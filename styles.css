@@ -1,0 +1,544 @@
+@font-face {
+    font-family: "Montserrat";
+    src: url("fonts/Montserrat-VariableFont_wght.ttf") format("truetype supports variations"),
+        url("fonts/Montserrat-VariableFont_wght.ttf") format("truetype-variations"),
+        url("fonts/Montserrat-Italic-VariableFont_wght.ttf") format("truetype supports variations"),
+        url("fonts/Montserrat-Italic-VariableFont_wght.ttf") format("truetype-variations");
+    font-weight: 100 1000;
+}
+
+body {
+    font-family: "Montserrat", sans-serif;
+    margin: 0;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    color: #333333;
+}
+
+
+#main {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: content-box;
+}
+
+
+.card {
+    border-radius: 8px;
+    box-shadow: 0 0 4px #ccc;
+    padding: 16px;
+    margin-bottom: 1rem;
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+}
+
+.card.warning {
+    background-color: #ffa50015;
+}
+
+.tabs-sidebar h3,
+#menu h3 {
+    margin: 0;
+}
+
+#menu::-webkit-scrollbar,
+#formview::-webkit-scrollbar,
+.tabs-sidebar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+#menu,
+#formview,
+.tabs-sidebar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+#menu {
+    flex: 1 1 30%;
+    padding: 16px;
+    border-left: 1px solid lightgray;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+#info-box {
+    overflow: auto;
+    flex: 0 1 min-content;
+}
+
+.tabs-sidebar {
+    position: relative;
+    flex: 1 1 25%;
+    border-right: 1px solid lightgray;
+    padding: 0 16px;
+    overflow: scroll;
+}
+
+.tabs-sidebar p {
+    margin: 8px 0;
+    color: gray;
+    font-size: small;
+}
+
+.sidebar-top {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    padding-top: 16px;
+    padding-bottom: 4px;
+}
+
+.doi-input button {
+    width: 100%;
+    margin-bottom: 4px;
+}
+
+#formview-container {
+    position: relative;
+    flex: 1 1 45%;
+    margin: 0 16px;
+    transform: scale(1);
+    height: 100vh;
+    overflow: hidden;
+}
+
+#formview {
+    height: 100%;
+    overflow: scroll;
+    padding: 4px;
+}
+
+#formview h2 {
+    margin: none;
+}
+
+#add-container {
+    position: sticky;
+    bottom: 0;
+    margin-top: 16px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    text-align: left;
+    background-color: white;
+    border-top: 1px solid lightgray;
+}
+
+input[type=text],
+input[type=number],
+select,
+.textbox {
+    display: block;
+    border-radius: 4px;
+    border: 1px solid lightgray;
+    padding: 0.25rem 0.5rem;
+    margin-bottom: 1.5rem;
+    width: 100%;
+    font-size: large;
+    box-sizing: border-box;
+}
+
+label {
+    display: block;
+    margin-right: 8px;
+    margin-bottom: 8px;
+}
+
+form {
+    margin-bottom: 10rem;
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid lightgray;
+    padding-bottom: 16px;
+
+}
+
+button {
+    font-size: 12pt;
+    background-color: #efefef;
+    border-radius: 4px;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 3px;
+    transition: 150ms;
+}
+
+button:hover {
+    background-color: #dfdfdf;
+}
+
+
+
+.title {
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.alignment-horizontal {
+    display: flex;
+    flex-direction: row;
+}
+
+.textbox-container {
+    position: relative;
+}
+
+.wordcount {
+    position: absolute;
+    right: 0.25rem;
+    bottom: 0.25rem;
+    background-color: #efefef;
+    color: gray;
+    border-radius: 99px;
+    padding: 0.25rem 0.5rem;
+    font-size: 10pt;
+}
+
+.wordcount-max {
+    right: 0;
+    bottom: -2rem;
+}
+
+.wordcount-ok {}
+
+.wordcount-warning {
+    color: darkred;
+    font-weight: bold;
+}
+
+.tab,
+.add-button {
+    font-size: 11pt;
+    background-color: #efefef;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    margin-bottom: 16px;
+    cursor: pointer;
+}
+
+.tab:hover:not(.active),
+.add-button {
+    background-color: #dfdfdf;
+}
+
+.tab.active {
+    background-color: #333333;
+    color: #efefef;
+}
+
+.tab.selected {
+    background-color: #333333;
+    color: #efefef;
+}
+
+.tab span {
+    pointer-events: none;
+}
+
+header {
+    border-bottom: 1px solid lightgray;
+}
+
+#item-info {
+    color: gray;
+    margin: 0;
+}
+
+#item-background-details,
+#tip-external-details {
+    color: gray;
+    margin-top: 1rem;
+}
+
+summary {
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+
+details {
+    margin-bottom: 1rem;
+}
+
+summary:hover {
+    color: #333333;
+}
+
+#score-box {
+    top: 0;
+    position: sticky
+}
+
+#score-box .sub {
+    margin: 0;
+    font-style: normal;
+    text-align: center;
+}
+
+#score-box p {
+    margin-bottom: 0;
+}
+
+#score-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+#current-score-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#overall-score {
+    margin-left: 16px;
+    padding-left: 16px;
+    border-left: 1px solid lightgray;
+}
+
+#overall-score-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#score-minmax {
+    text-align: center;
+    color: gray;
+    font-weight: bold;
+    margin: 0;
+}
+
+#score-percentage,
+#overall-score-percentage {
+    margin: 0;
+    text-align: center;
+    font-weight: bold;
+    font-size: 24pt;
+}
+
+#score-dot {
+    margin: 0 0.5rem;
+    font-weight: bold;
+    font-size: 16pt;
+    color: gray;
+}
+
+#no-score {
+    margin-top: 4px;
+    text-align: center;
+}
+
+.sub {
+    color: gray;
+    font-style: italic;
+    font-size: 10pt;
+    vertical-align: middle;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid lightgray;
+}
+
+.tag {
+    color: #000000a0;
+    font-size: small;
+    font-weight: bold;
+    background-color: #0000000d;
+    padding: 0.125rem 0.5rem;
+    border-radius: 99px;
+    margin-left: 8px;
+    text-align: c;
+}
+
+#ro-count-container {
+    text-align: center;
+    margin-top: 16px;
+    margin-bottom: 0;
+}
+
+/* Modal */
+
+/* The Modal (background) */
+.modal {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1;
+    /* Sit on top */
+    padding-top: 100px;
+    /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: #33333315;
+    backdrop-filter: blur(5px);
+}
+
+/* Modal Content */
+.modal-content {
+    position: relative;
+    background-color: white;
+    margin: auto;
+    padding: 16px;
+    width: 740px;
+    border-radius: 8px;
+    box-shadow: 0 0 8px #ccc;
+    max-height: 70vh;
+    overflow: auto;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+}
+
+#add-modal-continue {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+}
+
+.doi-info {
+    color: gray;
+    margin-bottom: 1rem;
+}
+
+.doi-info p {
+    text-align: left;
+}
+
+.menu-bottom {
+    text-align: center;
+}
+
+.github-link {
+    color: gray;
+}
+
+.github-link:hover {
+    color: #333333;
+}
+
+.highlight {
+    animation: highlight 1s;
+    background-color: yellow;
+}
+
+dialog {
+    border-radius: 8px;
+    border: none;
+    padding: 16px;
+    box-shadow: 0 0 2px #ccc;
+    max-width: 460px;
+
+    position: fixed;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    top: 25vh;
+}
+
+dialog h3 {
+    margin: 0;
+}
+
+dialog .buttons {
+    text-align: center;
+}
+
+button.critical {
+    background-color: firebrick;
+    color: #efefef;
+}
+
+button.critical:hover {
+    background-color: firebrick;
+    color: #efefef;
+
+    /* transform: scale(1.03); */
+    box-shadow: 0 0 8px firebrick;
+}
+
+@keyframes highlight {
+    50% {
+        background-color: white;
+    }
+}
+
+#saving {
+    position: fixed;
+    top: 1rem;
+    right: 0;
+    margin-left: auto;
+    width: fit-content;
+    color: #333333;
+    background-color: #efefef;
+    border-radius: 8px;
+    padding: 8px 16px;
+    z-index: 2;
+}
+
+.fakelink {
+    text-decoration: underline;
+    color: gray;
+    cursor: pointer;
+}
+
+.fakelink:hover {
+    color: #333333;
+}
+
+.animate.pop {
+    animation: pop 200ms;
+}
+
+@keyframes pop {
+    0% {
+        opacity: 0;
+        transform: scale(0.5, 0.5);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1, 1);
+    }
+}
+
+@media (max-width: 840px) {
+    #main {
+        display: none;
+    }
+
+    #info-modal {
+        width: 0;
+        height: 0;
+        display: none;
+    }
+
+    #mobile {
+        width: 90%;
+        margin: 1rem auto;
+    }
+}

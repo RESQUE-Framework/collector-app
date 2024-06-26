@@ -1,0 +1,13 @@
+{
+    "prefix": "D",
+    "version": "0.1",
+    "date": "2024-03-10",
+    "title": "Data Set",
+    "elements": [
+        {
+            "id": "D3",
+            "type": "text",
+            "title": "Data set name"
+        }
+    ]
+}

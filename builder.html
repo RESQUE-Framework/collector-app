@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <title>RESQUE Builder</title>
+</head>
+
+<body style="overflow: auto;">
+    <header style="padding: 2px; position: sticky; top: 0; background: #fff;">
+        <div style="text-align: center; width: 95%; max-width: 740px; margin: 0 auto;">
+            <h3>RESQUE Builder <button id="copy-button" onclick="copyLink()"><i class="fa-regular fa-clipboard"></i></button></h3>
+            <div class="result">
+                <p><a id="link"></a></p>
+            </div>
+        </div>
+    </header>
+
+    <div style="width: 95%; max-width: 740px; margin: 0 auto;">
+        <h2>Global parameters</h2>
+        <p class="title">Number of slots (maximum number of submittable research outputs; default: 10)</p>
+        <input type="number" placeholder="Number of slots" oninput="changeParameter('max', this.value)" />
+
+        <p class="title">Number of top papers (maximum number of 'best research outputs'; default: 3)</p>
+        <input type="number" placeholder="Number of top papers" oninput="changeParameter('maxTopPapers', this.value)" />
+
+        <p class="title">Threshold for 'number of required research outputs' warning (default: 5)</p>
+        <input type="number" placeholder="Number of research outputs"
+            oninput="changeParameter('minROWarningThreshold', this.value)" />
+
+        <hr>
+
+        <h2>Parameters for specific research outputs</h2>
+        <h3>Publications</h3>
+        <p class="title">Score threshold for 'too many indicators are not applicable' warning (default: 5)</p>
+        <input type="number" placeholder="Score threshold for 'too many indicators are not applicable' warning" oninput="changeParameter('pub:minIndicatorsWarningThreshold', this.value)">
+
+        <h3>Sofware Projects</h3>
+        <p class="title">Score threshold for 'too many indicators are not applicable' warning (default: 5)</p>
+        <input type="number" placeholder="Score threshold for 'too many indicators are not applicable' warning" oninput="changeParameter('software:minIndicatorsWarningThreshold', this.value)">
+
+        <h3>Data Sets</h3>
+        <p class="title">Score threshold for 'too many indicators are not applicable' warning (default: 5)</p>
+        <input type="number" placeholder="Score threshold for 'too many indicators are not applicable' warning" oninput="changeParameter('data:minIndicatorsWarningThreshold', this.value)">
+    </div>
+
+    <script>
+        const URL = 'https://nicebread.github.io/RESQUE/web'
+
+        displayLink(URL);
+
+        let defaults = {
+            max: "10",
+            maxTopPapers: "3",
+            minROWarningThreshold: "5",
+            "pubs.minIndicatorsWarningThreshold": "5",
+            "software.minIndicatorsWarningThreshold": "5",
+            "data.minIndicatorsWarningThreshold": "5"
+        }
+
+        let data = {};
+
+        function changeParameter(variable, value) {
+            data[variable] = value;
+
+            displayLink(generateLink(data));
+        }
+
+        function generateLink(data) {
+            const query = Object.entries(data)
+                // Only keep values that different from the defaults
+                .filter(([key, value]) => data[key] && defaults[key] !== value)
+                // Stringify
+                .map(([key, value]) => key + "=" + value)
+                .join('&');
+
+            return URL + (query ? ("?" + query) : '');
+        }
+
+        function displayLink(url) {
+            const link = document.getElementById('link');
+
+            link.setAttribute("href", url);
+            link.innerText = url;
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(document.getElementById('link').getAttribute("href"))
+                .then(() => {
+                    const copyButton = document.getElementById('copy-button');
+
+                    copyButton.innerHTML = '<i class="fa-solid fa-clipboard-check"></i>';
+                    new Promise(r => setTimeout(r, 3000)).then(() => {
+                        copyButton.innerHTML = '<i class="fa-regular fa-clipboard"></i>';
+                    });
+                });
+        }
+    </script>
+</body>
+
+</html>

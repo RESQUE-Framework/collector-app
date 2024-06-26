@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RESQUE</title>
+    <link rel="stylesheet" href="styles.css" />
+
+    <!-- Matomo -->
+    <script>
+        var _paq = window._paq = window._paq || [];
+        /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+        _paq.push(['trackPageView']);
+        _paq.push(['enableLinkTracking']);
+        (function () {
+            var u = "//tellmi.psy.lmu.de/matomo/";
+            _paq.push(['setTrackerUrl', u + 'matomo.php']);
+            _paq.push(['setSiteId', '6']);
+            var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+            g.async = true; g.src = u + 'matomo.js'; s.parentNode.insertBefore(g, s);
+        })();
+    </script>
+    <!-- End Matomo Code -->
+
+
+    <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css" />
+
+</head>
+
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <script>
+        const preprocessCondition = condition => {
+            let processedCondition = condition
+                .replaceAll(/([\$\w]+)\s*=\|=\s*\[(.*?)\]/g, (match, variable, list) => {
+                    return "(" + list.split(",")
+                        .map(value => `${variable} === ${value.trim()}`)
+                        .join(" || ") + ")";
+                })
+                .replaceAll(/([\$\w]+)\s*=&=\s*\[(.*?)\]/g, (match, variable, list) => {
+                    return "(" + list.split(",")
+                        .map(value => `${variable} === ${value.trim()}`)
+                        .join(" && ") + ")";
+                })
+
+            return processedCondition;
+        }
+
+        const insertValuesIntoCondition = condition => {
+            return condition
+                .replaceAll(/meta\$([a-zA-Z0-9_]+)/g, `Alpine.store('data').input[0]['$1']`)
+                .replaceAll(/\$(\w*)/g, `context['$1']`);
+        }
+
+        const evaluateCondition = condition => condition ? evaluateConditionInContext(condition, Alpine.store('data').currentInput) : true;
+
+        const evaluateConditionInContext = (condition, context) => {
+            const exists = id => !!id && id !== "";
+
+            return eval(insertValuesIntoCondition(preprocessCondition(condition)));
+        }
+
+        const partialHighlight = (indicatorId, text) => {
+            return text.replaceAll(/\{(.*?)\|(.*?)\}/g, (match, foundCondition, text) => {
+                let condition = foundCondition.trim();
+
+                if (condition.startsWith(':')) {
+                    console.error('Condition starts with \':\' but no indicator ID is provided. The condition was: ', condition);
+                    condition = `$${indicatorId} =|= [${condition.replace(':', '')}]`
+                }
+
+                return evaluateCondition(condition)
+                    ? `<span class="highlight">${text.trim()}</span>`
+                    : text
+            });
+        }
+
+        const insertValuesIntoText = text => {
+            const processType = {
+                datetime: (value) => {
+                    const millis = parseInt(value);
+                    return millis ? new Date(millis).toLocaleString() : '...';
+                },
+                date: (value) => {
+                    const millis = parseInt(value);
+                    return millis ? new Date(millis).toLocaleDateString() : '...';
+                },
+                default: (value) => 'Unknown type'
+            }
+
+            const globals = {
+                paper_count: (value) => Alpine.store('data').input.filter(r => r.type === 'pub' && r[value] === true).length,
+
+                papers: (value) => {
+                    let topPapers = Alpine.store('data').input.map((r, index) => {
+                        r.position = index;
+                        return r;
+                    }).filter(r => r.type === 'pub' && r[value] === true);
+
+                    let positions = topPapers.map(paper => paper.position);
+
+                    if (topPapers.length <= 0) {
+                        return "<i>No papers selected</i>";
+                    }
+
+                    const papersToDisplay = tabs
+                        .filter((tab, index) => positions.includes(index))
+                        .map(t => {
+                            t.classList.remove("selected");
+                            return t.outerHTML;
+                        });
+
+                    return papersToDisplay.join("");
+                }
+            }
+            return text
+                .replaceAll(/meta\$([a-zA-Z0-9_]+)/g, (match, variable) => results[0][variable])
+                .replaceAll(/global\$([a-zA-Z0-9_]+)@([a-zA-Z0-9_]+)/g, (match, variable, type) => {
+                    return globals[type](variable);
+                })
+                .replaceAll(/config\$([a-zA-Z0-9_]+)/g, (match, variable) => {
+                    return Alpine.store('config').config[variable];
+                })
+                .replaceAll(/config\$([a-zA-Z0-9_]+)@([a-zA-Z0-9_]+)/g, (match, variable, type) => {
+                    return processType[type](Alpine.store('config').config[variable]);
+                })
+                .replaceAll(/\$([a-zA-Z0-9_]+?)@([a-zA-Z0-9_]+)/g, (match, variable, type) => {
+                    return processType[type](Alpine.store('data').currentInput[variable]);
+                })
+                .replaceAll(/\$([a-zA-Z0-9_]+)/g, (match, variable) => {
+                    return Alpine.store('data').currentInput[variable] ?? '...';
+                });
+        }
+
+        const preprocessText = text => text ? insertValuesIntoText(partialHighlight(null, text)) : '';
+
+        const preprocessTextWithIndicatorContext = (indicatorID, text) => text ? insertValuesIntoText(partialHighlight(indicatorID, text)) : '';
+
+        const fetchInformationUsingDOI = async (doi) => {
+            return await fetch("https://doi.org/" + doi, {
+                headers: {
+                    Accept: 'application/vnd.citationstyles.csl+json'
+                }
+            })
+                .then(response => response.json())
+                .then(response => {
+                    if (mode === MODE_PREVIEW || mode === MODE_PRINT) {
+                        console.log(response);
+                    }
+
+                    return {
+                        title: response.title,
+                        year: response.published["date-parts"][0][0],
+                        DOI: response.DOI
+                    }
+                })
+                .catch(() => {
+                    return {
+                        error: true,
+                        title: doi ? '⚠️ <b>Invalid DOI:</b> ' + doi : undefined,
+                        year: undefined,
+                        DOI: doi
+                    }
+                })
+        }
+
+        const showSaving = () => {
+            let saving = document.getElementById("saving");
+
+            if (!saving) {
+                return;
+            }
+
+            if (saving.style.display !== "none") {
+                return;
+            }
+
+            saving.innerText = "Saving changes...";
+
+            saving.style.display = "block";
+
+            new Promise(r => setTimeout(r, 750))
+                .then(() => {
+                    saving.innerText = "Done ✅";
+                });
+
+            new Promise(r => setTimeout(r, 1500))
+                .then(() => {
+                    saving.style.display = "none";
+                });
+        }
+
+        const score = r => {
+            const scoring = Alpine.store('forms')[r.type].scoring;
+
+            if (scoring === undefined) {
+                return {};
+            }
+
+            if (!Object.keys(scoring).length) {
+                return {};
+            }
+
+            let maxScore = 0;
+            let reachedScore = 0;
+
+            for (indicator in scoring) {
+                if (indicator === 'post') {
+                    // skip post
+                    continue;
+                }
+                if (scoring[indicator].not_applicable && evaluateConditionInContext(scoring[indicator].not_applicable, r)) {
+                    continue;
+                }
+
+                maxScore += scoring[indicator].max;
+
+                switch (scoring[indicator].op) {
+                    case "sum":
+                        reachedScore += scoring[indicator].points
+                            .filter(p => evaluateConditionInContext(p.condition, r))
+                            .reduce((sum, next) => sum + next.value, 0);
+                        break;
+                    case "select":
+                        reachedScore += (scoring[indicator].points.find(p => evaluateConditionInContext(p.condition, r)) || { value: 0 }).value;
+                        break;
+                    default:
+                        break;
+                }
+
+
+            }
+
+            if (scoring.post) {
+                scoring.post.forEach(transformation => {
+                    if (evaluateConditionInContext(transformation.condition, r)) {
+                        console.log(transformation.factor)
+                        reachedScore *= transformation.factor;
+                    }
+                })
+            }
+
+            return {
+                max: maxScore,
+                score: reachedScore,
+                relative: reachedScore / maxScore,
+                percentage: ((reachedScore / maxScore) * 100).toFixed(1)
+            }
+        }
+
+        const scoreAll = rs => {
+            const scores = rs.map(r => score(r));
+
+            const validScores = scores.filter(s => Object.keys(s).length && s.max > 0)
+
+            const relative = validScores
+                .map(s => s.relative)
+                .reduce((sum, current) => sum + current, 0) / validScores.length
+
+            return {
+                scores,
+                overall: {
+                    relative,
+                    percentage: (relative * 100).toFixed(1)
+                }
+            };
+        }
+
+        let prefixes = {
+            meta: "M",
+            pub: "P",
+            software: "S",
+            data: "D"
+        }
+    </script>
+
+    <script>
+        Alpine.store('forms', {
+            meta: {},
+            pub: {},
+            software: {},
+            data: {}
+        });
+
+        const getDefaultValues = type => {
+            let defaultValues = {};
+
+            for (element of Alpine.store('forms')[type].elements) {
+                if (element.default) {
+                    if (element.type !== 'checkbox') {
+                        defaultValues[element.id] = element.default;
+                    } else {
+                        element.default.forEach((optionId) => {
+                            defaultValues[element.id + '_' + optionId] = true;
+                        })
+                    }
+                }
+            }
+
+            return defaultValues;
+        }
+
+        Alpine.store('config', {
+            config: {},
+            queryConfig: {}
+        });
+
+        const getConfig = (type) => ({
+            ...Alpine.store('forms')[type].config, // type specific config
+            ...Alpine.store('forms').config, // global config
+            ...Alpine.store('config').queryConfig.global, // global query config
+            ...Alpine.store('config').queryConfig[type] // type specific query config
+        })
+
+
+        Alpine.store('selectedIndicator', {});
+
+        Alpine.store('data', {
+            input: [{ type: 'meta' }],
+            currentTab: 0,
+            currentInput: {},
+            score: {},
+
+            manualInit() {
+                const data = localStorage.getItem('data');
+
+                if (data) {
+                    this.input = JSON.parse(data);
+                } else {
+                    this.newResearchOutput('meta');
+                }
+
+                this.currentTab = parseInt(sessionStorage.getItem('currentTab') ?? '0');
+                this.currentInput = this.input[this.currentTab];
+                this.score = scoreAll(this.input);
+            },
+
+            newResearchOutput(type) {
+                this.input.push({
+                    type,
+                    version: Alpine.store('forms')[type].versions[prefixes[type]],
+                    date_added: Date.now(),
+                    ...getDefaultValues(type)
+                });
+
+                this.currentTab = this.input.length - 1;
+
+                if (type === 'pub' && this.input.length === 2) {
+                    driver(tourForm).drive();
+                }
+            },
+
+            clear() {
+                localStorage.clear();
+                sessionStorage.clear();
+                this.input = [{ type: 'meta' }];
+                this.currentTab = 0;
+            }
+        });
+
+        Alpine.store('warnings', {
+            minROWarning: false,
+            minScoreWarning: false,
+
+            reevaluate() {
+                this.minIndicatorsWarning = Alpine.store('data').score.scores[Alpine.store('data').currentTab].max < Alpine.store('config').config.minIndicatorsWarningThreshold;
+                this.minROWarning = (Alpine.store('data').input.length - 1) < Alpine.store('config').config.minROWarningThreshold;
+            },
+
+            manualInit() {
+                this.reevaluate();
+            },
+
+            any() {
+                return this.minIndicatorsWarning || this.minROWarning;
+            }
+        });
+
+        Alpine.effect(() => {
+            const data = Alpine.store('data').input;
+
+            Alpine.store('data').score = scoreAll(data);
+
+            Alpine.store('warnings').reevaluate();
+
+            if (!data[0].date_created) {
+                data[0].date_created = Date.now();
+            }
+
+            Alpine.store('data').input[0].date_modified = Date.now();
+
+            showSaving();
+
+            localStorage.setItem('data', JSON.stringify(data));
+        });
+
+        Alpine.effect(() => {
+            const currentTab = Alpine.store('data').currentTab;
+            Alpine.store('data').date_modified = Date.now();
+            sessionStorage.setItem('currentTab', currentTab);
+
+            Alpine.store('data').currentInput = Alpine.store('data').input[currentTab];
+
+            Alpine.store('config').config = getConfig(Alpine.store('data').currentInput.type);
+        });
+
+        Alpine.effect(async () => {
+            const doi = Alpine.store('data').currentInput.DOI;
+
+            if (!doi) {
+                return;
+            }
+
+            const publicationInformation = await fetchInformationUsingDOI(doi);
+
+            Alpine.store('data').currentInput.Title = publicationInformation.title;
+            Alpine.store('data').currentInput.Year = publicationInformation.year;
+
+            if (!publicationInformation.error) {
+                Alpine.store('data').currentInput.DOI = "https://doi.org/" + publicationInformation.DOI;
+            }
+        });
+
+        const types = {
+            'meta': 'Author / Metadata',
+            'pub': 'Publication',
+            'software': 'Software',
+            'data': 'Data Set'
+        };
+    </script>
+
+    <div id="main">
+        <div class="tabs-sidebar">
+            <div class="sidebar-top">
+                <span style='background-color: lightyellow; font-size:80%;'>[Note: The RESQUE app is in beta stage and
+                    might change in the near future. If you want to use it in practice, please <a
+                        href="https://nicebread.github.io/RESQUE/team.html">contact</a> us.]</span><br><br>
+                <div class="top">
+                    <h3><a href="https://nicebread.github.io/RESQUE/">RESQUE</a></h3>
+                    <div id="actions">
+                        <button class="clear-button" @click="showModal('clear-modal')">Clear</button>
+                        <button class="load-button" @click="triggerLoad()">Load</button>
+                        <button class="save-button" @click="exp()">Save to file ...</button>
+                    </div>
+                </div>
+
+                <p x-text="`${$store.data.input.length - 1} of ${Alpine.store('config').config.max} slots used`"></p>
+            </div>
+            <div class="tabs-container">
+                <template x-for="tab, index in $store.data.input" :key="index">
+                    <div @click="$store.data.currentTab = index"
+                        x-html="`<b>${types[tab.type]}</b><br>${$store.data.input[index].Title ?? ''}`"
+                        :class="{tab: true, active: $store.data.currentTab === index}"></div>
+                </template>
+            </div>
+            <div id="add-container">
+                <div class="doi-input" style="display:none">
+                    <button class="pdf-button" onclick="document.getElementById('add-pdf').click()">Extract DOI from
+                        PDF</button>
+                    <input id="add-doi" type="text" placeholder="DOI (optional)" />
+                </div>
+
+                <div class="add-buttons" x-show="($store.data.input.length - 1) < $store.config.config.max">
+                    <button class="add-pub" @click="$store.data.newResearchOutput('pub')">Add Publication</button>
+                    <br />
+                    <button class="add-software" @click="$store.data.newResearchOutput('software')">Add
+                        Software</button>
+                    <br />
+                    <button class="add-data" @click="$store.data.newResearchOutput('data')">Add Data Set</button>
+                </div>
+            </div>
+        </div>
+        <div id="formview-container">
+            <div id="saving" class="animate pop" style="display: none;"></div>
+            <div id="formview">
+                <h3 x-html="$store.forms[$store.data.currentInput.type].title"></h3>
+
+                <template x-for="(elem, index) in $store.forms[$store.data.currentInput.type].elements" :key="index">
+                    <div @click="$store.selectedIndicator = elem" x-show="evaluateCondition(elem.condition)"
+                        onblur="actions[elem.onchange]()">
+                        <p x-html="preprocessText(elem.title)" style="font-weight: bold;"></p>
+
+                        <template x-if="elem.type === 'separator'">
+                            <hr style="height: 3px; border:none; color: #333; background-color: #333;" />
+                        </template>
+
+                        <template x-if="elem.type === 'info'">
+                            <p x-html="preprocessText(elem.text)"></p>
+                        </template>
+
+                        <template x-if="elem.type === 'text'">
+                            <input x-model="$store.data.currentInput[elem.id]" type="text"
+                                :placeholder="elem.title || ''" />
+                        </template>
+
+                        <template x-if="elem.type === 'textbox'">
+                            <div class="textbox" contenteditable x-model="$store.data.currentInput[elem.id]"
+                                :placeholder="elem.title || ''"></div>
+                        </template>
+
+                        <template x-if="elem.type === 'number'">
+                            <input x-model="$store.data.currentInput[elem.id]" type="text"
+                                :placeholder="elem.title || ''" />
+                        </template>
+
+                        <template x-if="elem.type === 'date'">
+                            <input x-model="$store.data.currentInput[elem.id]" type="date"
+                                :placeholder="elem.title || ''" />
+                        </template>
+
+                        <template x-if="elem.type === 'dropdown'">
+                            <select x-model="$store.data.currentInput[elem.id]">
+                                <template x-for="option in elem.options" :key="option.id">
+                                    <p x-text="option.text"></p>
+                                    <option x-html="option.text" :value="option.id"></option>
+                                </template>
+                            </select>
+                        </template>
+
+                        <template x-if="elem.type === 'radio'">
+                            <div :class="elem.alignment ? 'alignment-' + elem.alignment : 'alignment-vertical'">
+                                <template x-for="option in elem.options" :key="option.id">
+                                    <label :for="elem.id + '_' + option.id">
+                                        <input x-model="$store.data.currentInput[elem.id]" type="radio"
+                                            :id="elem.id + '_' + option.id" :value="option.id" />
+                                        <span x-html="option.text"></span>
+                                    </label>
+                                </template>
+                            </div>
+                        </template>
+
+                        <template x-if="elem.type === 'checkbox'">
+                            <template x-for="option in elem.options" :key="option.id">
+                                <label :for="elem.id + '_' + option.id">
+                                    <input x-model="$store.data.currentInput[elem.id + '_' + option.id]" type="checkbox"
+                                        :id="elem.id + '_' + option.id" />
+                                    <span x-html="option.text"></span>
+                                </label>
+                            </template>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </div>
+        <div id="menu">
+            <div class="card animate pop" :class="{ warning: $store.warnings.any() }" id="score-box" x-show="$store.data.currentInput.type !== 'meta'">
+                <div id="score-container">
+                    <div id="current-score">
+                        <span class="sub">Rigor Score of selected research output</span>
+                        <template x-show="$store.data.score.scores[$store.data.currentTab].max <= 0">
+                            <span id="no-score">Applicant requests<br>manual processing</span>
+                        </template>
+
+                        <template x-show="$store.data.score.scores[$store.data.currentTab].max > 0"></template>
+                        <div id="current-score-container">
+                            <p id="score-percentage"><span
+                                    x-text="$store.data.score.scores[$store.data.currentTab].percentage"></span>%</p>
+                            <p id="score-dot">•</p>
+                            <p id="score-minmax"><span
+                                    x-text="$store.data.score.scores[$store.data.currentTab].score"></span>/<span
+                                    x-text="$store.data.score.scores[$store.data.currentTab].max"></span></p>
+                        </div>
+                        </template>
+                    </div>
+                    <div id="overall-score">
+                        <span class="sub">Overall Rigor Score (mean)</span>
+                        <div id="overall-score-container">
+                            <p id="overall-score-percentage"><span
+                                    x-text="$store.data.score.overall.percentage"></span>%</p>
+                        </div>
+                    </div>
+                </div>
+                <p id="ro-count-container"><span class="tag"><span
+                            x-text="$store.data.score.scores.filter(s => s.max && s.max > 0).length"></span> scored
+                        research output(s)</span>
+                </p>
+                <p
+                    id="warning-score-too-low"
+                    x-show="$store.warnings.minIndicatorsWarning"
+                >⚠️ Many indicators are not applicable. Manual processing of this
+                    publication is recommended.
+                </p>
+                <p
+                    id="warning-min-ro-threshold"
+                    x-show="$store.warnings.minROWarning"
+                >⚠️ Please provide at least <span id="minROWarningThreshold" x-text="$store.config.config.minROWarningThreshold"></span>
+                    research contributions that can be scored (e.g. by adding more empirical papers, data sets, or
+                    software contributions)</p>
+            </div>
+            <div id="info-box" class="card">
+                <template x-if="!$store.selectedIndicator.id">
+                    <p id="item-info">Click on an indicator to see detailed information</p>
+                </template>
+
+                <template x-if="$store.selectedIndicator.id">
+                    <div>
+                        <p style="margin: 0;">
+                            <b><span x-text="$store.selectedIndicator.id"></span></b>
+                            <template x-if="$store.selectedIndicator.info">
+                                <div>
+                                    <br>
+                                    <span
+                                        x-html="preprocessTextWithIndicatorContext($store.selectedIndicator.id, $store.selectedIndicator.info)"></span>
+                                </div>
+                            </template>
+                            <template x-if="!$store.selectedIndicator.info">
+                                <p style="color: gray; margin: 0;"><br><i>No information.</i></p>
+                            </template>
+                        </p>
+                        <template x-if="$store.selectedIndicator.background">
+                            <details id="item-background-details">
+                                <summary>Background information</summary>
+                                <span id="item-background"
+                                    x-html="preprocessText($store.selectedIndicator.background)"></span>
+                            </details>
+                        </template>
+                        <template x-if="$store.selectedIndicator.tip_external">
+                            <details id="tip-external-details" :open="$store.data.input[0].RaterType === 'External'">
+                                <summary>Tips for external raters</summary>
+                                <span id="tip-external"
+                                    x-html="preprocessText($store.selectedIndicator.tip_external)"></span>
+                            </details>
+                        </template>
+                    </div>
+                </template>
+            </div>
+            <div class="menu-bottom">
+                <a class="fakelink" href="https://nicebread.github.io/RESQUE">RESQUE Website</a> • <span
+                    onclick="showInfoModal()" class="fakelink">FAQ</span> • <a class="github-link"
+                    href="https://github.com/nicebread/RESQUE">GitHub</a> • <span
+                    onclick="driver(tourAnytime()).drive()" class="fakelink">Tour</span>
+            </div>
+        </div>
+    </div>
+    <div id="info-modal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <button onclick="closeInfoModal()" id="add-modal-continue">Continue</button>
+
+            <h2>👋🏻 Welcome to the RESQUE tool!</h2>
+            <p>We need to change the way we assess research - with a focus on quality (over quantity). The <a
+                    href="https://github.com/nicebread/RESQUE">RESearch QUality Evaluation (RESQUE)</a> framework
+                provides an evaluation scheme for publications, data sets, and research software. With this tool, you
+                can enter the necessary information for your best research outputs, export a profile that shows your
+                research style (<i>not implemented yet</i>), and use it for your CV or in hiring and tenure committees.
+            </p>
+            <hr>
+            <h3>👀 How to use the RESQUE tool?</h3>
+            <details>
+                <summary>How do I add a new publication / software project / data set?</summary>
+                Normally, you would use the buttons in the sidebar on the left.
+                <br>
+                For this time, you can do it here:
+                <br><br>
+                <button onclick="newTab('pub')">New Publication</button>
+                <button onclick="newTab('software')">New Software Project</button>
+                <button onclick="newTab('data')">New Data Set</button>
+            </details>
+            <details>
+                <summary>How do I save my data?</summary>
+                Clicking on the <button onclick="exp()">Save as file ...</button> button here or in the top left corner
+                of this website exports a <code>.json</code> file. You can save this on your computer and share it with
+                others.
+            </details>
+            <details>
+                <summary>How do I load data I previously saved?</summary>
+                You can use the <button onclick="triggerLoad()">Load</button> button here or in the top left corner of
+                this website.
+            </details>
+            <details>
+                <summary>How can I clear all information I entered?</summary>
+                You can delete all data stored in the browser by clicking on the <button
+                    onclick="showModal('clear-modal')">Clear</button> button here or in the top left corner of this
+                website.
+            </details>
+            <details>
+                <summary>What should I do if I want to use RESQUE on a shared/public computer?</summary>
+                Whenever you open this website, it loads the locally stored data. On public computers, make sure that
+                you clear your data after you saved them as a file.
+            </details>
+            <hr>
+            <h3>🔒 Privacy • <span class="sub">Is my data stored privately in a safe location?</span></h3>
+            <p>
+                <b>No data leaves your device.</b>
+                <br>
+                We use the <a href="https://www.wikiwand.com/en/Web_storage">Web Storage API</a> supported by all major
+                browsers. Although the website itself is hosted on a server, your data is <i>only</i> stored and
+                processed in the local browser:
+                <br><br>
+                The data is processed only locally. Your score is calculated in the browser. The local PDF files you
+                open on this website are <i>not</i> uploaded to a server.
+                <br><br>
+                To get a sense of how many users we have, we do a very basic access logging with Matomo. You are not
+                identifiable by the logged information; none of your entered data is tracked; no cookies or third party
+                trackers are used.
+            </p>
+        </div>
+    </div>
+    <dialog id="clear-modal">
+        <h3>⚠️ Warning!</h3>
+        <p><b>This will delete all of your local data.</b><br><br>Do you want to save the data to a file first?</p>
+        <br>
+        <button onclick="closeModal('clear-modal')">Cancel</button> <button onclick="exp()">Save data to local
+            file</button>
+        <button @click="$store.data.clear(); closeModal('clear-modal')" class="critical">Clear all data</button>
+    </dialog>
+
+    <dialog id="config-incompatible-modal">
+        <h3>Incompatible configuration</h3>
+        <p>You have old data present, which was created using a different configuration. Do you want to load it, or
+            start with a fresh form?</p>
+        <p>Your data might be incompatible with the current configuration and lead to unexpected behavior.
+        </p>
+        <br>
+        <div class="buttons">
+            <button onclick="saveCurrentQueryConfig(); closeModal('config-incompatible-modal')">Use old data</button>
+            <button onclick="showModal('clear-modal')" class="critical">Clear everything and start fresh</button>
+        </div>
+    </dialog>
+
+    <div id="mobile">
+        <div class="card">
+            This window is too small for the <b>RESQUE</b> tool.
+            <br><br> Please visit <a href="https://nicebread.github.io/RESQUE/web">nicebread.github.io/RESQUE/web</a> on
+            a computer. If you are already on a computer, please make this window larger.
+            <hr>
+            <a class="github-link" href="https://github.com/nicebread/RESQUE">GitHub</a>
+        </div>
+    </div>
+
+    <input id="fileInput" type="file" accept="text/json" style="visibility: hidden" @change="handleLoad($el.files)" />
+    <a id="download" style="visibility: hidden"></a>
+    <input id="add-pdf" type="file" accept="application/pdf" onchange="handleSelectPDF(this.files)"
+        style="visibility: hidden;" />
+
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/object-hash@3.0.0/dist/object_hash.min.js"></script>
+    <script>
+        const driver = window.driver.js.driver;
+
+        const tourMain = {
+            showProgress: true,
+            steps: [
+                { popover: { title: '👋🏻 Welcome to the RESQUE tool!', description: 'We need to change the way we assess research - with a focus on quality (over quantity). The RESearch QUality Evaluation (RESQUE) framework provides an evaluation scheme for publications, data sets, and research software for psychological research. With this tool, you can enter the necessary information for your best research outputs, export a profile that shows your research style (not implemented yet), and use it for your CV or in hiring and tenure committees. <br><span style="background-color: lightyellow; font-size:80%;">[Note: The RESQUE is still a beta version and in active development.]</span>' } },
+                { popover: { title: '🔒 Privacy', description: 'The data you enter never leaves your device. Everything is processed locally. (except fetching the information about a publications using the DOI)' } },
+                { popover: { title: 'Saving changes...', description: 'Your changes are saved automatically in your browser. You can reload the page or close this tab and come back another time, the data you entered will still be here.' } },
+                // { element: '.pdf-button', popover: { description: 'You can open a PDF file and extract the DOI automatically. Note that this might fail in rare cases.' } },
+                { element: '.add-pub', popover: { title: 'Take your time...', description: 'After filling out the metadata form, add a new publication to continue the tour.' } },
+            ]
+        };
+
+        const tourForm = {
+            showProgress: true,
+            steps: [
+                { popover: { title: '🎉 You added your first publication!', description: 'We will continue showing you around.' } },
+                { element: '#DOI', popover: { description: 'You can enter the DOI here. We\'ll get the title and the year of publication from doi.org after you click away from the text field.' } },
+                { element: '#score-box', popover: { title: 'Score box', description: 'You see the score for the current research output and the overall score for all research outputs here.' } },
+                { element: '#info-box', popover: { title: 'Info box', description: 'You can click on an indicator in the form to see some help or detailed information here.' } },
+                { element: '.clear-button', popover: { title: 'Starting fresh', description: 'You can use the \'Clear\' button to delete everything you entered and start with a fresh form.' } },
+                { element: '.load-button', popover: { title: 'Loading previously exported data', description: 'The \'Load\' button opens a file picker, the local JSON file you select will be loaded into the tool.' } },
+                { element: '.save-button', popover: { title: 'Saving to a local file', description: 'If you want to export your data and save it to a local file (for example if you want to send the data to another person), you can use this button. A JSON file will be saved to your computer.' } },
+
+                { element: '.menu-bottom', popover: { description: 'You can click on FAQ to read more. You can also always take this tour by clicking on \'Tour\'' } },
+            ]
+        };
+
+        const tourAnytime = () => {
+            return {
+                showProgress: true,
+                steps: [
+                    { popover: { title: '👋🏻 Welcome to the RESQUE tool!', description: 'We need to change the way we assess research - with a focus on quality (over quantity). The RESearch QUality Evaluation (RESQUE) framework provides an evaluation scheme for publications, data sets, and research software. With this tool, you can enter the necessary information for your best research outputs, export a profile that shows your research style (not implemented yet), and use it for your CV or in hiring and tenure committees.' } },
+                    { popover: { title: '🔒 Privacy', description: 'The data you enter never leaves your device. Everything is processed locally. (except fetching the information about a publications using the DOI)' } },
+                    { popover: { title: 'Saving changes...', description: 'Your changes are saved automatically in your browser. You can reload the page or close this tab and come back another time, the data you entered will still be here.' } },
+                    { element: '.pdf-button', popover: { description: 'You can open a PDF file and extract the DOI automatically. Note that this might fail in rare cases.' } },
+                    { element: '.add-buttons', popover: { title: 'Add a new research output', description: 'You can use one of these three buttons to add new research outputs. RESQUE considers publications, software projects and data sets as research outputs.' } },
+                    { element: '.clear-button', popover: { title: 'Starting fresh', description: 'You can use the \'Clear\' button to delete everything you entered and start with a fresh form.' } },
+                    { element: '.load-button', popover: { title: 'Loading previously exported data', description: 'The \'Load\' button opens a file picker, the local JSON file you select will be loaded into the tool.' } },
+                    { element: '.save-button', popover: { title: 'Saving to a local file', description: 'If you want to export your data and save it to a local file (for example if you want to send the data to another person), you can use this button. A JSON file will be saved to your computer.' } },
+
+                    Alpine.store('data').currentInput.type === 'pub' ? { popover: { description: "Let's continue with the form and the right menu." } } : { popover: { title: 'Please switch to a publication tab', description: 'In order to continue the tour, you have to be on a publication tab. Add a new publication or switch to an existing one and start the tour again.' } },
+                    { element: '#DOI', popover: { description: 'You can enter the DOI here. We\'ll get the title and the year of publication from doi.org after you click away from the text field.' } },
+                    { element: '#score-box', popover: { title: 'Score box', description: 'You see the score for the current research output and the overall score for all research outputs here.' } },
+                    { element: '#info-box', popover: { title: 'Info box', description: 'You can click on an indicator in the form to see some help or detailed information here.' } },
+
+                    { element: '.menu-bottom', popover: { description: 'You can click on FAQ to read more. You can also always take this tour by clicking on \'Tour\'' } },
+                ]
+            }
+        }
+    </script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+            'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+
+        function extractText(pdf) {
+            var totalPageCount = pdf.numPages;
+            var countPromises = [];
+            for (
+                var currentPage = 1;
+                currentPage <= totalPageCount;
+                currentPage++
+            ) {
+                var page = pdf.getPage(currentPage);
+                countPromises.push(
+                    page.then(function (page) {
+                        var textContent = page.getTextContent();
+                        return textContent.then(function (text) {
+                            return text.items
+                                .map(function (s) {
+                                    return s.str;
+                                })
+                                .join(' ');
+                        });
+                    }),
+                );
+            }
+
+            return Promise.all(countPromises).then(function (texts) {
+                return texts.join(' ');
+            })
+        }
+
+        function handleSelectPDF(files) {
+            var file = files[0];
+
+            //Step 2: Read the file using file reader
+            var fileReader = new FileReader();
+
+            fileReader.onload = function () {
+
+                //Step 4:turn array buffer into typed array
+                var typedarray = new Uint8Array(this.result);
+
+                //Step 5:pdfjs should be able to read this
+                const loadingTask = pdfjsLib.getDocument(typedarray);
+                loadingTask.promise.then(pdf => {
+                    extractText(pdf).then(text => {
+                        let dois = extractDOIs(text);
+                        document.getElementById('add-doi').value = dois[0];
+
+                        if (mode === MODE_PREVIEW || mode === MODE_PRINT) {
+                            console.log(text);
+                            console.log(dois);
+                        }
+                    })
+                });
+            };
+            //Step 3:Read the file as ArrayBuffer
+            fileReader.readAsArrayBuffer(file);
+        }
+
+        function extractDOIs(text) {
+            let pattern = /\b10\.\d{4,9}\/[-._;()/:a-zA-Z0-9]+\b/g;
+            const dois = text.match(pattern);
+
+            return [...new Set(dois)];
+        }
+    </script>
+
+    <script>
+
+
+        async function use(config, ...packs) {
+
+            const pool = [];
+
+            const ps = await Promise.all(packs.map(async pack => {
+                const response = await fetch("./packs/" + pack + ".json");
+                return response.json();
+            }));
+
+            ps.forEach(p => pool.push(...p.elements));
+
+            let versions = {};
+
+            ps.forEach(pack => versions[pack.prefix] = pack.version);
+
+            let date = {};
+
+            ps.forEach(pack => date[pack.prefix] = pack.date);
+
+            let scoringInfos = {}
+
+            ps.forEach(pack => scoringInfos = { ...scoringInfos, ...pack.scoring })
+
+            return {
+                title: ps[0].title,
+                versions,
+                date,
+                scoring: scoringInfos,
+                pool,
+                config
+            };
+        }
+
+        function pick(combinedPack, ...ids) {
+            return {
+                title: combinedPack.title,
+                versions: combinedPack.versions,
+                date: combinedPack.date,
+                scoring: combinedPack.scoring,
+                config: combinedPack.config,
+                elements: ids.length <= 0 ? combinedPack.pool : ids.map(id => combinedPack.pool.find(item => item.id === id))
+            };
+        }
+
+        function pickByPrefix(combinedPack, prefix) {
+            return {
+                title: combinedPack.title,
+                versions: combinedPack.versions,
+                date: combinedPack.date,
+                scoring: combinedPack.scoring,
+                config: combinedPack.config,
+                elements: combinedPack.pool.filter(item => item.id.startsWith(prefix))
+            };
+        }
+
+        function pickByCondition(combinedPack, condition) {
+            return {
+                title: combinedPack.title,
+                versions: combinedPack.versions,
+                date: combinedPack.date,
+                scoring: combinedPack.scoring,
+                config: combinedPack.config,
+                elements: combinedPack.pool.filter(item => condition(item))
+            };
+        }
+
+        function pickExclude(combinedPack, ...ids) {
+            return pickByCondition(combinedPack, item => !ids.includes(item.id));
+        }
+    </script>
+
+    <script src="menu.js"></script>
+
+    <script>
+        const MODE_PREVIEW = "preview";
+        const MODE_PRINT = "print";
+        
+        // Modal
+
+        window.onclick = e => {
+            if (event.target.classList.contains("modal")) {
+                e.target.style.display = "none";
+            }
+        }
+
+        const showModal = (id) => {
+            document.getElementById(id).showModal();
+        }
+
+        const closeModal = (id) => {
+            document.getElementById(id).close();
+        }
+
+        const showInfoModal = () => {
+            document.getElementById("info-modal").style.display = "block";
+        }
+
+        const closeInfoModal = () => {
+            document.getElementById("info-modal").style.display = "none";
+        }
+
+        const save = () => {
+            localStorage.setItem("formdata", JSON.stringify(results))
+        }
+
+        const getSavedData = () => {
+            return JSON.parse(localStorage.getItem("formdata")) || [];
+        }
+
+        const reset = () => {
+            results = {};
+            localStorage.clear();
+            sessionStorage.clear();
+            location.reload();
+        }
+
+        const triggerLoad = () => {
+            fileSelector = document.getElementById("fileInput");
+            fileSelector.click();
+        }
+
+        const handleLoad = async files => {
+            let loadedData = JSON.parse(await files[0].text());
+
+            if (loadedData.every(r => Alpine.store('forms')[r.type].versions[prefixes[r.type]] === r.version)) {
+                Alpine.store('data').input = loadedData;
+                sessionStorage.clear();
+            } else {
+                alert("Warning: the data in the local file was created using an earlier version. Trying to load it anyway.");
+
+                // Temporary: Load anyway!!
+                Alpine.store('data').input = loadedData;
+                sessionStorage.clear();
+            }
+        }
+
+        const exp = () => {
+            const data = Alpine.store('data').input;
+
+            let millis = Date.now();
+            data.date_exported = millis;
+            let json = JSON.stringify(data, null, 2);
+            let blob = new Blob([json], { type: "text/json;charset=utf-8" });
+            let filename = `resque_${data[0].LastName ? data[0].LastName.toLowerCase() + "_" : ""}${millis}.json`;
+
+            let a = document.getElementById("download");
+            a.innerText = filename;
+            a.download = filename;
+            a.href = (window.URL || window.webkitURL).createObjectURL(blob);
+
+            a.click();
+        }
+
+        function getQueryConfig(params) {
+            let queryConfig = {
+                global: {},
+            };
+
+            params.forEach((value, key) => {
+                if (key.includes(':')) {
+                    const parts = key.split(':');
+
+                    let location = queryConfig;
+
+                    parts.forEach((part, index) => {
+                        if (index === parts.length - 1) {
+                            // Set the parameter
+                            location[part] = value;
+                        } else {
+                            // Navigate into the correct location
+                            location[part] = location[part] ?? {};
+                            location = location[part];
+                        }
+                    })
+                } else {
+                    // Global config parameter
+                    queryConfig.global[key] = value;
+                }
+            })
+
+            return queryConfig;
+        }
+
+        const params = new URLSearchParams(window.location.search);
+
+        Alpine.store('config').queryConfig = getQueryConfig(params);
+
+        const mode = params.get("mode");
+        const details = params.get("details") !== "false";
+        const filter = (params.get("filter") ?? "").split(",").filter(f => f);
+
+        if (!localStorage.getItem("data")) {
+            //showInfoModal();
+            driver(tourMain).drive();
+        }
+
+        if (mode === MODE_PRINT) {
+            const formview = document.querySelector("#formview");
+            formview.style.overflow = "visible";
+
+            document.querySelector("#main").style.display = "block";
+            document.body.style.overflow = "visible";
+            document.querySelector("#formview-container").style.overflow = "visible";
+            document.querySelector(".tabs-sidebar").style.display = "none";
+            document.querySelector("#menu").style.display = "none";
+
+            document.querySelector("#mobile").style.display = "none";
+        }
+
+        function saveCurrentQueryConfig() {
+            Alpine.store('data').input[0].queryConfig = Alpine.store('config').queryConfig;
+        }
+
+        menu().then(m => {
+            Alpine.store('forms').meta = m.meta;
+            Alpine.store('forms').pub = m.pub;
+            Alpine.store('forms').software = m.software;
+            Alpine.store('forms').data = m.data;
+            Alpine.store('forms').config = m.config;
+
+            Alpine.store('data').manualInit();
+            Alpine.store('warnings').manualInit();
+
+            if (!Alpine.store('data').input[0].queryConfig) {
+                // save query config
+                Alpine.store('data').input[0].queryConfig = Alpine.store('config').queryConfig;
+            }
+
+            // Check config compatibility
+            if (objectHash(Alpine.store('data').input[0].queryConfig) !== objectHash(Alpine.store('config').queryConfig)) {
+                showModal('config-incompatible-modal');
+            }
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,80 @@
+{
+    "version": "0.2.0",
+    "date": "2024-02-20",
+    "prefix": "M",
+    "title": "Author / Metadata",
+    "elements": [
+        {
+            "id": "LastName",
+            "type": "text",
+            "title": "Last name of applicant"
+        },
+        {
+            "id": "FirstName",
+            "type": "text",
+            "title": "First name"
+        },
+        {
+            "id": "YearPhD",
+            "type": "number",
+            "title": "Year of PhD / Dr."
+        },
+        {
+            "id": "AcademicAgeBonus",
+            "type": "number",
+            "title": "Years that are subtracted from active academic life (e.g. due to child care). You can enter fractional years, e.g. 0.5."
+        },
+        {
+            "id": "ORCID",
+            "type": "text",
+            "title": "ORCID identifier (as full link, e.g. https://orcid.org/0000-0002-1825-0097)"
+        },
+        {
+            "id": "RaterType",
+            "type": "radio",
+            "title": "Who enters the data?",
+            "options": [
+                {
+                    "id": "Applicant",
+                    "text": "I am the applicant & a co-author of these research outputs"
+                },
+                {
+                    "id": "External",
+                    "text": "I am an external rater"
+                }
+            ]
+        },
+        {
+            "id": "ExternalRaterName",
+            "type": "text",
+            "title": "Name of external rater (optional)",
+            "condition": "$RaterType === 'External'"
+        },
+        {
+            "id": "METASEP1",
+            "type": "separator"
+        },
+        {
+            "id": "TopPapers",
+            "type": "info",
+            "title": "The following papers were selected as 'Top Papers':",
+            "text": "global$P_TopPaper_Select@papers"
+        },
+        {
+            "id": "METASEP2",
+            "type": "separator"
+        },
+        {
+            "id": "DateCreated",
+            "type": "info",
+            "title": "Date created",
+            "text": "$date_created@datetime"
+        },
+        {
+            "id": "LastChange",
+            "type": "info",
+            "title": "Last change",
+            "text": "$date_modified@datetime"
+        }
+    ]
+}

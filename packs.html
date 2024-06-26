@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RESQUE Packs</title>
+</head>
+
+<body>
+    <div class="outer">
+        <div class="packs-list">
+            <h3>Available Packs</h3>
+            <ul class="contents"></ul>
+        </div>
+        <div class="main"></div>
+    </div>
+
+    <script>
+        const main = document.querySelector('.main');
+        const contents = document.querySelector('.contents');
+
+        function dropExtension(name) {
+            return name.replace(/\..*$/, '');
+        }
+
+        function prettifyPackName(name) {
+            return dropExtension(name).split('-').map(word => word[0].toUpperCase() + word.slice(1)).join(' ');
+        }
+
+        function objectToString(object) {
+            if (typeof object === 'string') {
+                return object;
+            }
+
+            if (typeof object === 'number') {
+                return object.toString();
+            }
+
+            if (Array.isArray(object)) {
+                return '<div class="box list">\n' + object.map(item => `${objectToString(item)}`).join('\n<hr>\n') + '\n</div>';
+            }
+
+            return '<div class="vstack">' + Object.entries(object).map(([key, value]) => `<p><b>${key}</b><br>${objectToString(value)}</p>`).join('\n') + '</div>';
+        }
+
+        function scoringToString(object) {
+            if (!object)
+                return 'No scoring information.';
+
+            return Object.entries(object).map(([key, value]) => `<div><h4>${key}:</h4>${objectToString(value)}</div>`).join('\n');
+        }
+
+        function indicatorToString(object) {
+            if (!object)
+                return 'No indicators.';
+
+            return `<div class='box'>${objectToString(object)}</div>`;
+        }
+
+        function packToLink(pack) {
+            const li = document.createElement('li');
+            const link = document.createElement('a');
+            link.innerText = prettifyPackName(prettifyPackName(pack.name));
+            link.href = `#${dropExtension(pack.name)}`;
+
+            li.appendChild(link);
+            return li;
+        }
+
+        function packToHTMLElement(pack) {
+            const container = document.createElement('div');
+            container.classList.add('pack');
+
+            const title = document.createElement('h2');
+            title.id = dropExtension(pack.name);
+            title.innerText = prettifyPackName(pack.name);
+
+            const subtitle = document.createElement('p');
+            subtitle.innerText = pack.name;
+            subtitle.classList.add('subtitle');
+
+            container.appendChild(title);
+            container.appendChild(subtitle);
+
+            const meta = document.createElement('div');
+
+            const scoring = document.createElement('div');
+            scoring.classList.add('vstack')
+
+            const indicators = document.createElement('div');
+            indicators.classList.add('vstack')
+
+            fetch(pack.download_url)
+                .then(response => response.json())
+                .then(content => {
+                    console.log(content.scoring);
+                    scoring.innerHTML = scoringToString(content.scoring);
+                    indicators.innerHTML = content.elements.map(element => indicatorToString(element)).join('\n');
+                })
+
+            const scoringDetails = document.createElement('details');
+            const scoringSummary = document.createElement('summary');
+            scoringSummary.innerText = 'Scoring information';
+            scoringDetails.appendChild(scoringSummary);
+            scoringDetails.appendChild(scoring);
+            container.appendChild(scoringDetails);
+
+            const indicatorsDetails = document.createElement('details');
+            const indicatorsSummary = document.createElement('summary');
+            indicatorsSummary.innerText = 'Indicators';
+            indicatorsDetails.appendChild(indicatorsSummary);
+            indicatorsDetails.appendChild(indicators);
+            container.appendChild(indicatorsDetails);
+
+            return container;
+        }
+
+        const packs_URL = 'https://api.github.com/repos/nicebread/RESQUE/contents/packs?ref=main';
+
+        fetch(packs_URL)
+            .then(response => response.json())
+            .then(packs => {
+                console.log(packs);
+                
+
+                const elems = packs.map(pack => packToHTMLElement(pack));
+                elems.forEach(elem => main.appendChild(elem));
+
+                const links = packs.map(pack => packToLink(pack));
+                links.forEach(link => contents.appendChild(link));
+            });
+    </script>
+</body>
+
+<style>
+    body {
+        font-family: sans-serif;
+        margin: 0;
+    }
+
+    h2 {
+        margin: 0;
+    }
+
+    .subtitle {
+        font-style: italic;
+        color: gray;
+        margin: 0;
+    }
+
+    .box {
+        background-color: #0000000c;
+        padding: 12px;
+        border-radius: 8px;
+    }
+
+    p {
+        margin: 0;
+    }
+
+    .pack {
+        margin-bottom: 2rem;
+    }
+
+    .vstack {
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+    }
+
+    hr {
+        border: none;
+        border-top: 1px solid gray;
+    }
+
+    .main {
+        flex: 1 1 80%;
+        overflow: scroll;
+        position: relative;
+    }
+
+    .packs-list {
+        flex: 1 1 20%;
+        position: sticky;
+        top: 0;
+        background-color: white;
+        z-index: 1;
+        padding-top: 0.5rem;
+        border-bottom: 1px solid lightgray;
+        margin-bottom: 1rem;
+    }
+
+    .packs-list ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .packs-list ul li {
+        display: inline;
+        margin-right: 0.5rem;
+    }
+
+    .outer {
+        max-width: 740px;
+        margin: 0 auto;
+    }
+
+    summary {
+        cursor: pointer;
+        margin: 0.5rem 0;
+    }
+</style>
+
+</html>
