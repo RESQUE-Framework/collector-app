@@ -7,13 +7,24 @@
     font-weight: 100 1000;
 }
 
+:root {
+    --bg-color: #fcfcff;
+    --shadow-color: #ccc;
+    --border-color: lightgray;
+    --dark-color: #333333;
+    --light-color: #efefef;
+    --light-hover-color: #dfdfdf;
+    --warning-color: #ffa50015;
+}
+
 body {
     font-family: "Montserrat", sans-serif;
     margin: 0;
     height: 100vh;
     width: 100%;
     overflow: hidden;
-    color: #333333;
+    color: var(--dark-color);
+    background-color: var(--bg-color);
 }
 
 
@@ -29,7 +40,7 @@ body {
 
 .card {
     border-radius: 8px;
-    box-shadow: 0 0 4px #ccc;
+    box-shadow: 0 0 4px var(--shadow-color);
     padding: 16px;
     margin-bottom: 1rem;
     width: 100%;
@@ -38,7 +49,7 @@ body {
 }
 
 .card.warning {
-    background-color: #ffa50015;
+    background-color: var(--warning-color);
 }
 
 .tabs-sidebar h3,
@@ -65,7 +76,7 @@ body {
 #menu {
     flex: 1 1 30%;
     padding: 16px;
-    border-left: 1px solid lightgray;
+    border-left: 1px solid var(--border-color);
     position: relative;
     display: flex;
     flex-direction: column;
@@ -79,7 +90,7 @@ body {
 .tabs-sidebar {
     position: relative;
     flex: 1 1 25%;
-    border-right: 1px solid lightgray;
+    border-right: 1px solid var(--border-color);
     padding: 0 16px;
     overflow: scroll;
 }
@@ -93,7 +104,7 @@ body {
 .sidebar-top {
     position: sticky;
     top: 0;
-    background-color: white;
+    background-color: var(--bg-color);
     padding-top: 16px;
     padding-bottom: 4px;
 }
@@ -129,8 +140,8 @@ body {
     padding-top: 16px;
     padding-bottom: 16px;
     text-align: left;
-    background-color: white;
-    border-top: 1px solid lightgray;
+    background-color: var(--bg-color);
+    border-top: 1px solid var(--border-color);
 }
 
 input[type=text],
@@ -139,12 +150,13 @@ select,
 .textbox {
     display: block;
     border-radius: 4px;
-    border: 1px solid lightgray;
+    border: 1px solid var(--border-color);
     padding: 0.25rem 0.5rem;
     margin-bottom: 1.5rem;
     width: 100%;
     font-size: large;
     box-sizing: border-box;
+    background-color: var(--bg-color);
 }
 
 label {
@@ -161,14 +173,14 @@ form {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid lightgray;
+    border-bottom: 1px solid var(--border-color);
     padding-bottom: 16px;
 
 }
 
 button {
     font-size: 12pt;
-    background-color: #efefef;
+    background-color: var(--light-color);
     border-radius: 4px;
     border: none;
     padding: 0.25rem 0.5rem;
@@ -179,7 +191,7 @@ button {
 }
 
 button:hover {
-    background-color: #dfdfdf;
+    background-color: var(--light-hover-color);
 }
 
 
@@ -202,7 +214,7 @@ button:hover {
     position: absolute;
     right: 0.25rem;
     bottom: 0.25rem;
-    background-color: #efefef;
+    background-color: var(--light-color);
     color: gray;
     border-radius: 99px;
     padding: 0.25rem 0.5rem;
@@ -224,7 +236,7 @@ button:hover {
 .tab,
 .add-button {
     font-size: 11pt;
-    background-color: #efefef;
+    background-color: var(--light-color);
     border-radius: 8px;
     padding: 0.5rem 1rem;
     margin-bottom: 16px;
@@ -233,17 +245,17 @@ button:hover {
 
 .tab:hover:not(.active),
 .add-button {
-    background-color: #dfdfdf;
+    background-color: var(--light-hover-color);
 }
 
 .tab.active {
-    background-color: #333333;
-    color: #efefef;
+    background-color: var(--dark-color);
+    color: var(--light-color);
 }
 
 .tab.selected {
-    background-color: #333333;
-    color: #efefef;
+    background-color: var(--dark-color);
+    color: var(--light-color);
 }
 
 .tab span {
@@ -251,7 +263,7 @@ button:hover {
 }
 
 header {
-    border-bottom: 1px solid lightgray;
+    border-bottom: 1px solid var(--border-color);
 }
 
 #item-info {
@@ -275,7 +287,7 @@ details {
 }
 
 summary:hover {
-    color: #333333;
+    color: var(--dark-color);
 }
 
 #score-box {
@@ -308,7 +320,7 @@ summary:hover {
 #overall-score {
     margin-left: 16px;
     padding-left: 16px;
-    border-left: 1px solid lightgray;
+    border-left: 1px solid var(--border-color);
 }
 
 #overall-score-container {
@@ -353,7 +365,7 @@ summary:hover {
 
 hr {
     border: none;
-    border-top: 1px solid lightgray;
+    border-top: 1px solid var(--border-color);
 }
 
 .tag {
@@ -364,7 +376,7 @@ hr {
     padding: 0.125rem 0.5rem;
     border-radius: 99px;
     margin-left: 8px;
-    text-align: c;
+    text-align: center;
 }
 
 #ro-count-container {
@@ -405,7 +417,7 @@ hr {
     padding: 16px;
     width: 740px;
     border-radius: 8px;
-    box-shadow: 0 0 8px #ccc;
+    box-shadow: 0 0 8px var(--shadow-color);
     max-height: 70vh;
     overflow: auto;
 }
@@ -438,7 +450,7 @@ hr {
 }
 
 .github-link:hover {
-    color: #333333;
+    color: var(--dark-color);
 }
 
 .highlight {
@@ -450,7 +462,7 @@ dialog {
     border-radius: 8px;
     border: none;
     padding: 16px;
-    box-shadow: 0 0 2px #ccc;
+    box-shadow: 0 0 2px var(--shadow-color);
     max-width: 460px;
 
     position: fixed;
@@ -483,7 +495,7 @@ button.critical:hover {
 
 @keyframes highlight {
     50% {
-        background-color: white;
+        background-color: var(--bg-color);
     }
 }
 
@@ -493,8 +505,8 @@ button.critical:hover {
     right: 0;
     margin-left: auto;
     width: fit-content;
-    color: #333333;
-    background-color: #efefef;
+    color: var(--dark-color);
+    background-color: var(--light-color);
     border-radius: 8px;
     padding: 8px 16px;
     z-index: 2;
@@ -507,7 +519,7 @@ button.critical:hover {
 }
 
 .fakelink:hover {
-    color: #333333;
+    color: var(--dark-color);
 }
 
 .animate.pop {
