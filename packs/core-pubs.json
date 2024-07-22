@@ -806,6 +806,9 @@
             "type": "separator",
             "condition": "$P_Suitable === 'Yes'"
         },
+
+
+
         {
             "id": "P_Data",
             "type": "radio",
@@ -823,6 +826,8 @@
             "condition": "$P_Suitable === 'Yes'",
             "tip_external": "Look in the abstract and/or method section."
         },
+
+        
         {
             "id": "P_Data_Source",
             "type": "checkbox",
@@ -858,53 +863,276 @@
             "tip_external": "Look in the abstract and/or method section. If no information can be found there, it might also be useful to look at the contributors of the repositories.<br><br><b>Search words:</b> simul*, data, OSF, availab*"
         },
         {
+            "id": "P_Sample_Type",
+            "type": "radio",
+            "title": "Type of sample",
+            "options": [
+                {
+                    "id": "Mostly_psych_students",
+                    "text": "(Predominantly) psychology students"
+                },
+                {
+                    "id": "Mostly_students",
+                    "text": "(Predominantly) students, interdisciplinary"
+                },
+                {
+                    "id": "General",
+                    "text": "Non-specific general population"
+                },
+                {
+                    "id": "Specific",
+                    "text": "Specific target population (e.g., working nurses)"
+                },
+                {
+                    "id": "Rare",
+                    "text": "Specific target population, hard to acquire (e.g., babies, inmates, rare disorders)"
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical"
+        },
+        {
+            "id": "P_Sample_Representative",
+            "type": "radio",
+            "title": "Representativeness of sample",
+            "options": [
+                {
+                    "id": "Convenience_sample",
+                    "text": "Convenience sample"
+                },
+                {
+                    "id": "Representative_sample",
+                    "text": "Representative sample"
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical",
+            "info": "{ $P_Sample_Representative_Representative_sample | <b>Representative sample</b>: according to common characteristics, such as gender, age, city vs. countryside}"
+        },
+        {
+            "id": "P_Sample_WEIRD",
+            "type": "radio",
+            "title": "WEIRDness of sample",
+            "options": [
+                {
+                    "id": "WEIRD",
+                    "text": "WEIRD: Western, Educated, Industrialized, Rich and Democratic"
+                },
+                {
+                    "id": "non_WEIRD",
+                    "text": "non-WEIRD"
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical"
+        },
+
+        {
+            "id": "P_Sample_CrossCultural",
+            "type": "radio",
+            "title": "Cultural diversity of sample / cross-cultural research",
+            "options": [                
+                {
+                    "id": "Single_culture",
+                    "text": "Single cultural or ethnic background"
+                },
+                {
+                    "id": "Multiple_cultures",
+                    "text": "Multiple cultural or ethnic backgrounds"
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical",
+            "info": "This question does not necessarily correlate with the nationality of participants. Please make a judgement whether, for example, multiple European subsamples actually qualify as 'Multiple cultural or ethnic backgrounds', or whether different ethnic backgrounds are sampled on purpose within one nation."
+        },
+
+        {
             "id": "P_Data_Type",
             "type": "checkbox",
             "title": "Type of data (check all that apply)",
             "options": [
                 {
-                    "id": "Questionnaire",
-                    "text": "Questionnaire"
+                    "id": "Questionnaire_selfreport",
+                    "text": "Questionnaire (self report)"
+                },
+                {
+                    "id": "Questionnaire_otherreport",
+                    "text": "Questionnaire (other/informant report)"
                 },
                 {
                     "id": "Behavioral",
-                    "text": "Behavioral"
+                    "text": "Behavioral data (give details below)"
                 },
                 {
                     "id": "Physiological",
-                    "text": "Physiological (e.g., fMRI, EEG, peripheral physiology)"
+                    "text": "Physiological (give details below)"
                 },
                 {
-                    "id": "Longitudinal",
-                    "text": "Longitudinal data"
+                    "id": "Interviews",
+                    "text": "Interviews"
                 },
                 {
-                    "id": "ESM",
-                    "text": "Experience Sampling/Ambulatory Assessment/Mobile Sensing"
+                    "id": "Content_data",
+                    "text": "Content data (e.g., digital traces, text, audiovisual content)"
                 },
                 {
-                    "id": "MetaAnalysis",
-                    "text": "Meta-analysis: Effect sizes from primary studies"
+                    "id": "Coding",
+                    "text": "Content or behavioral coding (i.e., converting rich qualitative data into numeric scores)"
                 },
                 {
                     "id": "OtherType",
-                    "text": "Other [please specify]"
+                    "text": "Other (please specify)"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation)",
-            "info": "{ $P_Data_Type_MetaAnalysis | In case of meta-analysis, only check 'Meta-analysis: Effect sizes from primary studies'. The data type of the primary studies is irrelevant.}",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical",
+            "info": "{ $P_Data_Type_MetaAnalysis | In case of meta-analysis, only check 'Meta-analysis: Effect sizes from primary studies'. The data type of the primary studies is irrelevant.} <ul><li>If you process data (for example when you derive numeric scores from a content analysis of interviews), check both the original data type (in the example, 'interviews') and the derived data type (in the example, 'Content or behavioral coding').</li><li>Some data types are combinations, e.g. if you do an <b>ESM study with mobile sensing</b>, you would choose 'Questionnaire (self report)' <b>and</b> 'Behavioral data' (--> 'Observed behavior (naturalistic situation)' in the next question) <b>and</b> 'longitudinal design' in the question on the study design.</li></ul>",
             "tip_external":"Look in the method section, more specifically at parts called procedure, data collection or variables."
         },
+
         {
             "id": "P_Data_Type_Other",
             "type": "text",
             "title": "Type of data: Other",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && $P_Data_Type_OtherType"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && $P_Data_Type_OtherType && $P_TypeMethod_Empirical"
         },
+
+       
+        {
+            "id": "P_Data_Type_Behavioral",
+            "type": "checkbox",
+            "title": "⤷ Type of behavioral data (check all that apply)",
+            "options": [
+                {
+                    "id": "Performance",
+                    "text": "Objective performance data (e.g., reaction times, intelligence scores, sales)"
+                },
+                {
+                    "id": "Observed_lab",
+                    "text": "Observed behavior (lab / artificial situation)"
+                },
+                {
+                    "id": "Observed_reallife",
+                    "text": "Observed behavior (naturalistic situation)"
+                },
+                {
+                    "id": "Observed_residues",
+                    "text": "Behavioral residues (e.g., sick leave days, number of books)"
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical && $P_Data_Type_Behavioral"
+        },
+
+        {
+            "id": "P_Data_Type_Physiological",
+            "type": "checkbox",
+            "title": "⤷ Type of physiological data (check all that apply)",
+            "options": [
+                {
+                    "id": "EEG",
+                    "text": "EEG"
+                },
+                {
+                    "id": "MEG",
+                    "text": "MEG"
+                },
+                {
+                    "id": "fMRI",
+                    "text": "(f)MRI"
+                },
+                {
+                    "id": "Peripheral_EDA",
+                    "text": "Peripheral: EDA"
+                },
+                {
+                    "id": "Peripheral_EMG",
+                    "text": "Peripheral: EMG"
+                },
+                {
+                    "id": "Peripheral_ECG",
+                    "text": "Peripheral: ECG"
+                },
+                {
+                    "id": "Eyetracking",
+                    "text": "Eyetracking, pupillometry"
+                },
+                {
+                    "id": "Endocrinology",
+                    "text": "Endocrinology (hormones, cortisol, ...)"
+                },
+                {
+                    "id": "Other",
+                    "text": "Other (please specify)"
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical && $P_Data_Type_Physiological"
+        },
+
+        {
+            "id": "P_Data_Type_Physiological_Other",
+            "type": "text",
+            "title": "Type of physiological data: Other",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical && $P_Data_Type_Physiological && $P_Data_Type_Physiological_Other"
+        },
+
+
+        {
+            "id": "P_Data_Type_DesignLongitudinal",
+            "type": "radio",
+            "title": "Study design 1",
+            "options": [
+                {
+                    "id": "Cross-sectional",
+                    "text": "Cross-sectional / single session"
+                },
+                {
+                    "id": "Longitudinal",
+                    "text": "Longitudinal / multiple sessions"
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical",
+            "info": "When you measure multiple conditions within a single session, this still counts as 'cross-sectional'."
+        }, 
+
+        {
+            "id": "P_Data_Type_DesignExperimental",
+            "type": "radio",
+            "title": "Experimental design",
+            "options": [
+                {
+                    "id": "Observational",
+                    "text": "Observational / non-experimental"
+                },
+                {
+                    "id": "Experimental",
+                    "text": "Experimental manipulation"
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical"
+        }, 
+
+        {
+            "id": "P_Data_Type_DesignExperimental_Effort",
+            "type": "radio",
+            "title": "⤷ Effort of experimental manipulation",
+            "options": [
+                {
+                    "id": "Low",
+                    "text": "Low (e.g., reading a vignette; different computerized conditions)"
+                },
+                {
+                    "id": "Medium",
+                    "text": "Medium (e.g., staging a social situation in the lab with confederates; tDCs / TMS)"
+                },
+                {
+                    "id": "High",
+                    "text": "High (e.g., doing a clinical intervention across multiple weeks)"
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical && $P_Data_Type_DesignExperimental == 'Experimental'"
+        }, 
+
+
+
         {
             "id": "P_Data_Open",
             "type": "radio",
-            "title": "⤷ Is the raw data available in an institutional repository?",
+            "title": "Is the raw data available in an institutional repository?",
             "options": [
                 {
                     "id": "NotApplicable",
@@ -924,7 +1152,7 @@
                 }
             ],
             "info": "If the data is only available on a personal website (including personal university websites) or 'upon (reasonable) request', select <i>not available</i>.<br><br> When to choose <b>'Not applicable'</b>?<ul><li>If legal regulations or binding conditions of the data provider prohibit data publication and not even restricted access is possible.</li></ul>",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn)",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther)",
             "tip_external": "<b>Practical approach</b>: <ul><li>Is a <b>link</b> to a data set provided?</li><li>Is the data in a <b>repository</b> that also controls data access?</li></ul> <br><br><b>Search words:</b> open, data, availab*"
         },
         {
