@@ -336,7 +336,8 @@
         },
         {
             "id": "P8P9bSEP",
-            "type": "separator"
+            "type": "separator",
+            "condition": "$P_Suitable === 'Yes'"
         },
         {
             "id": "P_CRediT_CollapseNote",
@@ -889,6 +890,12 @@
                 }
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical"
+        },
+        {
+            "id": "P_Sample_Type_RareOther",
+            "type": "text",
+            "title": "⤷ Please specify the hard to acquire population",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical && $P_Sample_Type == 'Rare'"
         },
         {
             "id": "P_Sample_Representative",
@@ -1729,7 +1736,8 @@
                 
         {
             "id": "P22P23SEP",
-            "type": "separator"
+            "type": "separator",
+            "condition": "$P_Suitable === 'Yes'"
         },
         {
             "id": "P_Power_Info",
@@ -1749,36 +1757,89 @@
             "title": "Sample size (if applicable, differentiate by levels / items / ...)",
             "condition": "$P_Suitable === 'Yes'"
         },
+
+        {
+            "id": "INTERSEP",
+            "type": "separator"
+        },
+
+        {
+            "id": "P_Interdisciplinary",
+            "type": "radio",
+            "title": "Multi-/Interdisciplinarity: The research was conducted ...",
+            "options": [
+                {
+                    "id": "None",
+                    "text": "with researchers from psychology only"
+                },
+                {
+                    "id": "Inter",
+                    "text": "in co-authorship with researchers or practitioners from different disciplines (beyond psychology)"
+                }
+            ]
+        },
+        {
+            "id": "P_Interdisciplinary_Discipline",
+            "type": "text",
+            "title": "⤷ Please list the specific (non-psychology) disciplines, separated by commas (e.g.: medicine, economics, ...):",
+            "condition": "$P_Interdisciplinary == 'Inter'"
+        },
+
+
         {
             "id": "P23P24SEP",
             "type": "separator"
         },
         {
-            "id": "P_MeritImpact_Info",
+            "id": "P_MeritImpactRelevance_Info",
             "type": "info",
-            "text": "<h2>Merit and Scientific Impact Statement</h2>"
+            "text": "<h2>Research Impact and Relevance</h2>"
+        },
+        {
+            "id": "P_PracticalRelevance_Info",
+            "type": "info",
+            "text": "<h3>Practical Relevance</h3>"
+        },
+        {
+            "id": "P_PracticalRelevance",
+            "type": "checkbox",
+            "title": "Does this research output have indirect or immediate practical relevance? Check all that apply:",
+            "options": [
+                {
+                    "id": "Indirect",
+                    "text": "The practical relevance of the study is indirect (e.g., through theory development, mechanism testing, method development)."
+                },
+                {
+                    "id": "Immediate",
+                    "text": "The study provides immediate practical implications (e.g., for policy design, organizational decisions, environmental design, everyday life)."
+                },
+                {
+                    "id": "InterventionEvaluation",
+                    "text": "The study evaluates one or multiple interventions in the field."
+                }
+            ]
         },
         {
             "id": "P_MeritStatement_Info",
             "type": "info",
-            "text": "<h3>Merit Statement</h3>A merit statement summarizes why this research output made an important substantive contribution to the field (e.g., the project took place in an interdisciplinary setting, a new theory was developed or tested for the first time, an experiment rejected or confirmed a long debated effect, or a methodological set-up was specifically innovative). The box will expand when you enter text. <br><i>Do not provide impact or citation information here, but focus on the intrinsic quality of the research output itself - regardless whether it had impact yet or not.</i>"
+            "text": "<h3>Merit Statement</h3>A merit statement summarizes why this research output made an important substantive contribution to the field. Such statements could reflect upon, for example:<ul><li>an interdisciplinary setting</li><li>a new theory that was developed or tested for the first time</li><li<an experiment that rejected or confirmed a long debated effect</li><li>a methodological set-up that was specifically innovative</li><li>an unusually great effort was needed to collect the sample</li><li>generalizability was particularly high</li></ul><br><i>Do not provide impact or citation information here, but focus on the intrinsic quality of the research output itself - regardless whether it had impact yet or not.</i>"
         },
         {
             "id": "P_MeritStatement",
             "type": "textbox",
             "maxwords": 150,
-            "title": "Merit Statement (narrative, max. 150 words)"
+            "title": "Provide your Merit Statement here (narrative, max. 150 words. Box will expand):"
         },
         {
             "id": "P_ImpactStatement_Info",
             "type": "info",
-            "text": "<h3>Scientific Impact Statement</h2>Age- and field-normalized citation statistics will be automatically retrieved for each submitted work. Here you can describe the scientific impact that this work made <i>beyond</i> these bibliometric indicators (e.g., explain how your methodological contribution was recommended as the go-to-approach in a consensus paper on best practice in the field). The box will expand when you enter text."
+            "text": "<h3>Scientific Impact Statement</h2>Age- and field-normalized citation statistics will be automatically retrieved for each submitted work. Here you can describe the scientific impact that this work made <i>beyond</i> these bibliometric indicators (e.g., explain how your methodological contribution was recommended as the go-to-approach in a consensus paper on best practice in the field)."
         },
         {
             "id": "P_ImpactStatement",
             "type": "textbox",
             "maxwords": 150,
-            "title": "Scientific Impact Statement (narrative, max. 150 words)"
+            "title": "Provide your Scientific Impact Statement here (narrative, max. 150 words. Box will expand):"
         },
         {
             "id": "MeritSEP",
@@ -1789,34 +1850,6 @@
             "type": "textbox",
             "maxwords": 500,
             "title": "(optional) General comments (max. 500 words)"
-        },
-        {
-            "id": "P_SchemeFit",
-            "type": "dropdown",
-            "title": "(optional) How well did the scheme (except your merit statement) cover the merits of this research output?",
-            "options": [
-                {
-                    "id": "-1",
-                    "text": "-undefined-"
-                },
-                {
-                    "id": "0",
-                    "text": "Not at all"
-                },
-                {
-                    "id": "1",
-                    "text": "Slightly: Some merits were covered"
-                },
-                {
-                    "id": "2",
-                    "text": "Moderately: Several merits covered; some aspects missing"
-                },
-                {
-                    "id": "3",
-                    "text": "Very well: Most merits covered"
-                }
-            ],
-            "default": "-1"
         }
     ]
 }

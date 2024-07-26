@@ -51,6 +51,22 @@
             "condition": "$RaterType === 'External'"
         },
         {
+            "id": "METASEP0",
+            "type": "separator"
+        },
+        {
+            "id": "M_MeritStatement_Info",
+            "type": "info",
+            "text": "<h3>Overall Merit Statement</h3>The overall merit statement summarizes why your research output - across all or some of your publications, data sets, or research software contributions - made an important substantive contribution to the field. This could include, for example:<ul><li>a consistent research programme across multiple papers</li><li>a new theory that was developed or tested for the first time</li><li>a series of experiments that rejected or confirmed a long debated effect</li></ul>Please focus on the overarching merit of your CV. You will be able to provide specific merit statements for each submitted research output.<br><br><i>Do not provide impact or citation information here, but focus on the intrinsic quality of your research output itself - regardless whether it had impact yet or not.</i>"
+        },
+        {
+            "id": "P_MeritStatement",
+            "type": "textbox",
+            "maxwords": 300,
+            "title": "Merit Statement (narrative, max. 300 words. Box will expand)"
+        },
+
+        {
             "id": "METASEP1",
             "type": "separator"
         },
