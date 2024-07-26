@@ -281,7 +281,7 @@
         {
             "id": "P_Suitable",
             "type": "radio",
-            "title": "Does this contribution fit well into the assessment scheme? (If 'No': Skip all other indicators; the paper will not be included in the scoring but processed manually)",
+            "title": "Does this contribution fit well into the assessment scheme? (If 'No': All indicators are skipped but you can still add a Merit Statement and an Impact Statement. The paper will not be included in the scoring but processed manually)",
             "options": [
                 {
                     "id": "No",
@@ -1117,7 +1117,7 @@
                 },
                 {
                     "id": "Medium",
-                    "text": "Medium (e.g., staging a social situation in the lab with confederates; tDCs / TMS)"
+                    "text": "Medium (e.g., staging a social situation in the lab with confederates; tDCS / TMS)"
                 },
                 {
                     "id": "High",
@@ -1754,16 +1754,31 @@
             "type": "separator"
         },
         {
-            "id": "P_Merit_Info",
+            "id": "P_MeritImpact_Info",
             "type": "info",
-            "text": "<h3>Merit Statement</h3>Please indicate why this research output made an important contribution to the field and why it should be considered during the hiring / promotion process. The box will expand when you enter text.",
-            "condition":  "$P_Suitable === 'Yes'"
+            "text": "<h2>Merit and Scientific Impact Statement</h2>"
         },
         {
-            "id": "P_Merit",
+            "id": "P_MeritStatement_Info",
+            "type": "info",
+            "text": "<h3>Merit Statement</h3>A merit statement summarizes why this research output made an important substantive contribution to the field (e.g., the project took place in an interdisciplinary setting, a new theory was developed or tested for the first time, an experiment rejected or confirmed a long debated effect, or a methodological set-up was specifically innovative). The box will expand when you enter text. <br><i>Do not provide impact or citation information here, but focus on the intrinsic quality of the research output itself - regardless whether it had impact yet or not.</i>"
+        },
+        {
+            "id": "P_MeritStatement",
             "type": "textbox",
             "maxwords": 150,
-            "title": "Merit / impact statement (narrative, max. 150 words)"
+            "title": "Merit Statement (narrative, max. 150 words)"
+        },
+        {
+            "id": "P_ImpactStatement_Info",
+            "type": "info",
+            "text": "<h3>Scientific Impact Statement</h2>Age- and field-normalized citation statistics will be automatically retrieved for each submitted work. Here you can describe the scientific impact that this work made <i>beyond</i> these bibliometric indicators (e.g., explain how your methodological contribution was recommended as the go-to-approach in a consensus paper on best practice in the field). The box will expand when you enter text."
+        },
+        {
+            "id": "P_ImpactStatement",
+            "type": "textbox",
+            "maxwords": 150,
+            "title": "Scientific Impact Statement (narrative, max. 150 words)"
         },
         {
             "id": "MeritSEP",
