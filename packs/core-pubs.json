@@ -205,38 +205,45 @@
             "title": "Publication type (check all that apply)",
             "options": [
                 {
-                    "id": "Empirical",
-                    "text": "Empirical paper"
+                    "id": "EmpiricalQuantitative",
+                    "text": "Empirical: Quantitative (e.g., experiment, survey, etc.)"
+                },
+                {
+                    "id": "EmpiricalQualitative",
+                    "text": "Empirical: Qualitative (e.g., interviews, focus groups, manual content analysis, etc.)"
                 },
                 {
                     "id": "MetaAnalysis",
                     "text": "Meta-Analysis"
                 },
                 {
-                    "id": "Theoretical",
-                    "text": "Theoretical contribution / Review"
+                    "id": "Computational",
+                    "text": " Computational (e.g., agent-based modeling, simulations, etc.)"
                 },
                 {
-                    "id": "Simulation",
-                    "text": "Simulation"
+                    "id": "Theoretical",
+                    "text": "Theoretical contribution (Theory development, formal modeling, etc.)"
+                },
+                {
+                    "id": "Nonempirical",
+                    "text": "Non-empirical contribution (Systematic Review, Opinion Piece, Whitepaper, etc.)"
                 },
                 {
                     "id": "OtherMethod",
                     "text": "Other (please specify)"
                 }
-            ],
-            "info": "Ask yourself: What is the paper mainly?"
+            ]
         },
         {
             "id": "P_TypeMethod_Other",
             "type": "text",
-            "title": "Publication type: Other",
+            "title": "⤷ Publication type: Other",
             "condition": "$P_TypeMethod_OtherMethod"
         },
         {
             "id": "P_TypePublication",
             "type": "radio",
-            "title": "Publication status",
+            "title": "Publication format",
             "options": [
                 {
                     "id": "PublishedPaper",
@@ -889,13 +896,13 @@
                     "text": "Specific target population, hard to acquire (e.g., babies, inmates, rare disorders)"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
         },
         {
             "id": "P_Sample_Type_RareOther",
             "type": "text",
             "title": "⤷ Please specify the hard to acquire population",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical && $P_Sample_Type == 'Rare'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_Type == 'Rare'"
         },
         {
             "id": "P_Sample_Representative",
@@ -911,7 +918,7 @@
                     "text": "Representative sample"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
             "info": "{ $P_Sample_Representative_Representative_sample | <b>Representative sample</b>: according to common characteristics, such as gender, age, city vs. countryside}"
         },
         {
@@ -928,7 +935,7 @@
                     "text": "non-WEIRD"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
         },
 
         {
@@ -945,7 +952,7 @@
                     "text": "Multiple cultural or ethnic backgrounds"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
             "info": "This question does not necessarily correlate with the nationality of participants. Please make a judgement whether, for example, multiple European subsamples actually qualify as 'Multiple cultural or ethnic backgrounds', or whether different ethnic backgrounds are sampled on purpose within one nation."
         },
 
@@ -987,7 +994,7 @@
                     "text": "Other (please specify)"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
             "info": "{ $P_Data_Type_MetaAnalysis | In case of meta-analysis, only check 'Meta-analysis: Effect sizes from primary studies'. The data type of the primary studies is irrelevant.} <ul><li>If you process data (for example when you derive numeric scores from a content analysis of interviews), check both the original data type (in the example, 'interviews') and the derived data type (in the example, 'Content or behavioral coding').</li><li>Some data types are combinations, e.g. if you do an <b>ESM study with mobile sensing</b>, you would choose 'Questionnaire (self report)' <b>and</b> 'Behavioral data' (--> 'Observed behavior (naturalistic situation)' in the next question) <b>and</b> 'longitudinal design' in the question on the study design.</li></ul>",
             "tip_external":"Look in the method section, more specifically at parts called procedure, data collection or variables."
         },
@@ -996,7 +1003,7 @@
             "id": "P_Data_Type_Other",
             "type": "text",
             "title": "Type of data: Other",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && $P_Data_Type_OtherType && $P_TypeMethod_Empirical"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && $P_Data_Type_OtherType && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
         },
 
        
@@ -1022,7 +1029,7 @@
                     "text": "Behavioral residues (e.g., sick leave days, number of books)"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical && $P_Data_Type_Behavioral"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Data_Type_Behavioral"
         },
 
         {
@@ -1067,14 +1074,14 @@
                     "text": "Other (please specify)"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical && $P_Data_Type_Physiological"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Data_Type_Physiological"
         },
 
         {
             "id": "P_Data_Type_Physiological_Other",
             "type": "text",
             "title": "Type of physiological data: Other",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical && $P_Data_Type_Physiological && $P_Data_Type_Physiological_Other"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Data_Type_Physiological && $P_Data_Type_Physiological_Other"
         },
 
 
@@ -1092,7 +1099,7 @@
                     "text": "Longitudinal / multiple sessions"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
             "info": "When you measure multiple conditions within a single session, this still counts as 'cross-sectional'."
         }, 
 
@@ -1110,7 +1117,7 @@
                     "text": "Experimental manipulation"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
         }, 
 
         {
@@ -1131,7 +1138,7 @@
                     "text": "High (e.g., doing a clinical intervention across multiple weeks)"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && $P_TypeMethod_Empirical && $P_Data_Type_DesignExperimental == 'Experimental'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Data_Type_DesignExperimental == 'Experimental'"
         }, 
 
 
@@ -1159,20 +1166,20 @@
                 }
             ],
             "info": "If the data is only available on a personal website (including personal university websites) or 'upon (reasonable) request', select <i>not available</i>.<br><br> When to choose <b>'Not applicable'</b>?<ul><li>If legal regulations or binding conditions of the data provider prohibit data publication and not even restricted access is possible.</li></ul>",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther)",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_Simulated)",
             "tip_external": "<b>Practical approach</b>: <ul><li>Is a <b>link</b> to a data set provided?</li><li>Is the data in a <b>repository</b> that also controls data access?</li></ul> <br><br><b>Search words:</b> open, data, availab*"
         },
         {
             "id": "P_Data_Open_NAExplanation",
             "type": "text",
             "title": "⤷ Not Applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn) && $P_Data_Open === 'NotApplicable'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open === 'NotApplicable'"
         },
         {
             "id": "P_Data_Open_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn) && $P_Data_Open =|= ['YesParts', 'YesEntire']"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesParts', 'YesEntire']"
         },
         {
             "id": "P_Data_Open_AccessLevel",
@@ -1193,14 +1200,14 @@
                 }
             ],
             "info": "For information about access levels, see <a href='https://rdc-psychology.org/access-data'>here</a>. <br> <ul><li>{:'ZK0' | <b>ZK0 / Sharing level 0 ('open for public use')</b>: Neither access to nor use of the data is restricted in any way. Research data provided in this category are typically licensed through standard licenses (e.g., CC-BY-SA 4.0)}</li><li>{:'ZK1' | <b>ZK1 / Sharing level 1 ('open for scientific use')</b>: Data re-use is limited to exclusively scientific purposes by means of a general use license. Proof of affiliation with a scientific institution and a brief description of the intended use must be provided.}</li><li>{:'ZK2' | <b>ZK2 / Sharing level 2 ('restricted scientific use')</b>: Comparable to ZK1, access and re-use is restricted to scientific purposes. In contrast to ZK1, however, individual license agreements are made that may contain other restrictions.}</li></ul>",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn) && $P_Data_Open =|= ['YesEntire', 'YesParts']",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts']",
             "tip_external":"<b>Practical Approach:</b><br><br> Follow the link and determine the access level. The data must be hosted at a repository and access control decisions must be guarded by a <b>predefined</b> set of rules by the repository <mark>(not by the author!)</mark>."
         },
         {
             "id": "P_Data_Open_AccessLevel_ZK2Explanation",
             "type": "text",
             "title": "⤷ Access level ZK2: Justification for restricted access",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn) && $P_Data_Open === 'YesEntire' && $P_Data_Open_AccessLevel === 'ZK2'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open === 'YesEntire' && $P_Data_Open_AccessLevel === 'ZK2'"
         },
         {
             "id": "P_Data_Open_FAIR",
@@ -1220,7 +1227,7 @@
                     "text": "The data set is stored in a structured, open format (e.g., .csv, .tsv, .tab, .txt, .json; not .sav, .xlsx, .pdf)"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn) && $P_Data_Open === 'YesEntire' && ($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1'] || $P_Data_Open_AccessLevel === 'ZK2' && $P_Data_Open_AccessLevel_ZK2Explanation)",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open === 'YesEntire' && ($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1'] || $P_Data_Open_AccessLevel === 'ZK2' && $P_Data_Open_AccessLevel_ZK2Explanation)",
             "info": "<ul><li>Persistent identifier: Data in an OSF project do count, as we consider OSF URLs to be persistent.</li></ul>",
             "tip_external":"For <b>Codebook</b>:<ul><li>Check the availability of a codebook. Normally a separate document should be provided.</li><li>Exception: Variable labels, descriptions and scales are provided in a structured (e.g. tabular) format at the beginning of the syntax script.</li><li><b>Variable name, content</b> and <b>scale</b> must be provided in order to receive the point.</li></ul>"
         },
@@ -1244,28 +1251,28 @@
                 },
                 {
                     "id": "YesParts",
-                    "text": "Yes, parts of scripts [provide doi or URL]"
+                    "text": "Parts of scripts are available [provide doi or URL]"
                 },
                 {
                     "id": "YesEntire",
-                    "text": "Yes, entire scripts [provide doi or URL]"
+                    "text": "The entire analysis pipeline is available, including preprocessing of the primary (raw) data [provide doi or URL]"
                 }
             ],
             "info":"{'YesParts', 'YesEntire' | Only choose <b>`Yes`</b> if a doi or URL can be provided.} <br><br><b>When only parts of scripts available:</b><br>Choose `Yes, parts of scripts` if no justification is given.<br>Choose `Yes, entire scripts` if a reasonable justification for all missing scripts are provided.<br><br> When to choose <b>'Not applicable'</b>:<br>If no scripts have been used in the publication.",
-            "condition": "$P_Suitable === 'Yes'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes'"
         },
         {
             "id": "P_ReproducibleScripts_NAExplanation",
             "type": "text",
             "title": "⤷ Not applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && $P_ReproducibleScripts === 'NotApplicable'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes' && $P_ReproducibleScripts === 'NotApplicable'"
         },
         {
             "id": "P_ReproducibleScripts_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL of the script",
             "info": "If multiple sources are available, provide the link to the primary source only. E.g. if both Github and OSF links are available, provide the Github link, as OSF only mirrors the content from Github.",
-            "condition": "$P_Suitable === 'Yes' && $P_ReproducibleScripts =|= ['YesParts', 'YesEntire']"
+            "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes' && $P_ReproducibleScripts =|= ['YesParts', 'YesEntire']"
         },
         {
             "id": "P_ReproducibleScripts_FAIR",
@@ -1285,52 +1292,25 @@
                     "text": "Version control"
                 },
                 {
-                    "id": "ReproducibleManuscripts",
-                    "text": "Reproducible manuscripts (e.g. with R Markdown)"
-                },
-                {
                     "id": "Documentation",
                     "text": "Proper documentation of code"
                 },
                 {
                     "id": "ReproducibleSoftwareEnvironments",
                     "text": "Reproducible software environment (e.g. <code>conda</code> environment, <code>renv</code> or <code>groundhog</code> in R)"
-                }
-            ],
-            "info": "<ul><li>{$P_ReproducibleScripts_FAIR_TimestampedRepository | <b>Timestamped repository</b>: Any repository that records and displays the timestamp when a file has been first uploaded and the last time it has been modified (e.g., GitHub, GitLab, OSF, Zenodo)</li> } <li>{$P_ReproducibleScripts_FAIR_VersionControl |<b>Version control</b>: Any repository that allows to go back in the history of a file with an established version control system, such as <code>git</code> (e.g., GitHub, GitLab. <i>Not</i> OSF or Zenodo.)</li> } <li>{$P_ReproducibleScripts_FAIR_ReproducibleManuscripts | <b>Reproducible manuscripts</b>: The final manuscript combines computations and text (e.g. Rmarkdown, Quarto, Jupyter notebooks)</li> } <li>{$P_ReproducibleScripts_FAIR_Documentation | <b>Proper documentation of code</b>: The source code has sufficiently detailed comments so that a knowledgable re-user can understand what (and why) something has been done.</li> } <li>{$P_ReproducibleScripts_FAIR_ReproducibleSoftwareEnvironments | <b>Reproducible software environment</b>: The software environment is fully reproducible with an established tool such as <code>conda</code>, <code>renv</code> or <code>groundhog</code>. Just recording the <code>sessionInfo()</code> in R is not sufficient, as it places too much burden on reproduction attempts.</li> } </ul>",
-            "tip_external":"<ul><li>Search for <b>Open License</b>: This license could be stated in ...<ul><li>A LICENSE file in the top level folder</li><li>Within the README file</li><li>In the header of each source code file</li><li>The OSF project license</li></ul> </li></ul>",
-            "condition": "$P_Suitable === 'Yes' && $P_ReproducibleScripts =|= ['YesParts', 'YesEntire']"
-        },
-        {
-            "id": "P_ReproducibleScripts_TIER4",
-            "type": "checkbox",
-            "title": "⤷ Reproducibility Standards",
-            "options": [
-                {
-                    "id": "Sufficiency",
-                    "text": "Sufficiency: Project contains everything necessary to reproduce the results (all data, scripts, and supplementary information)"
-                },
-                {
-                    "id": "SoupToNuts",
-                    "text": "Soup-to-Nuts: The entire analysis pipeline is contained, including preprocessing of the primary (raw) data."
-                },
-                {
-                    "id": "Portability",
-                    "text": "Portability: Any user is able to run the scripts on their own computer/workspace"
                 },
                 {
                     "id": "OneClickReproducibility",
                     "text": "(Almost) One-click reproducibility with a master script (or equivalent)"
+                },
+                {
+                    "id": "ReproducibleManuscripts",
+                    "text": "Reproducible manuscripts (e.g. with R Markdown)"
                 }
             ],
-            "info": "<ul><li> {$P_ReproducibleScripts_TIER4_Sufficiency | <b>Sufficiency</b>: The documentation for a project should contain all the data, scripts, and supplementary information necessary to enable any user (with access to and basic proficiency in the software used) to reproduce all the results presented in the report without undue difficulty. The user should not have to seek assistance from the person who conducted the study.} </li><li> {$P_ReproducibleScripts_TIER4_SoupToNuts |  <b>Soup-to-nuts</b>: The documentation should include scripts that reproduce all the computations required for both (i) the steps of processing necessary to prepare the data for analysis, and (ii) the analysis or procedures performed with the processed data that generate the results. } </li><li> {:'Portability' |  <b>Portability</b>: Provided the necessary software is installed, any user should be able to copy the project folder, with the hierarchy of subfolders and files it contains intact, onto their own computer or workspace, and then run the scripts that reproduce the project locally. Note that the <i>Portability</i> claim is an assertion by the submitting author; whether portability has been independently verified is covered in indicator <i>P_IndependentVerification (Workflow reproducibility)</i>.} </li><li> {$P_ReproducibleScripts_TIER4_OneClickReproducibility |  <b>(Almost) One-click reproducibility</b>: Reproducing all the computations required to generate the results of a study should require (almost) nothing other than executing a single Master Script. } </li></ul><br><br>These items are inspired by the <a href='https://www.projecttier.org/tier-protocol/protocol-4-0/'>TIER Protocol 4.0</a>. Some of the help text is quoted from there.",
-            "condition": "$P_Suitable === 'Yes' && $P_ReproducibleScripts =|= ['YesParts', 'YesEntire'] && meta$RaterType === 'Applicant'"
-        },
-        {
-            "id": "P_ReproducibleScripts_TIER4_CollapseNote",
-            "type": "info",
-            "text": "<span style='background-color: lightyellow; font-size:80%;'>[Note: The section on 'Reproducibility Standards' is automatically disabled as you indicated to be an external rater.]</span>",
-            "condition": "$P_Suitable === 'Yes' && $P_ReproducibleScripts =|= ['YesParts', 'YesEntire'] && meta$RaterType != 'Applicant'"
+            "info": "<ul><li>{$P_ReproducibleScripts_FAIR_TimestampedRepository | <b>Timestamped repository</b>: Any repository that records and displays the timestamp when a file has been first uploaded and the last time it has been modified (e.g., GitHub, GitLab, OSF, Zenodo)</li> } <li>{$P_ReproducibleScripts_FAIR_VersionControl |<b>Version control</b>: Any repository that allows to go back in the history of a file with an established version control system, such as <code>git</code> (e.g., GitHub, GitLab. <i>Not</i> OSF or Zenodo.)</li> } <li>{$P_ReproducibleScripts_FAIR_ReproducibleManuscripts | <b>Reproducible manuscripts</b>: The final manuscript combines computations and text (e.g. Rmarkdown, Quarto, Jupyter notebooks)</li> } <li>{$P_ReproducibleScripts_FAIR_Documentation | <b>Proper documentation of code</b>: The source code has sufficiently detailed comments so that a knowledgable re-user can understand what (and why) something has been done.</li> } <li>{$P_ReproducibleScripts_FAIR_ReproducibleSoftwareEnvironments | <b>Reproducible software environment</b>: The software environment is fully reproducible with an established tool such as <code>conda</code>, <code>renv</code> or <code>groundhog</code>. Just recording the <code>sessionInfo()</code> in R is not sufficient, as it places too much burden on reproduction attempts.</li> } </ul>",
+            "tip_external":"<ul><li>Search for <b>Open License</b>: This license could be stated in ...<ul><li>A LICENSE file in the top level folder</li><li>Within the README file</li><li>In the header of each source code file</li><li>The OSF project license</li></ul> </li></ul>",
+            "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes' && $P_ReproducibleScripts =|= ['YesParts', 'YesEntire']"
         },
         {
             "id": "P_IndependentVerification",
@@ -1363,22 +1343,22 @@
                 }
             ],
             "eval_dimension": "rigor",
-            "info": "<ul><li><i>Independent</i> means that someone who is not a co-author verified the computational reproducibility.</li><li>This only counts if a <i>verification report</i> is published and the doi is provided here (otherwise select 'no').</li></ul> <br><br>This has rarely been implemented so far, but some <a href='https://social-science-data-editors.github.io/guidance/'>journals</a> already do these independent checks, and universities start to provide <a href='https://www.ukrn.org/2024/01/30/pre-submission-certification-of-computational-reproducibility/'>pre-submission certification of computational reproducibility</a>.<br><br><ul><li>{:'WorkflowReproducible' | <b>Workflow reproducibility / code completeness check</b>: Code runs without errors or critical warnings on another machine by another person (without comparing the numbers). This is also known as <i>process reproducibility</i>.}</li><li>{:'MainResultsReproducible' | <b>Computational reproducibility of main results has been independently verified using the original code</b>: Someone compared the <i>figures and main results</i> and asserts a sufficient correspondence with the reported main results.}</li><li>{:'AllResultsReproducible' | <b>Computational reproducibility of <i>all numerical results</i> has been independently verified using the original code</b>: Someone compared <i>all figures and numbers</i> and asserts a sufficient correspondence with the reported results.}</li><li>{:'AnalysisReplication' | <b>Analysis replication (independent implementation)</b>: Somebody independently implemented the analyses, without looking at the original code, and asserts a sufficient correspondence with the reported main results.}</li></ul><br><br>If you check one of three 'reproducible' options, you should also check the <i>Portability</i> item in the section <i>Reproducibility Standards</i>. {:'WorkflowReproducible', 'MainResultsReproducible', 'AllResultsReproducible', 'AnalysisReplication' | The bonus point is only given when a public verification report/certificate with a persistent identifier is available.}",
+            "info": "<ul><li><i>Independent</i> means that someone who is not a co-author verified the computational reproducibility.</li><li>This only counts if a <i>verification report</i> is published and the doi is provided here (otherwise select 'no').</li></ul> <br><br>This has rarely been implemented so far, but some <a href='https://social-science-data-editors.github.io/guidance/'>journals</a> already do these independent checks, and universities start to provide <a href='https://www.ukrn.org/2024/01/30/pre-submission-certification-of-computational-reproducibility/'>pre-submission certification of computational reproducibility</a>.<br><br><ul><li>{:'WorkflowReproducible' | <b>Workflow reproducibility / code completeness check</b>: Code runs without errors or critical warnings on another machine by another person (without comparing the numbers). This is also known as <i>process reproducibility</i>.}</li><li>{:'MainResultsReproducible' | <b>Computational reproducibility of main results has been independently verified using the original code</b>: Someone compared the <i>figures and main results</i> and asserts a sufficient correspondence with the reported main results.}</li><li>{:'AllResultsReproducible' | <b>Computational reproducibility of <i>all numerical results</i> has been independently verified using the original code</b>: Someone compared <i>all figures and numbers</i> and asserts a sufficient correspondence with the reported results.}</li><li>{:'AnalysisReplication' | <b>Analysis replication (independent implementation)</b>: Somebody independently implemented the analyses, without looking at the original code, and asserts a sufficient correspondence with the reported main results.}</li></ul><br> {:'WorkflowReproducible', 'MainResultsReproducible', 'AllResultsReproducible', 'AnalysisReplication' | The bonus point is only given when a public verification report/certificate with a persistent identifier is available.}",
             "background": "'In the context of mathematics, Stodden et al. distinguish between <i>verification</i> and <i>validation</i>; following their definition, <b>a CODECHECK [or reproducibility check] ensures verification of computational results, i.e., checking that code generates the output it claims to create</b>, but <i>not</i> a validation, i.e., checking that the code implements the right algorithm [or statistical model] to solve the specific research problem.' (see <a href='https://f1000research.com/articles/10-253/v2'>Nüst & Eglen, 2021</a>).",
-            "condition": "$P_Suitable === 'Yes'",
+            "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes'",
             "tip_external": "<b>Search words:</b> reprodu*, verify, independent"
         },
         {
             "id": "P_IndependentVerification_NAExplanation",
             "type": "text",
             "title": "⤷ Not Applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && $P_IndependentVerification === 'NotApplicable'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes' && $P_IndependentVerification === 'NotApplicable'"
         },
         {
             "id": "P_IndependentVerification_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL of the verification report",
-            "condition": "$P_Suitable === 'Yes' && $P_IndependentVerification =|= ['WorkflowReproducible', 'MainResultsReproducible', 'AllResultsReproducible', 'AnalysisReplication']"
+            "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes' && $P_IndependentVerification =|= ['WorkflowReproducible', 'MainResultsReproducible', 'AllResultsReproducible', 'AnalysisReplication']"
         },
         {
             "id": "OMSEP",
