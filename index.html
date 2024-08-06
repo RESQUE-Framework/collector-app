@@ -319,23 +319,16 @@
         Alpine.store('selectedIndicator', {});
 
         Alpine.store('data', {
-            input: [{ type: 'meta' }],
-            currentTab: 0,
+            input: JSON.parse(localStorage.getItem('data')),
+            currentTab: parseInt(sessionStorage.getItem('currentTab') ?? '0'),
             currentInput: {},
             score: {},
 
             manualInit() {
-                const data = localStorage.getItem('data');
-
-                console.log(data)
-
-                if (data) {
-                    this.input = JSON.parse(data);
-                } else {
+                if(!this.input) {
                     this.newResearchOutput('meta');
                 }
 
-                this.currentTab = parseInt(sessionStorage.getItem('currentTab') ?? '0');
                 this.currentInput = this.input[this.currentTab];
                 this.score = scoreAll(this.input);
             },
@@ -500,7 +493,7 @@
 
                         <template x-if="elem.type === 'textbox'">
                             <div>
-                                <div class="textbox" contenteditable @input="$store.data.currentInput[elem.id] = $event.target.innerText"
+                                <div class="textbox" contenteditable x-init="$el.innerText = $store.data.currentInput[elem.id] ?? ''" @input="$store.data.currentInput[elem.id] = $event.target.innerText"
                                     :placeholder="elem.title || ''"></div>
 
                                 <template x-if="!!elem.maxwords">
