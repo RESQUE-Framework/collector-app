@@ -435,7 +435,8 @@
     <div id="main">
         <div class="tabs-sidebar">
             <div class="sidebar-top">
-                <span style='background-color: lightyellow; font-size:80%;'>[Note: The RESQUE collector app is in beta stage and might change in the near future. If you want to use it in practice, please <a
+                <span style='background-color: lightyellow; font-size:80%;'>[Note: The RESQUE collector app is in beta
+                    stage and might change in the near future. If you want to use it in practice, please <a
                         href="https://nicebread.github.io/RESQUE/team.html">contact</a> us.]</span><br><br>
                 <div class="top">
                     <h3><a href="https://nicebread.github.io/RESQUE/">RESQUE</a></h3>
@@ -496,8 +497,16 @@
                         </template>
 
                         <template x-if="elem.type === 'textbox'">
-                            <div class="textbox" contenteditable x-model="$store.data.currentInput[elem.id]"
-                                :placeholder="elem.title || ''"></div>
+                            <div>
+                                <div class="textbox" contenteditable @input="$store.data.currentInput[elem.id] = $event.target.innerText"
+                                    :placeholder="elem.title || ''"></div>
+
+                                <template x-if="!!elem.maxwords">
+                                    <p class="wordcount"
+                                        :class="($store.data.currentInput[elem.id] ?? '').match(/\S+/g).length > elem.maxwords ? 'wordcount-warning' : ''"
+                                        x-text="`${$store.data.currentInput[elem.id].match(/\S+/g).length} / ${elem.maxwords} words`"></p>
+                                </template>
+                            </div>
                         </template>
 
                         <template x-if="elem.type === 'number'">
@@ -545,7 +554,8 @@
             </div>
         </div>
         <div id="menu">
-            <div class="card animate pop" :class="{ warning: $store.warnings.any() }" id="score-box" x-show="$store.data.currentInput.type !== 'meta'">
+            <div class="card animate pop" :class="{ warning: $store.warnings.any() }" id="score-box"
+                x-show="$store.data.currentInput.type !== 'meta'">
                 <div id="score-container">
                     <div id="current-score">
                         <span class="sub">Rigor Score of selected research output</span>
@@ -576,16 +586,12 @@
                             x-text="$store.data.score.scores.filter(s => s.max && s.max > 0).length"></span> scored
                         research output(s)</span>
                 </p>
-                <p
-                    id="warning-score-too-low"
-                    x-show="$store.warnings.minIndicatorsWarning"
-                >⚠️ Many indicators are not applicable. Manual processing of this
+                <p id="warning-score-too-low" x-show="$store.warnings.minIndicatorsWarning">⚠️ Many indicators are not
+                    applicable. Manual processing of this
                     publication is recommended.
                 </p>
-                <p
-                    id="warning-min-ro-threshold"
-                    x-show="$store.warnings.minROWarning"
-                >⚠️ Please provide at least <span id="minROWarningThreshold" x-text="$store.config.config.minROWarningThreshold"></span>
+                <p id="warning-min-ro-threshold" x-show="$store.warnings.minROWarning">⚠️ Please provide at least <span
+                        id="minROWarningThreshold" x-text="$store.config.config.minROWarningThreshold"></span>
                     research contributions that can be scored (e.g. by adding more empirical papers, data sets, or
                     software contributions)</p>
             </div>
@@ -937,7 +943,7 @@
     <script>
         const MODE_PREVIEW = "preview";
         const MODE_PRINT = "print";
-        
+
         // Modal
 
         window.onclick = e => {

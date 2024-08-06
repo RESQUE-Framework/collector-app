@@ -152,7 +152,7 @@ select,
     border-radius: 4px;
     border: 1px solid var(--border-color);
     padding: 0.25rem 0.5rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.5rem;
     width: 100%;
     font-size: large;
     box-sizing: border-box;
@@ -211,19 +211,11 @@ button:hover {
 }
 
 .wordcount {
-    position: absolute;
-    right: 0.25rem;
-    bottom: 0.25rem;
-    background-color: var(--light-color);
     color: gray;
     border-radius: 99px;
-    padding: 0.25rem 0.5rem;
     font-size: 10pt;
-}
-
-.wordcount-max {
-    right: 0;
-    bottom: -2rem;
+    margin: 0;
+    text-align: right;
 }
 
 .wordcount-ok {}
