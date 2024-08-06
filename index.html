@@ -404,6 +404,7 @@
 
         Alpine.effect(async () => {
             const doi = Alpine.store('data').currentInput.DOI;
+            const doiTab = Alpine.store('data').currentTab;
 
             if (!doi) {
                 return;
@@ -411,11 +412,11 @@
 
             const publicationInformation = await fetchInformationUsingDOI(doi);
 
-            Alpine.store('data').currentInput.Title = publicationInformation.title;
-            Alpine.store('data').currentInput.Year = publicationInformation.year;
+            Alpine.store('data').input[doiTab].Title = publicationInformation.title;
+            Alpine.store('data').input[doiTab].Year = publicationInformation.year;
 
             if (!publicationInformation.error) {
-                Alpine.store('data').currentInput.DOI = "https://doi.org/" + publicationInformation.DOI;
+                Alpine.store('data').input[doiTab].DOI = "https://doi.org/" + publicationInformation.DOI;
             }
         });
 
