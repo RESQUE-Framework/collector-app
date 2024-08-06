@@ -51,6 +51,17 @@
             "condition": "$RaterType === 'External'"
         },
         {
+            "id": "HonestyDisclaimer",
+            "type": "checkbox",
+            "title": "I am aware that all information can be verified. I provide accurate information to the best of my knowledge.",
+            "options": [
+                {
+                    "id": "Yes",
+                    "text": "Yes"
+                }
+            ]
+        },
+        {
             "id": "METASEP0",
             "type": "separator"
         },

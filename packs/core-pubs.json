@@ -286,6 +286,99 @@
             "condition": "$P_TypePublication === 'OtherPublication'"
         },
         {
+            "id": "SEP_EPIGOALS2",
+            "type": "separator"
+        },
+        {
+            "id": "P_EpistemicGoals_Intro",
+            "type": "info",
+            "title": "<h3>What were the epistemic goals of the paper? (check all that apply)</h3>"
+        },
+        {
+            "id": "P_EpistemicGoals_Empirical",
+            "type": "checkbox",
+            "title": "Empirical phenomena",
+            "options": [
+                {
+                    "id": "Inventorizing",
+                    "text": "Inventorizing"
+                },
+                {
+                    "id": "Process",
+                    "text": "Process or underlying structure"
+                },
+                {
+                    "id": "Estimation",
+                    "text": "Estimation"
+                },
+                {
+                    "id": "GeneralityBoundary",
+                    "text": "Generality/boundary conditions"
+                },
+                {
+                    "id": "PhenomenaConfirmation",
+                    "text": "Phenomena confirmation"
+                }
+            ]
+        },
+        {
+            "id": "P_EpistemicGoals_ConceptDevelopment",
+            "type": "checkbox",
+            "title": "Concept development",
+            "options": [
+                {
+                    "id": "ConceptRevision",
+                    "text": "Concept revision"
+                },
+                {
+                    "id": "DescriptiveModelling",
+                    "text": "Descriptive modelling"
+                }
+            ]
+        },
+        {
+            "id": "P_EpistemicGoals_Theory",
+            "type": "checkbox",
+            "title": "Theory",
+            "options": [
+                {
+                    "id": "TheoryAffirmation",
+                    "text": "Theory affirmation: Can we find evidence for the theory? (Not falsification)"
+                },
+                {
+                    "id": "TheoryDevelopment",
+                    "text": "Theory development (new theory)"
+                },
+                {
+                    "id": "TheoryExpansion",
+                    "text": "Theory expansion of existing theory"
+                }
+            ]
+        },
+        {
+            "id": "P_EpistemicGoals_Other",
+            "type": "checkbox",
+            "title": "Other",
+            "options": [
+                {
+                    "id": "MeasurementAuxiliaries",
+                    "text": "Measurement & auxiliaries"
+                },
+                {
+                    "id": "CausalExplanation",
+                    "text": "Causal explanation"
+                },
+                {
+                    "id": "Application",
+                    "text": "Application ('Make it work' - an engineering perspective)"
+                }
+            ]
+        },
+        {
+            "id": "SEP_EPIGOALS2",
+            "type": "separator"
+        },
+        {
             "id": "P_Suitable",
             "type": "radio",
             "title": "Does this contribution fit well into the assessment scheme? (If 'No': All indicators are skipped but you can still add a Merit Statement and an Impact Statement. The paper will not be included in the scoring but processed manually)",
@@ -1146,7 +1239,7 @@
         {
             "id": "P_Data_Open",
             "type": "radio",
-            "title": "Is the raw data available in an institutional repository?",
+            "title": "Is the raw primary data available in an institutional repository?",
             "options": [
                 {
                     "id": "NotApplicable",
@@ -1165,7 +1258,7 @@
                     "text": "Yes, entire data [provide doi or URL]"
                 }
             ],
-            "info": "If the data is only available on a personal website (including personal university websites) or 'upon (reasonable) request', select <i>not available</i>.<br><br> When to choose <b>'Not applicable'</b>?<ul><li>If legal regulations or binding conditions of the data provider prohibit data publication and not even restricted access is possible.</li></ul>",
+            "info": "If the data is only available on a personal website (including personal university websites) or 'upon (reasonable) request', select <i>not available</i>. When only aggregated data is available, generally select <i>not available</i> (there might be exceptions with high-volume physiological data).<br><br>When to choose <b>'Not applicable'</b>?<ul><li>If legal regulations or binding conditions of the data provider prohibit data publication and not even restricted access is possible.</li></ul>",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_Simulated)",
             "tip_external": "<b>Practical approach</b>: <ul><li>Is a <b>link</b> to a data set provided?</li><li>Is the data in a <b>repository</b> that also controls data access?</li></ul> <br><br><b>Search words:</b> open, data, availab*"
         },
@@ -1404,6 +1497,12 @@
             "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials =|= ['YesParts', 'YesEntire']"
         },
         {
+            "id": "P_OpenMaterials_PartsExplanation",
+            "type": "text",
+            "title": "⤷ Partial open materials: What is missing? (optional)",
+            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials === 'YesParts'"
+        },
+        {
             "id": "P17P18SEP",
             "type": "separator",
             "condition": "$P_Suitable === 'Yes'"
@@ -1472,9 +1571,9 @@
                     "text": "Inferential criteria (e.g., defining your alpha level)"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport']",
+            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis",
             "info": "<ul><li><b>Sample size</b>: Typically, an a priori power analysis was conducted and is reported. <b>Not enough</b> to receive points:<ul><li>'We will collect as many participants as possible'</li><li>Only saying which sample size is aimed at <b>without any rationale.</b> Be careful: The AsPredicted template states 'No need to justify decision'. This would <i>not</i> be sufficient in RESQUE.</li><li> If <b>'reuse of existing data set'</b>: Only reporting how many participants the original study had.</li></ul></li></ul><br><br><b>Hypothesis</b><br><br> Hypotheses in the preregistration should be the <b>same</b> as reported in the paper. Deviations must be explained.<br><br><b>Operationalizations</b><br><br><ul><li>If it is ambiguous ('I will use either questionnaire A or B') - without a decision rule - it is <b>'no'</b>.</li><li>In a secondary data preregistration ('reuse of existing data set'), the primary outcome should be defined</li></ul><br><br><b>Analysis Plan</b><br><br>Required to receive points:<ul><li>Dependent and independent variables must be <b>specified</b> (what’s the primary outcome?)</li><li><b>Specified decision rule:</b> What’s the alpha-level? When does a result speak in favor of the hypothesis, when against? (especially when multiple testing was conducted)</li></ul>",
-            "tip_external":"For <b>Operationalizations</b>:<br><br>If you would be able to rebuild the experimental setup based on the preregistered description of the measurement instruments, then assign <b>'yes'</b>. If it is too vague (e.g. only 'we will use reaction times'), then assign <b>'no'</b>. "
+            "tip_external":"For <b>Operationalizations</b>:<br><br>If you would be able to rebuild the experimental setup based on the preregistered description of the measurement instruments, then assign <b>'yes'</b>. If it is too vague (e.g. only 'we will use reaction times'), then assign <b>'no'</b>."
         },
         {
             "id": "P_PreregisteredReplication",
@@ -1495,7 +1594,7 @@
                 }
             ],
             "info": "As only <i>preregistered</i> replication attempts count, you need to provide the DOI or URL of the preregistration in the previous indicator. If the paper contains a replication which was not preregistered, please select <b>'No'</b>.<br><br>If the paper was preregistered, but does not contain a replication, select <b>'No'</b>. If you chose 'not applicable' at the previous indicator 'Preregistration', choose 'not applicable' here, too.",
-            "condition": "$P_Suitable === 'Yes'",
+            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_MetaAnalysis",
             "tip_external":"If it is a replication of a previously reported effect, it is <b>'yes'</b>, even if the replication is not the main research question of the preregistration.<br><b>Search word</b> (in preregistration):replica*"
         },
         {
