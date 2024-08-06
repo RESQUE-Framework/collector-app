@@ -327,6 +327,8 @@
             manualInit() {
                 const data = localStorage.getItem('data');
 
+                console.log(data)
+
                 if (data) {
                     this.input = JSON.parse(data);
                 } else {
@@ -503,8 +505,8 @@
 
                                 <template x-if="!!elem.maxwords">
                                     <p class="wordcount"
-                                        :class="($store.data.currentInput[elem.id] ?? '').match(/\S+/g).length > elem.maxwords ? 'wordcount-warning' : ''"
-                                        x-text="`${$store.data.currentInput[elem.id].match(/\S+/g).length} / ${elem.maxwords} words`"></p>
+                                        :class="(($store.data.currentInput[elem.id] ?? '').match(/\S+/g) ?? []).length > elem.maxwords ? 'wordcount-warning' : ''"
+                                        x-text="`${(($store.data.currentInput[elem.id] ?? '').match(/\S+/g) ?? []).length} / ${elem.maxwords} words`"></p>
                                 </template>
                             </div>
                         </template>
@@ -966,14 +968,6 @@
 
         const closeInfoModal = () => {
             document.getElementById("info-modal").style.display = "none";
-        }
-
-        const save = () => {
-            localStorage.setItem("formdata", JSON.stringify(results))
-        }
-
-        const getSavedData = () => {
-            return JSON.parse(localStorage.getItem("formdata")) || [];
         }
 
         const reset = () => {
