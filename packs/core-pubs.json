@@ -292,12 +292,13 @@
         {
             "id": "P_EpistemicGoals_Intro",
             "type": "info",
-            "title": "<h3>What were the epistemic goals of the paper? (check all that apply)</h3>"
+            "title": "<h3>What were the epistemic goals of the paper? (check all that apply)</h3>",
+            "info": "These categories are from Scheel, Muijlwijk, & Lakens (in prep.)."
         },
         {
             "id": "P_EpistemicGoals_Empirical",
             "type": "checkbox",
-            "title": "Empirical phenomena",
+            "title": "Empirical phenomena (establish ‘what exists’ and consolidate stable patterns in data)",
             "options": [
                 {
                     "id": "Inventorizing",
@@ -319,12 +320,13 @@
                     "id": "PhenomenaConfirmation",
                     "text": "Phenomena confirmation"
                 }
-            ]
+            ],
+            "info": "<b>Empirical phenomena</b>: Establish ‘what exists’ and consolidate stable patterns in data.<br><ul><li>{ $P_EpistemicGoals_Empirical_Inventorizing | <b>Inventorizing</b>: Creating a comprehensive database or inventory of a phenomenon to facilitate future research. }</li><li>{ $P_EpistemicGoals_Empirical_Process | <b>Process or underlying structure</b>: Investigating a process or underlying structure of some higher-level phenomenon. }</li><li>{ $P_EpistemicGoals_Empirical_Estimation | <b>Estimation</b>: Estimating the strength of relationships between different concepts. }</li><li>{ $P_EpistemicGoals_Empirical_GeneralityBoundary | <b>Generality/boundary conditions</b>: Investigating whether a previously observed phenomenon is present in a new context or population. }</li><li>{ $P_EpistemicGoals_Empirical_PhenomenaConfirmation | <b>Phenomena Confirmation</b>: Verifying the existence of a previously observed phenomenon. }</li></ul>"
         },
         {
             "id": "P_EpistemicGoals_ConceptDevelopment",
             "type": "checkbox",
-            "title": "Concept development",
+            "title": "Concept development (abstract from data and aim to find useful descriptive models and concepts)",
             "options": [
                 {
                     "id": "ConceptRevision",
@@ -334,12 +336,13 @@
                     "id": "DescriptiveModelling",
                     "text": "Descriptive modelling"
                 }
-            ]
+            ],
+            "info": "<ul><li>{ $P_EpistemicGoals_ConceptDevelopment_ConceptRevision | <b>Concept Revision</b>: Investigating whether an existing concept could be improved in a certain way. }</li><li>{ $P_EpistemicGoals_ConceptDevelopment_DescriptiveModelling | <b>Descriptive Modelling</b>: Representing data patterns by means of a (statistical or conceptual) model. A central motivation of descriptive models is to reduce complexity and make data patterns easier to grasp. }</li></ul>"
         },
         {
             "id": "P_EpistemicGoals_Theory",
             "type": "checkbox",
-            "title": "Theory",
+            "title": "Theory (focus on a theoretical model rather than on explaining one specific phenomenon)",
             "options": [
                 {
                     "id": "TheoryAffirmation",
@@ -352,8 +355,13 @@
                 {
                     "id": "TheoryExpansion",
                     "text": "Theory expansion of existing theory"
+                },
+                {
+                    "id": "TheoryTesting",
+                    "text": "Testing of a theory"
                 }
-            ]
+            ],
+            "info": "<b>Theory</b>: Focus on a theoretical model (i.e., a framework with the purpose of explaining multiple phenomena) rather than on explaining one specific phenomenon.<br><br>"
         },
         {
             "id": "P_EpistemicGoals_Other",
@@ -366,13 +374,14 @@
                 },
                 {
                     "id": "CausalExplanation",
-                    "text": "Causal explanation"
+                    "text": "Causal explanation for a single empirical phenomenon"
                 },
                 {
                     "id": "Application",
                     "text": "Application ('Make it work' - an engineering perspective)"
                 }
-            ]
+            ],
+            "info": "<ul><li>{ $P_EpistemicGoals_Other_MeasurementAuxiliaries | <b>Measurement & auxiliaries</b>: Examine methodological factors that are necessary auxiliaries to answering substantive research questions } </li><li>{ $P_EpistemicGoals_Other_CausalExplanation | <b>Causal explanation</b>: Answer ‘why’ questions and establish explanations for <i>single</i> empirical phenomena (if you investigate a broader theoretical framework that aims to explain multiple phenomena, check one or more items in the <i>Theory</i> section above. } </li><li>{ $P_EpistemicGoals_Other_Application | <b>Application</b>: Focus on real-world interventions and aim to influence an outcome in a natural setting } </li></ul>"
         },
         {
             "id": "SEP_EPIGOALS2",
@@ -969,11 +978,11 @@
             "title": "Type of sample",
             "options": [
                 {
-                    "id": "Mostly_psych_students",
+                    "id": "MostlyPsychStudents",
                     "text": "(Predominantly) psychology students"
                 },
                 {
-                    "id": "Mostly_students",
+                    "id": "MostlyStudents",
                     "text": "(Predominantly) students, interdisciplinary"
                 },
                 {
@@ -1003,16 +1012,16 @@
             "title": "Representativeness of sample",
             "options": [
                 {
-                    "id": "Convenience_sample",
+                    "id": "ConvenienceSample",
                     "text": "Convenience sample"
                 },
                 {
-                    "id": "Representative_sample",
+                    "id": "RepresentativeSample",
                     "text": "Representative sample"
                 }
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
-            "info": "{ $P_Sample_Representative_Representative_sample | <b>Representative sample</b>: according to common characteristics, such as gender, age, city vs. countryside}"
+            "info": "{ $P_Sample_Representative_RepresentativeSample | <b>Representative sample</b>: according to common characteristics, such as gender, age, city vs. countryside}"
         },
         {
             "id": "P_Sample_WEIRD",
@@ -1037,11 +1046,11 @@
             "title": "Cultural diversity of sample / cross-cultural research",
             "options": [                
                 {
-                    "id": "Single_culture",
+                    "id": "SingleCulture",
                     "text": "Single cultural or ethnic background"
                 },
                 {
-                    "id": "Multiple_cultures",
+                    "id": "MultipleCultures",
                     "text": "Multiple cultural or ethnic backgrounds"
                 }
             ],
@@ -1055,11 +1064,11 @@
             "title": "Type of data (check all that apply)",
             "options": [
                 {
-                    "id": "Questionnaire_selfreport",
+                    "id": "QuestionnaireSelfreport",
                     "text": "Questionnaire (self report)"
                 },
                 {
-                    "id": "Questionnaire_otherreport",
+                    "id": "QuestionnaireOtherreport",
                     "text": "Questionnaire (other/informant report)"
                 },
                 {
@@ -1075,7 +1084,7 @@
                     "text": "Interviews"
                 },
                 {
-                    "id": "Content_data",
+                    "id": "ContentData",
                     "text": "Content data (e.g., digital traces, text, audiovisual content)"
                 },
                 {
@@ -1110,15 +1119,15 @@
                     "text": "Objective performance data (e.g., reaction times, intelligence scores, sales)"
                 },
                 {
-                    "id": "Observed_lab",
+                    "id": "ObservedLab",
                     "text": "Observed behavior (lab / artificial situation)"
                 },
                 {
-                    "id": "Observed_reallife",
+                    "id": "ObservedReallife",
                     "text": "Observed behavior (naturalistic situation)"
                 },
                 {
-                    "id": "Observed_residues",
+                    "id": "ObservedResidues",
                     "text": "Behavioral residues (e.g., sick leave days, number of books)"
                 }
             ],
@@ -1143,15 +1152,15 @@
                     "text": "(f)MRI"
                 },
                 {
-                    "id": "Peripheral_EDA",
+                    "id": "PeripheralEDA",
                     "text": "Peripheral: EDA"
                 },
                 {
-                    "id": "Peripheral_EMG",
+                    "id": "PeripheralEMG",
                     "text": "Peripheral: EMG"
                 },
                 {
-                    "id": "Peripheral_ECG",
+                    "id": "PeripheralECG",
                     "text": "Peripheral: ECG"
                 },
                 {
@@ -1184,7 +1193,7 @@
             "title": "Study design 1",
             "options": [
                 {
-                    "id": "Cross-sectional",
+                    "id": "Crosssectional",
                     "text": "Cross-sectional / single session"
                 },
                 {
