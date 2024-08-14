@@ -325,7 +325,7 @@
             score: {},
 
             manualInit() {
-                if(!this.input) {
+                if (!this.input) {
                     this.newResearchOutput('meta');
                 }
 
@@ -474,8 +474,9 @@
             <div id="formview">
                 <h3 x-html="$store.forms[$store.data.currentInput.type].title"></h3>
 
-                <template x-for="(elem, index) in $store.forms[$store.data.currentInput.type].elements" :key="$store.data.currentTab + '_' + index">
-                    <div @click="$store.selectedIndicator = elem" x-show="evaluateCondition(elem.condition)"
+                <template x-for="(elem, index) in $store.forms[$store.data.currentInput.type].elements"
+                    :key="$store.data.currentTab + '_' + index">
+                    <div @click="$store.selectedIndicator = elem" x-show="$store.mode === $store.MODE_PREVIEW || evaluateCondition(elem.condition)"
                         onblur="actions[elem.onchange]()">
                         <p x-html="preprocessText(elem.title)" style="font-weight: bold;"></p>
 
@@ -494,13 +495,16 @@
 
                         <template x-if="elem.type === 'textbox'">
                             <div>
-                                <div class="textbox" contenteditable x-init="$el.innerText = $store.data.currentInput[elem.id] ?? ''" @input="$store.data.currentInput[elem.id] = $event.target.innerText"
+                                <div class="textbox" contenteditable
+                                    x-init="$el.innerText = $store.data.currentInput[elem.id] ?? ''"
+                                    @input="$store.data.currentInput[elem.id] = $event.target.innerText"
                                     :placeholder="elem.title || ''"></div>
 
                                 <template x-if="!!elem.maxwords">
                                     <p class="wordcount"
                                         :class="(($store.data.currentInput[elem.id] ?? '').match(/\S+/g) ?? []).length > elem.maxwords ? 'wordcount-warning' : ''"
-                                        x-text="`${(($store.data.currentInput[elem.id] ?? '').match(/\S+/g) ?? []).length} / ${elem.maxwords} words`"></p>
+                                        x-text="`${(($store.data.currentInput[elem.id] ?? '').match(/\S+/g) ?? []).length} / ${elem.maxwords} words`">
+                                    </p>
                                 </template>
                             </div>
                         </template>
@@ -1043,25 +1047,13 @@
         Alpine.store('config').queryConfig = getQueryConfig(params);
 
         const mode = params.get("mode");
+        const printPack = params.get("pack");
         const details = params.get("details") !== "false";
         const filter = (params.get("filter") ?? "").split(",").filter(f => f);
 
         if (!localStorage.getItem("data")) {
             //showInfoModal();
             driver(tourMain).drive();
-        }
-
-        if (mode === MODE_PRINT) {
-            const formview = document.querySelector("#formview");
-            formview.style.overflow = "visible";
-
-            document.querySelector("#main").style.display = "block";
-            document.body.style.overflow = "visible";
-            document.querySelector("#formview-container").style.overflow = "visible";
-            document.querySelector(".tabs-sidebar").style.display = "none";
-            document.querySelector("#menu").style.display = "none";
-
-            document.querySelector("#mobile").style.display = "none";
         }
 
         function saveCurrentQueryConfig() {
@@ -1086,6 +1078,23 @@
             // Check config compatibility
             if (objectHash(Alpine.store('data').input[0].queryConfig) !== objectHash(Alpine.store('config').queryConfig)) {
                 showModal('config-incompatible-modal');
+            }
+        }).then(() => {
+            if (mode === MODE_PRINT) {
+                const formview = document.querySelector("#formview");
+                formview.style.overflow = "visible";
+
+                document.querySelector("#main").style.display = "block";
+                document.body.style.overflow = "visible";
+                document.querySelector("#formview-container").style.overflow = "visible";
+                document.querySelector(".tabs-sidebar").style.display = "none";
+                document.querySelector("#menu").style.display = "none";
+
+                document.querySelector("#mobile").style.display = "none";
+
+                Alpine.store('data').currentInput = { type: printPack };
+                Alpine.store('mode', mode);
+                Alpine.store('MODE_PRINT', MODE_PRINT);
             }
         })
     </script>
