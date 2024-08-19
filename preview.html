@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RESQUE Collector - Preview</title>
+
+    <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+    <script src="//unpkg.com/alpinejs" defer></script>
+
+    <script>
+        const getPacks = async () => {
+            const response = await fetch('./packs/archive/info.json');
+            const data = await response.json();
+            return data;
+        }
+
+        const getPack = async (filename) => {
+            if (!filename) {
+                return {};
+            }
+
+            const response = await fetch(`./packs/archive/${filename}.json`);
+            const data = await response.json();
+            return data;
+        }
+
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('packs', getPacks());
+
+            Alpine.store('pack', {});
+
+            Alpine.effect(() => {
+                const pack = Alpine.store('pack');
+
+                console.log(pack.title)
+            });
+
+        });
+
+        const preprocessText = text => {
+            return text
+                .replaceAll(/meta\$([a-zA-Z0-9_]+)/g, (match, variable) => variable)
+                .replaceAll(/global\$([a-zA-Z0-9_]+)@([a-zA-Z0-9_]+)/g, (match, variable, type) => {
+                    return '...';
+                })
+                .replaceAll(/config\$([a-zA-Z0-9_]+)/g, (match, variable) => {
+                    return '...';
+                })
+                .replaceAll(/config\$([a-zA-Z0-9_]+)@([a-zA-Z0-9_]+)/g, (match, variable, type) => {
+                    return '...';
+                })
+                .replaceAll(/\$([a-zA-Z0-9_]+?)@([a-zA-Z0-9_]+)/g, (match, variable, type) => {
+                    return '...';
+                })
+                .replaceAll(/\$([a-zA-Z0-9_]+)/g, (match, variable) => {
+                    return variable;
+                });
+        }
+
+    </script>
+
+    <div x-data="{selectedPack: ''}" x-effect="getPack(selectedPack).then(d => $store.pack = d)">
+        <select x-model="selectedPack">
+            <template x-for="pack in $store.packs" :key="pack.type + '_' + pack.version">
+                <option x-text="pack.type + ', v' + pack.version"
+                    :value="pack.type + '-' + pack.version.replaceAll('.', '_')"></option>
+            </template>
+        </select>
+
+        <div>
+            <div id="formview">
+                <h3 x-html="$store.pack.title"></h3>
+
+                <template x-for="(elem, index) in $store.pack.elements" :key="index">
+                    <div @click="$store.selectedIndicator = elem""
+                        onblur=" actions[elem.onchange]()">
+                        <p x-show="elem.title" x-html="preprocessText(elem.title)" style="font-weight: bold;"></p>
+
+                        <template x-if="elem.type === 'separator'">
+                            <hr style="height: 3px; border:none; color: #333; background-color: #333;" />
+                        </template>
+
+                        <template x-if="elem.type === 'info'">
+                            <p x-html="preprocessText(elem.text)"></p>
+                        </template>
+
+                        <template x-if="elem.type === 'text'">
+                            <input type="text" :placeholder="elem.title || ''" />
+                        </template>
+
+                        <template x-if="elem.type === 'textbox'">
+                            <div>
+                                <div class="textbox" contenteditable :placeholder="elem.title || ''"></div>
+
+                                <template x-if="!!elem.maxwords">
+                                    <p class="wordcount"
+                                        :class="(('').match(/\S+/g) ?? []).length > elem.maxwords ? 'wordcount-warning' : ''"
+                                        x-text="`${(('').match(/\S+/g) ?? []).length} / ${elem.maxwords} words`">
+                                    </p>
+                                </template>
+                            </div>
+                        </template>
+
+                        <template x-if="elem.type === 'number'">
+                            <input type="text" :placeholder="elem.title || ''" />
+                        </template>
+
+                        <template x-if="elem.type === 'date'">
+                            <input type="date" :placeholder="elem.title || ''" />
+                        </template>
+
+                        <template x-if="elem.type === 'dropdown'">
+                            <select>
+                                <template x-for="option in elem.options" :key="option.id">
+                                    <p x-text="option.text"></p>
+                                    <option x-html="option.text" :value="option.id"></option>
+                                </template>
+                            </select>
+                        </template>
+
+                        <template x-if="elem.type === 'radio'">
+                            <div :class="elem.alignment ? 'alignment-' + elem.alignment : 'alignment-vertical'">
+                                <template x-for="option in elem.options" :key="option.id">
+                                    <label :for="elem.id + '_' + option.id">
+                                        <input type="radio" :id="elem.id + '_' + option.id" :value="option.id" />
+                                        <span x-html="option.text"></span>
+                                    </label>
+                                </template>
+                            </div>
+                        </template>
+
+                        <template x-if="elem.type === 'checkbox'">
+                            <template x-for="option in elem.options" :key="option.id">
+                                <label :for="elem.id + '_' + option.id">
+                                    <input type="checkbox" :id="elem.id + '_' + option.id" />
+                                    <span x-html="option.text"></span>
+                                </label>
+                            </template>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+    </div>
+
+    <style>
+        .formview {
+            overflow: auto;
+        }
+
+        body {
+            overflow: auto;
+        }
+    </style>
+</body>
+
+</html>
