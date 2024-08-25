@@ -66,6 +66,7 @@
 
     <div x-data="{selectedPack: ''}" x-effect="getPack(selectedPack).then(d => $store.pack = d)">
         <select x-model="selectedPack">
+            <option value="" selected disabled hidden>Choose pack for preview</option>
             <template x-for="pack in $store.packs" :key="pack.type + '_' + pack.version">
                 <option x-text="pack.type + ', v' + pack.version"
                     :value="pack.type + '-' + pack.version.replaceAll('.', '_')"></option>
