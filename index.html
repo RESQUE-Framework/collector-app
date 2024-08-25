@@ -481,7 +481,7 @@
                             @mouseover="hoverStart"
                             class="tab-delete-button tab-delete-menu"
                             @click="showRemoveButton"
-                            x-show="hovering && !showRemove">
+                            x-show="index !== 0 && hovering && !showRemove">
                             X
                         </span>
                         <button
