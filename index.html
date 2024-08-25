@@ -106,14 +106,14 @@
                         return "<i>No papers selected</i>";
                     }
 
-                    const papersToDisplay = tabs
-                        .filter((tab, index) => positions.includes(index))
-                        .map(t => {
-                            t.classList.remove("selected");
-                            return t.outerHTML;
-                        });
+                    // const papersToDisplay = tabs
+                    //     .filter((tab, index) => positions.includes(index))
+                    //     .map(t => {
+                    //         t.classList.remove("selected");
+                    //         return t.outerHTML;
+                    //     });
 
-                    return papersToDisplay.join("");
+                    // return papersToDisplay.join("");
                 }
             }
             return text
@@ -315,11 +315,10 @@
             ...Alpine.store('config').queryConfig[type] // type specific query config
         })
 
-
         Alpine.store('selectedIndicator', {});
 
         Alpine.store('data', {
-            input: JSON.parse(localStorage.getItem('data')),
+            input: JSON.parse(localStorage.getItem('data') ?? false),
             currentTab: parseInt(sessionStorage.getItem('currentTab') ?? '0'),
             currentInput: {},
             score: {},
@@ -346,6 +345,11 @@
                 if (type === 'pub' && this.input.length === 2) {
                     driver(tourForm).drive();
                 }
+            },
+
+            removeResearchOutput(index) {
+                this.input.splice(index, 1);
+                this.currentTab = 0;
             },
 
             clear() {
@@ -420,6 +424,24 @@
             }
         });
 
+        Alpine.data('tab', () => ({
+            hovering: false,
+            showRemove: false,
+            
+            hoverStart() {
+                this.hovering = true;
+            },
+
+            hoverEnd() {
+                this.hovering = false;
+                this.showRemove = false;
+            },
+
+            showRemoveButton() {
+                this.showRemove = true;
+            }
+        }));
+
         const types = {
             'meta': 'Author / Metadata',
             'pub': 'Publication',
@@ -447,9 +469,28 @@
             </div>
             <div class="tabs-container">
                 <template x-for="tab, index in $store.data.input" :key="index">
-                    <div @click="$store.data.currentTab = index"
-                        x-html="`<b>${types[tab.type]}</b><br>${$store.data.input[index].Title ?? ''}`"
-                        :class="{tab: true, active: $store.data.currentTab === index}"></div>
+                    <div style="position: relative;" x-data="tab">
+                        <div
+                            @mouseover="hoverStart"
+                            @mouseout="hoverEnd"
+                            @click="$store.data.currentTab = index"
+                            x-html="`<b>${types[tab.type]}</b><br>${$store.data.input[index].Title ?? ''}`"
+                            :class="{tab: true, active: $store.data.currentTab === index}">
+                        </div>
+                        <span
+                            @mouseover="hoverStart"
+                            class="tab-delete-button tab-delete-menu"
+                            @click="showRemoveButton"
+                            x-show="hovering && !showRemove">
+                            X
+                        </span>
+                        <button
+                            class="critical tab-delete-menu"
+                            x-show="showRemove"
+                            @click="$store.data.removeResearchOutput(index)">
+                            Remove
+                        </button>
+                    </div>
                 </template>
             </div>
             <div id="add-container">
@@ -1066,6 +1107,8 @@
             Alpine.store('forms').software = m.software;
             Alpine.store('forms').data = m.data;
             Alpine.store('forms').config = m.config;
+
+            
 
             Alpine.store('data').manualInit();
             Alpine.store('warnings').manualInit();

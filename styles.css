@@ -107,6 +107,7 @@ body {
     background-color: var(--bg-color);
     padding-top: 16px;
     padding-bottom: 4px;
+    z-index: 2;
 }
 
 .doi-input button {
@@ -252,6 +253,31 @@ button:hover {
 
 .tab span {
     pointer-events: none;
+}
+
+.tab-delete-menu {
+    position: absolute;
+    right: 6px;
+    top: 6px;
+}
+
+.tab-delete-button {
+    border-radius: 99px;
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+    text-align: center;
+    line-height: 24px;
+    background-color: var(--light-color);
+    cursor: pointer;
+    transition-duration: 150ms;
+    font-weight: bold;
+}
+
+.tab-delete-button:hover {
+    transform: scale(1.1);
+    background-color: firebrick;
+    color: var(--light-color);
 }
 
 header {
