@@ -24,7 +24,7 @@
                 return {};
             }
 
-            const response = await fetch(`./packs/archive/${filename}.json`);
+            const response = await fetch(`./packs/${filename}.json`);
             const data = await response.json();
             return data;
         }
@@ -34,6 +34,8 @@
 
             Alpine.store('pack', {});
 
+            Alpine.store('filter', '');
+
             Alpine.effect(() => {
                 const pack = Alpine.store('pack');
 
@@ -41,6 +43,15 @@
             });
 
         });
+
+        const evaluateFilter = (filter, elemId) => {
+            if (!filter) {
+                return true;
+            }
+
+            // Check if elemId starts with one of the comma separated values in filter
+            return filter.split(',').some(f => elemId.startsWith(f.trim()));
+        }
 
         const preprocessText = text => {
             return text
@@ -65,21 +76,36 @@
     </script>
 
     <div x-data="{selectedPack: ''}" x-effect="getPack(selectedPack).then(d => $store.pack = d)">
-        <select x-model="selectedPack">
-            <option value="" selected disabled hidden>Choose pack for preview</option>
-            <template x-for="pack in $store.packs" :key="pack.type + '_' + pack.version">
-                <option x-text="pack.type + ', v' + pack.version"
-                    :value="pack.type + '-' + pack.version.replaceAll('.', '_')"></option>
-            </template>
-        </select>
+        <div class="no-print" style="padding: 16px; border-bottom: 1px solid lightgray;">
+            <select x-model="selectedPack" style="width: fit-content; display: inline-block; margin-bottom: 0;">
+                <option value="" selected disabled hidden>Choose pack for preview</option>
+
+                <option value="core-meta">core-meta</option>
+                <option value="core-pubs">core-pubs</option>
+                <option value="core-data">core-data</option>
+                <option value="core-software">core-software</option>
+
+                <template x-for="pack in $store.packs" :key="pack.type + '_' + pack.version">
+                    <option x-text="pack.type + ', v' + pack.version + ' (archived)'"
+                        :value="'archive/' + pack.type + '-' + pack.version.replaceAll('.', '_')"></option>
+                </template>
+            </select>
+
+            <input x-model="$store.filter" type="text" placeholder="Filter"
+                style="width: 500px; display: inline-block; margin-bottom: 0;"></input>
+
+        </div>
 
         <div>
             <div id="formview">
-                <h3 x-html="$store.pack.title"></h3>
+                <h2 x-show="!$store.pack.title" style="color: gray; font-style: italic; text-align: center;">
+                    Choose a pack to see indicators.
+                </h2>
+
+                <h2 style="text-align: center;" x-show="$store.pack.title" x-text="'RESQUE: ' + $store.pack.title"></h2>
 
                 <template x-for="(elem, index) in $store.pack.elements" :key="index">
-                    <div @click="$store.selectedIndicator = elem""
-                        onblur=" actions[elem.onchange]()">
+                    <div x-show="evaluateFilter($store.filter, elem.id)">
                         <p x-show="elem.title" x-html="preprocessText(elem.title)" style="font-weight: bold;"></p>
 
                         <template x-if="elem.type === 'separator'">
@@ -157,6 +183,13 @@
 
         body {
             overflow: auto;
+        }
+
+        @media print {
+            .no-print,
+            .no-print * {
+                display: none !important;
+            }
         }
     </style>
 </body>
