@@ -474,7 +474,7 @@
                             @mouseover="hoverStart"
                             @mouseout="hoverEnd"
                             @click="$store.data.currentTab = index"
-                            x-html="`<b>${types[tab.type]}</b><br>${$store.data.input[index].Title ?? ''}`"
+                            x-html="`${$store.data.input[index].P_TopPaper_Select ? '⭐️ ' : ''}<b>${types[tab.type]}</b><br>${$store.data.input[index].Title ?? ''}`"
                             :class="{tab: true, active: $store.data.currentTab === index}">
                         </div>
                         <span
