@@ -102,7 +102,16 @@
                     Choose a pack to see indicators.
                 </h2>
 
-                <h2 style="text-align: center;" x-show="$store.pack.title" x-text="'RESQUE: ' + $store.pack.title"></h2>
+                <div x-show="$store.pack.title" style="text-align: center;">
+                    <p
+                        style="margin-bottom: 0; color: gray; font-style: italic; font-size: small;"
+                        x-show="$store.filter"
+                    ><b>Selected indicators: </b><span x-text="$store.filter"></span></p>
+
+                    <h2 
+                        style="margin-top: 0.5rem;"
+                        x-text="`RESQUE: ${$store.pack.title} (v${$store.pack.version})`"></h2>
+                </div>
 
                 <template x-for="(elem, index) in $store.pack.elements" :key="index">
                     <div x-show="evaluateFilter($store.filter, elem.id)">
