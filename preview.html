@@ -10,15 +10,6 @@
 </head>
 
 <body>
-    <script>
-        function sendHeight() {
-            const height = document.documentElement.scrollHeight;
-            window.parent.postMessage(height, '*');
-        }
-
-        window.onload = sendHeight;
-        window.onresize = sendHeight;
-    </script>
 
     <script src="//unpkg.com/alpinejs" defer></script>
 
