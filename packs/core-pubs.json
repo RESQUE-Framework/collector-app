@@ -290,10 +290,17 @@
             "type": "separator"
         },
         {
+            "id": "P_EpistemicGoals_CollapseNote",
+            "type": "info",
+            "text": "<span style='background-color: lightyellow; font-size:80%;'>[Note: The section on 'Epistemic Goals' is automatically disabled as you indicated to be an external rater.]</span>",
+            "condition": "$P_Suitable === 'Yes' && meta$RaterType != 'Applicant'"
+        },
+        {
             "id": "P_EpistemicGoals_Intro",
             "type": "info",
             "title": "<h3>What were the epistemic goals of the paper? (check all that apply)</h3>",
-            "info": "These categories are from Scheel, Muijlwijk, & Lakens (in prep.)."
+            "info": "These categories are from Scheel, Muijlwijk, & Lakens (in prep.).",
+            "condition":  "meta$RaterType === 'Applicant'"
         },
         {
             "id": "P_EpistemicGoals_Empirical",
@@ -321,7 +328,8 @@
                     "text": "Phenomena confirmation"
                 }
             ],
-            "info": "<b>Empirical phenomena</b>: Establish ‘what exists’ and consolidate stable patterns in data.<br><ul><li>{ $P_EpistemicGoals_Empirical_Inventorizing | <b>Inventorizing</b>: Creating a comprehensive database or inventory of a phenomenon to facilitate future research. }</li><li>{ $P_EpistemicGoals_Empirical_Process | <b>Process or underlying structure</b>: Investigating a process or underlying structure of some higher-level phenomenon. }</li><li>{ $P_EpistemicGoals_Empirical_Estimation | <b>Estimation</b>: Estimating the strength of relationships between different concepts. }</li><li>{ $P_EpistemicGoals_Empirical_GeneralityBoundary | <b>Generality/boundary conditions</b>: Investigating whether a previously observed phenomenon is present in a new context or population. }</li><li>{ $P_EpistemicGoals_Empirical_PhenomenaConfirmation | <b>Phenomena Confirmation</b>: Verifying the existence of a previously observed phenomenon. }</li></ul>"
+            "info": "<b>Empirical phenomena</b>: Establish ‘what exists’ and consolidate stable patterns in data.<br><ul><li>{ $P_EpistemicGoals_Empirical_Inventorizing | <b>Inventorizing</b>: Creating a comprehensive database or inventory of a phenomenon to facilitate future research. }</li><li>{ $P_EpistemicGoals_Empirical_Process | <b>Process or underlying structure</b>: Investigating a process or underlying structure of some higher-level phenomenon. }</li><li>{ $P_EpistemicGoals_Empirical_Estimation | <b>Estimation</b>: Estimating the strength of relationships between different concepts. }</li><li>{ $P_EpistemicGoals_Empirical_GeneralityBoundary | <b>Generality/boundary conditions</b>: Investigating whether a previously observed phenomenon is present in a new context or population. }</li><li>{ $P_EpistemicGoals_Empirical_PhenomenaConfirmation | <b>Phenomena Confirmation</b>: Verifying the existence of a previously observed phenomenon. }</li></ul>",
+            "condition":  "meta$RaterType === 'Applicant'"
         },
         {
             "id": "P_EpistemicGoals_ConceptDevelopment",
@@ -337,7 +345,8 @@
                     "text": "Descriptive modelling"
                 }
             ],
-            "info": "<ul><li>{ $P_EpistemicGoals_ConceptDevelopment_ConceptRevision | <b>Concept Revision</b>: Investigating whether an existing concept could be improved in a certain way. }</li><li>{ $P_EpistemicGoals_ConceptDevelopment_DescriptiveModelling | <b>Descriptive Modelling</b>: Representing data patterns by means of a (statistical or conceptual) model. A central motivation of descriptive models is to reduce complexity and make data patterns easier to grasp. }</li></ul>"
+            "info": "<ul><li>{ $P_EpistemicGoals_ConceptDevelopment_ConceptRevision | <b>Concept Revision</b>: Investigating whether an existing concept could be improved in a certain way. }</li><li>{ $P_EpistemicGoals_ConceptDevelopment_DescriptiveModelling | <b>Descriptive Modelling</b>: Representing data patterns by means of a (statistical or conceptual) model. A central motivation of descriptive models is to reduce complexity and make data patterns easier to grasp. }</li></ul>",
+            "condition":  "meta$RaterType === 'Applicant'"
         },
         {
             "id": "P_EpistemicGoals_Theory",
@@ -361,7 +370,8 @@
                     "text": "Testing of a theory"
                 }
             ],
-            "info": "<b>Theory</b>: Focus on a theoretical model (i.e., a framework with the purpose of explaining multiple phenomena) rather than on explaining one specific phenomenon.<br><br>"
+            "info": "<b>Theory</b>: Focus on a theoretical model (i.e., a framework with the purpose of explaining multiple phenomena) rather than on explaining one specific phenomenon.<br><br>",
+            "condition":  "meta$RaterType === 'Applicant'"
         },
         {
             "id": "P_EpistemicGoals_Other",
@@ -381,10 +391,11 @@
                     "text": "Application ('Make it work' - an engineering perspective)"
                 }
             ],
-            "info": "<ul><li>{ $P_EpistemicGoals_Other_MeasurementAuxiliaries | <b>Measurement & auxiliaries</b>: Examine methodological factors that are necessary auxiliaries to answering substantive research questions } </li><li>{ $P_EpistemicGoals_Other_CausalExplanation | <b>Causal explanation</b>: Answer ‘why’ questions and establish explanations for <i>single</i> empirical phenomena (if you investigate a broader theoretical framework that aims to explain multiple phenomena, check one or more items in the <i>Theory</i> section above. } </li><li>{ $P_EpistemicGoals_Other_Application | <b>Application</b>: Focus on real-world interventions and aim to influence an outcome in a natural setting } </li></ul>"
+            "info": "<ul><li>{ $P_EpistemicGoals_Other_MeasurementAuxiliaries | <b>Measurement & auxiliaries</b>: Examine methodological factors that are necessary auxiliaries to answering substantive research questions } </li><li>{ $P_EpistemicGoals_Other_CausalExplanation | <b>Causal explanation</b>: Answer ‘why’ questions and establish explanations for <i>single</i> empirical phenomena (if you investigate a broader theoretical framework that aims to explain multiple phenomena, check one or more items in the <i>Theory</i> section above. } </li><li>{ $P_EpistemicGoals_Other_Application | <b>Application</b>: Focus on real-world interventions and aim to influence an outcome in a natural setting } </li></ul>",
+            "condition":  "meta$RaterType === 'Applicant'"
         },
         {
-            "id": "SEP_EPIGOALS2",
+            "id": "SEP_EPIGOALS3",
             "type": "separator"
         },
         {
