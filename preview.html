@@ -10,6 +10,16 @@
 </head>
 
 <body>
+    <script>
+        function sendHeight() {
+            const height = document.documentElement.scrollHeight;
+            window.parent.postMessage(height, '*');
+        }
+
+        window.onload = sendHeight;
+        window.onresize = sendHeight;
+    </script>
+
     <script src="//unpkg.com/alpinejs" defer></script>
 
     <script>
@@ -121,7 +131,8 @@
     </script>
 
     <div x-data="{selectedPack: ''}" x-effect="getPack(selectedPack).then(d => $store.pack = d)">
-        <div x-show="!$store.packInQuery?.filename" class="no-print" style="padding: 16px; border-bottom: 1px solid lightgray;">
+        <div x-show="!$store.packInQuery?.filename" class="no-print"
+            style="padding: 16px; border-bottom: 1px solid lightgray;">
             <select x-model="selectedPack" style="width: fit-content; display: inline-block; margin-bottom: 0;">
                 <option value="" selected disabled hidden>Choose pack for preview</option>
 
@@ -136,7 +147,8 @@
                 </template>
             </select>
 
-            <input x-model="$store.filter" type="text" placeholder="Filter (enter a comma separated list of indicator label prefixes)"
+            <input x-model="$store.filter" type="text"
+                placeholder="Filter (enter a comma separated list of indicator label prefixes)"
                 style="width: 500px; display: inline-block; margin-bottom: 0;"></input>
 
             <!-- Checkbox for showing indicator ids -->
@@ -154,25 +166,20 @@
                 </h2>
 
                 <div x-show="$store.pack.title" style="text-align: center;">
-                    <p
-                        style="margin-bottom: 0; color: gray; font-style: italic; font-size: small;"
-                        x-show="$store.filter"
-                    ><b>Selected indicators: </b><span x-text="$store.filter"></span></p>
+                    <p style="margin-bottom: 0; color: gray; font-style: italic; font-size: small;"
+                        x-show="$store.filter"><b>Selected indicators: </b><span x-text="$store.filter"></span></p>
 
-                    <h2 
-                        style="margin-top: 0.5rem;"
-                        x-text="`RESQUE: ${$store.pack.title} (v${$store.pack.version})`"></h2>
+                    <h2 style="margin-top: 0.5rem;" x-text="`RESQUE: ${$store.pack.title} (v${$store.pack.version})`">
+                    </h2>
                 </div>
 
                 <template x-for="(elem, index) in $store.pack.elements" :key="index">
                     <div x-show="evaluateFilter($store.filter, elem.id)">
                         <p>
-                            <span
-                                x-show="$store.showLabels"
-                                x-text="`[${elem.id}]`"
-                                style="font-size: small; color: gray;"
-                            ></span>
-                            <span x-show="elem.title" x-html="preprocessText(elem.title)" style="font-weight: bold;"></span>
+                            <span x-show="$store.showLabels" x-text="`[${elem.id}]`"
+                                style="font-size: small; color: gray;"></span>
+                            <span x-show="elem.title" x-html="preprocessText(elem.title)"
+                                style="font-weight: bold;"></span>
                         </p>
                         <template x-if="elem.type === 'separator'">
                             <hr style="height: 3px; border:none; color: #333; background-color: #333;" />
@@ -252,6 +259,7 @@
         }
 
         @media print {
+
             .no-print,
             .no-print * {
                 display: none !important;
