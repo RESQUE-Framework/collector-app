@@ -517,7 +517,7 @@
 
                 <template x-for="(elem, index) in $store.forms[$store.data.currentInput.type].elements"
                     :key="$store.data.currentTab + '_' + index">
-                    <div @click="$store.selectedIndicator = elem" x-show="$store.mode === $store.MODE_PREVIEW || evaluateCondition(elem.condition)"
+                    <div @click="$store.selectedIndicator = elem" x-show="evaluateCondition(elem.condition)"
                         onblur="actions[elem.onchange]()">
                         <p x-html="preprocessText(elem.title)" style="font-weight: bold;"></p>
 
