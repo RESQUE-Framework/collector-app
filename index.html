@@ -318,13 +318,13 @@
         Alpine.store('selectedIndicator', {});
 
         Alpine.store('data', {
-            input: JSON.parse(localStorage.getItem('data') ?? false),
+            input: JSON.parse(localStorage.getItem('data') ?? '[]'),
             currentTab: parseInt(sessionStorage.getItem('currentTab') ?? '0'),
             currentInput: {},
             score: {},
 
             manualInit() {
-                if (!this.input) {
+                if (typeof this.input === "object" && this.input.length === 0) {
                     this.newResearchOutput('meta');
                 }
 
@@ -365,7 +365,7 @@
             minScoreWarning: false,
 
             reevaluate() {
-                this.minIndicatorsWarning = Alpine.store('data').score.scores[Alpine.store('data').currentTab].max < Alpine.store('config').config.minIndicatorsWarningThreshold;
+                this.minIndicatorsWarning = Alpine.store('data').score.scores[Alpine.store('data').currentTab].max > 0 && Alpine.store('data').score.scores[Alpine.store('data').currentTab].max < Alpine.store('config').config.minIndicatorsWarningThreshold;
                 this.minROWarning = (Alpine.store('data').input.length - 1) < Alpine.store('config').config.minROWarningThreshold;
             },
 
@@ -515,82 +515,83 @@
             <div id="formview">
                 <h3 x-html="$store.forms[$store.data.currentInput.type].title"></h3>
 
-                <template x-for="(elem, index) in $store.forms[$store.data.currentInput.type].elements"
-                    :key="$store.data.currentTab + '_' + index">
-                    <div @click="$store.selectedIndicator = elem" x-show="evaluateCondition(elem.condition)"
-                        onblur="actions[elem.onchange]()">
-                        <p x-html="preprocessText(elem.title)" style="font-weight: bold;"></p>
+                <template x-if="$store.data.currentTab >= 0">
+                    <template x-for="(elem, index) in $store.forms[$store.data.currentInput.type].elements" :key="$store.data.currentInput.position + '_' + elem.id">
+                        <div @click="$store.selectedIndicator = elem" x-show="evaluateCondition(elem.condition)"
+                            onblur="actions[elem.onchange]()">
+                            <p x-html="preprocessText(elem.title)" style="font-weight: bold;"></p>
 
-                        <template x-if="elem.type === 'separator'">
-                            <hr style="height: 3px; border:none; color: #333; background-color: #333;" />
-                        </template>
+                            <template x-if="elem.type === 'separator'">
+                                <hr style="height: 3px; border:none; color: #333; background-color: #333;" />
+                            </template>
 
-                        <template x-if="elem.type === 'info'">
-                            <p x-html="preprocessText(elem.text)"></p>
-                        </template>
+                            <template x-if="elem.type === 'info'">
+                                <p x-html="preprocessText(elem.text)"></p>
+                            </template>
 
-                        <template x-if="elem.type === 'text'">
-                            <input x-model="$store.data.currentInput[elem.id]" type="text"
-                                :placeholder="elem.title || ''" />
-                        </template>
+                            <template x-if="elem.type === 'text'">
+                                <input x-model="$store.data.currentInput[elem.id]" type="text"
+                                    :placeholder="elem.title || ''" />
+                            </template>
 
-                        <template x-if="elem.type === 'textbox'">
-                            <div>
-                                <div class="textbox" contenteditable
-                                    x-init="$el.innerText = $store.data.currentInput[elem.id] ?? ''"
-                                    @input="$store.data.currentInput[elem.id] = $event.target.innerText"
-                                    :placeholder="elem.title || ''"></div>
+                            <template x-if="elem.type === 'textbox'">
+                                <div>
+                                    <div class="textbox" contenteditable
+                                        x-init="$el.innerText = $store.data.currentInput[elem.id] ?? ''"
+                                        @input="$store.data.currentInput[elem.id] = $event.target.innerText"
+                                        :placeholder="elem.title || ''"></div>
 
-                                <template x-if="!!elem.maxwords">
-                                    <p class="wordcount"
-                                        :class="(($store.data.currentInput[elem.id] ?? '').match(/\S+/g) ?? []).length > elem.maxwords ? 'wordcount-warning' : ''"
-                                        x-text="`${(($store.data.currentInput[elem.id] ?? '').match(/\S+/g) ?? []).length} / ${elem.maxwords} words`">
-                                    </p>
-                                </template>
-                            </div>
-                        </template>
+                                    <template x-if="!!elem.maxwords">
+                                        <p class="wordcount"
+                                            :class="(($store.data.currentInput[elem.id] ?? '').match(/\S+/g) ?? []).length > elem.maxwords ? 'wordcount-warning' : ''"
+                                            x-text="`${(($store.data.currentInput[elem.id] ?? '').match(/\S+/g) ?? []).length} / ${elem.maxwords} words`">
+                                        </p>
+                                    </template>
+                                </div>
+                            </template>
 
-                        <template x-if="elem.type === 'number'">
-                            <input x-model="$store.data.currentInput[elem.id]" type="text"
-                                :placeholder="elem.title || ''" />
-                        </template>
+                            <template x-if="elem.type === 'number'">
+                                <input x-model="$store.data.currentInput[elem.id]" type="text"
+                                    :placeholder="elem.title || ''" />
+                            </template>
 
-                        <template x-if="elem.type === 'date'">
-                            <input x-model="$store.data.currentInput[elem.id]" type="date"
-                                :placeholder="elem.title || ''" />
-                        </template>
+                            <template x-if="elem.type === 'date'">
+                                <input x-model="$store.data.currentInput[elem.id]" type="date"
+                                    :placeholder="elem.title || ''" />
+                            </template>
 
-                        <template x-if="elem.type === 'dropdown'">
-                            <select x-model="$store.data.currentInput[elem.id]">
-                                <template x-for="option in elem.options" :key="option.id">
-                                    <p x-text="option.text"></p>
-                                    <option x-html="option.text" :value="option.id"></option>
-                                </template>
-                            </select>
-                        </template>
+                            <template x-if="elem.type === 'dropdown'">
+                                <select x-model="$store.data.currentInput[elem.id]">
+                                    <template x-for="option in elem.options" :key="option.id">
+                                        <p x-text="option.text"></p>
+                                        <option x-html="option.text" :value="option.id"></option>
+                                    </template>
+                                </select>
+                            </template>
 
-                        <template x-if="elem.type === 'radio'">
-                            <div :class="elem.alignment ? 'alignment-' + elem.alignment : 'alignment-vertical'">
+                            <template x-if="elem.type === 'radio'">
+                                <div :class="elem.alignment ? 'alignment-' + elem.alignment : 'alignment-vertical'">
+                                    <template x-for="option in elem.options" :key="option.id">
+                                        <label :for="elem.id + '_' + option.id">
+                                            <input x-model="$store.data.currentInput[elem.id]" type="radio"
+                                                :id="elem.id + '_' + option.id" :value="option.id" />
+                                            <span x-html="option.text"></span>
+                                        </label>
+                                    </template>
+                                </div>
+                            </template>
+
+                            <template x-if="elem.type === 'checkbox'">
                                 <template x-for="option in elem.options" :key="option.id">
                                     <label :for="elem.id + '_' + option.id">
-                                        <input x-model="$store.data.currentInput[elem.id]" type="radio"
-                                            :id="elem.id + '_' + option.id" :value="option.id" />
+                                        <input x-model="$store.data.currentInput[elem.id + '_' + option.id]" type="checkbox"
+                                            :id="elem.id + '_' + option.id" />
                                         <span x-html="option.text"></span>
                                     </label>
                                 </template>
-                            </div>
-                        </template>
-
-                        <template x-if="elem.type === 'checkbox'">
-                            <template x-for="option in elem.options" :key="option.id">
-                                <label :for="elem.id + '_' + option.id">
-                                    <input x-model="$store.data.currentInput[elem.id + '_' + option.id]" type="checkbox"
-                                        :id="elem.id + '_' + option.id" />
-                                    <span x-html="option.text"></span>
-                                </label>
                             </template>
-                        </template>
-                    </div>
+                        </div>
+                    </template>
                 </template>
             </div>
         </div>
@@ -600,12 +601,11 @@
                 <div id="score-container">
                     <div id="current-score">
                         <span class="sub">Rigor Score of selected research output</span>
-                        <template x-show="$store.data.score.scores[$store.data.currentTab].max <= 0">
+                        <div x-show="$store.data.score.scores[$store.data.currentTab].max <= 0">
                             <span id="no-score">Applicant requests<br>manual processing</span>
-                        </template>
+                        </div>
 
-                        <template x-show="$store.data.score.scores[$store.data.currentTab].max > 0"></template>
-                        <div id="current-score-container">
+                        <div x-show="$store.data.score.scores[$store.data.currentTab].max > 0" id="current-score-container">
                             <p id="score-percentage"><span
                                     x-text="$store.data.score.scores[$store.data.currentTab].percentage"></span>%</p>
                             <p id="score-dot">•</p>
@@ -613,7 +613,6 @@
                                     x-text="$store.data.score.scores[$store.data.currentTab].score"></span>/<span
                                     x-text="$store.data.score.scores[$store.data.currentTab].max"></span></p>
                         </div>
-                        </template>
                     </div>
                     <div id="overall-score">
                         <span class="sub">Overall Rigor Score (mean)</span>
@@ -1088,9 +1087,7 @@
         Alpine.store('config').queryConfig = getQueryConfig(params);
 
         const mode = params.get("mode");
-        const printPack = params.get("pack");
         const details = params.get("details") !== "false";
-        const filter = (params.get("filter") ?? "").split(",").filter(f => f);
 
         if (!localStorage.getItem("data")) {
             //showInfoModal();
@@ -1108,8 +1105,6 @@
             Alpine.store('forms').data = m.data;
             Alpine.store('forms').config = m.config;
 
-            
-
             Alpine.store('data').manualInit();
             Alpine.store('warnings').manualInit();
 
@@ -1122,24 +1117,7 @@
             if (objectHash(Alpine.store('data').input[0].queryConfig) !== objectHash(Alpine.store('config').queryConfig)) {
                 showModal('config-incompatible-modal');
             }
-        }).then(() => {
-            if (mode === MODE_PRINT) {
-                const formview = document.querySelector("#formview");
-                formview.style.overflow = "visible";
-
-                document.querySelector("#main").style.display = "block";
-                document.body.style.overflow = "visible";
-                document.querySelector("#formview-container").style.overflow = "visible";
-                document.querySelector(".tabs-sidebar").style.display = "none";
-                document.querySelector("#menu").style.display = "none";
-
-                document.querySelector("#mobile").style.display = "none";
-
-                Alpine.store('data').currentInput = { type: printPack };
-                Alpine.store('mode', mode);
-                Alpine.store('MODE_PRINT', MODE_PRINT);
-            }
-        })
+        });
     </script>
 </body>
 
