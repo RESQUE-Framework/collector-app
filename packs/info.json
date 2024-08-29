@@ -1,0 +1,20 @@
+[
+    {
+        "path": "archive",
+        "type": "core-pubs",
+        "version": "0.3.1"
+    },
+    {
+        "path": "dev",
+        "type": "EP-epistemic_goals"
+    },
+    {
+        "path": "dev",
+        "type": "EP-multidisciplinary"
+        
+    },
+    {
+        "path": "dev",
+        "type": "EP-practical_relevance"
+    }
+]

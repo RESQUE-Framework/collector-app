@@ -15,7 +15,7 @@
 
     <script>
         const getPacks = async () => {
-            const response = await fetch('./packs/archive/info.json');
+            const response = await fetch('./packs/info.json');
             const data = await response.json();
             return data;
         }
@@ -91,6 +91,7 @@
             let type = urlParams.get('type');
             const version = urlParams.get('version');
             const filter = urlParams.get('filter');
+            const path = urlParams.get('path') ?? '';
             const showLabels = urlParams.get('showLabels') === 'true';
 
             if (['meta', 'pubs', 'data', 'software'].includes(type)) {
@@ -99,7 +100,7 @@
 
             if (type && version) {
                 return {
-                    filename: `archive/${type}-${version.replace(/\./g, '_')}`,
+                    filename: `${path}/${type}-${version.replace(/\./g, '_')}`,
                     filter: filter ?? '',
                     showLabels
                 };
@@ -124,7 +125,7 @@
     <div x-data="{selectedPack: ''}" x-effect="getPack(selectedPack).then(d => $store.pack = d)">
         <div x-show="!$store.packInQuery?.filename" class="no-print"
             style="padding: 16px; border-bottom: 1px solid lightgray;">
-            <select x-model="selectedPack" style="width: fit-content; display: inline-block; margin-bottom: 0;">
+            <select x-effect="console.log(selectedPack)" x-model="selectedPack" style="width: fit-content; display: inline-block; margin-bottom: 0;">
                 <option value="" selected disabled hidden>Choose pack for preview</option>
 
                 <option value="core-meta">core-meta</option>
@@ -132,9 +133,9 @@
                 <option value="core-data">core-data</option>
                 <option value="core-software">core-software</option>
 
-                <template x-for="pack in $store.packs" :key="pack.type + '_' + pack.version">
-                    <option x-text="pack.type + ', v' + pack.version + ' (archived)'"
-                        :value="'archive/' + pack.type + '-' + pack.version.replaceAll('.', '_')"></option>
+                <template x-for="pack in $store.packs" :key="pack.path + pack.type + '_' + pack.version ?? ''">
+                    <option x-text="`${pack.type} ${pack.version ? 'v' + pack.version : ''} (${pack.path ?? 'root'})`"
+                        :value="`${pack.path ?? '.'}/${pack.type}${pack.version ? ('-' + pack.version.replaceAll('.', '_')) : ''}`"></option>
                 </template>
             </select>
 
