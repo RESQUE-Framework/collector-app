@@ -574,7 +574,7 @@
                                     <template x-for="option in elem.options" :key="option.id">
                                         <label :for="elem.id + '_' + option.id">
                                             <input x-model="$store.data.currentInput[elem.id]" type="radio"
-                                                :id="elem.id + '_' + option.id" :value="option.id" />
+                                                :name="elem.id" :id="elem.id + '_' + option.id" :value="option.id" />
                                             <span x-html="option.text"></span>
                                         </label>
                                     </template>
