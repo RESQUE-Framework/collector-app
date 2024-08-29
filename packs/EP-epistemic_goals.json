@@ -1,0 +1,102 @@
+{
+    "version": "0.1.0",
+    "date": "2024-08-29",
+    "prefix": "EG",
+    "title": "Epistemic Goals",
+    "elements": [
+        {
+            "id": "EG_Intro",
+            "type": "info",
+            "title": "<h3>What were the epistemic goals of the paper? (check all that apply)</h3>",
+            "info": "These categories are from Scheel, Muijlwijk, & Lakens (in prep.)."
+        },
+        {
+            "id": "EG_Empirical",
+            "type": "checkbox",
+            "title": "Empirical phenomena (establish ‘what exists’ and consolidate stable patterns in data)",
+            "options": [
+                {
+                    "id": "Inventorizing",
+                    "text": "Inventorizing"
+                },
+                {
+                    "id": "Process",
+                    "text": "Process or underlying structure"
+                },
+                {
+                    "id": "Estimation",
+                    "text": "Estimation"
+                },
+                {
+                    "id": "GeneralityBoundary",
+                    "text": "Generality/boundary conditions"
+                },
+                {
+                    "id": "PhenomenaConfirmation",
+                    "text": "Phenomena confirmation"
+                }
+            ],
+            "info": "<b>Empirical phenomena</b>: Establish ‘what exists’ and consolidate stable patterns in data.<br><ul><li>{ $EG_Empirical_Inventorizing | <b>Inventorizing</b>: Creating a comprehensive database or inventory of a phenomenon to facilitate future research. }</li><li>{ $EG_Empirical_Process | <b>Process or underlying structure</b>: Investigating a process or underlying structure of some higher-level phenomenon. }</li><li>{ $EG_Empirical_Estimation | <b>Estimation</b>: Estimating the strength of relationships between different concepts. }</li><li>{ $EG_Empirical_GeneralityBoundary | <b>Generality/boundary conditions</b>: Investigating whether a previously observed phenomenon is present in a new context or population. }</li><li>{ $EG_Empirical_PhenomenaConfirmation | <b>Phenomena Confirmation</b>: Verifying the existence of a previously observed phenomenon. }</li></ul>"
+        },
+        {
+            "id": "EG_ConceptDevelopment",
+            "type": "checkbox",
+            "title": "Concept development (abstract from data and aim to find useful descriptive models and concepts)",
+            "options": [
+                {
+                    "id": "ConceptRevision",
+                    "text": "Concept revision"
+                },
+                {
+                    "id": "DescriptiveModelling",
+                    "text": "Descriptive modelling"
+                }
+            ],
+            "info": "<ul><li>{ $EG_ConceptDevelopment_ConceptRevision | <b>Concept Revision</b>: Investigating whether an existing concept could be improved in a certain way. }</li><li>{ $EG_ConceptDevelopment_DescriptiveModelling | <b>Descriptive Modelling</b>: Representing data patterns by means of a (statistical or conceptual) model. A central motivation of descriptive models is to reduce complexity and make data patterns easier to grasp. }</li></ul>"
+        },
+        {
+            "id": "EG_Theory",
+            "type": "checkbox",
+            "title": "Theory (focus on a theoretical model rather than on explaining one specific phenomenon)",
+            "options": [
+                {
+                    "id": "TheoryAffirmation",
+                    "text": "Theory affirmation: Can we find evidence for the theory? (Not falsification)"
+                },
+                {
+                    "id": "TheoryDevelopment",
+                    "text": "Theory development (new theory)"
+                },
+                {
+                    "id": "TheoryExpansion",
+                    "text": "Theory expansion of existing theory"
+                },
+                {
+                    "id": "TheoryTesting",
+                    "text": "Testing of a theory"
+                }
+            ],
+            "info": "<b>Theory</b>: Focus on a theoretical model (i.e., a framework with the purpose of explaining multiple phenomena) rather than on explaining one specific phenomenon.<br><br>"
+        },
+        {
+            "id": "EG_Other",
+            "type": "checkbox",
+            "title": "Other",
+            "options": [
+                {
+                    "id": "MeasurementAuxiliaries",
+                    "text": "Measurement & auxiliaries"
+                },
+                {
+                    "id": "CausalExplanation",
+                    "text": "Causal explanation for a single empirical phenomenon"
+                },
+                {
+                    "id": "Application",
+                    "text": "Application ('Make it work' - an engineering perspective)"
+                }
+            ],
+            "info": "<ul><li>{ $EG_Other_MeasurementAuxiliaries | <b>Measurement & auxiliaries</b>: Examine methodological factors that are necessary auxiliaries to answering substantive research questions } </li><li>{ $EG_Other_CausalExplanation | <b>Causal explanation</b>: Answer ‘why’ questions and establish explanations for <i>single</i> empirical phenomena (if you investigate a broader theoretical framework that aims to explain multiple phenomena, check one or more items in the <i>Theory</i> section above. } </li><li>{ $EG_Other_Application | <b>Application</b>: Focus on real-world interventions and aim to influence an outcome in a natural setting } </li></ul>"
+        }
+    ]
+}

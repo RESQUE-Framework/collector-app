@@ -1,0 +1,32 @@
+{
+    "version": "0.1.0",
+    "date": "2024-08-29",
+    "prefix": "PR",
+    "title": "Practical relevance",
+    "elements": [
+        {
+            "id": "PR_Info",
+            "type": "info",
+            "text": "<h3>Practical Relevance</h3>"
+        },
+        {
+            "id": "PR_PracticalRelevance",
+            "type": "checkbox",
+            "title": "Does this research output have indirect or immediate practical relevance? Check all that apply:",
+            "options": [
+                {
+                    "id": "Indirect",
+                    "text": "The practical relevance of the study is indirect (e.g., through theory development, mechanism testing, method development)."
+                },
+                {
+                    "id": "Immediate",
+                    "text": "The study provides immediate practical implications (e.g., for policy design, organizational decisions, environmental design, everyday life)."
+                },
+                {
+                    "id": "InterventionEvaluation",
+                    "text": "The study evaluates one or multiple interventions in the field."
+                }
+            ]
+        }
+    ]
+}

@@ -282,120 +282,11 @@
         {
             "id": "P_TypePublication_Other",
             "type": "text",
-            "title": "Publication type: Other",
+            "title": "⤷ Publication type: Other",
             "condition": "$P_TypePublication === 'OtherPublication'"
         },
         {
-            "id": "SEP_EPIGOALS2",
-            "type": "separator"
-        },
-        {
-            "id": "P_EpistemicGoals_CollapseNote",
-            "type": "info",
-            "text": "<span style='background-color: lightyellow; font-size:80%;'>[Note: The section on 'Epistemic Goals' is automatically disabled as you indicated to be an external rater.]</span>",
-            "condition": "$P_Suitable === 'Yes' && meta$RaterType != 'Applicant'"
-        },
-        {
-            "id": "P_EpistemicGoals_Intro",
-            "type": "info",
-            "title": "<h3>What were the epistemic goals of the paper? (check all that apply)</h3>",
-            "info": "These categories are from Scheel, Muijlwijk, & Lakens (in prep.).",
-            "condition":  "meta$RaterType === 'Applicant'"
-        },
-        {
-            "id": "P_EpistemicGoals_Empirical",
-            "type": "checkbox",
-            "title": "Empirical phenomena (establish ‘what exists’ and consolidate stable patterns in data)",
-            "options": [
-                {
-                    "id": "Inventorizing",
-                    "text": "Inventorizing"
-                },
-                {
-                    "id": "Process",
-                    "text": "Process or underlying structure"
-                },
-                {
-                    "id": "Estimation",
-                    "text": "Estimation"
-                },
-                {
-                    "id": "GeneralityBoundary",
-                    "text": "Generality/boundary conditions"
-                },
-                {
-                    "id": "PhenomenaConfirmation",
-                    "text": "Phenomena confirmation"
-                }
-            ],
-            "info": "<b>Empirical phenomena</b>: Establish ‘what exists’ and consolidate stable patterns in data.<br><ul><li>{ $P_EpistemicGoals_Empirical_Inventorizing | <b>Inventorizing</b>: Creating a comprehensive database or inventory of a phenomenon to facilitate future research. }</li><li>{ $P_EpistemicGoals_Empirical_Process | <b>Process or underlying structure</b>: Investigating a process or underlying structure of some higher-level phenomenon. }</li><li>{ $P_EpistemicGoals_Empirical_Estimation | <b>Estimation</b>: Estimating the strength of relationships between different concepts. }</li><li>{ $P_EpistemicGoals_Empirical_GeneralityBoundary | <b>Generality/boundary conditions</b>: Investigating whether a previously observed phenomenon is present in a new context or population. }</li><li>{ $P_EpistemicGoals_Empirical_PhenomenaConfirmation | <b>Phenomena Confirmation</b>: Verifying the existence of a previously observed phenomenon. }</li></ul>",
-            "condition":  "meta$RaterType === 'Applicant'"
-        },
-        {
-            "id": "P_EpistemicGoals_ConceptDevelopment",
-            "type": "checkbox",
-            "title": "Concept development (abstract from data and aim to find useful descriptive models and concepts)",
-            "options": [
-                {
-                    "id": "ConceptRevision",
-                    "text": "Concept revision"
-                },
-                {
-                    "id": "DescriptiveModelling",
-                    "text": "Descriptive modelling"
-                }
-            ],
-            "info": "<ul><li>{ $P_EpistemicGoals_ConceptDevelopment_ConceptRevision | <b>Concept Revision</b>: Investigating whether an existing concept could be improved in a certain way. }</li><li>{ $P_EpistemicGoals_ConceptDevelopment_DescriptiveModelling | <b>Descriptive Modelling</b>: Representing data patterns by means of a (statistical or conceptual) model. A central motivation of descriptive models is to reduce complexity and make data patterns easier to grasp. }</li></ul>",
-            "condition":  "meta$RaterType === 'Applicant'"
-        },
-        {
-            "id": "P_EpistemicGoals_Theory",
-            "type": "checkbox",
-            "title": "Theory (focus on a theoretical model rather than on explaining one specific phenomenon)",
-            "options": [
-                {
-                    "id": "TheoryAffirmation",
-                    "text": "Theory affirmation: Can we find evidence for the theory? (Not falsification)"
-                },
-                {
-                    "id": "TheoryDevelopment",
-                    "text": "Theory development (new theory)"
-                },
-                {
-                    "id": "TheoryExpansion",
-                    "text": "Theory expansion of existing theory"
-                },
-                {
-                    "id": "TheoryTesting",
-                    "text": "Testing of a theory"
-                }
-            ],
-            "info": "<b>Theory</b>: Focus on a theoretical model (i.e., a framework with the purpose of explaining multiple phenomena) rather than on explaining one specific phenomenon.<br><br>",
-            "condition":  "meta$RaterType === 'Applicant'"
-        },
-        {
-            "id": "P_EpistemicGoals_Other",
-            "type": "checkbox",
-            "title": "Other",
-            "options": [
-                {
-                    "id": "MeasurementAuxiliaries",
-                    "text": "Measurement & auxiliaries"
-                },
-                {
-                    "id": "CausalExplanation",
-                    "text": "Causal explanation for a single empirical phenomenon"
-                },
-                {
-                    "id": "Application",
-                    "text": "Application ('Make it work' - an engineering perspective)"
-                }
-            ],
-            "info": "<ul><li>{ $P_EpistemicGoals_Other_MeasurementAuxiliaries | <b>Measurement & auxiliaries</b>: Examine methodological factors that are necessary auxiliaries to answering substantive research questions } </li><li>{ $P_EpistemicGoals_Other_CausalExplanation | <b>Causal explanation</b>: Answer ‘why’ questions and establish explanations for <i>single</i> empirical phenomena (if you investigate a broader theoretical framework that aims to explain multiple phenomena, check one or more items in the <i>Theory</i> section above. } </li><li>{ $P_EpistemicGoals_Other_Application | <b>Application</b>: Focus on real-world interventions and aim to influence an outcome in a natural setting } </li></ul>",
-            "condition":  "meta$RaterType === 'Applicant'"
-        },
-        {
-            "id": "SEP_EPIGOALS3",
+            "id": "SEP_Suitable",
             "type": "separator"
         },
         {
@@ -1020,7 +911,7 @@
         {
             "id": "P_Sample_Representative",
             "type": "radio",
-            "title": "Representativeness of sample",
+            "title": "Representativeness of participant sample",
             "options": [
                 {
                     "id": "ConvenienceSample",
@@ -1033,6 +924,12 @@
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
             "info": "{ $P_Sample_Representative_RepresentativeSample | <b>Representative sample</b>: according to common characteristics, such as gender, age, city vs. countryside}"
+        },
+        {
+            "id": "P_Sample_Representative_Details",
+            "type": "text",
+            "title": "⤷ Please indicate (a) to which target population representativeness is aimed for and (b) which characteristics (e.g., age, gender, education) are considered.",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_Representative == 'RepresentativeSample'"
         },
         {
             "id": "P_Sample_WEIRD",
@@ -1049,6 +946,12 @@
                 }
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
+        },
+        {
+            "id": "P_Sample_WEIRD_Details",
+            "type": "text",
+            "title": "⤷ Name the non-WEIRD population(s)",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_WEIRD == 'non_WEIRD'"
         },
 
         {
@@ -1193,7 +1096,7 @@
         {
             "id": "P_Data_Type_Physiological_Other",
             "type": "text",
-            "title": "Type of physiological data: Other",
+            "title": "⤷ Type of physiological data: Other",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Data_Type_Physiological && $P_Data_Type_Physiological_Other"
         },
 
@@ -1201,7 +1104,7 @@
         {
             "id": "P_Data_Type_DesignLongitudinal",
             "type": "radio",
-            "title": "Study design 1",
+            "title": "Study design",
             "options": [
                 {
                     "id": "Crosssectional",
@@ -1738,7 +1641,7 @@
         {
             "id": "P_Theory_Type_Other",
             "type": "text",
-            "title": "Theory type/ Language: Other",
+            "title": "⤷ Theory type/ Language: Other",
             "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided' && $P_Theorizing_Type_Other"
         },
         {
@@ -1856,67 +1759,9 @@
             "title": "Sample size (if applicable, differentiate by levels / items / ...)",
             "condition": "$P_Suitable === 'Yes'"
         },
-
-        {
-            "id": "INTERSEP",
-            "type": "separator"
-        },
-
-        {
-            "id": "P_Interdisciplinary",
-            "type": "radio",
-            "title": "Multi-/Interdisciplinarity: The research was conducted ...",
-            "options": [
-                {
-                    "id": "None",
-                    "text": "with researchers from psychology only"
-                },
-                {
-                    "id": "Inter",
-                    "text": "in co-authorship with researchers or practitioners from different disciplines (beyond psychology)"
-                }
-            ]
-        },
-        {
-            "id": "P_Interdisciplinary_Discipline",
-            "type": "text",
-            "title": "⤷ Please list the specific (non-psychology) disciplines, separated by commas (e.g.: medicine, economics, ...):",
-            "condition": "$P_Interdisciplinary == 'Inter'"
-        },
-
-
         {
             "id": "P23P24SEP",
             "type": "separator"
-        },
-        {
-            "id": "P_MeritImpactRelevance_Info",
-            "type": "info",
-            "text": "<h2>Research Impact and Relevance</h2>"
-        },
-        {
-            "id": "P_PracticalRelevance_Info",
-            "type": "info",
-            "text": "<h3>Practical Relevance</h3>"
-        },
-        {
-            "id": "P_PracticalRelevance",
-            "type": "checkbox",
-            "title": "Does this research output have indirect or immediate practical relevance? Check all that apply:",
-            "options": [
-                {
-                    "id": "Indirect",
-                    "text": "The practical relevance of the study is indirect (e.g., through theory development, mechanism testing, method development)."
-                },
-                {
-                    "id": "Immediate",
-                    "text": "The study provides immediate practical implications (e.g., for policy design, organizational decisions, environmental design, everyday life)."
-                },
-                {
-                    "id": "InterventionEvaluation",
-                    "text": "The study evaluates one or multiple interventions in the field."
-                }
-            ]
         },
         {
             "id": "P_MeritStatement_Info",

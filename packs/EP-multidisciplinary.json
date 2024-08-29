@@ -1,0 +1,29 @@
+{
+    "version": "0.1.0",
+    "date": "2024-08-29",
+    "prefix": "MI",
+    "title": "Multi-/Interdisciplinarity",
+    "elements": [
+        {
+            "id": "MI_Interdisciplinary",
+            "type": "radio",
+            "title": "Multi-/Interdisciplinarity: The research was conducted ...",
+            "options": [
+                {
+                    "id": "None",
+                    "text": "with researchers from psychology only"
+                },
+                {
+                    "id": "Inter",
+                    "text": "in co-authorship with researchers or practitioners from different disciplines (beyond psychology)"
+                }
+            ]
+        },
+        {
+            "id": "MI_Interdisciplinary_Discipline",
+            "type": "text",
+            "title": "⤷ Please list the specific (non-psychology) disciplines, separated by commas (e.g.: medicine, economics, ...):",
+            "condition": "$MI_Interdisciplinary == 'Inter'"
+        }
+    ]
+}
