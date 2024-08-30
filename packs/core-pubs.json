@@ -1534,7 +1534,7 @@
         {
             "id": "P_Theory_Def",
             "type": "info",
-            "text": "<h3>Theory usage and development</h3><span style='background-color: lightyellow;'>[Note: So far, no scoring points have been assigned to the indicators on 'Theory']</span><br><br>In the following, the term '<i>theory</i>' is used for a set of (interconnected) ideas that explain empirical phenomena. Theories may be expressed in a narrative and/or a more formalized manner. The term '<i>model</i>' is reserved for a (part of a) theory that is expressed mathematically or algorithmically.",
+            "text": "<h3>Theory usage and development</h3><span style='background-color: lightyellow;'>[Note: So far, no scoring points have been assigned to the indicators on 'Theory']</span><br><br>In the following, the term <i>theory</i> is used for a set of conjectures about the world (i.e., assertions about structures, relations, and mechanisms) that explain empirical phenomena. The theory may be expressed in a narrative (i.e., primarily verbal) and/or a more formalized manner (i.e., a model).<br>The term <i>model</i> is reserved for a (part of a) theory that is expressed mathematically, algorithmically, or in terms of logical (IF-THEN) propositions, and which is able to reproduce patterns reflective of a to-be-explained phenomenon.",
             "condition": "$P_Suitable === 'Yes'"
         },
         {
@@ -1555,6 +1555,7 @@
                     "text": "Not applicable / cannot answer the question"
                 }
             ],
+            "info": "If the paper states theoretically derived hypotheses and alike, you should not choose 'descriptive' here.",
             "condition": "$P_Suitable === 'Yes'"
         },
 
@@ -1567,83 +1568,92 @@
         {
             "id": "P_Theorizing_Quality",
             "type": "checkbox",
-            "title": "The paper …",
+            "title": "Hygiene standards for papers developing and/or evaluating at least one theory. The paper …",
             "options": [
                 {
                     "id": "NarrativeAccount",
-                    "text": "contains an <b>explicit narrative account</b> of the <i>phenomena</i> that are to be explained, and of one or more hypothetical <i>mechanisms</i> accounting for them (i.e., a theory)."
+                    "text": "contains an <b>explicit narrative account</b> of (all) the <i>phenomena</i> that are to be explained, and of one or more hypothetical <i>mechanisms</i> accounting for them."
                 },
                 {
                     "id":"NarrativeDefinitions",
-                    "text": "contains <b>explicit narrative definitions of each element</b> (concepts, relationships, etc.) in the theory. All of this is made easily findable (e.g., under a standard heading 'Definitions')."
+                    "text": "contains <b>explicit narrative definitions of each element</b> (e.g., concepts, relationships between concepts) in the theory."
+                },
+                {
+                    "id":"BoundaryConditions",
+                    "text": "lists all (boundary) conditions under which the theory applies."
                 },
                 {
                     "id": "FormalizedAccount",
-                    "text": "contains a <b>formalized account of the theory (i.e., a model)</b> using a commonly accepted standard notation (e.g., mathematical or logical operations, ODD protocol for ABMs). This includes all connections among the elements of the theory, and a formalization of the phenomena that are to be explained."
+                    "text": "contains a <b>formalized account of the theory (i.e., a model)</b>. The model includes all connections among the elements of the theory, and a formalization of the phenomena that are to be explained."
                 }
             ],
-            "info": "Please apply these questions to the theory in your paper - regardless whether you (further) developed the theory or used someone else’s theory.",
+            "info": "Please apply these questions to the theory in your paper - regardless whether you (further) developed the theory or used someone else's theory.<br><br><i>Phenomena</i> are robust patterns in the world that have been confirmed in methodologically diverse empirical studies. While they are not always directly observable, they are implied by observation or measurement.<br><br><i>(Boundary) conditions</i> explicate under which conditions a theory applies (e.g., for which population, under which situational characteristics).<br><br>A <i>formalized account of the theory</i> can be achieved in various ways, typically by specifying the theory with (1) formal-logic (e.g., if-then propositions, rules of logic), (2) mathematical equations, or (3) in an agent-based (i.e., specification of individual entities and their interactions to simulate their effect on the system), or algorithmic model. Oftentimes, a model will mix multiple approaches (e.g., an agent-based model can include equations).",
             "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided'"
         },
         {
-            "id": "P_Theorizing_QualityFormalization",
+            "id": "P_Theorizing_ModelLanguage",
             "type": "checkbox",
-            "title": "The formalization of the theory …",
+            "title": "In what language or system is the model formulated?",
             "options": [
                 {
-                    "id": "MathProps",
-                    "text": "explicates the basic <b>mathematical properties</b> of all elements of the model (e.g., scalar vs. matrix; dimensionality; units carrying the information)."
-                },
-                {
-                    "id": "PossibleValues",
-                    "text": "explicates the <b>possible values for all elements</b> of the model (i.e., upper and lower bounds, scale level)."
-                },
-                {
-                    "id": "ObjectiveDerivation",
-                    "text": "explicitly derives predictions from that. The <b>derivation is objective</b>, in the sense that any person would come to the exact same predictions."
-                },
-                {
-                    "id": "Falsifiability",
-                    "text": "all stated predictions are in principle <b>falsifiable</b> (before considering operationalizations)."
-                }
-            ],
-            "info": "Please apply these questions to the theory in your paper - regardless whether you (further) developed the theory or used someone else’s theory.<br><br><ul><li><b>'basic mathematical properties'</b>: For example, if a formalization only contains the formula <i>Y = a*B + c</i>, even if all elements have a narrative definition, the mathematical properties might be unclear: Is <i>a</i> a constant, a vector, or a two-dimensional matrix?</li></ul>",
-            "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided' && $P_Theorizing_Quality_FormalizedAccount"
-        },
-        {
-            "id": "P_Theorizing_Type",
-            "type": "checkbox",
-            "title": "In what language or system is the theory formulated?",
-            "options": [
-                {
-                    "id": "Narrative",
-                    "text": "Narrative"
+                    "id": "FormalLogic",
+                    "text": "Formal-Logic"
                 },
                 {
                     "id": "Mathematical",
                     "text": "Mathematical"
                 },
                 {
-                    "id": "FormalLogic",
-                    "text": "Formal-Logic"
-                },
-                {
                     "id": "ABM",
-                    "text": "Agent-based model"
+                    "text": "Agent-based or algorithmic model"
                 },                
                 {
                     "id": "Other",
                     "text": "Other (please specify)"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided'"
+            "info": "More than one possible. Please tick all that apply.",
+            "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided' && $P_Theorizing_Quality_FormalizedAccount"
         },
         {
-            "id": "P_Theory_Type_Other",
+            "id": "P_Theorizing_ModelLanguage_Other",
             "type": "text",
             "title": "⤷ Theory type/ Language: Other",
-            "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided' && $P_Theorizing_Type_Other"
+            "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided' && $P_Theorizing_Quality_FormalizedAccount && P_Theorizing_ModelLanguage_Other"
         },
+
+
+
+        {
+            "id": "P_Theorizing_QualityFormalization",
+            "type": "checkbox",
+            "title": "The paper …",
+            "options": [
+                {
+                    "id": "AllElements",
+                    "text": "lists all elements of the model alongside their definitions (for instance in a table)."
+                },
+                {
+                    "id": "MathProps",
+                    "text": "explicates the basic mathematical properties of all elements of the model (e.g., scalar vs. matrix; dimensionality; units carrying the information)."
+                },
+                {
+                    "id": "PossibleValues",
+                    "text": "explicates the possible values for all elements of the model (i.e., upper and lower bounds, scale level)."
+                },
+                {
+                    "id": "PhenomenaReproduction",
+                    "text": "showcases that the model is able to reproduce the to-be-explained phenomenon or why it fails to do so."
+                },
+                {
+                    "id": "Falsifiability",
+                    "text": "showcases conditions which would allow to falsify the model."
+                }
+            ],
+            "info": "Please apply these questions to the theory in your paper - regardless whether you (further) developed the theory or used someone else’s theory.<br><br><ul><li>Under <i>elements</i> of a model we subsume all variables in the model (e.g., fixed and free parameters, outcomes), as well as all entities in the model, whose attributes are defined by variables.</li><li>Basic mathematical properties: For example, if a formalization only contains <code>Y = a*B + c</code>, even if all elements have a narrative definition, the mathematical properties might be unclear: For instance, is B a constant, a vector, or a two-dimensional matrix?</li></ul>",
+            "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided' && $P_Theorizing_Quality_FormalizedAccount"
+        },
+
         {
             "id": "P_Theorizing_Contribution",
             "type": "radio",
@@ -1693,7 +1703,7 @@
         {
             "id": "P_Theorizing_Test",
             "type": "radio",
-            "title": "Did you do a <b>confirmatory test</b> of (a part of) the theory?",
+            "title": "Did you test (a part of) this theory?",
             "options": [
                 {
                     "id": "No",
