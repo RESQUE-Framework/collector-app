@@ -870,7 +870,7 @@
             "default": [
                 "NewOwn"
             ],
-            "info": "Data set acquisition often is a collaborative enterprise with different contributor roles. { $P_Data_Source_ReuseOwn | Select 'Reuse of own existing data set' only, if you would qualify as a co-author with substantive contributions in a stand-alone data set publication of that data set. Otherwise, select 'Reuse of someone else's existing data set'.}<br><br>{ $P_TypeMethod_MetaAnalysis | In case of a meta-analysis, the extraction of effect sizes from the primary literature counts as 'Own new data collection'.}",
+            "info": "Data set acquisition often is a collaborative enterprise with different contributor roles. { $P_Data_Source_ReuseOwn | Select 'Reuse of own existing data set' only, if you would qualify as a co-author with substantive contributions in a stand-alone data set publication of that data set. Otherwise, select 'Reuse of someone else's existing data set'.}<br><br>{ $P_TypeMethod_MetaAnalysis | In case of a meta-analysis, the extraction of effect sizes from the primary literature counts as 'Own new data collection' (but <i>not</i> as 'Reuse of someone else's existing data set'.}",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes'",
             "tip_external": "Look in the abstract and/or method section. If no information can be found there, it might also be useful to look at the contributors of the repositories.<br><br><b>Search words:</b> simul*, data, OSF, availab*"
         },
@@ -911,7 +911,7 @@
         {
             "id": "P_Sample_Representative",
             "type": "radio",
-            "title": "Representativeness of participant sample",
+            "title": "Representativeness of participant sample (within the targeted population)",
             "options": [
                 {
                     "id": "ConvenienceSample",
@@ -923,7 +923,7 @@
                 }
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
-            "info": "{ $P_Sample_Representative_RepresentativeSample | <b>Representative sample</b>: according to common characteristics, such as gender, age, city vs. countryside}"
+            "info": "{ $P_Sample_Representative_RepresentativeSample | <b>Representative sample</b>: according to common characteristics, such as gender, age, city vs. countryside. Even if the sample targets a specific population (e.g., only participants wirth spider phobia), it can still be representative in terms of these characteristics - or a convenience sample within all spider phobia patients.}"
         },
         {
             "id": "P_Sample_Representative_Details",
@@ -1024,7 +1024,7 @@
 
        
         {
-            "id": "P_Data_Type_Behavioral",
+            "id": "P_Data_TypeBehavioral",
             "type": "checkbox",
             "title": "⤷ Type of behavioral data (check all that apply)",
             "options": [
@@ -1049,7 +1049,7 @@
         },
 
         {
-            "id": "P_Data_Type_Physiological",
+            "id": "P_Data_TypePhysiological",
             "type": "checkbox",
             "title": "⤷ Type of physiological data (check all that apply)",
             "options": [
@@ -1094,10 +1094,10 @@
         },
 
         {
-            "id": "P_Data_Type_Physiological_Other",
+            "id": "P_Data_TypePhysiological_Other",
             "type": "text",
             "title": "⤷ Type of physiological data: Other",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Data_Type_Physiological && $P_Data_Type_Physiological_Other"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Data_Type_Physiological && $P_Data_TypePhysiological_Other"
         },
 
 
@@ -1403,7 +1403,7 @@
                     "text": "Yes, all material necessary for a replication [provide doi or URL]"
                 }
             ],
-            "info": "Open Material refers to all material that is necessary to replicate a study. It typically includes questionnaire items, stimuli, texts for vignettes, or code for software that controls the experimental flow. {:'YesParts', 'YesEntire' | Only choose 'Yes' if the material substantially exceeds the open reproducible scripts. }<br><br><ul><li>{:0 | When to choose <b>'parts of the materials available'</b><br>Choose 'Yes, entire material' if a reasonable justification for only parts of material is given.<br>Choose 'Yes, parts of material' if no justification is given.</li><li>When to choose <b>'Not applicable'</b>: If no material has been used in the publication, or the entire material is contained in the open reproducible scripts.</li></ul>}",
+            "info": "Open Material refers to all material that is necessary to replicate a study. It typically includes questionnaire items, stimuli, texts for vignettes, or code for software that controls the experimental flow. {:'YesParts', 'YesEntire' | Only choose 'Yes' if the material substantially exceeds the open reproducible scripts. }<br><br><ul><li>{:0 | When to choose <b>'parts of the materials available'</b><br>Choose 'Yes, entire material' if a reasonable justification for only parts of material is given.<br>Choose 'Yes, parts of material' if no justification is given.</li><li>When to choose <b>'Not applicable'</b>: If no material has been used in the publication, or the entire material is contained in the open reproducible scripts.</li></ul><br>The pure existence of an Electronic Supplemental Material does not necessarily count as Open Material, for example if it only contains additional analyses or tables.",
             "condition": "$P_Suitable === 'Yes'",
             "tip_external":"<ul><li>Is a <b>link</b> to open materials provided (don't forget to check Appendix and Supplemental Materials)</li><li>Expect <b>'entire material'</b> as default if materials are available (only if the material is obviously <i>not</i> complete and no reasonable explanation is given, assign <b>'parts of materials'</b>)</li><li><b>'Not applicable'</b> is the default if 'reuse of existing data set', 'meta analysis' or 'simulation', <mark>but</mark> if there is additional material that shows an own contribution then assign <b>'Yes, entire material'</b></li></ul> "
         },
@@ -1496,7 +1496,7 @@
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis",
             "info": "<ul><li><b>Sample size</b>: Typically, an a priori power analysis was conducted and is reported. <b>Not enough</b> to receive points:<ul><li>'We will collect as many participants as possible'</li><li>Only saying which sample size is aimed at <b>without any rationale.</b> Be careful: The AsPredicted template states 'No need to justify decision'. This would <i>not</i> be sufficient in RESQUE.</li><li> If <b>'reuse of existing data set'</b>: Only reporting how many participants the original study had.</li></ul></li></ul><br><br><b>Hypothesis</b><br><br> Hypotheses in the preregistration should be the <b>same</b> as reported in the paper. Deviations must be explained.<br><br><b>Operationalizations</b><br><br><ul><li>If it is ambiguous ('I will use either questionnaire A or B') - without a decision rule - it is <b>'no'</b>.</li><li>In a secondary data preregistration ('reuse of existing data set'), the primary outcome should be defined</li></ul><br><br><b>Analysis Plan</b><br><br>Required to receive points:<ul><li>Dependent and independent variables must be <b>specified</b> (what’s the primary outcome?)</li><li><b>Specified decision rule:</b> What’s the alpha-level? When does a result speak in favor of the hypothesis, when against? (especially when multiple testing was conducted)</li></ul>",
-            "tip_external":"For <b>Operationalizations</b>:<br><br>If you would be able to rebuild the experimental setup based on the preregistered description of the measurement instruments, then assign <b>'yes'</b>. If it is too vague (e.g. only 'we will use reaction times'), then assign <b>'no'</b>."
+            "tip_external":"For <b>Operationalizations</b>:<br><br>If you would be able to rebuild the experimental setup based on the preregistered description of the measurement instruments, then assign <b>'yes'</b>. If it is too vague (e.g. only 'we will use reaction times'), then assign <b>'no'</b>.<br><br>ClinicalTrials.gov often lack the details for most of these aspects (often only the operationalizations are provided, but no sufficiently precise hypotheses, or sample size planning)."
         },
         {
             "id": "P_PreregisteredReplication",
