@@ -427,7 +427,7 @@
         Alpine.data('tab', () => ({
             hovering: false,
             showRemove: false,
-            
+
             hoverStart() {
                 this.hovering = true;
             },
@@ -470,23 +470,15 @@
             <div class="tabs-container">
                 <template x-for="tab, index in $store.data.input" :key="index">
                     <div style="position: relative;" x-data="tab">
-                        <div
-                            @mouseover="hoverStart"
-                            @mouseout="hoverEnd"
-                            @click="$store.data.currentTab = index"
+                        <div @mouseover="hoverStart" @mouseout="hoverEnd" @click="$store.data.currentTab = index"
                             x-html="`${$store.data.input[index].P_TopPaper_Select ? '⭐️ ' : ''}<b>${types[tab.type]}</b><br>${$store.data.input[index].Title ?? ''}`"
                             :class="{tab: true, active: $store.data.currentTab === index}">
                         </div>
-                        <span
-                            @mouseover="hoverStart"
-                            class="tab-delete-button tab-delete-menu"
-                            @click="showRemoveButton"
-                            x-show="index !== 0 && hovering && !showRemove">
+                        <span @mouseover="hoverStart" class="tab-delete-button tab-delete-menu"
+                            @click="showRemoveButton" x-show="index !== 0 && hovering && !showRemove">
                             X
                         </span>
-                        <button
-                            class="critical tab-delete-menu"
-                            x-show="showRemove"
+                        <button class="critical tab-delete-menu" x-show="showRemove"
                             @click="$store.data.removeResearchOutput(index)">
                             Remove
                         </button>
@@ -516,7 +508,8 @@
                 <h3 x-html="$store.forms[$store.data.currentInput.type].title"></h3>
 
                 <template x-if="$store.data.currentTab >= 0">
-                    <template x-for="(elem, index) in $store.forms[$store.data.currentInput.type].elements" :key="$store.data.currentInput.position + '_' + elem.id">
+                    <template x-for="(elem, index) in $store.forms[$store.data.currentInput.type].elements"
+                        :key="$store.data.currentInput.position + '_' + elem.id">
                         <div @click="$store.selectedIndicator = elem" x-show="evaluateCondition(elem.condition)"
                             onblur="actions[elem.onchange]()">
                             <p x-html="preprocessText(elem.title)" style="font-weight: bold;"></p>
@@ -584,8 +577,8 @@
                             <template x-if="elem.type === 'checkbox'">
                                 <template x-for="option in elem.options" :key="option.id">
                                     <label :for="elem.id + '_' + option.id">
-                                        <input x-model="$store.data.currentInput[elem.id + '_' + option.id]" type="checkbox"
-                                            :id="elem.id + '_' + option.id" />
+                                        <input x-model="$store.data.currentInput[elem.id + '_' + option.id]"
+                                            type="checkbox" :id="elem.id + '_' + option.id" />
                                         <span x-html="option.text"></span>
                                     </label>
                                 </template>
@@ -605,7 +598,8 @@
                             <span id="no-score">Applicant requests<br>manual processing</span>
                         </div>
 
-                        <div x-show="$store.data.score.scores[$store.data.currentTab].max > 0" id="current-score-container">
+                        <div x-show="$store.data.score.scores[$store.data.currentTab].max > 0"
+                            id="current-score-container">
                             <p id="score-percentage"><span
                                     x-text="$store.data.score.scores[$store.data.currentTab].percentage"></span>%</p>
                             <p id="score-dot">•</p>
@@ -687,7 +681,8 @@
 
             <h2>👋🏻 Welcome to the RESQUE tool!</h2>
             <p>We need to change the way we assess research - with a focus on quality (over quantity). The <a
-                    href="https://github.com/RESQUE-Framework/collector-app">RESearch QUality Evaluation (RESQUE)</a> framework
+                    href="https://github.com/RESQUE-Framework/collector-app">RESearch QUality Evaluation (RESQUE)</a>
+                framework
                 provides an evaluation scheme for publications, data sets, and research software. With this tool, you
                 can enter the necessary information for your best research outputs, export a profile that shows your
                 research style (<i>not implemented yet</i>), and use it for your CV or in hiring and tenure committees.
@@ -769,7 +764,8 @@
     <div id="mobile">
         <div class="card">
             This window is too small for the <b>RESQUE</b> tool.
-            <br><br> Please visit <a href="https://resque-framework.github.io/collector-app">resque-framework.github.io/collector-app</a> on
+            <br><br> Please visit <a
+                href="https://resque-framework.github.io/collector-app">resque-framework.github.io/collector-app</a> on
             a computer. If you are already on a computer, please make this window larger.
             <hr>
             <a class="github-link" href="https://github.com/RESQUE-Framework/collector-app">GitHub</a>
@@ -1035,8 +1031,29 @@
             }
         }
 
+        const filterExport = (result) => {
+            const elements = Alpine.store('forms')[result.type].elements;
+
+            const allIds = elements.map(e => e.id);
+
+            const filteredIds = [
+                ...(elements
+                    .filter(e => evaluateCondition(e.condition))
+                    .map(e => e.id)),
+                'date_added', 'position', 'type', 'version'
+            ];
+
+            const filteredData = Object.fromEntries(
+                Object.entries(result).filter(([key, value]) => filteredIds.includes(key))
+            );
+
+            return filteredData;
+        }
+
         const exp = () => {
-            const data = Alpine.store('data').input;
+            const data = Alpine.store('data').input
+                // only export the data that is currently visible
+                .map(filterExport);
 
             let millis = Date.now();
             data.date_exported = millis;
