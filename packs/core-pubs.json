@@ -1102,7 +1102,7 @@
 
 
         {
-            "id": "P_Data_Type_DesignLongitudinal",
+            "id": "P_Longitudinal",
             "type": "radio",
             "title": "Study design",
             "options": [
@@ -1120,7 +1120,7 @@
         }, 
 
         {
-            "id": "P_Data_Type_DesignExperimental",
+            "id": "P_DesignExperimental",
             "type": "radio",
             "title": "Experimental design",
             "options": [
@@ -1137,7 +1137,7 @@
         }, 
 
         {
-            "id": "P_Data_Type_DesignExperimental_Effort",
+            "id": "P_DesignExperimental_Effort",
             "type": "radio",
             "title": "⤷ Effort of experimental manipulation",
             "options": [
@@ -1154,7 +1154,7 @@
                     "text": "High (e.g., doing a clinical intervention across multiple weeks)"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Data_Type_DesignExperimental == 'Experimental'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_DesignExperimental == 'Experimental'"
         }, 
 
 
