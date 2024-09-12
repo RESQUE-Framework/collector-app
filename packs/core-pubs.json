@@ -877,7 +877,7 @@
         {
             "id": "P_Sample_Type",
             "type": "radio",
-            "title": "Type of sample",
+            "title": "Type of participant sample",
             "options": [
                 {
                     "id": "MostlyPsychStudents",
@@ -955,7 +955,7 @@
         {
             "id": "P_Sample_WEIRD",
             "type": "radio",
-            "title": "WEIRDness of sample",
+            "title": "WEIRDness of participant sample",
             "options": [
                 {
                     "id": "NotApplicable",
@@ -990,7 +990,7 @@
         {
             "id": "P_Sample_CrossCultural",
             "type": "radio",
-            "title": "Cultural diversity of sample / cross-cultural research",
+            "title": "Cultural diversity of participant sample / cross-cultural research",
             "options": [  
                 {
                     "id": "NotApplicable",
@@ -1022,7 +1022,7 @@
             "options": [
                 {
                     "id": "QuestionnaireSelfreport",
-                    "text": "Questionnaire (self report)"
+                    "text": "Questionnaire (self report), including self-reported behavioral intentions"
                 },
                 {
                     "id": "QuestionnaireOtherreport",
@@ -1077,11 +1077,11 @@
                 },
                 {
                     "id": "ObservedLab",
-                    "text": "Observed behavior (lab / artificial situation)"
+                    "text": "Observed actual behavior (lab / artificial situation)"
                 },
                 {
                     "id": "ObservedReallife",
-                    "text": "Observed behavior (naturalistic situation)"
+                    "text": "Observed actual behavior (naturalistic situation)"
                 },
                 {
                     "id": "ObservedResidues",
