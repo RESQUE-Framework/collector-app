@@ -899,8 +899,19 @@
                     "id": "Rare",
                     "text": "Specific target population, hard to acquire (e.g., babies, inmates, rare disorders)"
                 }
+                ,
+                {
+                    "id": "Other",
+                    "text": "Other"
+                }
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
+        },
+        {
+            "id": "P_Sample_Type_Other",
+            "type": "text",
+            "title": "⤷ Please specify the sample type",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_Type == 'Other'"
         },
         {
             "id": "P_Sample_Type_RareOther",
@@ -945,6 +956,7 @@
                     "text": "non-WEIRD"
                 }
             ],
+            "info": "This question is more about the cultural context where the study took place. Hence, even if some participants were non-WEIRD, the study would still be considered WEIRD if the majority of participants were WEIRD. Only if the majority of participants were non-WEIRD, the study would be considered non-WEIRD.",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
         },
         {
