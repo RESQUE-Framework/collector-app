@@ -925,28 +925,42 @@
             "title": "Representativeness of participant sample (within the targeted population)",
             "options": [
                 {
+                    "id": "NotApplicable",
+                    "text": "Not applicable"
+                },
+                {
                     "id": "ConvenienceSample",
                     "text": "Convenience sample"
                 },
                 {
                     "id": "RepresentativeSample",
                     "text": "Representative sample"
-                }
+                }                
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
             "info": "{ $P_Sample_Representative_RepresentativeSample | <b>Representative sample</b>: according to common characteristics, such as gender, age, city vs. countryside. Even if the sample targets a specific population (e.g., only participants wirth spider phobia), it can still be representative in terms of these characteristics - or a convenience sample within all spider phobia patients.}"
         },
         {
+            "id": "P_Sample_Representative_NAexplanation",
+            "type": "text",
+            "title": "⤷ Not Applicable: Explanation",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_Representative == 'RepresentativeSample'"
+        },
+        {
             "id": "P_Sample_Representative_Details",
             "type": "text",
             "title": "⤷ Please indicate (a) to which target population representativeness is aimed for and (b) which characteristics (e.g., age, gender, education) are considered.",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_Representative == 'RepresentativeSample'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_Representative == 'NotApplicable'"
         },
         {
             "id": "P_Sample_WEIRD",
             "type": "radio",
             "title": "WEIRDness of sample",
             "options": [
+                {
+                    "id": "NotApplicable",
+                    "text": "Not applicable"
+                },
                 {
                     "id": "WEIRD",
                     "text": "WEIRD: Western, Educated, Industrialized, Rich and Democratic"
@@ -960,6 +974,13 @@
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
         },
         {
+            "id": "P_Sample_WEIRD_NAexplanation",
+            "type": "text",
+            "title": "⤷ Not Applicable: Explanation",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_WEIRD == 'NotApplicable'"
+        },
+        
+        {
             "id": "P_Sample_WEIRD_Details",
             "type": "text",
             "title": "⤷ Name the non-WEIRD population(s)",
@@ -970,7 +991,11 @@
             "id": "P_Sample_CrossCultural",
             "type": "radio",
             "title": "Cultural diversity of sample / cross-cultural research",
-            "options": [                
+            "options": [  
+                {
+                    "id": "NotApplicable",
+                    "text": "Not applicable"
+                },              
                 {
                     "id": "SingleCulture",
                     "text": "Single cultural or ethnic background"
@@ -982,6 +1007,12 @@
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
             "info": "This question does not necessarily correlate with the nationality of participants. Please make a judgement whether, for example, multiple European subsamples actually qualify as 'Multiple cultural or ethnic backgrounds', or whether different ethnic backgrounds are sampled on purpose within one nation."
+        },
+        {
+            "id": "P_Sample_CrossCultural_NAexplanation",
+            "type": "text",
+            "title": "⤷ Not Applicable: Explanation",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_CrossCultural == 'NotApplicable'"
         },
 
         {
