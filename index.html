@@ -407,8 +407,8 @@
         });
 
         Alpine.effect(async () => {
-            const doi = Alpine.store('data').currentInput.DOI;
             const doiTab = Alpine.store('data').currentTab;
+            const doi = Alpine.store('data').input[doiTab].DOI;
 
             if (!doi) {
                 return;
