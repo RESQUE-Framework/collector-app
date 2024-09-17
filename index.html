@@ -1036,10 +1036,16 @@
 
             const allIds = elements.map(e => e.id);
 
+            const filteredElements = elements
+                    .filter(e => evaluateCondition(e.condition));
+
+            const checkboxIds = filteredElements
+                .filter(e => e.type === 'checkbox')
+                .map(e => e.options.map(o => e.id + '_' + o.id))
+                .flat();
+
             const filteredIds = [
-                ...(elements
-                    .filter(e => evaluateCondition(e.condition))
-                    .map(e => e.id)),
+                ...(filteredElements.map(e => e.id).concat(checkboxIds)),
                 'date_added', 'position', 'type', 'version'
             ];
 
