@@ -366,6 +366,22 @@
             "tip_external": "As an external rater, you are very unlikely to find this information."
         },
         {
+            "id": "P_CRediT_InJournal",
+            "type": "radio",
+            "title": "Was the CRediT information officially published in the paper itself?",
+            "options": [
+                {
+                    "id": "Yes",
+                    "text": "Yes"
+                },
+                {
+                    "id": "No",
+                    "text": "No (please still add the CRediT information here)"
+                }
+            ],
+            "condition":  "meta$RaterType === 'Applicant'"
+        },
+        {
             "id": "P_CRediT_Conceptualization",
             "type": "radio",
             "title": "Conceptualization",
@@ -919,74 +935,80 @@
             "title": "⤷ Please specify the hard to acquire population",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_Type == 'Rare'"
         },
+
+
+
+
         {
-            "id": "P_Sample_Representative",
+            "id": "P_Sample_RepresentativenessRelevance",
             "type": "radio",
-            "title": "Representativeness of participant sample (within the targeted population)",
+            "title": "Does the paper investigate a research question for which group differences regarding demographic variables (e.g., culture, age, or gender) are particularly relevant?",
             "options": [
                 {
                     "id": "NotApplicable",
                     "text": "Not applicable"
                 },
                 {
-                    "id": "ConvenienceSample",
-                    "text": "Convenience sample"
+                    "id": "No",
+                    "text": "No"
                 },
                 {
-                    "id": "RepresentativeSample",
-                    "text": "Representative sample"
+                    "id": "Yes",
+                    "text": "Yes"
                 }                
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
-            "info": "{ $P_Sample_Representative_RepresentativeSample | <b>Representative sample</b>: according to common characteristics, such as gender, age, city vs. countryside. Even if the sample targets a specific population (e.g., only participants wirth spider phobia), it can still be representative in terms of these characteristics - or a convenience sample within all spider phobia patients.}"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
         },
         {
-            "id": "P_Sample_Representative_NAexplanation",
+            "id": "P_Sample_RepresentativenessRelevance_NAexplanation",
             "type": "text",
             "title": "⤷ Not Applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_Representative == 'NotApplicable'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_RepresentativenessRelevance == 'NotApplicable'"
+        },
+
+
+        {
+            "id": "P_Sample_Representative",
+            "type": "radio",
+            "title": "Was the sample approximately representative with respect to these potentially relevant demographic variables (e.g., a sample that is not White Educated Industrialized Rich Democratic [WEIRD])?",
+            "options": [
+                {
+                    "id": "No",
+                    "text": "No (e.g., convenience sample)"
+                },
+                {
+                    "id": "Yes",
+                    "text": "Yes, we took care of representativeness"
+                }                
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_RepresentativenessRelevance == 'Yes'"
         },
         {
             "id": "P_Sample_Representative_Details",
             "type": "text",
-            "title": "⤷ Please indicate (a) to which target population representativeness is aimed for and (b) which characteristics (e.g., age, gender, education) are considered.",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_Representative == 'RepresentativeSample'"
-        },
-        {
-            "id": "P_Sample_WEIRD",
-            "type": "radio",
-            "title": "WEIRDness of participant sample",
-            "options": [
-                {
-                    "id": "NotApplicable",
-                    "text": "Not applicable"
-                },
-                {
-                    "id": "WEIRD",
-                    "text": "WEIRD: Western, Educated, Industrialized, Rich and Democratic"
-                },
-                {
-                    "id": "non_WEIRD",
-                    "text": "non-WEIRD"
-                }
-            ],
-            "info": "This question is more about the cultural context where the study took place. Hence, even if some participants were non-WEIRD, the study would still be considered WEIRD if the majority of participants were WEIRD. Only if the majority of participants were non-WEIRD, the study would be considered non-WEIRD.",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
-        },
-        {
-            "id": "P_Sample_WEIRD_NAexplanation",
-            "type": "text",
-            "title": "⤷ Not Applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_WEIRD == 'NotApplicable'"
-        },
-        
-        {
-            "id": "P_Sample_WEIRD_Details",
-            "type": "text",
-            "title": "⤷ Name the non-WEIRD population(s)",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_WEIRD == 'non_WEIRD'"
+            "title": "⤷ Please indicate (a) to which target population representativeness was aimed for and (b) which characteristics (e.g., age, gender, education, culture) were explicitly considered.",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_RepresentativenessRelevance == 'Yes' && $P_Sample_Representative == 'Yes'"
         },
 
+        {
+            "id": "P_CoG_ParcipantSample",
+            "type": "radio",
+            "title": "Are the Constraints on Generality explicitly discussed for the participant sample?",
+            "options": [
+                {
+                    "id": "No",
+                    "text": "No"
+                },
+                {
+                    "id": "Yes",
+                    "text": "Yes"
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_RepresentativenessRelevance != 'NotApplicable'"
+        },
+
+
+      
         {
             "id": "P_Sample_CrossCultural",
             "type": "radio",
@@ -1013,6 +1035,93 @@
             "type": "text",
             "title": "⤷ Not Applicable: Explanation",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_CrossCultural == 'NotApplicable'"
+        },
+
+        {
+            "id": "stimsep",
+            "type": "separator",
+            "condition": "$P_Suitable === 'Yes'"
+        },
+
+
+        {
+            "id": "P_Stimuli_Relevance",
+            "type": "radio",
+            "title": "Does the paper use stimuli in a substantive way?",
+            "options": [
+                {
+                    "id": "NotApplicable",
+                    "text": "Not applicable"
+                },
+                {
+                    "id": "No",
+                    "text": "No"
+                },
+                {
+                    "id": "Yes",
+                    "text": "Yes"
+                }                
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
+        },
+        {
+            "id": "P_Stimuli_Relevance_NAexplanation",
+            "type": "text",
+            "title": "⤷ Not Applicable: Explanation",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli_Relevance == 'NotApplicable'"
+        },
+        {
+            "id": "P_Stimuli_Representative",
+            "type": "radio",
+            "title": "Representativenss of stimulus sample (within the relevant stimulus population) ",
+            "options": [
+                {
+                    "id": "NotApplicable",
+                    "text": "Not applicable"
+                },
+                {
+                    "id": "NotConsidered",
+                    "text": "Not explicitly considered"
+                },
+                {
+                    "id": "ConsideredInvestigator",
+                    "text": "Explicitly considered, stimuli chosen by investigators"
+                },
+                {
+                    "id": "ConsideredSampled",
+                    "text": "Expliclty considered, stimuli randomly sampled from population"
+                }                
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli_Relevance == 'Yes'"
+        },
+        {
+            "id": "P_Stimuli_Representative_NAexplanation",
+            "type": "text",
+            "title": "⤷ Not Applicable: Explanation",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli_Relevance == 'Yes' && $P_Stimuli_Representative == 'NotApplicable'"
+        },
+
+        {
+            "id": "P_CoG_StimulusSample",
+            "type": "radio",
+            "title": "Are the Constraints on Generality explicitly discussed for the stimulus sample?",
+            "options": [
+                {
+                    "id": "No",
+                    "text": "No"
+                },
+                {
+                    "id": "Yes",
+                    "text": "Yes"
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli_Relevance == 'Yes' && $P_Stimuli_Representative != 'NotApplicable'"
+        },
+
+        {
+            "id": "stimsep2",
+            "type": "separator",
+            "condition": "$P_Suitable === 'Yes'"
         },
 
         {
