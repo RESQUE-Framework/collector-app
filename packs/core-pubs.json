@@ -1,36 +1,36 @@
 {
-    "version": "0.4.0",
-    "date": "2024-08-27",
+    "version": "0.4.1",
+    "date": "2024-09-17",
     "prefix": "P",
     "title": "Publication",
     "scoring": {
         "P_Data_Open_AccessLevel": {
-            "not_applicable": "($P_Suitable === 'No') || (($P_Data_Open === 'NotApplicable') && (exists($P_Data_Open_NAExplanation))) || ($P_Data === 'No') || (!($P_Data_Source_NewOwn) && !($P_Data_Source_ReuseOwn) && !($P_Data_Source_ReuseCompilation))",
+            "not_applicable": "($P_Suitable === 'No') || (($P_Data_Open === 'NotApplicable') && (exists($P_Data_Open_NAExplanation))) || ($P_Data === 'No') || (!($P_Data_Source_NewOwn) && !($P_Data_Source_ReuseOwn) && !($P_Data_Source_ReuseCompilation) && !($P_Data_Source_Simulated))",
             "max": 1,
             "op": "select",
             "points": [
                 {
                     "value": 1,
-                    "condition": "($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn) && ($P_Data_Open === 'YesEntire') && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || (($P_Data_Open_AccessLevel === 'ZK2') && (exists($P_Data_Open_AccessLevel_ZK2Explanation))))"
+                    "condition": "($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn ||$P_Data_Source_ReuseCompilation || $P_Data_Source_Simulated) && ($P_Data_Open === 'YesEntire') && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || (($P_Data_Open_AccessLevel === 'ZK2') && (exists($P_Data_Open_AccessLevel_ZK2Explanation))))"
                 }
             ]
         },
         "P_Data_Open_FAIR": {
-            "not_applicable": "($P_Suitable === 'No') || (($P_Data_Open === 'NotApplicable') && (exists($P_Data_Open_NAExplanation))) || ($P_Data === 'No')  || (!($P_Data_Source_NewOwn) && !($P_Data_Source_ReuseOwn) && !($P_Data_Source_ReuseCompilation))",
+            "not_applicable": "($P_Suitable === 'No') || (($P_Data_Open === 'NotApplicable') && (exists($P_Data_Open_NAExplanation))) || ($P_Data === 'No')  || (!($P_Data_Source_NewOwn) && !($P_Data_Source_ReuseOwn) && !($P_Data_Source_ReuseCompilation) && !($P_Data_Source_Simulated))",
             "max": 1,
             "op": "sum",
             "points": [
                 {
                     "value": 0.25,
-                    "condition": "(exists($P_Data_Open_FAIR_PersistentIdentifier)) && ($P_Data === 'Yes') && ($P_Data_Source_NewOwn) && ($P_Data_Open === 'YesEntire') &&(($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || (($P_Data_Open_AccessLevel === 'ZK2') && (exists($P_Data_Open_AccessLevel_ZK2Explanation))))"
+                    "condition": "(exists($P_Data_Open_FAIR_PersistentIdentifier)) && ($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_Simulated) && ($P_Data_Open === 'YesEntire') &&(($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || (($P_Data_Open_AccessLevel === 'ZK2') && (exists($P_Data_Open_AccessLevel_ZK2Explanation))))"
                 },
                 {
                     "value": 0.5,
-                    "condition": "($P_Data_Open_FAIR_Codebook) && ($P_Data === 'Yes') && ($P_Data_Source_NewOwn) && ($P_Data_Open === 'YesEntire') && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || (($P_Data_Open_AccessLevel === 'ZK2') && (exists($P_Data_Open_AccessLevel_ZK2Explanation))))"
+                    "condition": "($P_Data_Open_FAIR_Codebook) && ($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_Simulated) && ($P_Data_Open === 'YesEntire') && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || (($P_Data_Open_AccessLevel === 'ZK2') && (exists($P_Data_Open_AccessLevel_ZK2Explanation))))"
                 },
                 {
                     "value": 0.25,
-                    "condition": "($P_Data_Open_FAIR_StructuredOpenFormat) && ($P_Data === 'Yes') && ($P_Data_Source_NewOwn) && ($P_Data_Open === 'YesEntire') && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || (($P_Data_Open_AccessLevel === 'ZK2') && (exists($P_Data_Open_AccessLevel_ZK2Explanation))))"
+                    "condition": "($P_Data_Open_FAIR_StructuredOpenFormat) && ($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_Simulated) && ($P_Data_Open === 'YesEntire') && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || (($P_Data_Open_AccessLevel === 'ZK2') && (exists($P_Data_Open_AccessLevel_ZK2Explanation))))"
                 }
             ]
         },
@@ -371,12 +371,12 @@
             "title": "Was the CRediT information officially published in the paper itself?",
             "options": [
                 {
-                    "id": "Yes",
-                    "text": "Yes"
-                },
-                {
                     "id": "No",
                     "text": "No (please still add the CRediT information here)"
+                },
+                {
+                    "id": "Yes",
+                    "text": "Yes"
                 }
             ],
             "condition":  "meta$RaterType === 'Applicant'"
@@ -993,7 +993,7 @@
         {
             "id": "P_CoG_ParcipantSample",
             "type": "radio",
-            "title": "Are the Constraints on Generality explicitly discussed for the participant sample?",
+            "title": "Are Constraints on Generality explicitly discussed for the participant sample?",
             "options": [
                 {
                     "id": "No",
@@ -1073,7 +1073,7 @@
         {
             "id": "P_Stimuli_Representative",
             "type": "radio",
-            "title": "Representativenss of stimulus sample (within the relevant stimulus population) ",
+            "title": "Representativeness of stimulus sample (within the relevant stimulus population) ",
             "options": [
                 {
                     "id": "NotApplicable",
@@ -1104,7 +1104,7 @@
         {
             "id": "P_CoG_StimulusSample",
             "type": "radio",
-            "title": "Are the Constraints on Generality explicitly discussed for the stimulus sample?",
+            "title": "Are Constraints on Generality explicitly discussed for the stimulus sample?",
             "options": [
                 {
                     "id": "No",
