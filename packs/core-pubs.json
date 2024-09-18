@@ -1669,7 +1669,7 @@
                 }
             ],
             "info": "As only <i>preregistered</i> replication attempts count, you need to provide the DOI or URL of the preregistration in the previous indicator. If the paper contains a replication which was not preregistered, please select <b>'No'</b>.<br><br>If the paper was preregistered, but does not contain a replication, select <b>'No'</b>. If you chose 'not applicable' at the previous indicator 'Preregistration', choose 'not applicable' here, too.",
-            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_MetaAnalysis",
+            "condition": "$P_Suitable === 'Yes'",
             "tip_external":"If it is a replication of a previously reported effect, it is <b>'yes'</b>, even if the replication is not the main research question of the preregistration.<br><b>Search word</b> (in preregistration):replica*"
         },
         {
