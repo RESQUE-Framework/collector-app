@@ -58,6 +58,10 @@
         const evaluateCondition = condition => condition ? evaluateConditionInContext(condition, Alpine.store('data').currentInput) : true;
 
         const evaluateConditionInContext = (condition, context) => {
+            if (!condition) {
+                return true;
+            }
+
             const exists = id => !!id && id !== "";
 
             return eval(insertValuesIntoCondition(preprocessCondition(condition)));
@@ -1037,7 +1041,7 @@
             const allIds = elements.map(e => e.id);
 
             const filteredElements = elements
-                    .filter(e => evaluateCondition(e.condition));
+                    .filter(e => evaluateConditionInContext(e.condition, result));
 
             const checkboxIds = filteredElements
                 .filter(e => e.type === 'checkbox')
