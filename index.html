@@ -1090,6 +1090,9 @@
 
             let millis = Date.now();
             data.date_exported = millis;
+
+            data[0].forms = Alpine.store('forms');
+            
             let json = JSON.stringify(data, null, 2);
             let blob = new Blob([json], { type: "text/json;charset=utf-8" });
             let filename = `resque_${data[0].LastName ? data[0].LastName.toLowerCase() + "_" : ""}${millis}.json`;
