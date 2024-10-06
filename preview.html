@@ -85,6 +85,11 @@
                 });
         }
 
+        const clearMarkup = text => {
+            return text
+                .replaceAll(/\{.+?\|(.*?)\}/g, '$1')
+        }
+
         // get params from query params from URL
         const resolvePackInQuery = () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -172,6 +177,20 @@
                                 style="font-size: small; color: gray;"></span>
                             <span x-show="elem.title" x-html="preprocessText(elem.title)"
                                 style="font-weight: bold;"></span>
+                            <span x-show="elem.info" x-data="{ hover: false }">
+                                <span
+                                    @mouseenter="hover = true"
+                                    @mouseleave="hover = false"
+                                > ℹ️</span>
+                                <span
+                                    x-show="hover"
+                                    class="tooltip"
+                                    @mouseenter="hover = true"
+                                    @mouseleave="hover = false"
+                                >
+                                    <span x-html="clearMarkup(elem.info)"></span>
+                                </span>
+                            </span>
                         </p>
                         <template x-if="elem.type === 'separator'">
                             <hr style="height: 3px; border:none; color: #333; background-color: #333;" />
@@ -256,6 +275,16 @@
             .no-print * {
                 display: none !important;
             }
+        }
+
+        .tooltip {
+            position: absolute;
+            background-color: #333;
+            color: #efefef;
+            padding: 16px;
+            border-radius: 8px;
+            max-width: 400px;
+            z-index: 1;
         }
     </style>
 </body>
