@@ -301,6 +301,29 @@
                             defaultValues[element.id + '_' + optionId] = true;
                         })
                     }
+                } else {
+                    // Define default values
+                    switch (element.type) {
+                        case 'separator':    
+                        case 'info':
+                            // No default values needed
+                            break;
+                        case 'text':
+                        case 'textbox':
+                        case 'number':
+                        case 'date':
+                        case 'dropdown':
+                        case 'radio':
+                            defaultValues[element.id] = '';
+                            break;
+                        case 'checkbox':
+                            element.options.forEach((option) => {
+                                defaultValues[element.id + '_' + option.id] = false;
+                            });
+                            break;
+                        default:
+                            defaultValues[element.id] = '';
+                    }
                 }
             }
 
@@ -1041,7 +1064,7 @@
             const allIds = elements.map(e => e.id);
 
             const filteredElements = elements
-                    .filter(e => evaluateConditionInContext(e.condition, result));
+                .filter(e => evaluateConditionInContext(e.condition, result));
 
             const checkboxIds = filteredElements
                 .filter(e => e.type === 'checkbox')
