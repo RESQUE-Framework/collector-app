@@ -50,6 +50,8 @@
             Alpine.store('packInQuery', packInQuery);
 
             Alpine.store('showLabels', packInQuery.showLabels);
+
+            Alpine.store('showPoints', packInQuery.showPoints);
         });
 
         const evaluateFilter = (filter, elemId) => {
@@ -98,6 +100,7 @@
             const filter = urlParams.get('filter');
             const path = urlParams.get('path') ?? '';
             const showLabels = urlParams.get('showLabels') === 'true';
+            const showPoints = urlParams.get('showPoints') === 'true';
 
             if (['meta', 'pubs', 'data', 'software'].includes(type)) {
                 type = `core-${type}`;
@@ -113,7 +116,8 @@
                 return {
                     filename: `${path}/${type}`,
                     filter: filter ?? '',
-                    showLabels
+                    showLabels,
+                    showPoints
                 }
             }
 
@@ -121,7 +125,8 @@
             return {
                 filename: '',
                 filter: '',
-                showLabels
+                showLabels,
+                showPoints
             };
         }
 
@@ -152,6 +157,12 @@
             <label style="display: inline-block;">
                 <input type="checkbox" x-model="$store.showLabels" />
                 Show indicator labels
+            </label>
+
+             <!-- Checkbox for showing points -->
+             <label style="display: inline-block;">
+                <input type="checkbox" x-model="$store.showPoints" />
+                Show points
             </label>
 
         </div>
@@ -239,6 +250,7 @@
                                 <template x-for="option in elem.options" :key="option.id">
                                     <label :for="elem.id + '_' + option.id">
                                         <input type="radio" :id="elem.id + '_' + option.id" :value="option.id" />
+                                        <i><span x-show="option.value && $store.showPoints" x-text="`(${option.value}P) `"></span></i>
                                         <span x-html="option.text"></span>
                                     </label>
                                 </template>
@@ -249,6 +261,7 @@
                             <template x-for="option in elem.options" :key="option.id">
                                 <label :for="elem.id + '_' + option.id">
                                     <input type="checkbox" :id="elem.id + '_' + option.id" />
+                                    <i><span x-show="option.value && $store.showPoints" x-text="`(${option.value}P) `"></span></i>
                                     <span x-html="option.text"></span>
                                 </label>
                             </template>
