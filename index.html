@@ -66,6 +66,8 @@
 
             const c = insertValuesIntoCondition(preprocessCondition(condition))
 
+            console.log(c)
+
             return eval(c);
         }
 
@@ -1169,10 +1171,10 @@
 
                     rule.points = item.options.map(option => {
                         condition = `($${item.id} === '${option.id}')`
-                            + (item.score.condition ? ` && ${item.score.condition}` : '');
+                            + (item.score.condition ? ` && (${item.score.condition})` : '');
 
                         if (option.explanation_required) {
-                            condition += ` && exists(${item.id}_${option.id}Explanation)`;
+                            condition += ` && exists($${item.id}_${option.id}Explanation)`;
                         }
 
                         return {
@@ -1188,7 +1190,7 @@
 
                     rule.points = item.options.map(option => {
                         condition = `$${item.id}_${option.id}`
-                            + (item.score.condition ? ` && ${item.score.condition}` : '');
+                            + (item.score.condition ? ` && (${item.score.condition})` : '');
 
                         if (option.explanation_required) {
                             condition += ` && exists(${item.id}_${option.id}Explanation)`;
