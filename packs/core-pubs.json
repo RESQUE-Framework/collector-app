@@ -3,163 +3,6 @@
     "date": "2024-09-17",
     "prefix": "P",
     "title": "Publication",
-    "scoring": {
-        "P_Data_Open_AccessLevel": {
-            "not_applicable": "($P_Suitable === 'No') || (($P_Data_Open === 'NotApplicable') && (exists($P_Data_Open_NAExplanation))) || ($P_Data === 'No') || (!($P_Data_Source_NewOwn) && !($P_Data_Source_ReuseOwn) && !($P_Data_Source_ReuseCompilation) && !($P_Data_Source_Simulated))",
-            "max": 1,
-            "op": "select",
-            "points": [
-                {
-                    "value": 1,
-                    "condition": "($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn ||$P_Data_Source_ReuseCompilation || $P_Data_Source_Simulated) && ($P_Data_Open === 'YesEntire') && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || (($P_Data_Open_AccessLevel === 'ZK2') && (exists($P_Data_Open_AccessLevel_ZK2Explanation))))"
-                }
-            ]
-        },
-        "P_Data_Open_FAIR": {
-            "not_applicable": "($P_Suitable === 'No') || (($P_Data_Open === 'NotApplicable') && (exists($P_Data_Open_NAExplanation))) || ($P_Data === 'No')  || (!($P_Data_Source_NewOwn) && !($P_Data_Source_ReuseOwn) && !($P_Data_Source_ReuseCompilation) && !($P_Data_Source_Simulated))",
-            "max": 1,
-            "op": "sum",
-            "points": [
-                {
-                    "value": 0.25,
-                    "condition": "(exists($P_Data_Open_FAIR_PersistentIdentifier)) && ($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_Simulated) && ($P_Data_Open === 'YesEntire') &&(($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || (($P_Data_Open_AccessLevel === 'ZK2') && (exists($P_Data_Open_AccessLevel_ZK2Explanation))))"
-                },
-                {
-                    "value": 0.5,
-                    "condition": "($P_Data_Open_FAIR_Codebook) && ($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_Simulated) && ($P_Data_Open === 'YesEntire') && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || (($P_Data_Open_AccessLevel === 'ZK2') && (exists($P_Data_Open_AccessLevel_ZK2Explanation))))"
-                },
-                {
-                    "value": 0.25,
-                    "condition": "($P_Data_Open_FAIR_StructuredOpenFormat) && ($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_Simulated) && ($P_Data_Open === 'YesEntire') && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || (($P_Data_Open_AccessLevel === 'ZK2') && (exists($P_Data_Open_AccessLevel_ZK2Explanation))))"
-                }
-            ]
-        },
-        "P_IndependentVerification": {
-            "not_applicable": "($P_Suitable === 'No') || (($P_IndependentVerification === 'NotApplicable') && (exists($P_IndependentVerification_NAExplanation)))",
-            "max": 2,
-            "op": "select",
-            "points": [
-                {
-                    "value": 0.5,
-                    "condition": "($P_IndependentVerification === 'WorkflowReproducible') && (exists($P_IndependentVerification_Identifier))"
-                },
-                {
-                    "value": 1,
-                    "condition": "($P_IndependentVerification === 'MainResultsReproducible') && (exists($P_IndependentVerification_Identifier))"
-                },
-                {
-                    "value": 1.5,
-                    "condition": "($P_IndependentVerification === 'AllResultsReproducible') && (exists($P_IndependentVerification_Identifier))"
-                },
-                {
-                    "value": 2,
-                    "condition": "($P_IndependentVerification === 'AnalysisReplication') && (exists($P_IndependentVerification_Identifier))"
-                }
-            ]
-        },
-        "P_ReproducibleScripts": {
-            "not_applicable": "($P_Suitable === 'No') || (($P_ReproducibleScripts === 'NotApplicable') && (exists($P_ReproducibleScripts_NAExplanation)))",
-            "max": 1,
-            "op": "select",
-            "points": [
-                {
-                    "value": 1,
-                    "condition": "($P_ReproducibleScripts === 'YesEntire') && (exists($P_ReproducibleScripts_Identifier))"
-                }
-            ]
-        },
-        "P_ReproducibleScripts_FAIR": {
-            "not_applicable": "($P_Suitable === 'No') || (($P_ReproducibleScripts === 'NotApplicable') && (exists($P_ReproducibleScripts_NAExplanation)))",
-            "max": 1,
-            "op": "sum",
-            "points": [
-                {
-                    "value": 0.20,
-                    "condition": "($P_ReproducibleScripts_FAIR_TimestampedRepository) && ($P_ReproducibleScripts =|= ['YesParts', 'YesEntire'])"
-                },
-                {
-                    "value": 0.20,
-                    "condition": "($P_ReproducibleScripts_FAIR_VersionControl) && ($P_ReproducibleScripts =|= ['YesParts', 'YesEntire'])"
-                },
-                {
-                    "value": 0.20,
-                    "condition": "($P_ReproducibleScripts_FAIR_ReproducibleManuscripts) && ($P_ReproducibleScripts =|= ['YesParts', 'YesEntire'])"
-                },
-                {
-                    "value": 0.20,
-                    "condition": "($P_ReproducibleScripts_FAIR_Documentation) && ($P_ReproducibleScripts =|= ['YesParts', 'YesEntire'])"
-                },
-                {
-                    "value": 0.20,
-                    "condition": "($P_ReproducibleScripts_FAIR_ReproducibleSoftwareEnvironments) && ($P_ReproducibleScripts =|= ['YesParts', 'YesEntire'])"
-                }
-            ]
-        },
-        "P_OpenMaterials": {
-            "not_applicable": "($P_Suitable === 'No') || (($P_OpenMaterials === 'NotApplicable') && (exists($P_OpenMaterials_NAExplanation)))",
-            "max": 1,
-            "op": "select",
-            "points": [
-                {
-                    "value": 0.5,
-                    "condition": "($P_OpenMaterials === 'YesParts') && (exists($P_OpenMaterials_Identifier))"
-                },
-                {
-                    "value": 1,
-                    "condition": "($P_OpenMaterials === 'YesEntire') && (exists($P_OpenMaterials_Identifier))"
-                }
-            ]
-        },
-        "P_Preregistration": {
-            "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation)))",
-            "max": 2,
-            "op": "select",
-            "points": [
-                {
-                    "value": 1,
-                    "condition": "($P_Preregistration === 'Yes') && (exists($P_Preregistration_Identifier))"
-                },
-                {
-                    "value": 2,
-                    "condition": "($P_Preregistration === 'RegisteredReport') && (exists($P_Preregistration_Identifier))"
-                }
-            ]
-        },
-        "P_Preregistration_Content": {
-            "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation)))",
-            "max": 1,
-            "op": "sum",
-            "points": [
-                {
-                    "value": 0.25,
-                    "condition": "($P_Preregistration_Content_SampleSizePlanning)"
-                },
-                {
-                    "value": 0.25,
-                    "condition": "($P_Preregistration_Content_Hypotheses)"
-                },
-                {
-                    "value": 0.25,
-                    "condition": "($P_Preregistration_Content_Operationalizations)"
-                },
-                {
-                    "value": 0.25,
-                    "condition": "($P_Preregistration_Content_AnalysisPlan)"
-                }
-            ]
-        },
-        "P_PreregisteredReplication": {
-            "not_applicable": "($P_Suitable === 'No') || (($P_PreregisteredReplication === 'NotApplicable') && (exists($P_PreregisteredReplication_NAExplanation)))",
-            "max": 1,
-            "op": "select",
-            "points": [
-                {
-                    "value": 1,
-                    "condition": "($P_PreregisteredReplication === 'Yes')"
-                }
-            ]
-        }
-    },
     "elements": [        
         {
             "id": "P_Info",
@@ -1353,18 +1196,27 @@
             "id": "P_Data_Open_AccessLevel",
             "type": "radio",
             "title": "⤷ Access level",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || (($P_Data_Open === 'NotApplicable') && (exists($P_Data_Open_NAExplanation))) || ($P_Data === 'No') || (!($P_Data_Source_NewOwn) && !($P_Data_Source_ReuseOwn) && !($P_Data_Source_ReuseCompilation) && !($P_Data_Source_Simulated))",
+                "condition": "$P_Data === 'Yes'",
+                "op": "select" 
+            },
             "options": [
                 {
                     "id": "ZK0",
-                    "text": "ZK0 (open data)"
+                    "text": "ZK0 (open data)",
+                    "value": 1
                 },
                 {
                     "id": "ZK1",
-                    "text": "ZK1 (scientific use file)"
+                    "text": "ZK1 (scientific use file)",
+                    "value": 1
                 },
                 {
                     "id": "ZK2",
-                    "text": "ZK2 (restricted access) [provide justification]"
+                    "text": "ZK2 (restricted access) [provide justification]",
+                    "value": 1,
+                    "explanation_required": true
                 }
             ],
             "info": "For information about access levels, see <a href='https://rdc-psychology.org/access-data'>here</a>. <br> <ul><li>{:'ZK0' | <b>ZK0 / Sharing level 0 ('open for public use')</b>: Neither access to nor use of the data is restricted in any way. Research data provided in this category are typically licensed through standard licenses (e.g., CC-BY-SA 4.0)}</li><li>{:'ZK1' | <b>ZK1 / Sharing level 1 ('open for scientific use')</b>: Data re-use is limited to exclusively scientific purposes by means of a general use license. Proof of affiliation with a scientific institution and a brief description of the intended use must be provided.}</li><li>{:'ZK2' | <b>ZK2 / Sharing level 2 ('restricted scientific use')</b>: Comparable to ZK1, access and re-use is restricted to scientific purposes. In contrast to ZK1, however, individual license agreements are made that may contain other restrictions.}</li></ul>",
@@ -1381,18 +1233,25 @@
             "id": "P_Data_Open_FAIR",
             "type": "checkbox",
             "title": "⤷ FAIR format",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || (($P_Data_Open === 'NotApplicable') && (exists($P_Data_Open_NAExplanation))) || ($P_Data === 'No')  || (!($P_Data_Source_NewOwn) && !($P_Data_Source_ReuseOwn) && !($P_Data_Source_ReuseCompilation) && !($P_Data_Source_Simulated))",
+                "condition": "($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_Simulated) && ($P_Data_Open === 'YesEntire') && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || (($P_Data_Open_AccessLevel === 'ZK2') && (exists($P_Data_Open_AccessLevel_ZK2Explanation))))"
+            },
             "options": [
                 {
                     "id": "PersistentIdentifier",
-                    "text": "The data set has a globally unique, citable and persistent identifier (e.g., DOI, PURL, ARK)"
+                    "text": "The data set has a globally unique, citable and persistent identifier (e.g., DOI, PURL, ARK)",
+                    "value": 0.25
                 },
                 {
                     "id": "Codebook",
-                    "text": "All variables are comprehensively described in a codebook with a structured format"
+                    "text": "All variables are comprehensively described in a codebook with a structured format",
+                    "value": 0.5
                 },
                 {
                     "id": "StructuredOpenFormat",
-                    "text": "The data set is stored in a structured, open format (e.g., .csv, .tsv, .tab, .txt, .json; not .sav, .xlsx, .pdf)"
+                    "text": "The data set is stored in a structured, open format (e.g., .csv, .tsv, .tab, .txt, .json; not .sav, .xlsx, .pdf)",
+                    "value": 0.25
                 }
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open === 'YesEntire' && ($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1'] || $P_Data_Open_AccessLevel === 'ZK2' && $P_Data_Open_AccessLevel_ZK2Explanation)",
@@ -1408,22 +1267,30 @@
             "id": "P_ReproducibleScripts",
             "type": "radio",
             "title": "Open reproducible scripts",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || (($P_ReproducibleScripts === 'NotApplicable') && (exists($P_ReproducibleScripts_NAExplanation)))",
+                "condition": "(exists($P_ReproducibleScripts_Identifier))"
+            },
             "options": [
                 {
                     "id": "NotApplicable",
-                    "text": "Not applicable [provide explanation]"
+                    "text": "Not applicable [provide explanation]",
+                    "value": 0
                 },
                 {
                     "id": "NotAvailable",
-                    "text": "Not available"
+                    "text": "Not available",
+                    "value": 0
                 },
                 {
                     "id": "YesParts",
-                    "text": "Parts of scripts are available [provide doi or URL]"
+                    "text": "Parts of scripts are available [provide doi or URL]",
+                    "value": 0
                 },
                 {
                     "id": "YesEntire",
-                    "text": "The entire analysis pipeline is available, including preprocessing of the primary (raw) data [provide doi or URL]"
+                    "text": "The entire analysis pipeline is available, including preprocessing of the primary (raw) data [provide doi or URL]",
+                    "value": 1
                 }
             ],
             "info":"{'YesParts', 'YesEntire' | Only choose <b>`Yes`</b> if a doi or URL can be provided.} <br><br><b>When only parts of scripts available:</b><br>Choose `Yes, parts of scripts` if no justification is given.<br>Choose `Yes, entire scripts` if a reasonable justification for all missing scripts are provided.<br><br> When to choose <b>'Not applicable'</b>:<br>If no scripts have been used in the publication.",
@@ -1446,34 +1313,45 @@
             "id": "P_ReproducibleScripts_FAIR",
             "type": "checkbox",
             "title": "⤷ FAIR format",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || (($P_ReproducibleScripts === 'NotApplicable') && (exists($P_ReproducibleScripts_NAExplanation)))",
+                "condition": "($P_ReproducibleScripts =|= ['YesParts', 'YesEntire'])"
+            },
             "options": [
                 {
                     "id": "OpenLicense",
-                    "text": "The code has an explicitly stated open license (e.g., BSD, CC-BY, (L)GPL, MIT)"
+                    "text": "The code has an explicitly stated open license (e.g., BSD, CC-BY, (L)GPL, MIT)",
+                    "value": 0.2
                 },
                 {
                     "id": "TimestampedRepository",
-                    "text": "Timestamped repository"
+                    "text": "Timestamped repository",
+                    "value": 0.2
                 },
                 {
                     "id": "VersionControl",
-                    "text": "Version control"
+                    "text": "Version control",
+                    "value": 0.2
                 },
                 {
                     "id": "Documentation",
-                    "text": "Proper documentation of code"
+                    "text": "Proper documentation of code",
+                    "value": 0.2
                 },
                 {
                     "id": "ReproducibleSoftwareEnvironments",
-                    "text": "Reproducible software environment (e.g. <code>conda</code> environment, <code>renv</code> or <code>groundhog</code> in R)"
+                    "text": "Reproducible software environment (e.g. <code>conda</code> environment, <code>renv</code> or <code>groundhog</code> in R)",
+                    "value": 0.2
                 },
                 {
                     "id": "OneClickReproducibility",
-                    "text": "(Almost) One-click reproducibility with a master script (or equivalent)"
+                    "text": "(Almost) One-click reproducibility with a master script (or equivalent)",
+                    "value": 0.2
                 },
                 {
                     "id": "ReproducibleManuscripts",
-                    "text": "Reproducible manuscripts (e.g. with R Markdown)"
+                    "text": "Reproducible manuscripts (e.g. with R Markdown)",
+                    "value": 0.2
                 }
             ],
             "info": "<ul><li>{$P_ReproducibleScripts_FAIR_TimestampedRepository | <b>Timestamped repository</b>: Any repository that records and displays the timestamp when a file has been first uploaded and the last time it has been modified (e.g., GitHub, GitLab, OSF, Zenodo)</li> } <li>{$P_ReproducibleScripts_FAIR_VersionControl |<b>Version control</b>: Any repository that allows to go back in the history of a file with an established version control system, such as <code>git</code> (e.g., GitHub, GitLab. <i>Not</i> OSF or Zenodo.)</li> } <li>{$P_ReproducibleScripts_FAIR_Documentation | <b>Proper documentation of code</b>: The source code has sufficiently detailed comments so that a knowledgable re-user can understand what (and why) something has been done.</li> } <li>{$P_ReproducibleScripts_FAIR_ReproducibleSoftwareEnvironments | <b>Reproducible software environment</b>: The software environment is fully reproducible with an established tool such as <code>conda</code>, <code>renv</code> or <code>groundhog</code>. Just recording the <code>sessionInfo()</code> in R is not sufficient, as it places too much burden on reproduction attempts.</li> } <li>{$P_ReproducibleScripts_FAIR_ReproducibleManuscripts | <b>Reproducible manuscripts</b>: The final manuscript combines computations and text (e.g. Rmarkdown, Quarto, Jupyter notebooks) }</li></ul>",
@@ -1484,30 +1362,40 @@
             "id": "P_IndependentVerification",
             "type": "radio",
             "title": "Correctness of computational results has been independently verified",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || (($P_IndependentVerification === 'NotApplicable') && (exists($P_IndependentVerification_NAExplanation)))",
+                "condition": "(exists($P_IndependentVerification_Identifier))"
+            },
             "options": [
                 {
                     "id": "NotApplicable",
-                    "text": "Not applicable [provide explanation]"
+                    "text": "Not applicable [provide explanation]",
+                    "value": 0
                 },
                 {
                     "id": "No",
-                    "text": "No / not published"
+                    "text": "No / not published",
+                    "value": 0
                 },
                 {
                     "id": "WorkflowReproducible",
-                    "text": "Workflow reproducibility / code completeness check"
+                    "text": "Workflow reproducibility / code completeness check",
+                    "value": 0.5
                 },
                 {
                     "id": "MainResultsReproducible",
-                    "text": "Computational reproducibility of MAIN results has been indepedently verified using the original code"
+                    "text": "Computational reproducibility of MAIN results has been indepedently verified using the original code",
+                    "value": 1
                 },
                 {
                     "id": "AllResultsReproducible",
-                    "text": "Computational reproducibility of ALL numerical results has been independently verified using the original code"
+                    "text": "Computational reproducibility of ALL numerical results has been independently verified using the original code",
+                    "value": 1.5
                 },
                 {
                     "id": "AnalysisReplication",
-                    "text": "Analysis replication (independent implementation & verification)"
+                    "text": "Analysis replication (independent implementation & verification)",
+                    "value": 2
                 }
             ],
             "eval_dimension": "rigor",
@@ -1537,25 +1425,33 @@
             "id": "P_OpenMaterials",
             "type": "radio",
             "title": "Open materials (beyond the open reproducible scripts entered above)",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || (($P_OpenMaterials === 'NotApplicable') && (exists($P_OpenMaterials_NAExplanation)))",
+                "condition": "(exists($P_OpenMaterials_Identifier))"
+            },
             "options": [
                 {
                     "id": "NotApplicable",
-                    "text": "Not applicable [provide explanation]"
+                    "text": "Not applicable [provide explanation]",
+                    "value": 0
                 },
                 {
                     "id": "NotAvailable",
-                    "text": "Not available"
+                    "text": "Not available",
+                    "value": 0
                 },
                 {
                     "id": "YesParts",
-                    "text": "Yes, parts of material [provide doi or URL]"
+                    "text": "Yes, parts of material [provide doi or URL]",
+                    "value": 0.5
                 },
                 {
                     "id": "YesEntire",
-                    "text": "Yes, all material necessary for a replication [provide doi or URL]"
+                    "text": "Yes, all material necessary for a replication [provide doi or URL]",
+                    "value": 1
                 }
             ],
-            "info": "Open Material refers to all material that is necessary to replicate a study. It typically includes questionnaire items, stimuli, texts for vignettes, or code for software that controls the experimental flow. {:'YesParts', 'YesEntire' | Only choose 'Yes' if the material substantially exceeds the open reproducible scripts. }<br><br><ul><li>{:0 | When to choose <b>'parts of the materials available'</b><br>Choose 'Yes, entire material' if a reasonable justification for only parts of material is given.<br>Choose 'Yes, parts of material' if no justification is given.</li><li>When to choose <b>'Not applicable'</b>: If no material has been used in the publication, or the entire material is contained in the open reproducible scripts.</li></ul><br>The pure existence of an Electronic Supplemental Material does not necessarily count as Open Material, for example if it only contains additional analyses or tables.",
+            "info": "Open Material refers to all material that is necessary to replicate a study. It typically includes questionnaire items, stimuli, texts for vignettes, or code for software that controls the experimental flow. {:'YesParts', 'YesEntire' | Only choose 'Yes' if the material substantially exceeds the open reproducible scripts. }<br><br><ul><li>{:'YesParts' | When to choose <b>'parts of the materials available'</b><br>Choose 'Yes, entire material' if a reasonable justification for only parts of material is given.<br>Choose 'Yes, parts of material' if no justification is given.</li><li>When to choose <b>'Not applicable'</b>: If no material has been used in the publication, or the entire material is contained in the open reproducible scripts.</li></ul><br>The pure existence of an Electronic Supplemental Material does not necessarily count as Open Material, for example if it only contains additional analyses or tables.",
             "condition": "$P_Suitable === 'Yes'",
             "tip_external":"<ul><li>Is a <b>link</b> to open materials provided (don't forget to check Appendix and Supplemental Materials)</li><li>Expect <b>'entire material'</b> as default if materials are available (only if the material is obviously <i>not</i> complete and no reasonable explanation is given, assign <b>'parts of materials'</b>)</li><li><b>'Not applicable'</b> is the default if 'reuse of existing data set', 'meta analysis' or 'simulation', <mark>but</mark> if there is additional material that shows an own contribution then assign <b>'Yes, entire material'</b></li></ul> "
         },
@@ -1586,22 +1482,30 @@
             "id": "P_Preregistration",
             "type": "radio",
             "title": "Preregistration",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation)))",
+                "condition": "(exists($P_Preregistration_Identifier))"
+            },
             "options": [
                 {
                     "id": "NotApplicable",
-                    "text": "Not applicable [provide explanation]"
+                    "text": "Not applicable [provide explanation]",
+                    "value": 0
                 },
                 {
                     "id": "No",
-                    "text": "No"
+                    "text": "No",
+                    "value": 0
                 },
                 {
                     "id": "Yes",
-                    "text": "Yes (but not RR) [provide doi or URL]"
+                    "text": "Yes (but not RR) [provide doi or URL]",
+                    "value": 1
                 },
                 {
                     "id": "RegisteredReport",
-                    "text": "Registered Report [provide doi or URL]"
+                    "text": "Registered Report [provide doi or URL]",
+                    "value": 2
                 }
             ],
             "info": "{:'Yes' | Only choose <b>'Yes'</b> if the preregistration is time-stamped/registered before the publication of the study (check date).}<br><br><b>Multi Study Paper Case</b>: Only choose 'Yes' if your nominated study has been preregistered. <br><br> When to choose <b>'No'</b> <br> If the study was not preregistered or if preregistration is not time-stamped/registered <br><br> When to choose <b>'Not applicable'</b>:<ul><li>If the study type is 'Simulation' (except from benchmarking experiments), 'mainly theoretical Review' or no data has been used in a substantive way.</li>In rare cases: When the theory arguably is so precise that no preregistration is necessary.<li></li><li>There also might be other cases with reasonable justifications for no preregistration.</li></ul>",
@@ -1624,26 +1528,35 @@
             "id": "P_Preregistration_Content",
             "type": "checkbox",
             "title": "⤷ What has been preregistered? (check all that apply)",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation)))",
+                "condition": ""
+            },
             "options": [
                 {
                     "id": "SampleSizePlanning",
-                    "text": "Sample size planning (typically: an a priori power analysis)"
+                    "text": "Sample size planning (typically: an a priori power analysis)",
+                    "value": 0.20
                 },
                 {
                     "id": "Hypotheses",
-                    "text": "Hypotheses"
+                    "text": "Hypotheses",
+                    "value": 0.20
                 },
                 {
                     "id": "Operationalizations",
-                    "text": "Operationalizations"
+                    "text": "Operationalizations",
+                    "value": 0.20
                 },
                 {
                     "id": "AnalysisPlan",
-                    "text": "Analysis Plan"
+                    "text": "Analysis Plan",
+                    "value": 0.20
                 },
                 {
                     "id": "InferentialCriteria",
-                    "text": "Inferential criteria (e.g., defining your alpha level)"
+                    "text": "Inferential criteria (e.g., defining your alpha level)",
+                    "value": 0.20
                 }
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis",
@@ -1654,18 +1567,25 @@
             "id": "P_PreregisteredReplication",
             "type": "radio",
             "title": "The paper contains a preregistered replication attempt (either direct/close or conceptual)",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || (($P_PreregisteredReplication === 'NotApplicable') && (exists($P_PreregisteredReplication_NAExplanation)))",
+                "condition": ""
+            },
             "options": [
                 {
                     "id": "NotApplicable",
-                    "text": "Not applicable"
+                    "text": "Not applicable",
+                    "value": 0
                 },
                 {
                     "id": "No",
-                    "text": "No"
+                    "text": "No",
+                    "value": 0
                 },
                 {
                     "id": "Yes",
-                    "text": "Yes"
+                    "text": "Yes",
+                    "value": 1
                 }
             ],
             "info": "As only <i>preregistered</i> replication attempts count, you need to provide the DOI or URL of the preregistration in the previous indicator. If the paper contains a replication which was not preregistered, please select <b>'No'</b>.<br><br>If the paper was preregistered, but does not contain a replication, select <b>'No'</b>. If you chose 'not applicable' at the previous indicator 'Preregistration', choose 'not applicable' here, too.",
