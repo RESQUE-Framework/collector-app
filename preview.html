@@ -250,7 +250,7 @@
                                 <template x-for="option in elem.options" :key="option.id">
                                     <label :for="elem.id + '_' + option.id">
                                         <input type="radio" :id="elem.id + '_' + option.id" :value="option.id" />
-                                        <i><span x-show="option.value && $store.showPoints" x-text="`(${option.value}P) `"></span></i>
+                                        <i><span style="background-color: yellow;" x-show="option.value && $store.showPoints" x-text="`(${option.value}P) `"></span></i>
                                         <span x-html="option.text"></span>
                                     </label>
                                 </template>
@@ -261,7 +261,7 @@
                             <template x-for="option in elem.options" :key="option.id">
                                 <label :for="elem.id + '_' + option.id">
                                     <input type="checkbox" :id="elem.id + '_' + option.id" />
-                                    <i><span x-show="option.value && $store.showPoints" x-text="`(${option.value}P) `"></span></i>
+                                    <i><span style="background-color: yellow;" x-show="option.value && $store.showPoints" x-text="`(${option.value}P) `"></span></i>
                                     <span x-html="option.text"></span>
                                 </label>
                             </template>
