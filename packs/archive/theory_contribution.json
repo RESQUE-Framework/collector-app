@@ -1,0 +1,44 @@
+{
+    "id": "P_Theorizing_Contribution",
+    "type": "radio",
+    "title": "How much did you personally contribute to this version of the theory?",
+    "options": [
+        {
+            "id": "No",
+            "text": "I did not contribute to this version of the theory itself (i.e., I did no theoretical work beyond testing a theory)"
+        },
+        {
+            "id": "Yes",
+            "text": "I did contribute significantly to this version of the theory"
+        }
+    ],
+    "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided'"
+},
+{
+    "id": "P_Theorizing_ContributionType",
+    "type": "checkbox",
+    "title": "I significantly contributed to ...",
+    "options": [
+        {
+            "id": "NarrativeDevelopment",
+            "text": "the overall development of an entire narrative theory"
+        },
+        {
+            "id": "NarrativeRefinement",
+            "text": "the expansion or refinement of an existing narrative theory"
+        },
+        {
+            "id": "FormalizationFirst",
+            "text": "the first formalization of an existing narrative theory"
+        },
+        {
+            "id": "FormalizationStandAlone",
+            "text": "the overall development of an entire formal model of which there was no narrative version"
+        },
+        {
+            "id": "FormalizationRefinement",
+            "text": "the expansion or refinement of an existing formal model"
+        }
+    ],
+    "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided' && $P_Theorizing_Contribution === 'Yes'"
+}
