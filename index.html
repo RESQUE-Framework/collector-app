@@ -26,11 +26,14 @@
 
     <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 
 <body>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <script src="./chartutils.js"></script>
 
     <script>
         const preprocessCondition = condition => {
@@ -474,9 +477,9 @@
         Alpine.effect(() => {
             const data = Alpine.store('data').input;
 
-            Alpine.store('data').score = scoreAll(data);
+            const scores = scoreAll(data);
 
-            console.log(Alpine.store('data').score);
+            Alpine.store('data').score = scores;
 
             Alpine.store('warnings').reevaluate();
 
@@ -489,6 +492,15 @@
             showSaving();
 
             localStorage.setItem('data', JSON.stringify(data));
+
+            renderScoreChart('overallScoreChart', scores.overall.categories);
+
+            const currentScore = scores.scores[Alpine.store('data').currentTab];
+
+            if (currentScore && currentScore.categories) {
+                console.log(currentScore)
+                renderScoreChart('currentScoreChart', currentScore.categories);
+            }
         });
 
         Alpine.effect(() => {
@@ -702,6 +714,7 @@
                                     x-text="$store.data.score.scores[$store.data.currentTab].score.toFixed(2)"></span>/<span
                                     x-text="$store.data.score.scores[$store.data.currentTab].max.toFixed(2)"></span></p>
                         </div>
+                        <canvas id="currentScoreChart" width="200" height="200"></canvas>    
                     </div>
                     <div id="overall-score">
                         <span class="sub">Overall Rigor Score (mean)</span>
@@ -709,6 +722,7 @@
                             <p id="overall-score-percentage"><span
                                     x-text="$store.data.score.overall.percentage"></span>%</p>
                         </div>
+                        <canvas id="overallScoreChart" width="200" height="200"></canvas> 
                     </div>
                 </div>
                 <p id="ro-count-container"><span class="tag"><span
