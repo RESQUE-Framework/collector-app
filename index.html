@@ -66,8 +66,6 @@
 
             const c = insertValuesIntoCondition(preprocessCondition(condition))
 
-            console.log(c)
-
             return eval(c);
         }
 
@@ -215,6 +213,8 @@
             let maxScore = 0;
             let reachedScore = 0;
 
+            let itemScores = {};
+
             for (indicator in scoring) {
                 if (indicator === 'post') {
                     // skip post
@@ -224,22 +224,29 @@
                     continue;
                 }
 
-                maxScore += scoring[indicator].max;
+                itemMaxScore = scoring[indicator].max;
+                itemScore = 0;
 
                 switch (scoring[indicator].op) {
                     case "sum":
-                        reachedScore += scoring[indicator].points
+                        itemScore = scoring[indicator].points
                             .filter(p => evaluateConditionInContext(p.condition, r))
                             .reduce((sum, next) => sum + next.value, 0);
                         break;
                     case "select":
-                        reachedScore += (scoring[indicator].points.find(p => evaluateConditionInContext(p.condition, r)) || { value: 0 }).value;
+                        itemScore = (scoring[indicator].points.find(p => evaluateConditionInContext(p.condition, r)) || { value: 0 }).value;
                         break;
                     default:
                         break;
                 }
 
+                maxScore += itemMaxScore;
+                reachedScore += itemScore;
 
+                itemScores[indicator] = {
+                    max: itemMaxScore,
+                    score: itemScore
+                }
             }
 
             if (scoring.post) {
@@ -251,11 +258,48 @@
                 })
             }
 
+            const categories = [
+                {
+                    title: "Theorizing & Formal Modeling",
+                    cue: "Theorizing"
+                },
+                {
+                    title: "Open Data",
+                    cue: "Data"
+                },
+                {
+                    title: "Open Materials",
+                    cue: "OpenMaterials"
+                },
+                {
+                    title: "Preregistration",
+                    cue: "Prereg"
+                },
+                {
+                    title: "Reproducible Code & Verification",
+                    cue: "ReproducibleScripts|IndependentVerification"
+                }
+            ]
+
+            const categoryScores = categories.map(category => {
+                const categoryIndicators = Object.keys(itemScores).filter(indicator => new RegExp(category.cue).test(indicator));
+                const categoryMax = categoryIndicators.map(indicator => itemScores[indicator].max).reduce((sum, current) => sum + current, 0);
+                const categoryScore = categoryIndicators.map(indicator => itemScores[indicator].score).reduce((sum, current) => sum + current, 0);
+
+                return {
+                    title: category.title,
+                    max: categoryMax,
+                    score: categoryScore
+                }
+            });
+
             return {
                 max: maxScore,
                 score: reachedScore,
                 relative: reachedScore / maxScore,
-                percentage: ((reachedScore / maxScore) * 100).toFixed(1)
+                percentage: ((reachedScore / maxScore) * 100).toFixed(1),
+                items: itemScores,
+                categories: categoryScores
             }
         }
 
@@ -268,11 +312,29 @@
                 .map(s => s.relative)
                 .reduce((sum, current) => sum + current, 0) / validScores.length
 
+            const overallCategoryScores = validScores
+                .map(s => s.categories)
+                .reduce((sum, current) => {
+                    current.forEach(category => {
+                        const existingCategory = sum.find(c => c.title === category.title);
+
+                        if (existingCategory) {
+                            existingCategory.max += category.max;
+                            existingCategory.score += category.score;
+                        } else {
+                            sum.push({ ...category });
+                        }
+                    });
+
+                    return sum;
+                }, []);
+                
             return {
                 scores,
                 overall: {
                     relative,
-                    percentage: (relative * 100).toFixed(1)
+                    percentage: (relative * 100).toFixed(1),
+                    categories: overallCategoryScores
                 }
             };
         }
@@ -413,6 +475,8 @@
             const data = Alpine.store('data').input;
 
             Alpine.store('data').score = scoreAll(data);
+
+            console.log(Alpine.store('data').score);
 
             Alpine.store('warnings').reevaluate();
 
