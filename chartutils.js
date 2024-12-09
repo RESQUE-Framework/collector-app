@@ -2,7 +2,7 @@ function scaleValues(value, oldMin, oldMax, newMin, newMax) {
   return (value - oldMin) * (newMax - newMin) / (oldMax - oldMin) + newMin;
 }
 
-function renderScoreChart(canvasId, categories) {
+function renderScoreChart(canvasId, categories, animation = true) {
   const canvas = document.getElementById(canvasId);
 
   if (!canvas) {
@@ -15,7 +15,7 @@ function renderScoreChart(canvasId, categories) {
   const data = {
     labels: categories.map(c => c.title),
     datasets: [{
-      data: categories.map(c => scaleValues(c.score, 0, c.max, 0, 10)),
+      data: categories.map(c => scaleValues(c.score, 0, c.max, 0, 100)),
       borderWidth: 1
     }]
   };
@@ -32,11 +32,16 @@ function renderScoreChart(canvasId, categories) {
       },
       scales: {
         r: {
+          min: 0,
+          max: 100,
           ticks: {
             beginAtZero: true,
             display: false
           }
         }
+      },
+      animation: {
+        duration: animation ? 300 : 0
       }
     }
   };

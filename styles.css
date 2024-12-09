@@ -46,6 +46,7 @@ body {
     width: 100%;
     display: block;
     box-sizing: border-box;
+    overflow: scroll;
 }
 
 .card.warning {
@@ -571,4 +572,8 @@ button.critical:hover {
         width: 90%;
         margin: 1rem auto;
     }
+}
+
+table {
+    margin-bottom: 0.5rem;
 }

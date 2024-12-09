@@ -331,7 +331,7 @@
 
                     return sum;
                 }, []);
-                
+
             return {
                 scores,
                 overall: {
@@ -493,7 +493,7 @@
 
             localStorage.setItem('data', JSON.stringify(data));
 
-            renderScoreChart('overallScoreChart', scores.overall.categories);
+            renderScoreChart('overallScoreChart', scores.overall.categories, animation = false);
 
             const currentScore = scores.scores[Alpine.store('data').currentTab];
 
@@ -700,11 +700,24 @@
                 x-show="$store.data.currentInput.type !== 'meta'">
                 <div id="score-container">
                     <div id="current-score">
-                        <span class="sub">Rigor Score of selected research output</span>
+                        <span class="sub">Selected research output</span>
                         <div x-show="$store.data.score.scores[$store.data.currentTab].max <= 0">
                             <span id="no-score">Applicant requests<br>manual processing</span>
                         </div>
 
+                        <canvas id="currentScoreChart" width="150" height="150"></canvas>
+                    </div>
+                    <div id="overall-score">
+                        <span class="sub">Overall Rigor Score (mean)</span>
+                        <canvas id="overallScoreChart" width="150" height="150"></canvas>
+                    </div>
+
+                </div>
+                <details>
+                    <summary>Details</summary>
+                    <div id="score-details">
+                        <h3>Selected research output</h3>
+                        <hr>
                         <div x-show="$store.data.score.scores[$store.data.currentTab].max > 0"
                             id="current-score-container">
                             <p id="score-percentage"><span
@@ -714,17 +727,54 @@
                                     x-text="$store.data.score.scores[$store.data.currentTab].score.toFixed(2)"></span>/<span
                                     x-text="$store.data.score.scores[$store.data.currentTab].max.toFixed(2)"></span></p>
                         </div>
-                        <canvas id="currentScoreChart" width="200" height="200"></canvas>    
-                    </div>
-                    <div id="overall-score">
-                        <span class="sub">Overall Rigor Score (mean)</span>
+                        <hr>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Score</th>
+                                    <th>Max</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template
+                                    x-for="category in $store.data.score.scores[$store.data.currentTab].categories"
+                                    :key="category.title">
+                                    <tr>
+                                        <td x-text="category.title"></td>
+                                        <td x-text="category.score.toFixed(2)"></td>
+                                        <td x-text="category.max.toFixed(2)"></td>
+                                </template>
+                            </tbody>
+                        </table>
+                        <h3>Overall</h3>
+                        <hr>
                         <div id="overall-score-container">
                             <p id="overall-score-percentage"><span
                                     x-text="$store.data.score.overall.percentage"></span>%</p>
                         </div>
-                        <canvas id="overallScoreChart" width="200" height="200"></canvas> 
+                        <hr>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Score</th>
+                                    <th>Max</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template x-for="category in $store.data.score.overall.categories"
+                                    :key="category.title">
+                                    <tr>
+                                        <td x-text="category.title"></td>
+                                        <td x-text="category.score.toFixed(2)"></td>
+                                        <td x-text="category.max.toFixed(2)"></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
                     </div>
-                </div>
+                </details>
                 <p id="ro-count-container"><span class="tag"><span
                             x-text="$store.data.score.scores.filter(s => s.max && s.max > 0).length"></span> scored
                         research output(s)</span>
@@ -1291,7 +1341,7 @@
         menu().then(m => {
             for (const key in m) {
                 if (m[key].elements) {
-                 m[key].scoring = generateScoringRules(m[key].elements);
+                    m[key].scoring = generateScoringRules(m[key].elements);
                 }
                 Alpine.store('forms')[key] = m[key];
             }
