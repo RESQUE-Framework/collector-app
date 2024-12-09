@@ -296,6 +296,14 @@ header {
     margin-top: 1rem;
 }
 
+.scoring-details {
+    margin-bottom: 0;
+}
+
+.scoring-details summary {
+    margin-bottom: 0;
+}
+
 summary {
     margin-bottom: 8px;
     cursor: pointer;
@@ -401,7 +409,7 @@ hr {
 #ro-count-container {
     text-align: center;
     margin-top: 16px;
-    margin-bottom: 0;
+    margin-bottom: 16px;
 }
 
 /* Modal */

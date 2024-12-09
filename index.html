@@ -713,7 +713,13 @@
                     </div>
 
                 </div>
-                <details>
+
+                <p id="ro-count-container"><span class="tag"><span
+                            x-text="$store.data.score.scores.filter(s => s.max && s.max > 0).length"></span> scored
+                        research output(s)</span>
+                </p>
+                
+                <details class="scoring-details">
                     <summary>Details</summary>
                     <div id="score-details">
                         <h3>Selected research output</h3>
@@ -775,10 +781,6 @@
                         </table>
                     </div>
                 </details>
-                <p id="ro-count-container"><span class="tag"><span
-                            x-text="$store.data.score.scores.filter(s => s.max && s.max > 0).length"></span> scored
-                        research output(s)</span>
-                </p>
                 <p id="warning-score-too-low" x-show="$store.warnings.minIndicatorsWarning">⚠️ Many indicators are not
                     applicable. Manual processing of this
                     publication is recommended.
