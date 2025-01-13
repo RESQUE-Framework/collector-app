@@ -319,7 +319,8 @@ summary:hover {
 
 #score-box {
     top: 0;
-    position: sticky
+    position: sticky;
+    flex-shrink: 0.2;
 }
 
 #score-box .sub {
