@@ -103,29 +103,8 @@
 
             const globals = {
                 paper_count: (value) => Alpine.store('data').input.filter(r => r.type === 'pub' && r[value] === true).length,
-
-                papers: (value) => {
-                    let topPapers = Alpine.store('data').input.map((r, index) => {
-                        r.position = index;
-                        return r;
-                    }).filter(r => r.type === 'pub' && r[value] === true);
-
-                    let positions = topPapers.map(paper => paper.position);
-
-                    if (topPapers.length <= 0) {
-                        return "<i>No papers selected</i>";
-                    }
-
-                    // const papersToDisplay = tabs
-                    //     .filter((tab, index) => positions.includes(index))
-                    //     .map(t => {
-                    //         t.classList.remove("selected");
-                    //         return t.outerHTML;
-                    //     });
-
-                    // return papersToDisplay.join("");
-                }
             }
+            
             return text
                 .replaceAll(/meta\$([a-zA-Z0-9_]+)/g, (match, variable) => results[0][variable])
                 .replaceAll(/global\$([a-zA-Z0-9_]+)@([a-zA-Z0-9_]+)/g, (match, variable, type) => {
@@ -416,6 +395,7 @@
 
         Alpine.store('data', {
             input: JSON.parse(localStorage.getItem('data') ?? '[]'),
+            topPapers: [],
             currentTab: parseInt(sessionStorage.getItem('currentTab') ?? '0'),
             currentInput: {},
             score: {},
@@ -427,6 +407,7 @@
 
                 this.currentInput = this.input[this.currentTab];
                 this.score = scoreAll(this.input);
+                this.topPapers = this.input.filter(r => r.type === 'pub' && r.P_TopPaper_Select === true);
             },
 
             newResearchOutput(type) {
@@ -482,6 +463,28 @@
 
         Alpine.effect(() => {
             const data = Alpine.store('data').input;
+
+            const newTopPapers = data.filter(r => r.type === 'pub' && r.P_TopPaper_Select === true);
+
+            console.log(newTopPapers.length)
+            console.log(Alpine.store('data').topPapers.length)
+
+            if (newTopPapers.length > Alpine.store('config').config.maxTopPapers) {
+                // set difference
+                const diff = newTopPapers.filter(paper => !Alpine.store('data').topPapers.includes(paper));
+                
+                // undo change
+                setTimeout(() => {
+                    diff.forEach(paper => paper.P_TopPaper_Select = false);
+                }, 0);
+
+                // show warning
+                alert(`You can only select ${Alpine.store('config').config.maxTopPapers} top papers.`);
+
+                return;
+            }
+
+            Alpine.store('data').topPapers = newTopPapers;
 
             const scores = scoreAll(data);
 

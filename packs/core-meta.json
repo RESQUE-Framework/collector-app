@@ -85,16 +85,6 @@
             "type": "separator"
         },
         {
-            "id": "TopPapers",
-            "type": "info",
-            "title": "The following papers were selected as 'Top Papers':",
-            "text": "global$P_TopPaper_Select@papers"
-        },
-        {
-            "id": "METASEP2",
-            "type": "separator"
-        },
-        {
             "id": "DateCreated",
             "type": "info",
             "title": "Date created",
