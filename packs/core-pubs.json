@@ -31,7 +31,8 @@
             "id": "Abstract",
             "type": "info",
             "title": "Abstract <span style='color: grey; font-size:80%; font-weight:normal;'>(automatically added via doi)</span>",
-            "text": "<details><summary>Abstract</summary>$Abstract</details>"
+            "text": "<details><summary>Abstract</summary>$Abstract</details>",
+            "style_classes": "abstract"
         },
         {
             "id": "P_TopPaper",
