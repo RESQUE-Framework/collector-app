@@ -550,6 +550,8 @@
             }
         });
 
+        Alpine.store('tabsSidebarScrollTop', 0);
+
         Alpine.data('tab', () => ({
             hovering: false,
             showRemove: false,
@@ -577,7 +579,7 @@
     </script>
 
     <div id="main">
-        <div class="tabs-sidebar">
+        <div class="tabs-sidebar" id="tabs-sidebar" x-on:scroll="$store.tabsSidebarScrollTop = $el.scrollTop">
             <div class="sidebar-top">
                 <span style='background-color: lightyellow; font-size:80%;'>[Note: The RESQUE collector app is in beta
                     stage and might change in the near future. If you want to use it in practice, please <a
@@ -593,24 +595,36 @@
 
                 <p x-text="`${$store.data.input.length - 1} of ${Alpine.store('config').config.max} slots used`"></p>
             </div>
-            <div x-data="{ show: true }" x-sort="$store.data.reorderResearchOutputs($item, $position); show = false; setTimeout(() => show = true, 0);" class="tabs-container">
+            <div x-data="{ show: true }"
+                x-effect="if (show) document.querySelector('#tabs-sidebar').scrollTop = $store.tabsSidebarScrollTop;"
+                class="tabs-container">
                 <template x-if="show">
-                    <template x-for="tab, index in $store.data.input" :key="index">
-                        <div x-sort:item="index" style="position: relative;" x-data="tab">
-                            <div @mouseover="hoverStart" @mouseout="hoverEnd" @click="$store.data.currentTab = index"
-                                x-html="`${$store.data.input[index].P_TopPaper_Select ? '⭐️ ' : ''}<b>${types[tab.type]}</b><br>${$store.data.input[index].Title ?? ''}`"
-                                :class="{tab: true, active: $store.data.currentTab === index}">
-                            </div>
-                            <span @mouseover="hoverStart" class="tab-delete-button tab-delete-menu"
-                                @click="showRemoveButton" x-show="index !== 0 && hovering && !showRemove">
-                                X
-                            </span>
-                            <button class="critical tab-delete-menu" x-show="showRemove"
-                                @click="$store.data.removeResearchOutput(index)">
-                                Remove
-                            </button>
+                    <div x-data="{ scrollY: 0 }">
+                        <div class="tab" @click="$store.data.currentTab = 0"
+                            :class="{ active: $store.data.currentTab === 0 }">
+                            <b>Author / Metadata</b>
                         </div>
-                    </template>
+                        <div x-sort="$store.data.reorderResearchOutputs($item, $position + 1); show = false; setTimeout(() => show = true, 0);">
+                            <template x-for="tab, index in $store.data.input.slice(1)"
+                                :key="index">
+                                <div x-sort:item="index + 1" style="position: relative;" x-data="tab">
+                                    <div @mouseover="hoverStart" @mouseout="hoverEnd"
+                                        @click="$store.data.currentTab = index + 1"
+                                        x-html="`${$store.data.input[index].P_TopPaper_Select ? '⭐️ ' : ''}<b>${types[tab.type]}</b><br>${$store.data.input[index + 1].Title ?? ''}`"
+                                        :class="{tab: true, active: $store.data.currentTab === index + 1}">
+                                    </div>
+                                    <span @mouseover="hoverStart" class="tab-delete-button tab-delete-menu"
+                                        @click="showRemoveButton" x-show="index !== 0 && hovering && !showRemove">
+                                        X
+                                    </span>
+                                    <button class="critical tab-delete-menu" x-show="showRemove"
+                                        @click="$store.data.removeResearchOutput(index + 1)">
+                                        Remove
+                                    </button>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
                 </template>
             </div>
             <div id="add-container">
@@ -754,8 +768,8 @@
                                     x-text="$store.data.score.scores[$store.data.currentTab].percentage"></span>%</p>
                             <p id="score-dot">•</p>
                             <p id="score-minmax"><span
-                                    x-text="$store.data.score.scores[$store.data.currentTab].score.toFixed(2)"></span>/<span
-                                    x-text="$store.data.score.scores[$store.data.currentTab].max.toFixed(2)"></span></p>
+                                    x-text="$store.data.score.scores[$store.data.currentTab].score?.toFixed(2)"></span>/<span
+                                    x-text="$store.data.score.scores[$store.data.currentTab].max?.toFixed(2)"></span></p>
                         </div>
                         <hr>
                         <table>
@@ -963,8 +977,8 @@
                     </div>
                     <template x-for="pub in publications">
                         <div @click="pub.selected = !pub.selected" class="tab" :class="{ active: pub.selected }">
-                            <p><b x-text="pub.title"></b></p>
-                            <p><span x-text="pub.year"></span> | <a style="color: inherit;" :href="`https://doi.org/${pub.doi}`" target="_blank"><span x-text="pub.doi"></span></a></p>
+                            <p style="margin-top: 0;"><b x-text="pub.title"></b></p>
+                            <p style="margin-bottom: 0;"><span x-text="pub.year"></span> | <a style="color: inherit;" :href="`https://doi.org/${pub.doi}`" target="_blank"><span x-text="pub.doi"></span></a></p>
                         </div>
                     </template>
                 </div>
