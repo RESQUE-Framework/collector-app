@@ -143,7 +143,7 @@
 
                     return {
                         title: response.title,
-                        year: response.published["date-parts"][0][0],
+                        year: response.published?.["date-parts"][0][0] || response.issued?.["date-parts"][0][0] || null,
                         DOI: response.DOI
                     }
                 })
