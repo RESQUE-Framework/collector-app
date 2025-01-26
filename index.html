@@ -849,14 +849,14 @@
                             <details id="item-background-details">
                                 <summary>Background information</summary>
                                 <span id="item-background"
-                                    x-html="preprocessText($store.selectedIndicator.background)"></span>
+                                    x-html="preprocessTextWithIndicatorContext($store.selectedIndicator.id, $store.selectedIndicator.background)"></span>
                             </details>
                         </template>
                         <template x-if="$store.selectedIndicator.tip_external">
                             <details id="tip-external-details" :open="$store.data.input[0].RaterType === 'External'">
                                 <summary>Tips for external raters</summary>
                                 <span id="tip-external"
-                                    x-html="preprocessText($store.selectedIndicator.tip_external)"></span>
+                                    x-html="preprocessTextWithIndicatorContext($store.selectedIndicator.id, $store.selectedIndicator.tip_external)"></span>
                             </details>
                         </template>
                     </div>
