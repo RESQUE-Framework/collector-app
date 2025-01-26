@@ -6,7 +6,7 @@ function renderScoreChart(canvasId, categories, animation = true) {
   const canvas = document.getElementById(canvasId);
 
   if (!canvas) {
-    console.error(`Canvas with id ${canvasId} not found`);
+    //console.error(`Canvas with id ${canvasId} not found`);
     return;
   }
 
