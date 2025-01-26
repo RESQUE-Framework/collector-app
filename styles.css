@@ -421,7 +421,7 @@ hr {
     /* Hidden by default */
     position: fixed;
     /* Stay in place */
-    z-index: 1;
+    z-index: 2;
     /* Sit on top */
     padding-top: 100px;
     /* Location of the box */
@@ -443,15 +443,12 @@ hr {
     background-color: white;
     margin: auto;
     padding: 16px;
+    padding-top: 0px;
     width: 740px;
     border-radius: 8px;
     box-shadow: 0 0 8px var(--shadow-color);
     max-height: 70vh;
     overflow: auto;
-}
-
-.modal-content h2 {
-    margin-top: 0;
 }
 
 #add-modal-continue {

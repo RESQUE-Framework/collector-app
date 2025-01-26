@@ -436,6 +436,15 @@
                 this.input.splice(to, 0, removed);
             },
 
+            addPublicationWithDetails(details) {
+                this.input.push({
+                    type: 'pub',
+                    version: Alpine.store('forms')['pub'].versions[prefixes['pub']],
+                    date_added: Date.now(),
+                    ...details
+                });
+            },
+
             clear() {
                 localStorage.clear();
                 sessionStorage.clear();
@@ -618,6 +627,8 @@
                         Software</button>
                     <br />
                     <button class="add-data" @click="$store.data.newResearchOutput('data')">Add Data Set</button>
+                    <hr />
+                    <button class="add-orcid" @click="showORCIDModal()">Import using ORCID</button>
                 </div>
             </div>
         </div>
@@ -935,6 +946,32 @@
         </div>
     </dialog>
 
+    <div id="orcid-modal" class="modal">
+        <div x-data="{ orcid: '', authorName: '', publications: [] }" class="modal-content">
+            <h3>Import publications using ORCID</h3>
+            <input x-model="orcid" type="text" placeholder="ORCID" />
+            <button @click="fetchAuthorByORCID(orcid).then(name => authorName = name); fetchPapersByORCID(orcid).then(ps => publications = ps)">Fetch Publications</button>
+
+            <template x-if="publications.length">
+                <div>
+                    <hr>
+                    <div style="position: sticky; top: 0; background-color: white; padding: 2px 0;">
+                        <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; border-bottom: 1px solid lightgray;">
+                            <h3 x-text="`${authorName} (${publications.length} publications)`"></h3>
+                            <button @click="publications.filter(p => p.selected).forEach(p => $store.data.addPublicationWithDetails({DOI: 'https://doi.org/' + p.doi, Title: p.title, Year: p.year})); closeORCIDModal(); orcid = '', authorName ='', publications = []"><span x-text="`Add ${publications.filter(p => p.selected).length} publications.`"></span></button>
+                        </div>
+                    </div>
+                    <template x-for="pub in publications">
+                        <div @click="pub.selected = !pub.selected" class="tab" :class="{ active: pub.selected }">
+                            <p><b x-text="pub.title"></b></p>
+                            <p><span x-text="pub.year"></span> | <a style="color: inherit;" :href="`https://doi.org/${pub.doi}`" target="_blank"><span x-text="pub.doi"></span></a></p>
+                        </div>
+                    </template>
+                </div>
+            </template>
+        </div>
+    </div>
+
     <div id="mobile">
         <div class="card">
             This window is too small for the <b>RESQUE</b> tool.
@@ -1178,6 +1215,15 @@
             document.getElementById("info-modal").style.display = "none";
         }
 
+        const showORCIDModal = () => {
+            document.getElementById("orcid-modal").style.display = "block";
+        }
+
+        const closeORCIDModal = () => {
+            document.getElementById("orcid-modal").style.display = "none";
+        }
+
+      
         const reset = () => {
             results = {};
             localStorage.clear();
