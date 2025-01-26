@@ -1198,7 +1198,7 @@
             "title": "⤷ Access level",
             "score": {
                 "not_applicable": "($P_Suitable === 'No') || (($P_Data_Open === 'NotApplicable') && (exists($P_Data_Open_NAExplanation))) || ($P_Data === 'No') || (!($P_Data_Source_NewOwn) && !($P_Data_Source_ReuseOwn) && !($P_Data_Source_ReuseCompilation) && !($P_Data_Source_Simulated))",
-                "condition": "$P_Data === 'Yes'",
+                "condition": "($P_Data === 'Yes')",
                 "op": "select" 
             },
             "options": [
@@ -1680,7 +1680,7 @@
                     "text": "Agent-based or algorithmic model"
                 },                
                 {
-                    "id": "Other",
+                    "id": "OtherLanguage",
                     "text": "Other (please specify)"
                 }
             ],
@@ -1691,7 +1691,7 @@
             "id": "P_Theorizing_ModelLanguage_Other",
             "type": "text",
             "title": "⤷ Theory type/ Language: Other",
-            "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided' && $P_Theorizing_Quality_FormalizedAccount && P_Theorizing_ModelLanguage_Other"
+            "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided' && $P_Theorizing_Quality_FormalizedAccount && P_Theorizing_ModelLanguage_OtherLanguage"
         },
 
 
