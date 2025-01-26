@@ -19,13 +19,19 @@
             "id": "Title",
             "type": "info",
             "title": "Paper title <span style='color: grey; font-size:80%; font-weight:normal;'>(automatically added via doi)</span>",
-            "text": "$Title"
+            "text": "<a href='$DOI'>$Title</a>"
         },
         {
             "id": "Year",
             "type": "info",
             "title": "Year of publication <span style='color: grey; font-size:80%; font-weight:normal;'>(automatically added via doi)</span>",
             "text": "$Year"
+        },
+        {
+            "id": "Abstract",
+            "type": "info",
+            "title": "Abstract <span style='color: grey; font-size:80%; font-weight:normal;'>(automatically added via doi)</span>",
+            "text": "<details><summary>Abstract</summary>$Abstract</details>"
         },
         {
             "id": "P_TopPaper",
