@@ -476,9 +476,6 @@
 
             const newTopPapers = data.filter(r => r.type === 'pub' && r.P_TopPaper_Select === true);
 
-            console.log(newTopPapers.length)
-            console.log(Alpine.store('data').topPapers.length)
-
             if (newTopPapers.length > Alpine.store('config').config.maxTopPapers) {
                 // set difference
                 const diff = newTopPapers.filter(paper => !Alpine.store('data').topPapers.includes(paper));
