@@ -165,7 +165,8 @@
                     return {
                         title: `${authorString} (${year}): ${response.title}`,
                         year: year,
-                        DOI: response.DOI
+                        DOI: response.DOI,
+                        abstract: response.abstract
                     }
                 })
                 .catch(() => {
@@ -173,7 +174,9 @@
                         error: true,
                         title: doi ? '⚠️ <b>Invalid DOI:</b> ' + doi : undefined,
                         year: undefined,
-                        DOI: doi
+                        DOI: doi,
+                        abstract: undefined
+                        
                     }
                 })
         }
@@ -562,6 +565,7 @@
 
             Alpine.store('data').input[doiTab].Title = publicationInformation.title;
             Alpine.store('data').input[doiTab].Year = publicationInformation.year;
+            Alpine.store('data').input[doiTab].Abstract = publicationInformation.abstract;
 
             if (!publicationInformation.error) {
                 Alpine.store('data').input[doiTab].DOI = "https://doi.org/" + publicationInformation.DOI;
