@@ -612,7 +612,7 @@
                     <div id="actions">
                         <button class="clear-button" @click="showModal('clear-modal')">Clear</button>
                         <button class="load-button" @click="triggerLoad()">Load</button>
-                        <button class="save-button" @click="exp()">Save to file ...</button>
+                        <button class="save-button" @click="showExportModal()">Save to file ...</button>
                     </div>
                 </div>
 
@@ -1019,6 +1019,28 @@
         </div>
     </div>
 
+    <div id="export-modal" class="modal">
+        <div x-data="{ excludedPublications: new Set() }" class="modal-content">
+            
+            <div style="position: sticky; top: 0; background-color: white; padding: 2px 0;">
+                <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center">
+                    <h3>Export Data</h3>
+                    <button @click="exp(excludedPublications); excludedPublications = new Set(); closeExportModal();">Export <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> Research Outputs</button>
+                </div>
+            </div>
+
+            <div>
+                <template x-for="pub, index in $store.data.input.slice(1)">
+                    <div class="tab"
+                        :class="{ 'active': !excludedPublications.has(index + 1) }"
+                        @click="if (excludedPublications.has(index + 1)) { excludedPublications.delete(index + 1); } else { excludedPublications.add(index + 1); }">
+                        <p style="margin: 0;" x-text="pub.Title"></p>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+
     <div id="mobile">
         <div class="card">
             This window is too small for the <b>RESQUE</b> tool.
@@ -1270,6 +1292,14 @@
             document.getElementById("orcid-modal").style.display = "none";
         }
 
+        const showExportModal = () => {
+            document.getElementById("export-modal").style.display = "block";
+        }
+
+        const closeExportModal = () => {
+            document.getElementById("export-modal").style.display = "none";
+        }
+
       
         const reset = () => {
             results = {};
@@ -1323,8 +1353,12 @@
             return filteredData;
         }
 
-        const exp = () => {
-            const data = Alpine.store('data').input
+        const exp = (excluded) => {
+            if (!excluded) {
+                excluded = new Set();
+            }
+
+            let data = Alpine.store('data').input
                 // only export the data that is currently visible
                 .map(filterExport);
 
@@ -1332,6 +1366,8 @@
             data.date_exported = millis;
 
             data[0].forms = Alpine.store('forms');
+
+            data = data.filter((_, index) => !excluded.has(index));
 
             let json = JSON.stringify(data, null, 2);
             let blob = new Blob([json], { type: "text/json;charset=utf-8" });
