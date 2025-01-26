@@ -142,7 +142,7 @@
                     }
 
                     return {
-                        title: response.title,
+                        title: `${response.title} (${response.author[0].family})`,
                         year: response.published?.["date-parts"][0][0] || response.issued?.["date-parts"][0][0] || null,
                         DOI: response.DOI
                     }
