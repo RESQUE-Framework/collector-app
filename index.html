@@ -1003,9 +1003,9 @@
                 <div>
                     <hr>
                     <div style="position: sticky; top: 0; background-color: white; padding: 2px 0;">
-                        <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; border-bottom: 1px solid lightgray;">
+                        <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
                             <h3 x-text="`${authorName} (${publications.length} publications)`"></h3>
-                            <button @click="publications.filter(p => p.selected).forEach(p => $store.data.addPublicationWithDetails({DOI: 'https://doi.org/' + p.doi, Title: p.title, Year: p.year})); closeORCIDModal(); orcid = '', authorName ='', publications = []"><span x-text="`Add ${publications.filter(p => p.selected).length} publications.`"></span></button>
+                            <button @click="publications.filter(p => p.selected).forEach(p => $store.data.addPublicationWithDetails({DOI: 'https://doi.org/' + p.doi, Title: p.title, Year: p.year})); closeORCIDModal(); orcid = '', authorName ='', publications = []"><span x-text="`Add ${publications.filter(p => p.selected).length} Publications`"></span></button>
                         </div>
                     </div>
                     <template x-for="pub in publications">
