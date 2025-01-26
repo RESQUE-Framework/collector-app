@@ -611,7 +611,7 @@
                                         :class="{tab: true, active: $store.data.currentTab === index + 1}">
                                     </div>
                                     <span @mouseover="hoverStart" class="tab-delete-button tab-delete-menu"
-                                        @click="showRemoveButton" x-show="!showRemove">
+                                        @click="showRemoveButton" x-show="hovering && !showRemove">
                                         X
                                     </span>
                                     <button class="critical tab-delete-menu" x-show="showRemove"
