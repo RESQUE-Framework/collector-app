@@ -753,6 +753,13 @@
                                     </template>
                                 </template>
                             </div>
+
+                            <details x-show="$store.selectedIndicator.id === elem.id">
+                                <summary style="font-size: 0.9rem; color: gray; text-align: right;">Add comment</summary>
+                                <input x-model="$store.data.currentInput[elem.id + '_Comment']" type="text"
+                                    :placeholder="`Comment on '${elem.id}'`" />
+                            </details>
+
                         </div>
                     </template>
                 </template>
