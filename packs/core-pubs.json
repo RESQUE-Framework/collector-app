@@ -1698,7 +1698,7 @@
             "id": "P_Theorizing_ModelLanguage_Other",
             "type": "text",
             "title": "⤷ Theory type/ Language: Other",
-            "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided' && $P_Theorizing_Quality_FormalizedAccount && P_Theorizing_ModelLanguage_OtherLanguage"
+            "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided' && $P_Theorizing_Quality_FormalizedAccount && $P_Theorizing_ModelLanguage_OtherLanguage"
         },
 
 
