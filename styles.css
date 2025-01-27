@@ -275,6 +275,15 @@ button:hover {
     font-weight: bold;
 }
 
+.tab-progress-indicator {
+    border-radius: 100%;
+    width: 8px;
+    height: 8px;
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+}
+
 .tab-delete-button:hover {
     transform: scale(1.1);
     background-color: firebrick;

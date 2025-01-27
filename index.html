@@ -348,6 +348,52 @@
             };
         }
 
+        const checkCompletion = (result) => {
+            const elements = Alpine.store('forms')[result.type].elements;
+
+            if (!elements) {
+                return {
+                    progress: {
+                        current: 0,
+                        total: 0,
+                        ratio: 0,
+                        percent: 0
+                    },
+                    warnings: []
+                }
+            }
+
+            // We can't check progress of checkboxes
+            const fillableElements = elements.filter(e => e.type !== 'checkbox' && e.type !== 'separator' && e.type !== 'info');
+
+            // Get visible elements (required)
+            const filteredElements = fillableElements
+                .filter(e => evaluateConditionInContext(e.condition, result));
+
+            // Get visible elements that are filled out
+            const filledOutElements = filteredElements.filter(e => result[e.id] !== '');
+
+            const progress = filledOutElements.length / filteredElements.length;
+            const progressPercent = Math.round(progress * 100).toFixed(2);
+
+            return {
+                progress: {
+                    current: filledOutElements.length,
+                    total: filteredElements.length,
+                    ratio: progress,
+                    percent: progressPercent
+                },
+                warnings: []
+            }
+        }
+
+        const getProgressColor = value => {
+            //value from 0 to 1
+            let hue = (value * 120).toString(10);
+
+            return `hsl(${hue}, 100%, 38%)`;
+        }
+
         let prefixes = {
             meta: "M",
             pub: "P",
@@ -425,6 +471,7 @@
             currentTab: parseInt(sessionStorage.getItem('currentTab') ?? '0'),
             currentInput: {},
             score: {},
+            completion: {},
 
             manualInit() {
                 if (typeof this.input === "object" && this.input.length === 0) {
@@ -433,16 +480,21 @@
 
                 this.currentInput = this.input[this.currentTab];
                 this.score = scoreAll(this.input);
+                this.completion = this.input.map(checkCompletion);
                 this.topPapers = this.input.filter(r => r.type === 'pub' && r.P_TopPaper_Select === true);
             },
 
-            newResearchOutput(type) {
-                this.input.push({
+            createResearchOutput(type) {
+                return {
                     type,
                     version: Alpine.store('forms')[type].versions[prefixes[type]],
                     date_added: Date.now(),
                     ...getDefaultValues(type)
-                });
+                }
+            },
+
+            newResearchOutput(type) {
+                this.input.push(this.createResearchOutput(type));
 
                 this.currentTab = this.input.length - 1;
 
@@ -466,7 +518,7 @@
                     type: 'pub',
                     version: Alpine.store('forms')['pub'].versions[prefixes['pub']],
                     date_added: Date.now(),
-                    ...getDefaultValues(type),
+                    ...getDefaultValues('pub'),
                     ...details
                 });
             },
@@ -474,7 +526,7 @@
             clear() {
                 localStorage.clear();
                 sessionStorage.clear();
-                this.input = [{ type: 'meta' }];
+                this.input = [this.createResearchOutput('meta')];
                 this.currentTab = 0;
             }
         });
@@ -522,6 +574,8 @@
             const scores = scoreAll(data);
 
             Alpine.store('data').score = scores;
+
+            Alpine.store('data').completion = data.map(checkCompletion);
 
             Alpine.store('warnings').reevaluate();
 
@@ -625,8 +679,13 @@
                 <template x-if="show">
                     <div x-data="{ scrollY: 0 }">
                         <div class="tab" @click="$store.data.currentTab = 0"
-                            :class="{ active: $store.data.currentTab === 0 }">
+                            :class="{ active: $store.data.currentTab === 0 }"
+                            style="position: relative;">
                             <b>Author / Metadata</b>
+                            <div class="tab-progress-indicator"
+                                :style="`background-color: ${getProgressColor($store.data.completion[0].progress.ratio)};`"
+                                :title="`Progress: ${$store.data.completion[0].progress.percent}%`">
+                            </div>
                         </div>
                         <div x-sort="$store.data.reorderResearchOutputs($item, $position + 1); show = false; setTimeout(() => show = true, 0);">
                             <template x-for="tab, index in $store.data.input.slice(1)"
@@ -645,6 +704,11 @@
                                         @click="$store.data.removeResearchOutput(index + 1)">
                                         Remove
                                     </button>
+                                    <div class="tab-progress-indicator"
+                                        :style="`background-color: ${getProgressColor($store.data.completion[index + 1].progress.ratio)};`"
+                                        :title="`Progress: ${$store.data.completion[index + 1].progress.percent}%`">
+                                    </div>
+                                    
                                 </div>
                             </template>
                         </div>
