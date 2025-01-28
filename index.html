@@ -1089,7 +1089,7 @@
             
             <div style="position: sticky; top: 0; background-color: white; padding: 2px 0;">
                 <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center">
-                    <h3>Export Data</h3>
+                    <h3>Export Data<span style="font-size: 70%; font-weight: normal;">&nbsp;&nbsp;Click publications to (de)select</span></h3>
                     <button @click="exp(excludedPublications); excludedPublications = new Set(); closeExportModal();">Export <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> Research Outputs</button>
                 </div>
             </div>
