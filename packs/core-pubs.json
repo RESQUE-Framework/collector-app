@@ -19,7 +19,7 @@
             "id": "Title",
             "type": "info",
             "title": "Paper title <span style='color: grey; font-size:80%; font-weight:normal;'>(automatically added via doi)</span>",
-            "text": "<a href='$DOI'>$Title</a>"
+            "text": "<a href='$DOI' target='_blank'>$Title</a>"
         },
         {
             "id": "Year",

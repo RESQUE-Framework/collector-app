@@ -840,11 +840,11 @@
                             <span id="no-score">Applicant requests<br>manual processing</span>
                         </div>
 
-                        <canvas id="currentScoreChart" width="150" height="150"></canvas>
+                        <canvas id="currentScoreChart" width="150" height="150" style="margin-top: 10px;"></canvas>
                     </div>
                     <div id="overall-score">
-                        <span class="sub">Overall Rigor Score (mean)</span>
-                        <canvas id="overallScoreChart" width="150" height="150"></canvas>
+                        <span class="sub">Overall Profile (mean)</span>
+                        <canvas id="overallScoreChart" width="150" height="150" style="margin-top: 10px;"></canvas>
                     </div>
                 </div>
 
@@ -1117,7 +1117,7 @@
         </div>
     </div>
 
-    <input id="fileInput" type="file" accept="text/json" style="visibility: hidden" @change="handleLoad($el.files)" />
+    <input id="fileInput" type="file" accept="application/json" style="visibility: hidden" @change="handleLoad($el.files)" />
     <a id="download" style="visibility: hidden"></a>
     <input id="add-pdf" type="file" accept="application/pdf" onchange="handleSelectPDF(this.files)"
         style="visibility: hidden;" />
