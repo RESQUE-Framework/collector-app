@@ -1611,7 +1611,10 @@
 
             Alpine.store('loaded', true);
 
-            Alpine.store('data', Alpine.store('data'));
+            setTimeout(() => {
+                Alpine.store('data').input[0].date_modeified = Date.now();
+            }, 0)
+
         }).then(() => {
             // Check config compatibility
             if (objectHash(Alpine.store('data').input[0].queryConfig) !== objectHash(Alpine.store('config').queryConfig)) {
