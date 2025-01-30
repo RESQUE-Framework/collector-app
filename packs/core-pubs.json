@@ -64,7 +64,7 @@
                 },
                 {
                     "id": "MetaAnalysis",
-                    "text": "Meta-Analysis"
+                    "text": "Meta-Analysis / Mega-Analysis"
                 },
                 {
                     "id": "Computational",
@@ -1007,6 +1007,10 @@
                     "id": "Coding",
                     "text": "Content or behavioral coding (i.e., converting rich qualitative data into numeric scores)"
                 },
+                {
+                    "id": "MetaAnalysis",
+                    "text": "Meta-analysis: Effect sizes from primary studies"
+                },                
                 {
                     "id": "OtherType",
                     "text": "Other (please specify)"
