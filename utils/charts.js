@@ -65,7 +65,7 @@ function renderScoreChart(canvasId, categories, animation = true) {
 
 function getDefaultColor(index) {
   const defaultColors = [
-    '#7fb1d3', '#8ed3c7', '#fffdb3', '#bebada', '#fb8072', '#FF9F40'
+    '#7fb1d3', '#8ed3c7', '#efd59d', '#bebada', '#fb8072', '#FF9F40'
   ];
   return defaultColors[index % defaultColors.length];
 }
