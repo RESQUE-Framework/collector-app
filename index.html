@@ -594,8 +594,7 @@
             const currentScore = scores.scores[Alpine.store('data').currentTab];
 
             if (currentScore && currentScore.categories) {
-                console.log(currentScore)
-                renderScoreChart('currentScoreChart', currentScore.categories);
+                renderScoreChart('currentScoreChart', currentScore.categories, animation = false);
             }
         });
 
