@@ -64,7 +64,11 @@
 
             const exists = id => !!id && id !== "";
 
-            return eval(insertValuesIntoCondition(preprocessCondition(condition)));
+            const c = insertValuesIntoCondition(preprocessCondition(condition))
+
+            console.log(c)
+
+            return eval(c);
         }
 
         const partialHighlight = (indicatorId, text) => {
@@ -304,7 +308,7 @@
                 } else {
                     // Define default values
                     switch (element.type) {
-                        case 'separator':    
+                        case 'separator':
                         case 'info':
                             // No default values needed
                             break;
@@ -633,8 +637,8 @@
                                     x-text="$store.data.score.scores[$store.data.currentTab].percentage"></span>%</p>
                             <p id="score-dot">•</p>
                             <p id="score-minmax"><span
-                                    x-text="$store.data.score.scores[$store.data.currentTab].score"></span>/<span
-                                    x-text="$store.data.score.scores[$store.data.currentTab].max"></span></p>
+                                    x-text="$store.data.score.scores[$store.data.currentTab].score.toFixed(2)"></span>/<span
+                                    x-text="$store.data.score.scores[$store.data.currentTab].max.toFixed(2)"></span></p>
                         </div>
                     </div>
                     <div id="overall-score">
@@ -801,7 +805,7 @@
         </div>
     </div>
 
-    <input id="fileInput" type="file" accept="text/json" style="visibility: hidden" @change="handleLoad($el.files)" />
+    <input id="fileInput" type="file" accept="application/json" style="visibility: hidden" @change="handleLoad($el.files)" />
     <a id="download" style="visibility: hidden"></a>
     <input id="add-pdf" type="file" accept="application/pdf" onchange="handleSelectPDF(this.files)"
         style="visibility: hidden;" />
@@ -1094,7 +1098,7 @@
             data.date_exported = millis;
 
             data[0].forms = Alpine.store('forms');
-            
+
             let json = JSON.stringify(data, null, 2);
             let blob = new Blob([json], { type: "text/json;charset=utf-8" });
             let filename = `resque_${data[0].LastName ? data[0].LastName.toLowerCase() + "_" : ""}${millis}.json`;
@@ -1153,12 +1157,68 @@
             Alpine.store('data').input[0].queryConfig = Alpine.store('config').queryConfig;
         }
 
+        const generateScoringRules = (items) => {
+            let rules = {};
+
+            items.forEach(item => {
+                if (!item.score) return;
+
+                rule = {
+                    not_applicable: item.score.not_applicable,
+                };
+
+                if (item.type === 'radio') {
+                    rule.op = 'select';
+                    rule.max = Math.max(...item.options.map(v => v.value));
+
+                    rule.points = item.options.map(option => {
+                        condition = `($${item.id} === '${option.id}')`
+                            + (item.score.condition ? ` && (${item.score.condition})` : '');
+
+                        if (option.explanation_required) {
+                            condition += ` && exists($${item.id}_${option.id}Explanation)`;
+                        }
+
+                        return {
+                            value: option.value,
+                            condition
+                        }
+                    })
+                }
+
+                if (item.type === 'checkbox') {
+                    rule.op = 'sum';
+                    rule.max = item.options.reduce((acc, option) => acc + option.value, 0);
+
+                    rule.points = item.options.map(option => {
+                        condition = `$${item.id}_${option.id}`
+                            + (item.score.condition ? ` && (${item.score.condition})` : '');
+
+                        if (option.explanation_required) {
+                            condition += ` && exists(${item.id}_${option.id}Explanation)`;
+                        }
+
+                        return {
+                            value: option.value,
+                            condition
+                        }
+                    })
+                }
+
+                rules[item.id] = rule;
+
+            });
+
+            return rules;
+        }
+
         menu().then(m => {
-            Alpine.store('forms').meta = m.meta;
-            Alpine.store('forms').pub = m.pub;
-            Alpine.store('forms').software = m.software;
-            Alpine.store('forms').data = m.data;
-            Alpine.store('forms').config = m.config;
+            for (const key in m) {
+                if (m[key].elements) {
+                 m[key].scoring = generateScoringRules(m[key].elements);
+                }
+                Alpine.store('forms')[key] = m[key];
+            }
 
             Alpine.store('data').manualInit();
             Alpine.store('warnings').manualInit();
