@@ -630,6 +630,8 @@
 
         Alpine.store('tabsSidebarScrollTop', 0);
 
+        Alpine.store('showIndicators', true);
+
         Alpine.data('tab', () => ({
             hovering: false,
             showRemove: false,
@@ -654,6 +656,13 @@
             'software': 'Software',
             'data': 'Data Set'
         };
+
+        const switchToTab = (index) => {
+            Alpine.store('showIndicators', false);
+            Alpine.store('data').currentTab = index;
+            setTimeout(() => Alpine.store('showIndicators', true), 0);
+            document.querySelector('#formview').scrollTop = 0;
+        }
     </script>
 
     <div id="main">
@@ -678,7 +687,7 @@
                 class="tabs-container">
                 <template x-if="show">
                     <div x-data="{ scrollY: 0 }">
-                        <div class="tab" @click="$store.data.currentTab = 0"
+                        <div class="tab" @click="switchToTab(0)"
                             :class="{ active: $store.data.currentTab === 0 }"
                             style="position: relative;">
                             <b>Author / Metadata</b>
@@ -692,7 +701,7 @@
                                 :key="index">
                                 <div x-sort:item="index + 1" style="position: relative;" x-data="tab">
                                     <div @mouseover="hoverStart" @mouseout="hoverEnd"
-                                        @click="$store.data.currentTab = index + 1"
+                                        @click="switchToTab(index + 1)"
                                         x-html="`${$store.data.input[index + 1].P_TopPaper_Select ? '⭐️ ' : ''}<b>${types[tab.type]}</b><br>${$store.data.input[index + 1].Title ?? ''}`"
                                         :class="{tab: true, active: $store.data.currentTab === index + 1}">
                                     </div>
@@ -742,90 +751,92 @@
                 <template x-if="$store.data.currentTab >= 0">
                     <template x-for="(elem, index) in $store.forms[$store.data.currentInput.type].elements"
                         :key="$store.data.currentInput.position + '_' + elem.id">
-                        <div @click="$store.selectedIndicator = elem" x-show="evaluateCondition(elem.condition)"
-                            onblur="actions[elem.onchange]()"
-                            :class="elem.style_classes">
-                            <p class="title" x-html="preprocessText(elem.title)" style="font-weight: bold;"></p>
+                        <template x-if="$store.showIndicators">
+                            <div @click="$store.selectedIndicator = elem" x-show="evaluateCondition(elem.condition)"
+                                onblur="actions[elem.onchange]()"
+                                :class="elem.style_classes">
+                                <p class="title" x-html="preprocessText(elem.title)" style="font-weight: bold;"></p>
 
-                            <div class="content">
-                                <template x-if="elem.type === 'separator'">
-                                    <hr style="height: 3px; border:none; color: #333; background-color: #333;" />
-                                </template>
-    
-                                <template x-if="elem.type === 'info'">
-                                    <p x-html="preprocessText(elem.text)"></p>
-                                </template>
-    
-                                <template x-if="elem.type === 'text'">
-                                    <input x-model="$store.data.currentInput[elem.id]" type="text"
-                                        :placeholder="elem.title || ''" />
-                                </template>
-    
-                                <template x-if="elem.type === 'textbox'">
-                                    <div>
-                                        <div class="textbox" contenteditable
-                                            x-init="$el.innerText = $store.data.currentInput[elem.id] ?? ''"
-                                            @input="$store.data.currentInput[elem.id] = $event.target.innerText"
-                                            :placeholder="elem.title || ''"></div>
-    
-                                        <template x-if="!!elem.maxwords">
-                                            <p class="wordcount"
-                                                :class="(($store.data.currentInput[elem.id] ?? '').match(/\S+/g) ?? []).length > elem.maxwords ? 'wordcount-warning' : ''"
-                                                x-text="`${(($store.data.currentInput[elem.id] ?? '').match(/\S+/g) ?? []).length} / ${elem.maxwords} words`">
-                                            </p>
-                                        </template>
-                                    </div>
-                                </template>
-    
-                                <template x-if="elem.type === 'number'">
-                                    <input x-model="$store.data.currentInput[elem.id]" type="text"
-                                        :placeholder="elem.title || ''" />
-                                </template>
-    
-                                <template x-if="elem.type === 'date'">
-                                    <input x-model="$store.data.currentInput[elem.id]" type="date"
-                                        :placeholder="elem.title || ''" />
-                                </template>
-    
-                                <template x-if="elem.type === 'dropdown'">
-                                    <select x-model="$store.data.currentInput[elem.id]">
-                                        <template x-for="option in elem.options" :key="option.id">
-                                            <p x-text="option.text"></p>
-                                            <option x-html="option.text" :value="option.id"></option>
-                                        </template>
-                                    </select>
-                                </template>
-    
-                                <template x-if="elem.type === 'radio'">
-                                    <div :class="elem.alignment ? 'alignment-' + elem.alignment : 'alignment-vertical'">
+                                <div class="content">
+                                    <template x-if="elem.type === 'separator'">
+                                        <hr style="height: 3px; border:none; color: #333; background-color: #333;" />
+                                    </template>
+        
+                                    <template x-if="elem.type === 'info'">
+                                        <p x-html="preprocessText(elem.text)"></p>
+                                    </template>
+        
+                                    <template x-if="elem.type === 'text'">
+                                        <input x-model="$store.data.currentInput[elem.id]" type="text"
+                                            :placeholder="elem.title || ''" />
+                                    </template>
+        
+                                    <template x-if="elem.type === 'textbox'">
+                                        <div>
+                                            <div class="textbox" contenteditable
+                                                x-init="$el.innerText = $store.data.currentInput[elem.id] ?? ''"
+                                                @input="$store.data.currentInput[elem.id] = $event.target.innerText"
+                                                :placeholder="elem.title || ''"></div>
+        
+                                            <template x-if="!!elem.maxwords">
+                                                <p class="wordcount"
+                                                    :class="(($store.data.currentInput[elem.id] ?? '').match(/\S+/g) ?? []).length > elem.maxwords ? 'wordcount-warning' : ''"
+                                                    x-text="`${(($store.data.currentInput[elem.id] ?? '').match(/\S+/g) ?? []).length} / ${elem.maxwords} words`">
+                                                </p>
+                                            </template>
+                                        </div>
+                                    </template>
+        
+                                    <template x-if="elem.type === 'number'">
+                                        <input x-model="$store.data.currentInput[elem.id]" type="text"
+                                            :placeholder="elem.title || ''" />
+                                    </template>
+        
+                                    <template x-if="elem.type === 'date'">
+                                        <input x-model="$store.data.currentInput[elem.id]" type="date"
+                                            :placeholder="elem.title || ''" />
+                                    </template>
+        
+                                    <template x-if="elem.type === 'dropdown'">
+                                        <select x-model="$store.data.currentInput[elem.id]">
+                                            <template x-for="option in elem.options" :key="option.id">
+                                                <p x-text="option.text"></p>
+                                                <option x-html="option.text" :value="option.id"></option>
+                                            </template>
+                                        </select>
+                                    </template>
+        
+                                    <template x-if="elem.type === 'radio'">
+                                        <div :class="elem.alignment ? 'alignment-' + elem.alignment : 'alignment-vertical'">
+                                            <template x-for="option in elem.options" :key="option.id">
+                                                <label :for="elem.id + '_' + option.id">
+                                                    <input x-model="$store.data.currentInput[elem.id]" type="radio"
+                                                        :name="elem.id" :id="elem.id + '_' + option.id" :value="option.id" />
+                                                    <span x-html="option.text"></span>
+                                                </label>
+                                            </template>
+                                        </div>
+                                    </template>
+        
+                                    <template x-if="elem.type === 'checkbox'">
                                         <template x-for="option in elem.options" :key="option.id">
                                             <label :for="elem.id + '_' + option.id">
-                                                <input x-model="$store.data.currentInput[elem.id]" type="radio"
-                                                    :name="elem.id" :id="elem.id + '_' + option.id" :value="option.id" />
+                                                <input x-model="$store.data.currentInput[elem.id + '_' + option.id]"
+                                                    type="checkbox" :id="elem.id + '_' + option.id" />
                                                 <span x-html="option.text"></span>
                                             </label>
                                         </template>
-                                    </div>
-                                </template>
-    
-                                <template x-if="elem.type === 'checkbox'">
-                                    <template x-for="option in elem.options" :key="option.id">
-                                        <label :for="elem.id + '_' + option.id">
-                                            <input x-model="$store.data.currentInput[elem.id + '_' + option.id]"
-                                                type="checkbox" :id="elem.id + '_' + option.id" />
-                                            <span x-html="option.text"></span>
-                                        </label>
                                     </template>
-                                </template>
+                                </div>
+
+                                <details x-show="$store.selectedIndicator.id === elem.id">
+                                    <summary style="font-size: 0.9rem; color: gray; text-align: right;">Add comment</summary>
+                                    <input x-model="$store.data.currentInput[elem.id + '_Comment']" type="text"
+                                        :placeholder="`Comment on '${elem.id}'`" />
+                                </details>
+
                             </div>
-
-                            <details x-show="$store.selectedIndicator.id === elem.id">
-                                <summary style="font-size: 0.9rem; color: gray; text-align: right;">Add comment</summary>
-                                <input x-model="$store.data.currentInput[elem.id + '_Comment']" type="text"
-                                    :placeholder="`Comment on '${elem.id}'`" />
-                            </details>
-
-                        </div>
+                        </template>
                     </template>
                 </template>
             </div>
