@@ -27,6 +27,11 @@ body {
     background-color: var(--bg-color);
 }
 
+#root {
+    height: 100%;
+    width: 100%;
+    box-sizing: content-box;
+}
 
 #main {
     display: flex;
@@ -442,7 +447,7 @@ hr {
     /* Full height */
     overflow: auto;
     /* Enable scroll if needed */
-    background-color: #33333315;
+    background-color: #33333399;
     backdrop-filter: blur(5px);
 }
 
@@ -572,6 +577,10 @@ button.critical:hover {
     }
 }
 
+#mobile {
+    display: none;
+}
+
 @media (max-width: 840px) {
     #main {
         display: none;
@@ -584,6 +593,7 @@ button.critical:hover {
     }
 
     #mobile {
+        display: block;
         width: 90%;
         margin: 1rem auto;
     }
@@ -591,6 +601,12 @@ button.critical:hover {
 
 table {
     margin-bottom: 0.5rem;
+}
+
+canvas {
+    display: block;
+    width: 150px !important;
+    height: 150px !important;
 }
 
 #legend-container {
