@@ -1609,6 +1609,8 @@
             }
 
             Alpine.store('loaded', true);
+
+            Alpine.store('data', Alpine.store('data'));
         }).then(() => {
             // Check config compatibility
             if (objectHash(Alpine.store('data').input[0].queryConfig) !== objectHash(Alpine.store('config').queryConfig)) {
