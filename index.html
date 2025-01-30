@@ -1072,8 +1072,8 @@
     <div id="orcid-modal" class="modal">
         <div x-data="{ orcid: '', authorName: '', publications: [] }" class="modal-content">
             <h3>Import publications using ORCID</h3>
-            <input x-model="orcid" type="text" placeholder="ORCID" />
-            <button @click="fetchAuthorByORCID(orcid).then(name => authorName = name); fetchPapersByORCID(orcid).then(ps => publications = ps)">Fetch Publications</button>
+            <input id="orcid-modal-input" x-model="orcid" type="text" placeholder="ORCID" />
+            <button id="orcid-modal-button" @click="fetchAuthorByORCID(orcid).then(name => authorName = name); fetchPapersByORCID(orcid).then(ps => publications = ps)">Fetch Publications</button>
 
             <template x-if="publications.length">
                 <div>
@@ -1361,6 +1361,21 @@
         }
 
         const showORCIDModal = () => {
+            const orcidInput = document.querySelector("#orcid-modal-input");
+            const orcidButton = document.querySelector("#orcid-modal-button");
+
+            // Extract ORCID from the input
+            let extractedORCID = (Alpine.store('data').input[0].ORCID ?? '').replace('https://orcid.org/', '');
+
+            // See orcid-modal to understand why the following lines work
+
+            // Set the input
+            orcidInput.value =  extractedORCID;
+            orcidInput.dispatchEvent(new Event('input'));
+
+            // Click the button to fetch works
+            orcidButton.click();
+
             document.getElementById("orcid-modal").style.display = "block";
         }
 
