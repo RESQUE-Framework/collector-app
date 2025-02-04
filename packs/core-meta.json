@@ -36,13 +36,14 @@
             "options": [
                 {
                     "id": "Applicant",
-                    "text": "I am the applicant & a co-author of these research outputs"
+                    "text": "I am the applicant & a (co-)author of these research outputs"
                 },
                 {
                     "id": "External",
                     "text": "I am an external rater"
                 }
-            ]
+            ],
+            "default": "Applicant"
         },
         {
             "id": "ExternalRaterName",
