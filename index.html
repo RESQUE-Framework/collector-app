@@ -685,9 +685,9 @@
                     <div class="sidebar-top">
                         <span style='background-color: lightyellow; font-size:80%;'>[Note: The RESQUE collector app is in beta
                             stage and might change in the near future. If you want to use it in practice, please <a
-                                href="https://resque-framework.github.io/website/team.html">contact</a> us.]</span><br><br>
+                                href="https://www.resque.info/team.html">contact</a> us.]</span><br><br>
                         <div class="top">
-                            <h3><a href="https://resque-framework.github.io/website">RESQUE</a></h3>
+                            <h3><a href="https://www.resque.info">RESQUE</a></h3>
                             <div id="actions">
                                 <button class="clear-button" @click="showModal('clear-modal')">Clear</button>
                                 <button class="load-button" @click="triggerLoad()">Load</button>
@@ -702,7 +702,7 @@
                         class="tabs-container">
                         <template x-if="show">
                             <div x-data="{ scrollY: 0 }">
-                                <div class="tab" @click="switchToTab(0)"
+                                <div class="tab metadata" @click="switchToTab(0)"
                                     :class="{ active: $store.data.currentTab === 0 }"
                                     style="position: relative;">
                                     <b>Author / Metadata</b>
@@ -992,7 +992,7 @@
                         </template>
                     </div>
                     <div class="menu-bottom">
-                        <a class="fakelink" href="https://resque-framework.github.io/website/">RESQUE Website</a> • <span
+                        <a class="fakelink" href="https://www.resque.info">RESQUE Website</a> • <span
                             onclick="showInfoModal()" class="fakelink">FAQ</span> • <a class="github-link"
                             href="https://github.com/RESQUE-Framework/collector-app">GitHub</a> • <span
                             onclick="driver(tourAnytime()).drive()" class="fakelink">Tour</span>
@@ -1160,11 +1160,13 @@
         const tourMain = {
             showProgress: true,
             steps: [
-                { popover: { title: '👋🏻 Welcome to the RESQUE tool!', description: 'We need to change the way we assess research - with a focus on quality (over quantity). The RESearch QUality Evaluation (RESQUE) framework provides an evaluation scheme for publications, data sets, and research software for psychological research. With this tool, you can enter the necessary information for your best research outputs, export a profile that shows your research style (not implemented yet), and use it for your CV or in hiring and tenure committees. <br><span style="background-color: lightyellow; font-size:80%;">[Note: The RESQUE is still a beta version and in active development.]</span><br><br><hr><br>If you use the app in an application process and have troubles or questions, you can (confidentially) contact Prof. Felix Schönbrodt (<a href="mailto:felix.schoenbrodt@psy.lmu.de">felix.schoenbrodt@psy.lmu.de</a>) or Prof. Anne Gärtner (<a href="mailto:anne.gaertner@fu-berlin.de">anne.gaertner@fu-berlin.de</a>) for consultation.' } },
+                { popover: { title: '👋🏻 Welcome to the RESQUE tool!', description: 'We need to change the way we assess research - with a focus on quality (over quantity). The RESearch QUality Evaluation (RESQUE) framework provides an evaluation scheme for publications, data sets, and research software for psychological research. With this tool, you can enter the necessary information for your best research outputs, export a profile that shows your research style (not implemented yet), and use it for your CV or in hiring and tenure committees. <br><span style="background-color: lightyellow; font-size:80%;">[Note: The RESQUE is still a beta version and in active development.]</span><br><br><hr><br>If you use the app in <span style="background-color: lightyellow;">an application process</span> and have troubles or questions, you can (confidentially) contact Prof. Felix Schönbrodt (<a href="mailto:felix.schoenbrodt@psy.lmu.de">felix.schoenbrodt@psy.lmu.de</a>) or Prof. Anne Gärtner (<a href="mailto:anne.gaertner@fu-berlin.de">anne.gaertner@fu-berlin.de</a>) for consultation.' } },
                 { popover: { title: '🔒 Privacy', description: 'The data you enter never leaves your device. Everything is processed locally. (except fetching the information about a publications using the DOI)' } },
-                { popover: { title: 'Saving changes...', description: 'Your changes are saved automatically in your browser. You can reload the page or close this tab and come back another time, the data you entered will still be here.' } },
+                { element: '.save-button', popover: { title: 'Saving changes...', description: 'Your changes are saved automatically in your browser. You can reload the page or close this tab and come back another time, the data you entered will still be here. Nonetheless, you should regularly make backups from your data by saving the data in a local file.' } },
                 // { element: '.pdf-button', popover: { description: 'You can open a PDF file and extract the DOI automatically. Note that this might fail in rare cases.' } },
-                { element: '.add-pub', popover: { title: 'Take your time...', description: 'After filling out the metadata form, add a new publication to continue the tour.' } },
+                { element: '.metadata', popover: { title: 'The first step', description: 'As a first step, please fill in the information on the <b>Author/Metadata tab</b>.' } },
+                { element: '.add-pub', popover: { title: 'Adding publications (1/2)', description: 'After that you can start to add a new publication. You can do this manually by clicking on the <b>Add Publication</b> button ...' } },
+                { element: '.add-orcid', popover: { title: 'Adding publications (2/2)', description: '... or you can add multiple publications at once by selecting them from your ORCID profile.' } },
             ]
         };
 
