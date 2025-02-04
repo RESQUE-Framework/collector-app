@@ -3,7 +3,7 @@ async function menu() {
         config: {
             max: 10,
             maxTopPapers: 3,
-            minROWarningThreshold: 5,
+            minROWarningThreshold: 0,
         },
 
         meta: pick(await use({
