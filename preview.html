@@ -184,8 +184,7 @@
                 <template x-for="(elem, index) in $store.pack.elements" :key="index">
                     <div x-show="evaluateFilter($store.filter, elem.id)">
                         <p>
-                            <span x-show="$store.showLabels" x-text="`[${elem.id}]`"
-                                style="font-size: small; color: gray;"></span>
+                            <span class="label" x-show="$store.showLabels" x-text="`[${elem.id}]`"></span>
                             <span x-show="elem.title" x-html="preprocessText(elem.title)"
                                 style="font-weight: bold;"></span>
                             <span x-show="elem.info" x-data="{ hover: false }">
@@ -250,7 +249,7 @@
                                 <template x-for="option in elem.options" :key="option.id">
                                     <label :for="elem.id + '_' + option.id">
                                         <input type="radio" :id="elem.id + '_' + option.id" :value="option.id" />
-                                        <i><span x-show="option.value && $store.showPoints" x-text="`(${option.value}P) `"></span></i>
+                                        <i><span class="hl" x-show="option.value !== undefined  && $store.showPoints" x-text="`(${option.value}P) `"></span></i>
                                         <span x-html="option.text"></span>
                                     </label>
                                 </template>
@@ -261,7 +260,7 @@
                             <template x-for="option in elem.options" :key="option.id">
                                 <label :for="elem.id + '_' + option.id">
                                     <input type="checkbox" :id="elem.id + '_' + option.id" />
-                                    <i><span x-show="option.value && $store.showPoints" x-text="`(${option.value}P) `"></span></i>
+                                    <i><span class="hl" x-show="option.value !== undefined  && $store.showPoints" x-text="`(${option.value}P) `"></span></i>
                                     <span x-html="option.text"></span>
                                 </label>
                             </template>
@@ -282,12 +281,13 @@
             overflow: auto;
         }
 
-        @media print {
+        .hl {
+            background-color: yellow;
+        }
 
-            .no-print,
-            .no-print * {
-                display: none !important;
-            }
+        .label {
+            font-size: small;
+            color: gray;
         }
 
         .tooltip {
@@ -298,6 +298,19 @@
             border-radius: 8px;
             max-width: 400px;
             z-index: 1;
+        }
+
+        @media print {
+
+            .no-print,
+            .no-print * {
+                display: none !important;
+            }
+
+            body,
+            body * {
+                font-size: 60% !important;
+            }
         }
     </style>
 </body>

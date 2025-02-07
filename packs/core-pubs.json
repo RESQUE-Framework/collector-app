@@ -1,6 +1,6 @@
 {
-    "version": "0.4.1",
-    "date": "2024-09-17",
+    "version": "0.5.0",
+    "date": "2024-11-25",
     "prefix": "P",
     "title": "Publication",
     "elements": [        
@@ -1614,12 +1614,8 @@
             "type": "separator",
             "condition": "$P_Suitable === 'Yes'"
         },
-        {
-            "id": "P_Theory_Def",
-            "type": "info",
-            "text": "<h3>Theory usage and development</h3><span style='background-color: lightyellow;'>[Note: So far, no scoring points have been assigned to the indicators on 'Theory']</span><br><br>In the following, the term <i>theory</i> is used for a set of conjectures about the world (i.e., assertions about structures, relations, and mechanisms) that explain empirical phenomena. The theory may be expressed in a narrative (i.e., primarily verbal) and/or a more formalized manner (i.e., a model).<br>The term <i>model</i> is reserved for a (part of a) theory that is expressed mathematically, algorithmically, or in terms of logical (IF-THEN) propositions, and which is able to reproduce patterns reflective of a to-be-explained phenomenon.",
-            "condition": "$P_Suitable === 'Yes'"
-        },
+
+    
         {
             "id": "P_Theorizing",
             "type": "radio",
@@ -1638,7 +1634,7 @@
                     "text": "Not applicable / cannot answer the question"
                 }
             ],
-            "info": "If the paper states theoretically derived hypotheses and alike, you should not choose 'descriptive' here.",
+            "info": "If the paper states any theoretically derived hypotheses or the and alike, you should choose the second option here, even if large parts of the study had an exploratory motivation.",
             "condition": "$P_Suitable === 'Yes'"
         },
 
@@ -1648,31 +1644,51 @@
             "title": "⤷ Not Applicable: Explanation",
             "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'NotApplicable'"
         },
+
+        {
+            "id": "P_Theory_Def",
+            "type": "info",
+            "text": "<h4>Theory usage and development</h4>The following section aims to assess the <b>theoretical rigor</b> of your work, with a formalized version of a theory in a computational model being considered the highest standard.<br><ul><li>A <b>theory</b> is a set of assumptions about mechanisms that explain empirical phenomena.</li><li><b>Phenomena</b> are expressed in robust patterns in the world that have been confirmed in methodologically diverse empirical studies. They are usually not directly observable but implied by observed or measured data patterns. Notably, the assumption of the existence of the phenomenon may be false (e.g., due to errors in the measurement).</li><li><b>Mechanisms</b> that explain phenomena are typically described using concepts (e.g., person, situation, attitude, motive, etc.) and relations among these concepts. We call these the 'elements of a theory'. Eventually, the elements specified within the theory should be able to reproduce the data pattern that resembles the data pattern reflective of the assumed phenomenon.</li></ul>Whether or not the pattern exists in reality is relevant regarding the theory’s ultimate utility, but it is irrelevant in terms of how precisely, transparently and comprehensively the theory itself is presented. A theory may be well-specified and still wrong.<br><br>A <b>model</b> is a formalization of a (part of a) theory in accordance with some set of standard notation rules (e.g., algebra). A model always consists of mathematical or formal-logic elements such as variables, scalars and constants, as well as exact specifications of the ways in which these are related to one another. The formulation of a model should always enable to run concrete simulations, thereby increasing the precision, objectivity, and falsifiability of a theory. Please note that there is a difference between 1) a computational model of your theory, which aims to explain your data by formalizing a data-generating process, and 2) a statistical model of your data, which aims to describe patterns within the data but without offering an explanation of how that data was generated. In the following, the term “model” is used in the former way.",
+            "info": "The following section aims to assess the theoretical rigor of your work, with a formalized version of a theory in a computational model being considered the highest standard.<br><br>It is important to distinguish between 1) a computational model of your theory, which aims to <i>explain</i> your data by formalizing a data-generating process, and 2) a statistical model of your data, which aims to <i>describe</i> patterns in your data.",
+            "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided'"
+        },
+
+
+
         {
             "id": "P_Theorizing_Quality",
             "type": "checkbox",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || (($P_Theorizing === 'DescriptiveExploratory') || (($P_Theorizing === 'NotApplicable') && (exists($P_Theorizing_NAExplanation))))"
+            },
             "title": "Hygiene standards for papers developing and/or evaluating at least one theory. The paper …",
             "options": [
                 {
                     "id": "NarrativeAccount",
-                    "text": "contains an <b>explicit narrative account</b> of (all) the <i>phenomena</i> that are to be explained, and of one or more hypothetical <i>mechanisms</i> accounting for them."
+                    "text": "contains an explicit narrative account of the phenomena that are to be explained, and of one or more hypothetical mechanisms accounting for them. ",
+                    "value": 0.4
                 },
                 {
                     "id":"NarrativeDefinitions",
-                    "text": "contains <b>explicit narrative definitions of each element</b> (e.g., concepts, relationships between concepts) in the theory."
+                    "text": "contains explicit narrative definitions of each element (e.g., concepts, relationships between concepts) in the theory.",
+                    "value": 0.3
                 },
                 {
                     "id":"BoundaryConditions",
-                    "text": "lists all (boundary) conditions under which the theory applies."
+                    "text": "specifies the conditions that must be met for the theory to apply to the phenomena.",
+                    "value": 0.3
                 },
                 {
                     "id": "FormalizedAccount",
-                    "text": "contains a <b>formalized account of the theory (i.e., a model)</b>. The model includes all connections among the elements of the theory, and a formalization of the phenomena that are to be explained."
+                    "text": "contains a formalized account of the theory (i.e., a model). That is, all properties and connections among the elements of the theory are expressed in a formalized way (see explanations for examples), and the model attempts to reproduce the to-be-explained phenomenon.",
+                    "value": 1
                 }
             ],
-            "info": "Please apply these questions to the theory in your paper - regardless whether you (further) developed the theory or used someone else's theory.<br><br><i>Phenomena</i> are robust patterns in the world that have been confirmed in methodologically diverse empirical studies. While they are not always directly observable, they are implied by observation or measurement.<br><br><i>(Boundary) conditions</i> explicate under which conditions a theory applies (e.g., for which population, under which situational characteristics).<br><br>A <i>formalized account of the theory</i> can be achieved in various ways, typically by specifying the theory with (1) formal-logic (e.g., if-then propositions, rules of logic), (2) mathematical equations, or (3) in an agent-based (i.e., specification of individual entities and their interactions to simulate their effect on the system), or algorithmic model. Oftentimes, a model will mix multiple approaches (e.g., an agent-based model can include equations).",
+            "info": "The following criteria also apply when reusing or testing a previously developed model. In this case, they refer to the previous work that is referenced in the paper and any deviations, additions and adaptations reported in the current work.<br><br><ul><li><i>Phenomena</i> are robust patterns in the world that have been confirmed in methodologically diverse empirical studies. While they are not always directly observable, they are implied by observation or measurement.</li><li>'<i>conditions that must be met</i>': For example, for which population, under which situational characteristics.</li><li>A <i>formalized account of the theory</i> can be achieved in various ways, typically by specifying the theory with (1) formal-logic (e.g., if-then propositions, rules of logic), (2) mathematical equations, or (3) in an agent-based (i.e., specification of individual entities and their interactions to simulate their effect on the system), or (4) algorithmic model. Oftentimes, a model will mix multiple approaches (e.g., an agent-based model can include equations and / or computer code).</li></ul>",
             "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided'"
         },
+
+
         {
             "id": "P_Theorizing_ModelLanguage",
             "type": "checkbox",
@@ -1688,7 +1704,11 @@
                 },
                 {
                     "id": "ABM",
-                    "text": "Agent-based or algorithmic model"
+                    "text": "Agent-based model"
+                },
+                {
+                    "id": "Algo",
+                    "text": "Algorithmic model"
                 },                
                 {
                     "id": "OtherLanguage",
@@ -1710,83 +1730,46 @@
         {
             "id": "P_Theorizing_QualityFormalization",
             "type": "checkbox",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || (($P_Theorizing === 'DescriptiveExploratory') || (($P_Theorizing === 'NotApplicable') && (exists($P_Theorizing_NAExplanation))))"
+            },
             "title": "The paper …",
             "options": [
                 {
                     "id": "AllElements",
-                    "text": "lists all elements of the model alongside their definitions (for instance in a table)."
+                    "text": "lists all elements of the model alongside their definitions in a clearly arranged form (e.g., in a table).",
+                    "value": 0.4
                 },
                 {
                     "id": "MathProps",
-                    "text": "explicates the basic mathematical properties of all elements of the model (e.g., scalar vs. matrix; dimensionality; units carrying the information)."
+                    "text": "explicates the basic mathematical properties of all elements of the model (e.g., scalar vs. matrix; dimensionality; units carrying the information).",
+                    "value": 0.3
                 },
                 {
                     "id": "PossibleValues",
-                    "text": "explicates the possible values for all elements of the model (i.e., upper and lower bounds, scale level)."
+                    "text": "explicates the possible values for all elements of the model (i.e., upper and lower bounds, scale level).",
+                    "value": 0.3
                 },
                 {
                     "id": "PhenomenaReproduction",
-                    "text": "showcases that the model is able to reproduce the to-be-explained phenomenon or why it fails to do so."
+                    "text": "contains one or more simulation(s) to explore the ability of the model to reproduce the to-be-explained phenomenon.",
+                    "value": 0.7
                 },
                 {
-                    "id": "Falsifiability",
-                    "text": "showcases conditions which would allow to falsify the model."
+                    "id": "Implications",
+                    "text": "contains one or more simulation(s) to explore additional implications of the theory.",
+                    "value": 0.3
                 }
             ],
-            "info": "Please apply these questions to the theory in your paper - regardless whether you (further) developed the theory or used someone else’s theory.<br><br><ul><li>Under <i>elements</i> of a model we subsume all variables in the model (e.g., fixed and free parameters, outcomes), as well as all entities in the model, whose attributes are defined by variables.</li><li>Basic mathematical properties: For example, if a formalization only contains <code>Y = a*B + c</code>, even if all elements have a narrative definition, the mathematical properties might be unclear: For instance, is B a constant, a vector, or a two-dimensional matrix?</li></ul>",
+            "info": "Please apply these questions to the theory in your paper - regardless whether you (further) developed the theory or used someone else’s theory.<br><br><ul><li>Under <i>elements</i> of a model we subsume fixed and free parameters, scaling constants, measurable variables, and outcomes.</li><li>Basic mathematical properties: For example, if a formalization only contains <code>Y = a*B + c</code>, even if all elements have a narrative definition, the mathematical properties might be unclear: For instance, is <code>B</code> a constant, a vector, or a two-dimensional matrix?</li><li>The simulations do not necessarily involve empirical data.</li></ul>",
             "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided' && $P_Theorizing_Quality_FormalizedAccount"
-        },
-
-        {
-            "id": "P_Theorizing_Contribution",
-            "type": "radio",
-            "title": "How much did you personally contribute to this version of the theory?",
-            "options": [
-                {
-                    "id": "No",
-                    "text": "I did not contribute to this version of the theory itself (i.e., I did no theoretical work beyond testing a theory)"
-                },
-                {
-                    "id": "Yes",
-                    "text": "I did contribute significantly to this version of the theory"
-                }
-            ],
-            "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided'"
-        },
-        {
-            "id": "P_Theorizing_ContributionType",
-            "type": "checkbox",
-            "title": "I significantly contributed to ...",
-            "options": [
-                {
-                    "id": "NarrativeDevelopment",
-                    "text": "the overall development of an entire narrative theory"
-                },
-                {
-                    "id": "NarrativeRefinement",
-                    "text": "the expansion or refinement of an existing narrative theory"
-                },
-                {
-                    "id": "FormalizationFirst",
-                    "text": "the first formalization of an existing narrative theory"
-                },
-                {
-                    "id": "FormalizationStandAlone",
-                    "text": "the overall development of an entire formal model of which there was no narrative version"
-                },
-                {
-                    "id": "FormalizationRefinement",
-                    "text": "the expansion or refinement of an existing formal model"
-                }
-            ],
-            "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided' && $P_Theorizing_Contribution === 'Yes'"
         },
 
 
         {
             "id": "P_Theorizing_Test",
             "type": "radio",
-            "title": "Did you test (a part of) this theory?",
+            "title": "Did you test (a part of) this theory with empirical data?",
             "options": [
                 {
                     "id": "No",
@@ -1797,37 +1780,94 @@
                     "text": "Yes"
                 }                
             ],
-            "info": "We define 'test of theory' in a broad sense, including empirical and simulation studies.",
+            "info": "Testing the empirical consistency of a theory usually involves the comparison of a concrete prediction from the theory against empirical data. This can involve simulations but does necessarily require them.",
             "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided'"
         },
+
         {
-            "id": "P_Theorizing_Test_Quality",
+            "id": "P_Theory_Eval_Def",
+            "type": "info",
+            "text": "<h4>Theory Evaluation</h4>Theories may be evaluated in terms of how well they predict or reproduce data patterns that are indicative of the to-be-explained phenomenon. To do so, the elements of the theory that are to be included in the evaluation need to be “operationalized”. Evaluating a theory does not require its formalization but doing so will usually result in a more precise and objective test. Evaluating only parts of a theory is possible and legitimate.<br><br>An optimal theory evaluation contains an explicit account of which of the theory’s elements are (not) evaluated, how each of these elements are represented in the design of the respective empirical study, and how the assumed  phenomenon is represented in the observable data. An optimal theory evaluation also contains precise predictions, criteria for how they may be falsified, an assessment of how well the theory’s predictions fit the observable data, and a discussion of what the findings mean for the theory.",
+            "info": "The following section aims to assess the theoretical rigor of your work, with a formalized version of a theory in a computational model being considered the highest standard.<br><br>It is important to distinguish between 1) a computational model of your theory, which aims to <i>explain</i> your data by formalizing a data-generating process, and 2) a statistical model of your data, which aims to <i>describe</i> patterns in your data.",
+            "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided' && $P_Theorizing_Test == 'Yes'"
+        },
+
+        {
+            "id": "P_Theorizing_Test_QualityAssumptions",
             "type": "checkbox",
-            "title": "The paper …",
+            "title": "The paper describes all additional assumptions that were necessary to make the theory testable, by stating which, why, and how elements of the theory were ...",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || (($P_Theorizing === 'DescriptiveExploratory') || (($P_Theorizing === 'NotApplicable') && (exists($P_Theorizing_NAExplanation)))) || ($P_Theorizing_Test === 'No')"
+            },
             "options": [
                 {
-                    "id": "Assumptions",
-                    "text": "describes all necessary assumptions that were necessary to make the theory testable (including ad-hoc assumptions)."
+                    "id": "Measured",
+                    "text": "measured (i.e. operationalized)",
+                    "value": 0.1
                 },
                 {
-                    "id": "Operationalization",
-                    "text": "describes which, how, and why elements of the theory are measured, estimated, or fixed to specific values."
+                    "id": "Manipulated",
+                    "text": "manipulated within an experimental design",
+                    "value": 0.1
+                },
+                {
+                    "id": "Estimated",
+                    "text": "estimated (i.e. reflected in a (statistical) model)",
+                    "value": 0.1
+                },
+                {
+                    "id": "Fixed",
+                    "text": "fixed to specific values",
+                    "value": 0.1
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided' && $P_Theorizing_Test === 'Yes'",
+            "info": "This also includes ad-hoc assumptions."
+        },
+        {
+            "id": "P_Theorizing_Test_QualityDerivation",
+            "type": "checkbox",
+            "title": "The paper makes clear how the tested predictions logically and stringently follow from the theory by ...",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || (($P_Theorizing === 'DescriptiveExploratory') || (($P_Theorizing === 'NotApplicable') && (exists($P_Theorizing_NAExplanation)))) || ($P_Theorizing_Test === 'No')"
+            },
+            "options": [
+                {
+                    "id": "NarrativeWalkthrough",
+                    "text": "a narrative walk-through",
+                    "value": 0.3
                 },
                 {
                     "id": "Derivation",
-                    "text": "makes clear how the tested hypotheses logically and stringently follow from the theory."
-                },
+                    "text": "explicitly deriving the tested predictions from a formalized version of the theory.",
+                    "value": 0.3
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided' && $P_Theorizing_Test === 'Yes'",
+            "info": "More than one possible. Please tick all that apply. To gain all points, a formalized derivation of predictions should be accompanied by a narrative walkthrough.<ul><li>A narrative derivation explains the reasoning in a comprehensible manner using natural language terms, such that a competent person can follow the argumentation</li><li>A formalized derivation is objective, in the sense that any competent person would come to the same prediction.</li></ul>"
+        },
+        {
+            "id": "P_Theorizing_Test_QualityOther",
+            "type": "checkbox",
+            "title": "The paper ...",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || (($P_Theorizing === 'DescriptiveExploratory') || (($P_Theorizing === 'NotApplicable') && (exists($P_Theorizing_NAExplanation)))) || ($P_Theorizing_Test === 'No')"
+            },
+            "options": [
                 {
-                    "id": "Evaluation",
-                    "text": "evaluates the relative and/or absolute model fit with appropriate procedures (e.g., out-of-sample cross-validation, AIC, BIC, LOO, Bayes Factors)."
+                    "id": "ModelFit",
+                    "text": "evaluates the relative and/or absolute fit of the theory to the empirical data with appropriate procedures (e.g., qualitative reproduction of empirical patterns, cross-validation, AIC, Bayes Factors).",
+                    "value": 0.7
                 },
                 {
                     "id": "Discussion",
-                    "text": "contains an explicit discussion as to what the results mean for the theory that was tested."
+                    "text": "contains an explicit discussion as to what the results mean for the theory that was tested (e.g., refutation, limitation of scope, adding or subtracting theory elements).",
+                    "value": 0.3
                 }
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided' && $P_Theorizing_Test === 'Yes'"
         },
+
                 
         {
             "id": "P22P23SEP",
