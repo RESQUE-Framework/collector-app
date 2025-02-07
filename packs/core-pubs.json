@@ -19,13 +19,20 @@
             "id": "Title",
             "type": "info",
             "title": "Paper title <span style='color: grey; font-size:80%; font-weight:normal;'>(automatically added via doi)</span>",
-            "text": "$Title"
+            "text": "<a href='$DOI' target='_blank'>$Title</a>"
         },
         {
             "id": "Year",
             "type": "info",
             "title": "Year of publication <span style='color: grey; font-size:80%; font-weight:normal;'>(automatically added via doi)</span>",
             "text": "$Year"
+        },
+        {
+            "id": "Abstract",
+            "type": "info",
+            "title": "Abstract <span style='color: grey; font-size:80%; font-weight:normal;'>(automatically added via doi)</span>",
+            "text": "<details><summary>Abstract</summary>$Abstract</details>",
+            "style_classes": "abstract"
         },
         {
             "id": "P_TopPaper",
@@ -57,7 +64,7 @@
                 },
                 {
                     "id": "MetaAnalysis",
-                    "text": "Meta-Analysis"
+                    "text": "Meta-Analysis / Mega-Analysis"
                 },
                 {
                     "id": "Computational",
@@ -1001,6 +1008,10 @@
                     "text": "Content or behavioral coding (i.e., converting rich qualitative data into numeric scores)"
                 },
                 {
+                    "id": "MetaAnalysis",
+                    "text": "Meta-analysis: Effect sizes from primary studies"
+                },                
+                {
                     "id": "OtherType",
                     "text": "Other (please specify)"
                 }
@@ -1198,7 +1209,7 @@
             "title": "⤷ Access level",
             "score": {
                 "not_applicable": "($P_Suitable === 'No') || (($P_Data_Open === 'NotApplicable') && (exists($P_Data_Open_NAExplanation))) || ($P_Data === 'No') || (!($P_Data_Source_NewOwn) && !($P_Data_Source_ReuseOwn) && !($P_Data_Source_ReuseCompilation) && !($P_Data_Source_Simulated))",
-                "condition": "$P_Data === 'Yes'",
+                "condition": "($P_Data === 'Yes')",
                 "op": "select" 
             },
             "options": [
@@ -1227,7 +1238,7 @@
             "id": "P_Data_Open_AccessLevel_ZK2Explanation",
             "type": "text",
             "title": "⤷ Access level ZK2: Justification for restricted access",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open === 'YesEntire' && $P_Data_Open_AccessLevel === 'ZK2'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts'] && $P_Data_Open_AccessLevel === 'ZK2'"
         },
         {
             "id": "P_Data_Open_FAIR",
@@ -1235,7 +1246,7 @@
             "title": "⤷ FAIR format",
             "score": {
                 "not_applicable": "($P_Suitable === 'No') || (($P_Data_Open === 'NotApplicable') && (exists($P_Data_Open_NAExplanation))) || ($P_Data === 'No')  || (!($P_Data_Source_NewOwn) && !($P_Data_Source_ReuseOwn) && !($P_Data_Source_ReuseCompilation) && !($P_Data_Source_Simulated))",
-                "condition": "($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_Simulated) && ($P_Data_Open === 'YesEntire') && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || (($P_Data_Open_AccessLevel === 'ZK2') && (exists($P_Data_Open_AccessLevel_ZK2Explanation))))"
+                "condition": "($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts'] && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || (($P_Data_Open_AccessLevel === 'ZK2') && (exists($P_Data_Open_AccessLevel_ZK2Explanation))))"
             },
             "options": [
                 {
@@ -1254,7 +1265,7 @@
                     "value": 0.25
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open === 'YesEntire' && ($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1'] || $P_Data_Open_AccessLevel === 'ZK2' && $P_Data_Open_AccessLevel_ZK2Explanation)",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts'] && ($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1'] || $P_Data_Open_AccessLevel === 'ZK2' && $P_Data_Open_AccessLevel_ZK2Explanation)",
             "info": "<ul><li>Persistent identifier: Data in an OSF project do count, as we consider OSF URLs to be persistent.</li></ul>",
             "tip_external":"For <b>Codebook</b>:<ul><li>Check the availability of a codebook. Normally a separate document should be provided.</li><li>Exception: Variable labels, descriptions and scales are provided in a structured (e.g. tabular) format at the beginning of the syntax script.</li><li><b>Variable name, content</b> and <b>scale</b> must be provided in order to receive the point.</li></ul>"
         },
@@ -1451,7 +1462,7 @@
                     "value": 1
                 }
             ],
-            "info": "Open Material refers to all material that is necessary to replicate a study. It typically includes questionnaire items, stimuli, texts for vignettes, or code for software that controls the experimental flow. {:'YesParts', 'YesEntire' | Only choose 'Yes' if the material substantially exceeds the open reproducible scripts. }<br><br><ul><li>{:'YesParts' | When to choose <b>'parts of the materials available'</b><br>Choose 'Yes, entire material' if a reasonable justification for only parts of material is given.<br>Choose 'Yes, parts of material' if no justification is given.</li><li>When to choose <b>'Not applicable'</b>: If no material has been used in the publication, or the entire material is contained in the open reproducible scripts.</li></ul><br>The pure existence of an Electronic Supplemental Material does not necessarily count as Open Material, for example if it only contains additional analyses or tables.",
+            "info": "Open Material refers to all material that is necessary to replicate a study. It typically includes questionnaire items, stimuli, texts for vignettes, or code for software that controls the experimental flow. {:'YesParts', 'YesEntire' | Only choose 'Yes' if the material substantially exceeds the open reproducible scripts. }<br><br><ul><li>{:'YesEntire' | Choose 'Yes, entire material' if a reasonable justification for only parts of material is given.}</li><li>{:'YesParts' | Choose 'Yes, parts of material' if no justification is given. }</li><li>{:'NotApplicable' | When to choose <b>'Not applicable'</b>: If no material has been used in the publication, or the entire material is contained in the open reproducible scripts. }</li></ul><br>The pure existence of an Electronic Supplemental Material does not necessarily count as Open Material, for example if it only contains additional analyses or tables.",
             "condition": "$P_Suitable === 'Yes'",
             "tip_external":"<ul><li>Is a <b>link</b> to open materials provided (don't forget to check Appendix and Supplemental Materials)</li><li>Expect <b>'entire material'</b> as default if materials are available (only if the material is obviously <i>not</i> complete and no reasonable explanation is given, assign <b>'parts of materials'</b>)</li><li><b>'Not applicable'</b> is the default if 'reuse of existing data set', 'meta analysis' or 'simulation', <mark>but</mark> if there is additional material that shows an own contribution then assign <b>'Yes, entire material'</b></li></ul> "
         },
@@ -1700,7 +1711,7 @@
                     "text": "Algorithmic model"
                 },                
                 {
-                    "id": "Other",
+                    "id": "OtherLanguage",
                     "text": "Other (please specify)"
                 }
             ],
@@ -1711,7 +1722,7 @@
             "id": "P_Theorizing_ModelLanguage_Other",
             "type": "text",
             "title": "⤷ Theory type/ Language: Other",
-            "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided' && $P_Theorizing_Quality_FormalizedAccount && $P_Theorizing_ModelLanguage_Other"
+            "condition": "$P_Suitable === 'Yes' && $P_Theorizing === 'TheoryGuided' && $P_Theorizing_Quality_FormalizedAccount && $P_Theorizing_ModelLanguage_OtherLanguage"
         },
 
 

@@ -27,6 +27,11 @@ body {
     background-color: var(--bg-color);
 }
 
+#root {
+    height: 100%;
+    width: 100%;
+    box-sizing: content-box;
+}
 
 #main {
     display: flex;
@@ -46,6 +51,7 @@ body {
     width: 100%;
     display: block;
     box-sizing: border-box;
+    overflow: scroll;
 }
 
 .card.warning {
@@ -274,6 +280,15 @@ button:hover {
     font-weight: bold;
 }
 
+.tab-progress-indicator {
+    border-radius: 100%;
+    width: 8px;
+    height: 8px;
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+}
+
 .tab-delete-button:hover {
     transform: scale(1.1);
     background-color: firebrick;
@@ -295,6 +310,14 @@ header {
     margin-top: 1rem;
 }
 
+.scoring-details {
+    margin-bottom: 0;
+}
+
+.scoring-details summary {
+    margin-bottom: 0;
+}
+
 summary {
     margin-bottom: 8px;
     cursor: pointer;
@@ -310,7 +333,8 @@ summary:hover {
 
 #score-box {
     top: 0;
-    position: sticky
+    position: sticky;
+    flex-shrink: 0.2;
 }
 
 #score-box .sub {
@@ -400,7 +424,7 @@ hr {
 #ro-count-container {
     text-align: center;
     margin-top: 16px;
-    margin-bottom: 0;
+    margin-bottom: 16px;
 }
 
 /* Modal */
@@ -411,7 +435,7 @@ hr {
     /* Hidden by default */
     position: fixed;
     /* Stay in place */
-    z-index: 1;
+    z-index: 2;
     /* Sit on top */
     padding-top: 100px;
     /* Location of the box */
@@ -423,7 +447,7 @@ hr {
     /* Full height */
     overflow: auto;
     /* Enable scroll if needed */
-    background-color: #33333315;
+    background-color: #33333399;
     backdrop-filter: blur(5px);
 }
 
@@ -433,15 +457,12 @@ hr {
     background-color: white;
     margin: auto;
     padding: 16px;
+    padding-top: 0px;
     width: 740px;
     border-radius: 8px;
     box-shadow: 0 0 8px var(--shadow-color);
     max-height: 70vh;
     overflow: auto;
-}
-
-.modal-content h2 {
-    margin-top: 0;
 }
 
 #add-modal-continue {
@@ -556,6 +577,10 @@ button.critical:hover {
     }
 }
 
+#mobile {
+    display: none;
+}
+
 @media (max-width: 840px) {
     #main {
         display: none;
@@ -568,7 +593,44 @@ button.critical:hover {
     }
 
     #mobile {
+        display: block;
         width: 90%;
         margin: 1rem auto;
     }
 }
+
+table {
+    margin-bottom: 0.5rem;
+}
+
+canvas {
+    display: block;
+    width: 150px !important;
+    height: 150px !important;
+}
+
+#legend-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    margin-right: 18px;
+  }
+  
+  .legend-color {
+    width: 8px;
+    height: 8px;
+    display: inline-block;
+    margin-right: 5px;
+  }
+  
+  .legend-label {
+    font-size: 12px;
+  }

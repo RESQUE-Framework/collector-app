@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RESQUE</title>
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="indicator-styles.css" />
 
     <!-- Matomo -->
     <script>
@@ -26,11 +27,16 @@
 
     <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 
 <body>
+    <script src="https://cdn.jsdelivr.net/npm/@alpinejs/sort@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <script src="./utils/charts.js"></script>
+    <script src="./utils/orcid.js"></script>
 
     <script>
         const preprocessCondition = condition => {
@@ -66,8 +72,6 @@
 
             const c = insertValuesIntoCondition(preprocessCondition(condition))
 
-            console.log(c)
-
             return eval(c);
         }
 
@@ -101,29 +105,8 @@
 
             const globals = {
                 paper_count: (value) => Alpine.store('data').input.filter(r => r.type === 'pub' && r[value] === true).length,
-
-                papers: (value) => {
-                    let topPapers = Alpine.store('data').input.map((r, index) => {
-                        r.position = index;
-                        return r;
-                    }).filter(r => r.type === 'pub' && r[value] === true);
-
-                    let positions = topPapers.map(paper => paper.position);
-
-                    if (topPapers.length <= 0) {
-                        return "<i>No papers selected</i>";
-                    }
-
-                    // const papersToDisplay = tabs
-                    //     .filter((tab, index) => positions.includes(index))
-                    //     .map(t => {
-                    //         t.classList.remove("selected");
-                    //         return t.outerHTML;
-                    //     });
-
-                    // return papersToDisplay.join("");
-                }
             }
+            
             return text
                 .replaceAll(/meta\$([a-zA-Z0-9_]+)/g, (match, variable) => results[0][variable])
                 .replaceAll(/global\$([a-zA-Z0-9_]+)@([a-zA-Z0-9_]+)/g, (match, variable, type) => {
@@ -159,10 +142,32 @@
                         console.log(response);
                     }
 
+                    const authors = response.author;
+
+                    let authorString;
+
+                    switch (authors.length) {
+                        case 0:
+                            authorString = 'No author';
+                            break;
+                        case 1:
+                            authorString = authors[0].family;
+                            break;
+                        case 2:
+                            authorString = authors.map(a => a.family).join(' & ');
+                            break;
+                        default:
+                            authorString = authors[0].family + ' et al.';
+                            break;
+                    }
+
+                    const year = response.published?.["date-parts"][0][0] || response.issued?.["date-parts"][0][0] || null;
+
                     return {
-                        title: response.title,
-                        year: response.published["date-parts"][0][0],
-                        DOI: response.DOI
+                        title: `${authorString} (${year}): ${response.title}`,
+                        year: year,
+                        DOI: response.DOI,
+                        abstract: response.abstract
                     }
                 })
                 .catch(() => {
@@ -170,7 +175,9 @@
                         error: true,
                         title: doi ? '⚠️ <b>Invalid DOI:</b> ' + doi : undefined,
                         year: undefined,
-                        DOI: doi
+                        DOI: doi,
+                        abstract: undefined
+                        
                     }
                 })
         }
@@ -215,6 +222,8 @@
             let maxScore = 0;
             let reachedScore = 0;
 
+            let itemScores = {};
+
             for (indicator in scoring) {
                 if (indicator === 'post') {
                     // skip post
@@ -224,22 +233,29 @@
                     continue;
                 }
 
-                maxScore += scoring[indicator].max;
+                itemMaxScore = scoring[indicator].max;
+                itemScore = 0;
 
                 switch (scoring[indicator].op) {
                     case "sum":
-                        reachedScore += scoring[indicator].points
+                        itemScore = scoring[indicator].points
                             .filter(p => evaluateConditionInContext(p.condition, r))
                             .reduce((sum, next) => sum + next.value, 0);
                         break;
                     case "select":
-                        reachedScore += (scoring[indicator].points.find(p => evaluateConditionInContext(p.condition, r)) || { value: 0 }).value;
+                        itemScore = (scoring[indicator].points.find(p => evaluateConditionInContext(p.condition, r)) || { value: 0 }).value;
                         break;
                     default:
                         break;
                 }
 
+                maxScore += itemMaxScore;
+                reachedScore += itemScore;
 
+                itemScores[indicator] = {
+                    max: itemMaxScore,
+                    score: itemScore
+                }
             }
 
             if (scoring.post) {
@@ -251,11 +267,48 @@
                 })
             }
 
+            const categories = [
+                {
+                    title: "Theorizing & Formal Modeling",
+                    cue: "Theorizing"
+                },
+                {
+                    title: "Open Data",
+                    cue: "Data"
+                },
+                {
+                    title: "Open Materials",
+                    cue: "OpenMaterials"
+                },
+                {
+                    title: "Preregistration",
+                    cue: "Prereg"
+                },
+                {
+                    title: "Reproducible Code & Verification",
+                    cue: "ReproducibleScripts|IndependentVerification"
+                }
+            ]
+
+            const categoryScores = categories.map(category => {
+                const categoryIndicators = Object.keys(itemScores).filter(indicator => new RegExp(category.cue).test(indicator));
+                const categoryMax = categoryIndicators.map(indicator => itemScores[indicator].max).reduce((sum, current) => sum + current, 0);
+                const categoryScore = categoryIndicators.map(indicator => itemScores[indicator].score).reduce((sum, current) => sum + current, 0);
+
+                return {
+                    title: category.title,
+                    max: categoryMax,
+                    score: categoryScore
+                }
+            });
+
             return {
                 max: maxScore,
                 score: reachedScore,
                 relative: reachedScore / maxScore,
-                percentage: ((reachedScore / maxScore) * 100).toFixed(1)
+                percentage: ((reachedScore / maxScore) * 100).toFixed(1),
+                items: itemScores,
+                categories: categoryScores
             }
         }
 
@@ -268,13 +321,77 @@
                 .map(s => s.relative)
                 .reduce((sum, current) => sum + current, 0) / validScores.length
 
+            const overallCategoryScores = validScores
+                .map(s => s.categories)
+                .reduce((sum, current) => {
+                    current.forEach(category => {
+                        const existingCategory = sum.find(c => c.title === category.title);
+
+                        if (existingCategory) {
+                            existingCategory.max += category.max;
+                            existingCategory.score += category.score;
+                        } else {
+                            sum.push({ ...category });
+                        }
+                    });
+
+                    return sum;
+                }, []);
+
             return {
                 scores,
                 overall: {
                     relative,
-                    percentage: (relative * 100).toFixed(1)
+                    percentage: (relative * 100).toFixed(1),
+                    categories: overallCategoryScores
                 }
             };
+        }
+
+        const checkCompletion = (result) => {
+            const elements = Alpine.store('forms')[result.type].elements;
+
+            if (!elements) {
+                return {
+                    progress: {
+                        current: 0,
+                        total: 0,
+                        ratio: 0,
+                        percent: 0
+                    },
+                    warnings: []
+                }
+            }
+
+            // We can't check progress of checkboxes
+            const fillableElements = elements.filter(e => e.type !== 'checkbox' && e.type !== 'separator' && e.type !== 'info');
+
+            // Get visible elements (required)
+            const filteredElements = fillableElements
+                .filter(e => evaluateConditionInContext(e.condition, result));
+
+            // Get visible elements that are filled out
+            const filledOutElements = filteredElements.filter(e => result[e.id] !== '');
+
+            const progress = filledOutElements.length / filteredElements.length;
+            const progressPercent = Math.round(progress * 100).toFixed(2);
+
+            return {
+                progress: {
+                    current: filledOutElements.length,
+                    total: filteredElements.length,
+                    ratio: progress,
+                    percent: progressPercent
+                },
+                warnings: []
+            }
+        }
+
+        const getProgressColor = value => {
+            //value from 0 to 1
+            let hue = (value * 120).toString(10);
+
+            return `hsl(${hue}, 100%, 38%)`;
         }
 
         let prefixes = {
@@ -286,6 +403,8 @@
     </script>
 
     <script>
+        Alpine.store('loaded', false);
+
         Alpine.store('forms', {
             meta: {},
             pub: {},
@@ -350,9 +469,11 @@
 
         Alpine.store('data', {
             input: JSON.parse(localStorage.getItem('data') ?? '[]'),
+            topPapers: [],
             currentTab: parseInt(sessionStorage.getItem('currentTab') ?? '0'),
             currentInput: {},
             score: {},
+            completion: {},
 
             manualInit() {
                 if (typeof this.input === "object" && this.input.length === 0) {
@@ -361,15 +482,21 @@
 
                 this.currentInput = this.input[this.currentTab];
                 this.score = scoreAll(this.input);
+                this.completion = this.input.map(checkCompletion);
+                this.topPapers = this.input.filter(r => r.type === 'pub' && r.P_TopPaper_Select === true);
             },
 
-            newResearchOutput(type) {
-                this.input.push({
+            createResearchOutput(type) {
+                return {
                     type,
                     version: Alpine.store('forms')[type].versions[prefixes[type]],
                     date_added: Date.now(),
                     ...getDefaultValues(type)
-                });
+                }
+            },
+
+            newResearchOutput(type) {
+                this.input.push(this.createResearchOutput(type));
 
                 this.currentTab = this.input.length - 1;
 
@@ -383,10 +510,25 @@
                 this.currentTab = 0;
             },
 
+            reorderResearchOutputs(from, to) {
+                const [removed] = this.input.splice(from, 1);
+                this.input.splice(to, 0, removed);
+            },
+
+            addPublicationWithDetails(details) {
+                this.input.push({
+                    type: 'pub',
+                    version: Alpine.store('forms')['pub'].versions[prefixes['pub']],
+                    date_added: Date.now(),
+                    ...getDefaultValues('pub'),
+                    ...details
+                });
+            },
+
             clear() {
                 localStorage.clear();
                 sessionStorage.clear();
-                this.input = [{ type: 'meta' }];
+                this.input = [this.createResearchOutput('meta')];
                 this.currentTab = 0;
             }
         });
@@ -410,9 +552,36 @@
         });
 
         Alpine.effect(() => {
+            if (!Alpine.store('loaded')) {
+                return;
+            }
+
             const data = Alpine.store('data').input;
 
-            Alpine.store('data').score = scoreAll(data);
+            const newTopPapers = data.filter(r => r.type === 'pub' && r.P_TopPaper_Select === true);
+
+            if (newTopPapers.length > Alpine.store('config').config.maxTopPapers) {
+                // set difference
+                const diff = newTopPapers.filter(paper => !Alpine.store('data').topPapers.includes(paper));
+                
+                // undo change
+                setTimeout(() => {
+                    diff.forEach(paper => paper.P_TopPaper_Select = false);
+                }, 0);
+
+                // show warning
+                alert(`You can only select ${Alpine.store('config').config.maxTopPapers} top papers.`);
+
+                return;
+            }
+
+            Alpine.store('data').topPapers = newTopPapers;
+
+            const scores = scoreAll(data);
+
+            Alpine.store('data').score = scores;
+
+            Alpine.store('data').completion = data.map(checkCompletion);
 
             Alpine.store('warnings').reevaluate();
 
@@ -425,9 +594,21 @@
             showSaving();
 
             localStorage.setItem('data', JSON.stringify(data));
+
+            renderScoreChart('overallScoreChart', scores.overall.categories, animation = false);
+
+            const currentScore = scores.scores[Alpine.store('data').currentTab];
+
+            if (currentScore && currentScore.categories) {
+                renderScoreChart('currentScoreChart', currentScore.categories, animation = false);
+            }
         });
 
         Alpine.effect(() => {
+            if (!Alpine.store('loaded')) {
+                return;
+            }
+
             const currentTab = Alpine.store('data').currentTab;
             Alpine.store('data').date_modified = Date.now();
             sessionStorage.setItem('currentTab', currentTab);
@@ -438,6 +619,10 @@
         });
 
         Alpine.effect(async () => {
+            if (!Alpine.store('loaded')) {
+                return;
+            }
+
             const doiTab = Alpine.store('data').currentTab;
             const doi = Alpine.store('data').input[doiTab].DOI;
 
@@ -449,11 +634,16 @@
 
             Alpine.store('data').input[doiTab].Title = publicationInformation.title;
             Alpine.store('data').input[doiTab].Year = publicationInformation.year;
+            Alpine.store('data').input[doiTab].Abstract = publicationInformation.abstract;
 
             if (!publicationInformation.error) {
                 Alpine.store('data').input[doiTab].DOI = "https://doi.org/" + publicationInformation.DOI;
             }
         });
+
+        Alpine.store('tabsSidebarScrollTop', 0);
+
+        Alpine.store('showIndicators', true);
 
         Alpine.data('tab', () => ({
             hovering: false,
@@ -479,320 +669,477 @@
             'software': 'Software',
             'data': 'Data Set'
         };
+
+        const switchToTab = (index) => {
+            Alpine.store('showIndicators', false);
+            Alpine.store('data').currentTab = index;
+            setTimeout(() => Alpine.store('showIndicators', true), 0);
+            document.querySelector('#formview').scrollTop = 0;
+        }
     </script>
 
-    <div id="main">
-        <div class="tabs-sidebar">
-            <div class="sidebar-top">
-                <span style='background-color: lightyellow; font-size:80%;'>[Note: The RESQUE collector app is in beta
-                    stage and might change in the near future. If you want to use it in practice, please <a
-                        href="https://resque-framework.github.io/website/team.html">contact</a> us.]</span><br><br>
-                <div class="top">
-                    <h3><a href="https://resque-framework.github.io/website">RESQUE</a></h3>
-                    <div id="actions">
-                        <button class="clear-button" @click="showModal('clear-modal')">Clear</button>
-                        <button class="load-button" @click="triggerLoad()">Load</button>
-                        <button class="save-button" @click="exp()">Save to file ...</button>
-                    </div>
-                </div>
-
-                <p x-text="`${$store.data.input.length - 1} of ${Alpine.store('config').config.max} slots used`"></p>
-            </div>
-            <div class="tabs-container">
-                <template x-for="tab, index in $store.data.input" :key="index">
-                    <div style="position: relative;" x-data="tab">
-                        <div @mouseover="hoverStart" @mouseout="hoverEnd" @click="$store.data.currentTab = index"
-                            x-html="`${$store.data.input[index].P_TopPaper_Select ? '⭐️ ' : ''}<b>${types[tab.type]}</b><br>${$store.data.input[index].Title ?? ''}`"
-                            :class="{tab: true, active: $store.data.currentTab === index}">
+    <template x-if="$store.loaded">
+        <div id="root">
+            <div id="main">
+                <div class="tabs-sidebar" id="tabs-sidebar" x-on:scroll="$store.tabsSidebarScrollTop = $el.scrollTop">
+                    <div class="sidebar-top">
+                        <span style='background-color: lightyellow; font-size:80%;'>[Note: The RESQUE collector app is in beta
+                            stage and might change in the near future. If you want to use it in practice, please <a
+                                href="https://www.resque.info/team.html">contact</a> us.]</span><br><br>
+                        <div class="top">
+                            <h3><a href="https://www.resque.info">RESQUE</a></h3>
+                            <div id="actions">
+                                <button class="clear-button" @click="showModal('clear-modal')">Clear</button>
+                                <button class="load-button" @click="triggerLoad()">Load</button>
+                                <button class="save-button" @click="showExportModal()">Save to file ...</button>
+                            </div>
                         </div>
-                        <span @mouseover="hoverStart" class="tab-delete-button tab-delete-menu"
-                            @click="showRemoveButton" x-show="index !== 0 && hovering && !showRemove">
-                            X
-                        </span>
-                        <button class="critical tab-delete-menu" x-show="showRemove"
-                            @click="$store.data.removeResearchOutput(index)">
-                            Remove
-                        </button>
+
+                        <p x-text="`${$store.data.input.length - 1} of ${Alpine.store('config').config.max} slots used`"></p>
                     </div>
-                </template>
-            </div>
-            <div id="add-container">
-                <div class="doi-input" style="display:none">
-                    <button class="pdf-button" onclick="document.getElementById('add-pdf').click()">Extract DOI from
-                        PDF</button>
-                    <input id="add-doi" type="text" placeholder="DOI (optional)" />
-                </div>
-
-                <div class="add-buttons" x-show="($store.data.input.length - 1) < $store.config.config.max">
-                    <button class="add-pub" @click="$store.data.newResearchOutput('pub')">Add Publication</button>
-                    <!-- REMOVED TEMPORARILY
-                    <br />
-                    <button class="add-software" @click="$store.data.newResearchOutput('software')">Add
-                        Software</button>
-                    <br />
-                    <button class="add-data" @click="$store.data.newResearchOutput('data')">Add Data Set</button>
-                    -->
-                </div>
-            </div>
-        </div>
-        <div id="formview-container">
-            <div id="saving" class="animate pop" style="display: none;"></div>
-            <div id="formview">
-                <h3 x-html="$store.forms[$store.data.currentInput.type].title"></h3>
-
-                <template x-if="$store.data.currentTab >= 0">
-                    <template x-for="(elem, index) in $store.forms[$store.data.currentInput.type].elements"
-                        :key="$store.data.currentInput.position + '_' + elem.id">
-                        <div @click="$store.selectedIndicator = elem" x-show="evaluateCondition(elem.condition)"
-                            onblur="actions[elem.onchange]()">
-                            <p x-html="preprocessText(elem.title)" style="font-weight: bold;"></p>
-
-                            <template x-if="elem.type === 'separator'">
-                                <hr style="height: 3px; border:none; color: #333; background-color: #333;" />
-                            </template>
-
-                            <template x-if="elem.type === 'info'">
-                                <p x-html="preprocessText(elem.text)"></p>
-                            </template>
-
-                            <template x-if="elem.type === 'text'">
-                                <input x-model="$store.data.currentInput[elem.id]" type="text"
-                                    :placeholder="elem.title || ''" />
-                            </template>
-
-                            <template x-if="elem.type === 'textbox'">
-                                <div>
-                                    <div class="textbox" contenteditable
-                                        x-init="$el.innerText = $store.data.currentInput[elem.id] ?? ''"
-                                        @input="$store.data.currentInput[elem.id] = $event.target.innerText"
-                                        :placeholder="elem.title || ''"></div>
-
-                                    <template x-if="!!elem.maxwords">
-                                        <p class="wordcount"
-                                            :class="(($store.data.currentInput[elem.id] ?? '').match(/\S+/g) ?? []).length > elem.maxwords ? 'wordcount-warning' : ''"
-                                            x-text="`${(($store.data.currentInput[elem.id] ?? '').match(/\S+/g) ?? []).length} / ${elem.maxwords} words`">
-                                        </p>
+                    <div x-data="{ show: true }"
+                        x-effect="if (show) document.querySelector('#tabs-sidebar').scrollTop = $store.tabsSidebarScrollTop;"
+                        class="tabs-container">
+                        <template x-if="show">
+                            <div x-data="{ scrollY: 0 }">
+                                <div class="tab metadata" @click="switchToTab(0)"
+                                    :class="{ active: $store.data.currentTab === 0 }"
+                                    style="position: relative;">
+                                    <b>Author / Metadata</b>
+                                    <div class="tab-progress-indicator"
+                                        :style="`background-color: ${getProgressColor($store.data.completion[0].progress.ratio)};`"
+                                        :title="`Progress: ${$store.data.completion[0].progress.percent}%`">
+                                    </div>
+                                </div>
+                                <div x-sort="$store.data.reorderResearchOutputs($item, $position + 1); show = false; setTimeout(() => show = true, 0);">
+                                    <template x-for="tab, index in $store.data.input.slice(1)"
+                                        :key="index">
+                                        <div x-sort:item="index + 1" style="position: relative;" x-data="tab">
+                                            <div @mouseover="hoverStart" @mouseout="hoverEnd"
+                                                @click="switchToTab(index + 1)"
+                                                x-html="`${$store.data.input[index + 1].P_TopPaper_Select ? '⭐️ ' : ''}<b>${types[tab.type]}</b><br>${$store.data.input[index + 1].Title ?? ''}`"
+                                                :class="{tab: true, active: $store.data.currentTab === index + 1}">
+                                            </div>
+                                            <span @mouseover="hoverStart" class="tab-delete-button tab-delete-menu"
+                                                @click="showRemoveButton" x-show="hovering && !showRemove">
+                                                X
+                                            </span>
+                                            <button class="critical tab-delete-menu" x-show="showRemove"
+                                                @click="$store.data.removeResearchOutput(index + 1)">
+                                                Remove
+                                            </button>
+                                            <div class="tab-progress-indicator"
+                                                :style="`background-color: ${getProgressColor($store.data.completion[index + 1].progress.ratio)};`"
+                                                :title="`Progress: ${$store.data.completion[index + 1].progress.percent}%`">
+                                            </div>
+                                            
+                                        </div>
                                     </template>
                                 </div>
-                            </template>
+                            </div>
+                        </template>
+                    </div>
+                    <div id="add-container">
+                        <div class="doi-input" style="display:none">
+                            <button class="pdf-button" onclick="document.getElementById('add-pdf').click()">Extract DOI from
+                                PDF</button>
+                            <input id="add-doi" type="text" placeholder="DOI (optional)" />
+                        </div>
 
-                            <template x-if="elem.type === 'number'">
-                                <input x-model="$store.data.currentInput[elem.id]" type="text"
-                                    :placeholder="elem.title || ''" />
-                            </template>
+                        <div class="add-buttons" x-show="($store.data.input.length - 1) < $store.config.config.max">
+                            <button class="add-pub" @click="$store.data.newResearchOutput('pub')">Add Publication</button>
+                            <br />
+                            <!-- REMOVED TEMPORARILY
+                            <button class="add-software" @click="$store.data.newResearchOutput('software')">Add
+                                Software</button>
+                            <br />
+                            <button class="add-data" @click="$store.data.newResearchOutput('data')">Add Data Set</button>
+                            <hr />
+                            -->
+                            <button class="add-orcid" @click="showORCIDModal()">Import using ORCID</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="formview-container">
+                    <div id="saving" class="animate pop" style="display: none;"></div>
+                    <div id="formview">
+                        <h3 x-html="$store.forms[$store.data.currentInput.type].title"></h3>
 
-                            <template x-if="elem.type === 'date'">
-                                <input x-model="$store.data.currentInput[elem.id]" type="date"
-                                    :placeholder="elem.title || ''" />
-                            </template>
+                        <template x-if="$store.data.currentTab >= 0">
+                            <template x-for="(elem, index) in $store.forms[$store.data.currentInput.type].elements"
+                                :key="$store.data.currentInput.position + '_' + elem.id">
+                                <template x-if="$store.showIndicators">
+                                    <div @click="$store.selectedIndicator = elem" x-show="evaluateCondition(elem.condition)"
+                                        onblur="actions[elem.onchange]()"
+                                        :class="elem.style_classes">
+                                        <p class="title" x-html="preprocessText(elem.title)" style="font-weight: bold;"></p>
 
-                            <template x-if="elem.type === 'dropdown'">
-                                <select x-model="$store.data.currentInput[elem.id]">
-                                    <template x-for="option in elem.options" :key="option.id">
-                                        <p x-text="option.text"></p>
-                                        <option x-html="option.text" :value="option.id"></option>
-                                    </template>
-                                </select>
-                            </template>
+                                        <div class="content">
+                                            <template x-if="elem.type === 'separator'">
+                                                <hr style="height: 3px; border:none; color: #333; background-color: #333;" />
+                                            </template>
+                
+                                            <template x-if="elem.type === 'info'">
+                                                <p x-html="preprocessText(elem.text)"></p>
+                                            </template>
+                
+                                            <template x-if="elem.type === 'text'">
+                                                <input x-model="$store.data.currentInput[elem.id]" type="text"
+                                                    :placeholder="elem.title || ''" />
+                                            </template>
+                
+                                            <template x-if="elem.type === 'textbox'">
+                                                <div>
+                                                    <div class="textbox" contenteditable
+                                                        x-init="$el.innerText = $store.data.currentInput[elem.id] ?? ''"
+                                                        @input="$store.data.currentInput[elem.id] = $event.target.innerText"
+                                                        :placeholder="elem.title || ''"></div>
+                
+                                                    <template x-if="!!elem.maxwords">
+                                                        <p class="wordcount"
+                                                            :class="(($store.data.currentInput[elem.id] ?? '').match(/\S+/g) ?? []).length > elem.maxwords ? 'wordcount-warning' : ''"
+                                                            x-text="`${(($store.data.currentInput[elem.id] ?? '').match(/\S+/g) ?? []).length} / ${elem.maxwords} words`">
+                                                        </p>
+                                                    </template>
+                                                </div>
+                                            </template>
+                
+                                            <template x-if="elem.type === 'number'">
+                                                <input x-model="$store.data.currentInput[elem.id]" type="text"
+                                                    :placeholder="elem.title || ''" />
+                                            </template>
+                
+                                            <template x-if="elem.type === 'date'">
+                                                <input x-model="$store.data.currentInput[elem.id]" type="date"
+                                                    :placeholder="elem.title || ''" />
+                                            </template>
+                
+                                            <template x-if="elem.type === 'dropdown'">
+                                                <select x-model="$store.data.currentInput[elem.id]">
+                                                    <template x-for="option in elem.options" :key="option.id">
+                                                        <p x-text="option.text"></p>
+                                                        <option x-html="option.text" :value="option.id"></option>
+                                                    </template>
+                                                </select>
+                                            </template>
+                
+                                            <template x-if="elem.type === 'radio'">
+                                                <div :class="elem.alignment ? 'alignment-' + elem.alignment : 'alignment-vertical'">
+                                                    <template x-for="option in elem.options" :key="option.id">
+                                                        <label :for="elem.id + '_' + option.id">
+                                                            <input x-model="$store.data.currentInput[elem.id]" type="radio"
+                                                                :name="elem.id" :id="elem.id + '_' + option.id" :value="option.id" />
+                                                            <span x-html="option.text"></span>
+                                                        </label>
+                                                    </template>
+                                                </div>
+                                            </template>
+                
+                                            <template x-if="elem.type === 'checkbox'">
+                                                <template x-for="option in elem.options" :key="option.id">
+                                                    <label :for="elem.id + '_' + option.id">
+                                                        <input x-model="$store.data.currentInput[elem.id + '_' + option.id]"
+                                                            type="checkbox" :id="elem.id + '_' + option.id" />
+                                                        <span x-html="option.text"></span>
+                                                    </label>
+                                                </template>
+                                            </template>
+                                        </div>
 
-                            <template x-if="elem.type === 'radio'">
-                                <div :class="elem.alignment ? 'alignment-' + elem.alignment : 'alignment-vertical'">
-                                    <template x-for="option in elem.options" :key="option.id">
-                                        <label :for="elem.id + '_' + option.id">
-                                            <input x-model="$store.data.currentInput[elem.id]" type="radio"
-                                                :name="elem.id" :id="elem.id + '_' + option.id" :value="option.id" />
-                                            <span x-html="option.text"></span>
-                                        </label>
-                                    </template>
-                                </div>
-                            </template>
+                                        <details x-show="$store.selectedIndicator.id === elem.id">
+                                            <summary style="font-size: 0.9rem; color: gray; text-align: right;">Add comment</summary>
+                                            <input x-model="$store.data.currentInput[elem.id + '_Comment']" type="text"
+                                                :placeholder="`Comment on '${elem.id}'`" />
+                                        </details>
 
-                            <template x-if="elem.type === 'checkbox'">
-                                <template x-for="option in elem.options" :key="option.id">
-                                    <label :for="elem.id + '_' + option.id">
-                                        <input x-model="$store.data.currentInput[elem.id + '_' + option.id]"
-                                            type="checkbox" :id="elem.id + '_' + option.id" />
-                                        <span x-html="option.text"></span>
-                                    </label>
+                                    </div>
                                 </template>
+                            </template>
+                        </template>
+                    </div>
+                </div>
+                <div id="menu">
+                    <div class="card animate pop" :class="{ warning: $store.warnings.any() }" id="score-box"
+                        x-show="$store.data.currentInput.type !== 'meta'">
+                        <div id="score-container">
+                            <div id="current-score">
+                                <span class="sub">Selected research output</span>
+                                <div x-show="$store.data.score.scores[$store.data.currentTab].max <= 0">
+                                    <span id="no-score">Applicant requests<br>manual processing</span>
+                                </div>
+
+                                <canvas id="currentScoreChart" width="150" height="150" style="margin-top: 10px;"></canvas>
+                            </div>
+                            <div id="overall-score">
+                                <span class="sub">Overall Profile (mean)</span>
+                                <canvas id="overallScoreChart" width="150" height="150" style="margin-top: 10px;"></canvas>
+                            </div>
+                        </div>
+
+                        <div id="legend-container"></div>
+
+                        <p id="ro-count-container"><span class="tag"><span
+                                    x-text="$store.data.score.scores.filter(s => s.max && s.max > 0).length"></span> scored
+                                research output(s)</span>
+                        </p>
+
+                        <details class="scoring-details">
+                            <summary>Details</summary>
+                            <div id="score-details">
+                                <h3>Selected research output</h3>
+                                <hr>
+                                <div x-show="$store.data.score.scores[$store.data.currentTab].max > 0"
+                                    id="current-score-container">
+                                    <p id="score-percentage"><span
+                                            x-text="$store.data.score.scores[$store.data.currentTab].percentage"></span>%</p>
+                                    <p id="score-dot">•</p>
+                                    <p id="score-minmax"><span
+                                            x-text="$store.data.score.scores[$store.data.currentTab].score?.toFixed(2)"></span>/<span
+                                            x-text="$store.data.score.scores[$store.data.currentTab].max?.toFixed(2)"></span></p>
+                                </div>
+                                <hr>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Category</th>
+                                            <th>Score</th>
+                                            <th>Max</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template
+                                            x-for="category in $store.data.score.scores[$store.data.currentTab].categories"
+                                            :key="category.title">
+                                            <tr>
+                                                <td x-text="category.title"></td>
+                                                <td x-text="category.score.toFixed(2)"></td>
+                                                <td x-text="category.max.toFixed(2)"></td>
+                                        </template>
+                                    </tbody>
+                                </table>
+                                <h3>Overall</h3>
+                                <hr>
+                                <div id="overall-score-container">
+                                    <p id="overall-score-percentage"><span
+                                            x-text="$store.data.score.overall.percentage"></span>%</p>
+                                </div>
+                                <hr>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Category</th>
+                                            <th>Score</th>
+                                            <th>Max</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template x-for="category in $store.data.score.overall.categories"
+                                            :key="category.title">
+                                            <tr>
+                                                <td x-text="category.title"></td>
+                                                <td x-text="category.score.toFixed(2)"></td>
+                                                <td x-text="category.max.toFixed(2)"></td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </details>
+                        <p id="warning-score-too-low" x-show="$store.warnings.minIndicatorsWarning">⚠️ Many indicators are not
+                            applicable. Manual processing of this
+                            publication is recommended.
+                        </p>
+                        <p id="warning-min-ro-threshold" x-show="$store.warnings.minROWarning">⚠️ Please provide at least <span
+                                id="minROWarningThreshold" x-text="$store.config.config.minROWarningThreshold"></span>
+                            research contributions that can be scored (e.g. by adding more empirical papers, data sets, or
+                            software contributions)</p>
+                    </div>
+                    <div id="info-box" class="card">
+                        <template x-if="!$store.selectedIndicator.id">
+                            <p id="item-info">Click on an indicator to see detailed information</p>
+                        </template>
+
+                        <template x-if="$store.selectedIndicator.id">
+                            <div>
+                                <p style="margin: 0;">
+                                    <b><span x-text="$store.selectedIndicator.id"></span></b>
+                                    <template x-if="$store.selectedIndicator.info">
+                                        <div>
+                                            <br>
+                                            <span
+                                                x-html="preprocessTextWithIndicatorContext($store.selectedIndicator.id, $store.selectedIndicator.info)"></span>
+                                        </div>
+                                    </template>
+                                    <template x-if="!$store.selectedIndicator.info">
+                                        <p style="color: gray; margin: 0;"><br><i>No information.</i></p>
+                                    </template>
+                                </p>
+                                <template x-if="$store.selectedIndicator.background">
+                                    <details id="item-background-details">
+                                        <summary>Background information</summary>
+                                        <span id="item-background"
+                                            x-html="preprocessTextWithIndicatorContext($store.selectedIndicator.id, $store.selectedIndicator.background)"></span>
+                                    </details>
+                                </template>
+                                <template x-if="$store.selectedIndicator.tip_external">
+                                    <details id="tip-external-details" :open="$store.data.input[0].RaterType === 'External'">
+                                        <summary>Tips for external raters</summary>
+                                        <span id="tip-external"
+                                            x-html="preprocessTextWithIndicatorContext($store.selectedIndicator.id, $store.selectedIndicator.tip_external)"></span>
+                                    </details>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+                    <div class="menu-bottom">
+                        <a class="fakelink" href="https://www.resque.info">RESQUE Website</a> • <span
+                            onclick="showInfoModal()" class="fakelink">FAQ</span> • <a class="github-link"
+                            href="https://github.com/RESQUE-Framework/collector-app">GitHub</a> • <span
+                            onclick="driver(tourAnytime()).drive()" class="fakelink">Tour</span>
+                    </div>
+                </div>
+            </div>
+            <div id="info-modal" class="modal">
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <button onclick="closeInfoModal()" id="add-modal-continue">Continue</button>
+
+                    <h2>👋🏻 Welcome to the RESQUE tool!</h2>
+                    <p>We need to change the way we assess research - with a focus on quality (over quantity). The <a
+                            href="https://github.com/RESQUE-Framework/collector-app">RESearch QUality Evaluation (RESQUE)</a>
+                        framework
+                        provides an evaluation scheme for publications, data sets, and research software. With this tool, you
+                        can enter the necessary information for your best research outputs, export a profile that shows your
+                        research style (<i>not implemented yet</i>), and use it for your CV or in hiring and tenure committees.
+                    </p>
+                    <hr>
+                    <h3>👀 How to use the RESQUE tool?</h3>
+                    <details>
+                        <summary>How do I add a new publication / software project / data set?</summary>
+                        Normally, you would use the buttons in the sidebar on the left.
+                        <br>
+                        For this time, you can do it here:
+                        <br><br>
+                        <button onclick="newTab('pub')">New Publication</button>
+                        <button onclick="newTab('software')">New Software Project</button>
+                        <button onclick="newTab('data')">New Data Set</button>
+                    </details>
+                    <details>
+                        <summary>How do I save my data?</summary>
+                        Clicking on the <button onclick="exp()">Save as file ...</button> button here or in the top left corner
+                        of this website exports a <code>.json</code> file. You can save this on your computer and share it with
+                        others.
+                    </details>
+                    <details>
+                        <summary>How do I load data I previously saved?</summary>
+                        You can use the <button onclick="triggerLoad()">Load</button> button here or in the top left corner of
+                        this website.
+                    </details>
+                    <details>
+                        <summary>How can I clear all information I entered?</summary>
+                        You can delete all data stored in the browser by clicking on the <button
+                            onclick="showModal('clear-modal')">Clear</button> button here or in the top left corner of this
+                        website.
+                    </details>
+                    <details>
+                        <summary>What should I do if I want to use RESQUE on a shared/public computer?</summary>
+                        Whenever you open this website, it loads the locally stored data. On public computers, make sure that
+                        you clear your data after you saved them as a file.
+                    </details>
+                    <hr>
+                    <h3>🔒 Privacy • <span class="sub">Is my data stored privately in a safe location?</span></h3>
+                    <p>
+                        <b>No data leaves your device.</b>
+                        <br>
+                        We use the <a href="https://www.wikiwand.com/en/Web_storage">Web Storage API</a> supported by all major
+                        browsers. Although the website itself is hosted on a server, your data is <i>only</i> stored and
+                        processed in the local browser:
+                        <br><br>
+                        The data is processed only locally. Your score is calculated in the browser. The local PDF files you
+                        open on this website are <i>not</i> uploaded to a server.
+                        <br><br>
+                        To get a sense of how many users we have, we do a very basic access logging with Matomo. You are not
+                        identifiable by the logged information; none of your entered data is tracked; no cookies or third party
+                        trackers are used.
+                    </p>
+                </div>
+            </div>
+            <dialog id="clear-modal">
+                <h3>⚠️ Warning!</h3>
+                <p><b>This will delete all of your local data.</b><br><br>Do you want to save the data to a file first?</p>
+                <br>
+                <button onclick="closeModal('clear-modal')">Cancel</button> <button onclick="exp()">Save data to local
+                    file</button>
+                <button @click="$store.data.clear(); closeModal('clear-modal')" class="critical">Clear all data</button>
+            </dialog>
+
+            <dialog id="config-incompatible-modal">
+                <h3>Incompatible configuration</h3>
+                <p>You have old data present, which was created using a different configuration. Do you want to load it, or
+                    start with a fresh form?</p>
+                <p>Your data might be incompatible with the current configuration and lead to unexpected behavior.
+                </p>
+                <br>
+                <div class="buttons">
+                    <button onclick="saveCurrentQueryConfig(); closeModal('config-incompatible-modal')">Use old data</button>
+                    <button onclick="showModal('clear-modal')" class="critical">Clear everything and start fresh</button>
+                </div>
+            </dialog>
+
+            <div id="orcid-modal" class="modal">
+                <div x-data="{ orcid: '', authorName: '', publications: [] }" class="modal-content">
+                    <h3>Import publications using ORCID</h3>
+                    <input id="orcid-modal-input" x-model="orcid" type="text" placeholder="ORCID" />
+                    <button id="orcid-modal-button" @click="fetchAuthorByORCID(orcid).then(name => authorName = name); fetchPapersByORCID(orcid).then(ps => publications = ps)">Fetch Publications</button>
+
+                    <template x-if="publications.length">
+                        <div>
+                            <hr>
+                            <div style="position: sticky; top: 0; background-color: white; padding: 2px 0;">
+                                <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
+                                    <h3 x-text="`${authorName} (${publications.length} publications)`"></h3>
+                                    <button @click="publications.filter(p => p.selected).forEach(p => $store.data.addPublicationWithDetails({DOI: 'https://doi.org/' + p.doi, Title: p.title, Year: p.year})); closeORCIDModal(); orcid = '', authorName ='', publications = []"><span x-text="`Add ${publications.filter(p => p.selected).length} Publications`"></span></button>
+                                </div>
+                            </div>
+                            <template x-for="pub in publications">
+                                <div @click="pub.selected = !pub.selected" class="tab" :class="{ active: pub.selected }">
+                                    <p style="margin-top: 0;"><b x-text="pub.title"></b></p>
+                                    <p style="margin-bottom: 0;"><span x-text="pub.year"></span> | <a style="color: inherit;" :href="`https://doi.org/${pub.doi}`" target="_blank"><span x-text="pub.doi"></span></a></p>
+                                </div>
                             </template>
                         </div>
                     </template>
-                </template>
+                </div>
             </div>
-        </div>
-        <div id="menu">
-            <div class="card animate pop" :class="{ warning: $store.warnings.any() }" id="score-box"
-                x-show="$store.data.currentInput.type !== 'meta'">
-                <div id="score-container">
-                    <div id="current-score">
-                        <span class="sub">Rigor Score of selected research output</span>
-                        <div x-show="$store.data.score.scores[$store.data.currentTab].max <= 0">
-                            <span id="no-score">Applicant requests<br>manual processing</span>
-                        </div>
 
-                        <div x-show="$store.data.score.scores[$store.data.currentTab].max > 0"
-                            id="current-score-container">
-                            <p id="score-percentage"><span
-                                    x-text="$store.data.score.scores[$store.data.currentTab].percentage"></span>%</p>
-                            <p id="score-dot">•</p>
-                            <p id="score-minmax"><span
-                                    x-text="$store.data.score.scores[$store.data.currentTab].score.toFixed(2)"></span>/<span
-                                    x-text="$store.data.score.scores[$store.data.currentTab].max.toFixed(2)"></span></p>
-                        </div>
-                    </div>
-                    <div id="overall-score">
-                        <span class="sub">Overall Rigor Score (mean)</span>
-                        <div id="overall-score-container">
-                            <p id="overall-score-percentage"><span
-                                    x-text="$store.data.score.overall.percentage"></span>%</p>
-                        </div>
+            <div id="export-modal" class="modal">
+            <div x-data="{ excludedPublications: new Set() }" class="modal-content">
+                
+                <div style="position: sticky; top: 0; background-color: white; padding: 2px 0;">
+                    <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center">
+                        <h3>Export Data<span style="font-size: 70%; font-weight: normal;">&nbsp;&nbsp;Click publications to (de)select</span></h3>
+                        <button @click="exp(excludedPublications); excludedPublications = new Set(); closeExportModal();">Export <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> Research Outputs</button>
                     </div>
                 </div>
-                <p id="ro-count-container"><span class="tag"><span
-                            x-text="$store.data.score.scores.filter(s => s.max && s.max > 0).length"></span> scored
-                        research output(s)</span>
-                </p>
-                <p id="warning-score-too-low" x-show="$store.warnings.minIndicatorsWarning">⚠️ Many indicators are not
-                    applicable. Manual processing of this
-                    publication is recommended.
-                </p>
-                <p id="warning-min-ro-threshold" x-show="$store.warnings.minROWarning">⚠️ Please provide at least <span
-                        id="minROWarningThreshold" x-text="$store.config.config.minROWarningThreshold"></span>
-                    research contributions that can be scored (e.g. by adding more empirical papers, data sets, or
-                    software contributions)</p>
-            </div>
-            <div id="info-box" class="card">
-                <template x-if="!$store.selectedIndicator.id">
-                    <p id="item-info">Click on an indicator to see detailed information</p>
-                </template>
 
-                <template x-if="$store.selectedIndicator.id">
-                    <div>
-                        <p style="margin: 0;">
-                            <b><span x-text="$store.selectedIndicator.id"></span></b>
-                            <template x-if="$store.selectedIndicator.info">
-                                <div>
-                                    <br>
-                                    <span
-                                        x-html="preprocessTextWithIndicatorContext($store.selectedIndicator.id, $store.selectedIndicator.info)"></span>
-                                </div>
-                            </template>
-                            <template x-if="!$store.selectedIndicator.info">
-                                <p style="color: gray; margin: 0;"><br><i>No information.</i></p>
-                            </template>
-                        </p>
-                        <template x-if="$store.selectedIndicator.background">
-                            <details id="item-background-details">
-                                <summary>Background information</summary>
-                                <span id="item-background"
-                                    x-html="preprocessText($store.selectedIndicator.background)"></span>
-                            </details>
-                        </template>
-                        <template x-if="$store.selectedIndicator.tip_external">
-                            <details id="tip-external-details" :open="$store.data.input[0].RaterType === 'External'">
-                                <summary>Tips for external raters</summary>
-                                <span id="tip-external"
-                                    x-html="preprocessText($store.selectedIndicator.tip_external)"></span>
-                            </details>
-                        </template>
-                    </div>
-                </template>
+                <div>
+                    <template x-for="pub, index in $store.data.input.slice(1)">
+                        <div class="tab"
+                            :class="{ 'active': !excludedPublications.has(index + 1) }"
+                            @click="if (excludedPublications.has(index + 1)) { excludedPublications.delete(index + 1); } else { excludedPublications.add(index + 1); }">
+                            <p style="margin: 0;" x-text="pub.Title"></p>
+                        </div>
+                    </template>
+                </div>
             </div>
-            <div class="menu-bottom">
-                <a class="fakelink" href="https://resque-framework.github.io/website/">RESQUE Website</a> • <span
-                    onclick="showInfoModal()" class="fakelink">FAQ</span> • <a class="github-link"
-                    href="https://github.com/RESQUE-Framework/collector-app">GitHub</a> • <span
-                    onclick="driver(tourAnytime()).drive()" class="fakelink">Tour</span>
             </div>
-        </div>
-    </div>
-    <div id="info-modal" class="modal">
-        <!-- Modal content -->
-        <div class="modal-content">
-            <button onclick="closeInfoModal()" id="add-modal-continue">Continue</button>
 
-            <h2>👋🏻 Welcome to the RESQUE tool!</h2>
-            <p>We need to change the way we assess research - with a focus on quality (over quantity). The <a
-                    href="https://github.com/RESQUE-Framework/collector-app">RESearch QUality Evaluation (RESQUE)</a>
-                framework
-                provides an evaluation scheme for publications, data sets, and research software. With this tool, you
-                can enter the necessary information for your best research outputs, export a profile that shows your
-                research style (<i>not implemented yet</i>), and use it for your CV or in hiring and tenure committees.
-            </p>
-            <hr>
-            <h3>👀 How to use the RESQUE tool?</h3>
-            <details>
-                <summary>How do I add a new publication / software project / data set?</summary>
-                Normally, you would use the buttons in the sidebar on the left.
-                <br>
-                For this time, you can do it here:
-                <br><br>
-                <button onclick="newTab('pub')">New Publication</button>
-                <button onclick="newTab('software')">New Software Project</button>
-                <button onclick="newTab('data')">New Data Set</button>
-            </details>
-            <details>
-                <summary>How do I save my data?</summary>
-                Clicking on the <button onclick="exp()">Save as file ...</button> button here or in the top left corner
-                of this website exports a <code>.json</code> file. You can save this on your computer and share it with
-                others.
-            </details>
-            <details>
-                <summary>How do I load data I previously saved?</summary>
-                You can use the <button onclick="triggerLoad()">Load</button> button here or in the top left corner of
-                this website.
-            </details>
-            <details>
-                <summary>How can I clear all information I entered?</summary>
-                You can delete all data stored in the browser by clicking on the <button
-                    onclick="showModal('clear-modal')">Clear</button> button here or in the top left corner of this
-                website.
-            </details>
-            <details>
-                <summary>What should I do if I want to use RESQUE on a shared/public computer?</summary>
-                Whenever you open this website, it loads the locally stored data. On public computers, make sure that
-                you clear your data after you saved them as a file.
-            </details>
-            <hr>
-            <h3>🔒 Privacy • <span class="sub">Is my data stored privately in a safe location?</span></h3>
-            <p>
-                <b>No data leaves your device.</b>
-                <br>
-                We use the <a href="https://www.wikiwand.com/en/Web_storage">Web Storage API</a> supported by all major
-                browsers. Although the website itself is hosted on a server, your data is <i>only</i> stored and
-                processed in the local browser:
-                <br><br>
-                The data is processed only locally. Your score is calculated in the browser. The local PDF files you
-                open on this website are <i>not</i> uploaded to a server.
-                <br><br>
-                To get a sense of how many users we have, we do a very basic access logging with Matomo. You are not
-                identifiable by the logged information; none of your entered data is tracked; no cookies or third party
-                trackers are used.
-            </p>
+            <input id="fileInput" type="file" accept="application/json" style="visibility: hidden" @change="handleLoad($el.files)" />
+            <a id="download" style="visibility: hidden"></a>
+            <input id="add-pdf" type="file" accept="application/pdf" onchange="handleSelectPDF(this.files)"
+                style="visibility: hidden;" />
         </div>
-    </div>
-    <dialog id="clear-modal">
-        <h3>⚠️ Warning!</h3>
-        <p><b>This will delete all of your local data.</b><br><br>Do you want to save the data to a file first?</p>
-        <br>
-        <button onclick="closeModal('clear-modal')">Cancel</button> <button onclick="exp()">Save data to local
-            file</button>
-        <button @click="$store.data.clear(); closeModal('clear-modal')" class="critical">Clear all data</button>
-    </dialog>
-
-    <dialog id="config-incompatible-modal">
-        <h3>Incompatible configuration</h3>
-        <p>You have old data present, which was created using a different configuration. Do you want to load it, or
-            start with a fresh form?</p>
-        <p>Your data might be incompatible with the current configuration and lead to unexpected behavior.
-        </p>
-        <br>
-        <div class="buttons">
-            <button onclick="saveCurrentQueryConfig(); closeModal('config-incompatible-modal')">Use old data</button>
-            <button onclick="showModal('clear-modal')" class="critical">Clear everything and start fresh</button>
-        </div>
-    </dialog>
+    </template>
 
     <div id="mobile">
         <div class="card">
@@ -805,11 +1152,6 @@
         </div>
     </div>
 
-    <input id="fileInput" type="file" accept="application/json" style="visibility: hidden" @change="handleLoad($el.files)" />
-    <a id="download" style="visibility: hidden"></a>
-    <input id="add-pdf" type="file" accept="application/pdf" onchange="handleSelectPDF(this.files)"
-        style="visibility: hidden;" />
-
     <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/object-hash@3.0.0/dist/object_hash.min.js"></script>
     <script>
@@ -818,11 +1160,13 @@
         const tourMain = {
             showProgress: true,
             steps: [
-                { popover: { title: '👋🏻 Welcome to the RESQUE tool!', description: 'We need to change the way we assess research - with a focus on quality (over quantity). The RESearch QUality Evaluation (RESQUE) framework provides an evaluation scheme for publications, data sets, and research software for psychological research. With this tool, you can enter the necessary information for your best research outputs, export a profile that shows your research style (not implemented yet), and use it for your CV or in hiring and tenure committees. <br><span style="background-color: lightyellow; font-size:80%;">[Note: The RESQUE is still a beta version and in active development.]</span><br><br><hr><br>If you use the app in an application process and have troubles or questions, you can (confidentially) contact Prof. Felix Schönbrodt (<a href="mailto:felix.schoenbrodt@psy.lmu.de">felix.schoenbrodt@psy.lmu.de</a>) or Prof. Anne Gärtner (<a href="mailto:anne.gaertner@fu-berlin.de">anne.gaertner@fu-berlin.de</a>) for consultation.' } },
+                { popover: { title: '👋🏻 Welcome to the RESQUE tool!', description: 'We need to change the way we assess research - with a focus on quality (over quantity). The RESearch QUality Evaluation (RESQUE) framework provides an evaluation scheme for publications, data sets, and research software for psychological research. With this tool, you can enter the necessary information for your best research outputs, export a profile that shows your research style (not implemented yet), and use it for your CV or in hiring and tenure committees. <br><span style="background-color: lightyellow; font-size:80%;">[Note: The RESQUE is still a beta version and in active development.]</span><br><br><hr><br>If you use the app in <span style="background-color: lightyellow;">an application process</span> and have troubles or questions, you can (confidentially) contact Prof. Felix Schönbrodt (<a href="mailto:felix.schoenbrodt@psy.lmu.de">felix.schoenbrodt@psy.lmu.de</a>) or Prof. Anne Gärtner (<a href="mailto:anne.gaertner@fu-berlin.de">anne.gaertner@fu-berlin.de</a>) for consultation.' } },
                 { popover: { title: '🔒 Privacy', description: 'The data you enter never leaves your device. Everything is processed locally. (except fetching the information about a publications using the DOI)' } },
-                { popover: { title: 'Saving changes...', description: 'Your changes are saved automatically in your browser. You can reload the page or close this tab and come back another time, the data you entered will still be here.' } },
+                { element: '.save-button', popover: { title: 'Saving changes...', description: 'Your changes are saved automatically in your browser. You can reload the page or close this tab and come back another time, the data you entered will still be here. Nonetheless, you should regularly make backups from your data by saving the data in a local file.' } },
                 // { element: '.pdf-button', popover: { description: 'You can open a PDF file and extract the DOI automatically. Note that this might fail in rare cases.' } },
-                { element: '.add-pub', popover: { title: 'Take your time...', description: 'After filling out the metadata form, add a new publication to continue the tour.' } },
+                { element: '.metadata', popover: { title: 'The first step', description: 'As a first step, please fill in the information on the <b>Author/Metadata tab</b>.' } },
+                { element: '.add-pub', popover: { title: 'Adding publications (1/2)', description: 'After that you can start to add a new publication. You can do this manually by clicking on the <b>Add Publication</b> button ...' } },
+                { element: '.add-orcid', popover: { title: 'Adding publications (2/2)', description: '... or you can add multiple publications at once by selecting them from your ORCID profile.' } },
             ]
         };
 
@@ -1037,6 +1381,38 @@
             document.getElementById("info-modal").style.display = "none";
         }
 
+        const showORCIDModal = () => {
+            const orcidInput = document.querySelector("#orcid-modal-input");
+            const orcidButton = document.querySelector("#orcid-modal-button");
+
+            // Extract ORCID from the input
+            let extractedORCID = (Alpine.store('data').input[0].ORCID ?? '').replace('https://orcid.org/', '');
+
+            // See orcid-modal to understand why the following lines work
+
+            // Set the input
+            orcidInput.value =  extractedORCID;
+            orcidInput.dispatchEvent(new Event('input'));
+
+            // Click the button to fetch works
+            orcidButton.click();
+
+            document.getElementById("orcid-modal").style.display = "block";
+        }
+
+        const closeORCIDModal = () => {
+            document.getElementById("orcid-modal").style.display = "none";
+        }
+
+        const showExportModal = () => {
+            document.getElementById("export-modal").style.display = "block";
+        }
+
+        const closeExportModal = () => {
+            document.getElementById("export-modal").style.display = "none";
+        }
+
+      
         const reset = () => {
             results = {};
             localStorage.clear();
@@ -1079,6 +1455,7 @@
 
             const filteredIds = [
                 ...(filteredElements.map(e => e.id).concat(checkboxIds)),
+                ...(filteredElements.map(e => e.id + '_Comment')),
                 'date_added', 'position', 'type', 'version'
             ];
 
@@ -1089,8 +1466,12 @@
             return filteredData;
         }
 
-        const exp = () => {
-            const data = Alpine.store('data').input
+        const exp = (excluded) => {
+            if (!excluded) {
+                excluded = new Set();
+            }
+
+            let data = Alpine.store('data').input
                 // only export the data that is currently visible
                 .map(filterExport);
 
@@ -1098,6 +1479,8 @@
             data.date_exported = millis;
 
             data[0].forms = Alpine.store('forms');
+
+            data = data.filter((_, index) => !excluded.has(index));
 
             let json = JSON.stringify(data, null, 2);
             let blob = new Blob([json], { type: "text/json;charset=utf-8" });
@@ -1215,7 +1598,7 @@
         menu().then(m => {
             for (const key in m) {
                 if (m[key].elements) {
-                 m[key].scoring = generateScoringRules(m[key].elements);
+                    m[key].scoring = generateScoringRules(m[key].elements);
                 }
                 Alpine.store('forms')[key] = m[key];
             }
@@ -1228,6 +1611,13 @@
                 Alpine.store('data').input[0].queryConfig = Alpine.store('config').queryConfig;
             }
 
+            Alpine.store('loaded', true);
+
+            setTimeout(() => {
+                Alpine.store('data').input[0].date_modeified = Date.now();
+            }, 0)
+
+        }).then(() => {
             // Check config compatibility
             if (objectHash(Alpine.store('data').input[0].queryConfig) !== objectHash(Alpine.store('config').queryConfig)) {
                 showModal('config-incompatible-modal');
