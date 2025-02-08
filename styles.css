@@ -351,6 +351,7 @@ summary:hover {
     top: 0;
     position: sticky;
     flex-shrink: 0.2;
+    max-height: 60%;
 }
 
 #score-box .sub {
