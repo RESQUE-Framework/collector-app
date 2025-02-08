@@ -762,6 +762,9 @@
                 </div>
                 <div id="formview-container">
                     <div id="saving" class="animate pop" style="display: none;"></div>
+                    <div class="progressbar-frame">
+                        <div class="progressbar-content" :style="`width: ${$store.data.completion[$store.data.currentTab].progress.percent}%;`"></div>
+                    </div>
                     <div id="formview">
                         <h3 x-html="$store.forms[$store.data.currentInput.type].title"></h3>
 

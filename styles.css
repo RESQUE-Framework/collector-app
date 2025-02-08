@@ -127,7 +127,6 @@ body {
     margin: 0 16px;
     transform: scale(1);
     height: 100vh;
-    overflow: hidden;
 }
 
 #formview {
@@ -138,6 +137,23 @@ body {
 
 #formview h2 {
     margin: none;
+}
+
+.progressbar-frame {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: calc(100% + 32px);
+    margin-left: -16px;
+    height: 4px;
+    background-color: lightgray;
+    z-index: 1;
+}
+
+.progressbar-content {
+    height: 100%;
+    background-color: var(--dark-color);
+    transition: ease-in-out 0.3s;
 }
 
 #add-container {
