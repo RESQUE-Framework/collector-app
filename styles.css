@@ -188,6 +188,56 @@ label {
     margin-bottom: 8px;
 }
 
+#formview table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#formview table th {
+    border-bottom: none;
+    padding: 0.25rem 0.5rem;
+    text-wrap: nowrap;
+}
+
+#formview table tr {
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 0.5rem;
+}
+
+#formview table tr:last-child {
+    border-bottom: none;
+}
+
+#formview table tbody tr:hover {
+    background-color: var(--light-color);
+}
+
+#formview table tr td {
+    padding: 8px 0;
+    text-align: center;
+    position: relative;
+}
+
+#formview table tr td .tabular-option-info {
+    position: absolute;
+    background-color: var(--dark-color);
+    color: var(--light-color);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    top: -20px;
+    text-wrap: nowrap;
+    display: none;
+}
+
+#formview table tr td input[type=radio]:hover + .tabular-option-info {
+    display: block;
+}
+
+#formview table tr td:first-child {
+    font-weight: bold;
+    text-align: left;
+}
+
 form {
     margin-bottom: 10rem;
 }

@@ -847,6 +847,43 @@
                                                     </label>
                                                 </template>
                                             </template>
+
+                                            <template x-if="elem.type === 'tabular_radio'">
+                                                <div>
+                                                    <table>
+                                                        <thead>
+                                                            <tr>
+                                                                <th></th>
+                                                                <template x-for="option in elem.options" :key="option.id">
+                                                                    <th x-html="option.text"></th>
+                                                                </template>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <template x-for="row in elem.rows" :key="row.id">
+                                                                <!-- Stop event propagation to separate child and parent pointer events -->
+                                                                <tr @click="e => { 
+                                                                    e.stopPropagation();
+                                                                    $store.selectedIndicator = {
+                                                                        id: elem.id + '_' + row.id,
+                                                                        info: row.info,
+                                                                        background: row.background,
+                                                                        tip_external: row.tip_external 
+                                                                    };}">
+                                                                    <td x-html="row.title"></td>
+                                                                    <template x-for="option in elem.options" :key="option.id">
+                                                                        <td>
+                                                                            <input x-model="$store.data.currentInput[elem.id + '_' + row.id]" type="radio"
+                                                                                :name="elem.id + '_' + row.id" :id="elem.id + '_' + row.id + '_' + option.id" :value="option.id" />
+                                                                            <div class="tabular-option-info" x-text="`${option.text}`"></div>
+                                                                        </td>
+                                                                    </template>
+                                                                </tr>
+                                                            </template>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </template>
                                         </div>
 
                                         <details x-show="$store.selectedIndicator.id === elem.id">

@@ -232,9 +232,8 @@
             "condition":  "meta$RaterType === 'Applicant'"
         },
         {
-            "id": "P_CRediT_Conceptualization",
-            "type": "radio",
-            "title": "Conceptualization",
+            "id": "P_CRediT",
+            "type": "tabular_radio",
             "options": [
                 {
                     "id": "Lead",
@@ -258,426 +257,93 @@
                 }
             ],
             "default": "NoRole",
-            "alignment": "horizontal",
-            "tooltip": "Ideas; formulation or evolution of overarching research goals and aims.",
-            "info": "Ideas; formulation or evolution of overarching research goals and aims.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'.}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>",
+            "rows": [
+                {
+                    "id": "Conceptualization",
+                    "title": "Conceptualization",
+                    "tooltip": "Ideas; formulation or evolution of overarching research goals and aims.",
+                    "info": "Ideas; formulation or evolution of overarching research goals and aims.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'.}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
+                },
+                {
+                    "id": "DataCuration",
+                    "title": "Data curation",
+                    "tooltip": "Management activities to annotate (produce metadata), scrub data and maintain research data (including software code, where it is necessary for interpreting the data itself) for initial use and later re-use.",
+                    "info": "Management activities to annotate (produce metadata), scrub data and maintain research data (including software code, where it is necessary for interpreting the data itself) for initial use and later re-use.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
+                },
+                {
+                    "id": "FormalAnalysis",
+                    "title": "Formal analysis (≙ statistical data analysis)",
+                    "tooltip": "Application of statistical, mathematical, computational, or other formal techniques to analyse or synthesize study data.",
+                    "info": "Application of statistical, mathematical, computational, or other formal techniques to analyse or synthesize study data.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
+                },
+                {
+                    "id": "FundingAcquisition",
+                    "title": "Funding acquisition",
+                    "tooltip": "Acquisition of the financial support for the project leading to this publication.",
+                    "info": "Acquisition of the financial support for the project leading to this publication.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
+                },
+                {
+                    "id": "Investigation",
+                    "title": "Investigation (≙ data collection, performing the experiments)",
+                    "tooltip": "Conducting a research and investigation process, specifically performing the experiments, or data/evidence collection.",
+                    "info": "Conducting a research and investigation process, specifically performing the experiments, or data/evidence collection.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
+                },
+                {
+                    "id": "Methodology",
+                    "title": "Methodology",
+                    "tooltip": "Development or design of methodology; creation of models.",
+                    "info": "Development or design of methodology; creation of models.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
+                },
+                {
+                    "id": "ProjectAdministration",
+                    "title": "Project administration",
+                    "tooltip": "Management and coordination responsibility for the research activity planning and execution.",
+                    "info": "Management and coordination responsibility for the research activity planning and execution.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
+                },
+                {
+                    "id": "Resources",
+                    "title": "Resources",
+                    "tooltip": "Provision of study materials, reagents, materials, patients, laboratory samples, animals, instrumentation, computing resources, or other analysis tools.",
+                    "info": "Provision of study materials, reagents, materials, patients, laboratory samples, animals, instrumentation, computing resources, or other analysis tools.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
+                },
+                {
+                    "id": "Software",
+                    "title": "Software",
+                    "tooltip": "Programming, software development; designing computer programs; implementation of the computer code and supporting algorithms; testing of existing code components.",
+                    "info": "Programming, software development; designing computer programs; implementation of the computer code and supporting algorithms; testing of existing code components.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
+                },
+                {
+                    "id": "Supervision",
+                    "title": "Supervision",
+                    "tooltip": "Oversight and leadership responsibility for the research activity planning and execution, including mentorship external to the core team.",
+                    "info": "Oversight and leadership responsibility for the research activity planning and execution, including mentorship external to the core team.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
+                },
+                {
+                    "id": "Validation",
+                    "title": "Validation",
+                    "tooltip": "Verification, whether as a part of the activity or separate, of the overall replication/reproducibility of results/experiments and other research outputs.",
+                    "info": "Verification, whether as a part of the activity or separate, of the overall replication/reproducibility of results/experiments and other research outputs.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
+                },
+                {
+                    "id": "Visualization",
+                    "title": "Visualization",
+                    "tooltip": "Preparation, creation and/or presentation of the published work, specifically visualization/data presentation.",
+                    "info": "Preparation, creation and/or presentation of the published work, specifically visualization/data presentation.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
+                },
+                {
+                    "id": "WritingOriginalDraft",
+                    "title": "Writing - Original Draft",
+                    "tooltip": "Preparation, creation and/or presentation of the published work, specifically writing the initial draft (including substantive translation).",
+                    "info": "Preparation, creation and/or presentation of the published work, specifically writing the initial draft (including substantive translation).<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
+                },
+                {
+                    "id": "WritingReviewEditing",
+                    "title": "Writing - Review & Editing",
+                    "tooltip": "Preparation, creation and/or presentation of the published work by those from the original research group, specifically critical review, commentary or revision – including pre- or post-publication stages.",
+                    "info": "Preparation, creation and/or presentation of the published work by those from the original research group, specifically critical review, commentary or revision – including pre- or post-publication stages.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
+                }
+            ],
             "condition":  "meta$RaterType === 'Applicant'"
-        },
-        {
-            "id": "P_CRediT_DataCuration",
-            "type": "radio",
-            "title": "Data curation",
-            "options": [
-                {
-                    "id": "Lead",
-                    "text": "Lead"
-                },
-                {
-                    "id": "Equal",
-                    "text": "Equal"
-                },
-                {
-                    "id": "Support",
-                    "text": "Support"
-                },
-                {
-                    "id": "NoRole",
-                    "text": "No Role"
-                },
-                {
-                    "id": "NA",
-                    "text": "n/a"
-                }
-            ],
-            "default": "NoRole",
-            "alignment": "horizontal",
-            "condition": "meta$RaterType === 'Applicant'",
-            "tooltip": "Management activities to annotate (produce metadata), scrub data and maintain research data (including software code, where it is necessary for interpreting the data itself) for initial use and later re-use.",
-            "info": "Management activities to annotate (produce metadata), scrub data and maintain research data (including software code, where it is necessary for interpreting the data itself) for initial use and later re-use.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'.}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
-        },
-        {
-            "id": "P_CRediT_FormalAnalysis",
-            "type": "radio",
-            "title": "Formal analysis (≙ statistical data analysis)",
-            "options": [
-                {
-                    "id": "Lead",
-                    "text": "Lead"
-                },
-                {
-                    "id": "Equal",
-                    "text": "Equal"
-                },
-                {
-                    "id": "Support",
-                    "text": "Support"
-                },
-                {
-                    "id": "NoRole",
-                    "text": "No Role"
-                },
-                {
-                    "id": "NA",
-                    "text": "n/a"
-                }
-            ],
-            "default": "NoRole",
-            "alignment": "horizontal",
-            "condition": "meta$RaterType === 'Applicant'",
-            "tooltip": "Application of statistical, mathematical, computational, or other formal techniques to analyse or synthesize study data.",
-            "info": "Application of statistical, mathematical, computational, or other formal techniques to analyse or synthesize study data.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'.}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
-        },
-        {
-            "id": "P_CRediT_FundingAcquisition",
-            "type": "radio",
-            "title": "Funding acquisition",
-            "options": [
-                {
-                    "id": "Lead",
-                    "text": "Lead"
-                },
-                {
-                    "id": "Equal",
-                    "text": "Equal"
-                },
-                {
-                    "id": "Support",
-                    "text": "Support"
-                },
-                {
-                    "id": "NoRole",
-                    "text": "No Role"
-                },
-                {
-                    "id": "NA",
-                    "text": "n/a"
-                }
-            ],
-            "default": "NoRole",
-            "alignment": "horizontal",
-            "condition": "meta$RaterType === 'Applicant'",
-            "tooltip": "Acquisition of the financial support for the project leading to this publication.",
-            "info": "Acquisition of the financial support for the project leading to this publication.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'.}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
-        },
-        {
-            "id": "P_CRediT_Investigation",
-            "type": "radio",
-            "title": "Investigation (≙ data collection, performing the experiments)",
-            "options": [
-                {
-                    "id": "Lead",
-                    "text": "Lead"
-                },
-                {
-                    "id": "Equal",
-                    "text": "Equal"
-                },
-                {
-                    "id": "Support",
-                    "text": "Support"
-                },
-                {
-                    "id": "NoRole",
-                    "text": "No Role"
-                },
-                {
-                    "id": "NA",
-                    "text": "n/a"
-                }
-            ],
-            "default": "NoRole",
-            "alignment": "horizontal",
-            "condition": "meta$RaterType === 'Applicant'",
-            "tooltip": "Conducting a research and investigation process, specifically performing the experiments, or data/evidence collection.",
-            "info": "Conducting a research and investigation process, specifically performing the experiments, or data/evidence collection.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'.}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
-        },
-        {
-            "id": "P_CRediT_Methodology",
-            "type": "radio",
-            "title": "Methodology",
-            "options": [
-                {
-                    "id": "Lead",
-                    "text": "Lead"
-                },
-                {
-                    "id": "Equal",
-                    "text": "Equal"
-                },
-                {
-                    "id": "Support",
-                    "text": "Support"
-                },
-                {
-                    "id": "NoRole",
-                    "text": "No Role"
-                },
-                {
-                    "id": "NA",
-                    "text": "n/a"
-                }
-            ],
-            "default": "NoRole",
-            "alignment": "horizontal",
-            "condition": "meta$RaterType === 'Applicant'",
-            "tooltip": "Development or design of methodology; creation of models.",
-            "info": "Development or design of methodology; creation of models.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'.}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
-        },
-        {
-            "id": "P_CRediT_ProjectAdministration",
-            "type": "radio",
-            "title": "Project administration",
-            "options": [
-                {
-                    "id": "Lead",
-                    "text": "Lead"
-                },
-                {
-                    "id": "Equal",
-                    "text": "Equal"
-                },
-                {
-                    "id": "Support",
-                    "text": "Support"
-                },
-                {
-                    "id": "NoRole",
-                    "text": "No Role"
-                },
-                {
-                    "id": "NA",
-                    "text": "n/a"
-                }
-            ],
-            "default": "NoRole",
-            "alignment": "horizontal",
-            "condition": "meta$RaterType === 'Applicant'",
-            "tooltip": "Management and coordination responsibility for the research activity planning and execution.",
-            "info": "Management and coordination responsibility for the research activity planning and execution.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'.}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
-        },
-        {
-            "id": "P_CRediT_Resources",
-            "type": "radio",
-            "title": "Resources",
-            "options": [
-                {
-                    "id": "Lead",
-                    "text": "Lead"
-                },
-                {
-                    "id": "Equal",
-                    "text": "Equal"
-                },
-                {
-                    "id": "Support",
-                    "text": "Support"
-                },
-                {
-                    "id": "NoRole",
-                    "text": "No Role"
-                },
-                {
-                    "id": "NA",
-                    "text": "n/a"
-                }
-            ],
-            "default": "NoRole",
-            "alignment": "horizontal",
-            "condition": "meta$RaterType === 'Applicant'",
-            "tooltip": "Provision of study materials, reagents, materials, patients, laboratory samples, animals, instrumentation, computing resources, or other analysis tools.",
-            "info": "Provision of study materials, reagents, materials, patients, laboratory samples, animals, instrumentation, computing resources, or other analysis tools.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'.}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
-        },
-        {
-            "id": "P_CRediT_Software",
-            "type": "radio",
-            "title": "Software (beyond statistical data analysis, which is in 'Formal Analysis')",
-            "options": [
-                {
-                    "id": "Lead",
-                    "text": "Lead"
-                },
-                {
-                    "id": "Equal",
-                    "text": "Equal"
-                },
-                {
-                    "id": "Support",
-                    "text": "Support"
-                },
-                {
-                    "id": "NoRole",
-                    "text": "No Role"
-                },
-                {
-                    "id": "NA",
-                    "text": "n/a"
-                }
-            ],
-            "default": "NoRole",
-            "alignment": "horizontal",
-            "condition": "meta$RaterType === 'Applicant'",
-            "tooltip": "Programming, software development; designing computer programs; implementation of the computer code and supporting algorithms; testing of existing code components.",
-            "info": "Programming, software development; designing computer programs; implementation of the computer code and supporting algorithms; testing of existing code components.<br><br>If you wrote scripts that apply to a <b>'one-shot' data analysis</b>, this belongs to the role <i>Formal analysis</i> (see above).<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'.}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
-        },
-        {
-            "id": "P_CRediT_Supervision",
-            "type": "radio",
-            "title": "Supervision",
-            "options": [
-                {
-                    "id": "Lead",
-                    "text": "Lead"
-                },
-                {
-                    "id": "Equal",
-                    "text": "Equal"
-                },
-                {
-                    "id": "Support",
-                    "text": "Support"
-                },
-                {
-                    "id": "NoRole",
-                    "text": "No Role"
-                },
-                {
-                    "id": "NA",
-                    "text": "n/a"
-                }
-            ],
-            "default": "NoRole",
-            "alignment": "horizontal",
-            "condition": "meta$RaterType === 'Applicant'",
-            "tooltip": "Oversight and leadership responsibility for the research activity planning and execution, including mentorship external to the core team.",
-            "info": "Oversight and leadership responsibility for the research activity planning and execution, including mentorship external to the core team.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'.}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
-        },
-        {
-            "id": "P_CRediT_Validation",
-            "type": "radio",
-            "title": "Validation",
-            "options": [
-                {
-                    "id": "Lead",
-                    "text": "Lead"
-                },
-                {
-                    "id": "Equal",
-                    "text": "Equal"
-                },
-                {
-                    "id": "Support",
-                    "text": "Support"
-                },
-                {
-                    "id": "NoRole",
-                    "text": "No Role"
-                },
-                {
-                    "id": "NA",
-                    "text": "n/a"
-                }
-            ],
-            "default": "NoRole",
-            "alignment": "horizontal",
-            "condition": "meta$RaterType === 'Applicant'",
-            "tooltip": "Verification, whether as a part of the activity or separate, of the overall replication/reproducibility of results/experiments and other research outputs.",
-            "info": "Verification, whether as a part of the activity or separate, of the overall replication/reproducibility of results/experiments and other research outputs.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'.}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
-        },
-        {
-            "id": "P_CRediT_Visualization",
-            "type": "radio",
-            "title": "Visualization",
-            "options": [
-                {
-                    "id": "Lead",
-                    "text": "Lead"
-                },
-                {
-                    "id": "Equal",
-                    "text": "Equal"
-                },
-                {
-                    "id": "Support",
-                    "text": "Support"
-                },
-                {
-                    "id": "NoRole",
-                    "text": "No Role"
-                },
-                {
-                    "id": "NA",
-                    "text": "n/a"
-                }
-            ],
-            "default": "NoRole",
-            "alignment": "horizontal",
-            "condition": "meta$RaterType === 'Applicant'",
-            "tooltip": "Preparation, creation and/or presentation of the published work, specifically visualization/data presentation.",
-            "info": "Preparation, creation and/or presentation of the published work, specifically visualization/data presentation.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'.}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
-        },
-        {
-            "id": "P_CRediT_WritingOriginalDraft",
-            "type": "radio",
-            "title": "Writing - original draft",
-            "options": [
-                {
-                    "id": "Lead",
-                    "text": "Lead"
-                },
-                {
-                    "id": "Equal",
-                    "text": "Equal"
-                },
-                {
-                    "id": "Support",
-                    "text": "Support"
-                },
-                {
-                    "id": "NoRole",
-                    "text": "No Role"
-                },
-                {
-                    "id": "NA",
-                    "text": "n/a"
-                }
-            ],
-            "default": "NoRole",
-            "alignment": "horizontal",
-            "condition": "meta$RaterType === 'Applicant'",
-            "tooltip": "Preparation, creation and/or presentation of the published work, specifically writing the initial draft (including substantive translation).",
-            "info": "Preparation, creation and/or presentation of the published work, specifically writing the initial draft (including substantive translation).<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'.}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
-        },
-        {
-            "id": "P_CRediT_WritingReviewEditing",
-            "type": "radio",
-            "title": "Writing - review & editing",
-            "options": [
-                {
-                    "id": "Lead",
-                    "text": "Lead"
-                },
-                {
-                    "id": "Equal",
-                    "text": "Equal"
-                },
-                {
-                    "id": "Support",
-                    "text": "Support"
-                },
-                {
-                    "id": "NoRole",
-                    "text": "No Role"
-                },
-                {
-                    "id": "NA",
-                    "text": "n/a"
-                }
-            ],
-            "default": "NoRole",
-            "alignment": "horizontal",
-            "condition": "meta$RaterType === 'Applicant'",
-            "tooltip": "Preparation, creation and/or presentation of the published work by those from the original research group, specifically critical review, commentary or revision – including pre- or post-publication stages.",
-            "info": "Preparation, creation and/or presentation of the published work by those from the original research group, specifically critical review, commentary or revision – including pre- or post-publication stages.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'.}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
         },
         {
             "id": "P9P10SEP",
