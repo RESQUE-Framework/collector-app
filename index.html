@@ -1492,9 +1492,16 @@
                 .filter(e => e.type === 'checkbox')
                 .map(e => e.options.map(o => e.id + '_' + o.id))
                 .flat();
+            
+            const tabularRadioIds = filteredElements
+                .filter(e => e.type === 'tabular_radio')
+                .map(e => e.rows.map(r => e.id + '_' + r.id))
+                .flat();
 
             const filteredIds = [
-                ...(filteredElements.map(e => e.id).concat(checkboxIds)),
+                ...filteredElements.map(e => e.id),
+                ...checkboxIds,
+                ...tabularRadioIds,
                 ...(filteredElements.map(e => e.id + '_Comment')),
                 'date_added', 'position', 'type', 'version'
             ];
