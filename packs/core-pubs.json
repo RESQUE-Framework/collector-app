@@ -16,10 +16,16 @@
             "onchange": "fetch_doi"
         },
         {
+            "id": "Title_Empty",
+            "type": "info",
+            "text": "💡 Please enter a DOI to fetch the publication metadata",
+            "condition": "!exists($DOI)"
+        },
+        {
             "id": "Title_Invalid",
             "type": "info",
             "text": "⚠️ <b>Invalid DOI:</b> $DOI",
-            "condition": "!exists($Title)",
+            "condition": "!exists($Title) && exists($DOI)",
             "style_classes": "alert"
         },
         {
