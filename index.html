@@ -28,7 +28,7 @@
     <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <script src=" https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js "></script>
 </head>
 
 <body>
@@ -173,7 +173,7 @@
                 .catch(() => {
                     return {
                         error: true,
-                        title: doi ? '⚠️ <b>Invalid DOI:</b> ' + doi : undefined,
+                        title: '',
                         year: undefined,
                         DOI: doi,
                         abstract: undefined
@@ -695,7 +695,9 @@
                             </div>
                         </div>
 
-                        <p x-text="`${$store.data.input.length - 1} of ${Alpine.store('config').config.max} slots used`"></p>
+                        <p><span x-text="`${$store.data.input.length - 1} of ${Alpine.store('config').config.max} slots used`"></span> | <span class="fakelink"
+                            @click="window.open(`https://shiny.psy.lmu.de/felix/RESQUE_profile?data=${LZString.compress(JSON.stringify($store.data.input))}`, '_blank')"
+                        >View Profile ↗</span></p>
                     </div>
                     <div x-data="{ show: true }"
                         x-effect="if (show) document.querySelector('#tabs-sidebar').scrollTop = $store.tabsSidebarScrollTop;"

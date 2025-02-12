@@ -1,3 +1,14 @@
 .abstract .content {
     font-size: 0.8rem;
 }
+
+.alert {
+    background-color: #ffa50015;
+    border: 1px solid #ffa500;
+    border-radius: 4px;
+    padding: 16px;
+}
+
+.alert p {
+    margin: 0;    
+}
