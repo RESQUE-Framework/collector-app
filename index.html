@@ -29,6 +29,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src=" https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js "></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
 </head>
 
 <body>
@@ -37,6 +38,11 @@
 
     <script src="./utils/charts.js"></script>
     <script src="./utils/orcid.js"></script>
+
+    <!-- jsConfetti init -->
+    <script>
+        const jsConfetti = new JSConfetti();
+    </script>
 
     <script>
         const preprocessCondition = condition => {
@@ -394,6 +400,12 @@
             return `hsl(${hue}, 100%, 38%)`;
         }
 
+        const celebrateCompletion = () => {      
+            jsConfetti.addConfetti({
+                emojis: ['✅']
+            });
+        }
+
         let prefixes = {
             meta: "M",
             pub: "P",
@@ -558,6 +570,8 @@
 
             const data = Alpine.store('data').input;
 
+            const currentTab = Alpine.store('data').currentTab;
+
             const newTopPapers = data.filter(r => r.type === 'pub' && r.P_TopPaper_Select === true);
 
             if (newTopPapers.length > Alpine.store('config').config.maxTopPapers) {
@@ -581,7 +595,15 @@
 
             Alpine.store('data').score = scores;
 
-            Alpine.store('data').completion = data.map(checkCompletion);
+            const previousCompletions = Alpine.store('data').completion;
+            const completions = data.map(checkCompletion);
+            Alpine.store('data').completion = completions;
+
+            if (completions[currentTab].progress.ratio === 1 && previousCompletions[currentTab].progress.ratio < 1) {
+                celebrateCompletion();
+            }
+
+            
 
             Alpine.store('warnings').reevaluate();
 
