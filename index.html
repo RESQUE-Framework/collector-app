@@ -428,14 +428,29 @@
             let defaultValues = {};
 
             for (element of Alpine.store('forms')[type].elements) {
-                if (element.default) {
-                    if (element.type !== 'checkbox') {
-                        defaultValues[element.id] = element.default;
-                    } else {
-                        element.default.forEach((optionId) => {
-                            defaultValues[element.id + '_' + optionId] = true;
-                        })
-                    }
+                if (element.default
+                    || element.rows?.some(row => row.default)
+                ) {
+                    switch (element.type) {
+                        case 'checkbox':
+                            element.default.forEach((optionId) => {
+                                defaultValues[element.id + '_' + optionId] = true;
+                            })
+                            break;
+                        case 'tabular_radio':
+                            element.rows.forEach((row) => {
+                                defaultValues[element.id + '_' + row.id] = element.default || '';
+                            });
+
+                            element.rows.forEach((row) => {
+                                if (row.default) {
+                                    defaultValues[element.id + '_' + row.id] = row.default;
+                                }
+                            });
+                            break;
+                        default:
+                            defaultValues[element.id] = element.default;
+                    }                   
                 } else {
                     // Define default values
                     switch (element.type) {
@@ -454,6 +469,11 @@
                         case 'checkbox':
                             element.options.forEach((option) => {
                                 defaultValues[element.id + '_' + option.id] = false;
+                            });
+                            break;
+                        case 'tabular_radio':
+                            element.rows.forEach((row) => {
+                                defaultValues[element.id + '_' + row.id] = '';
                             });
                             break;
                         default:
@@ -717,9 +737,9 @@
                             </div>
                         </div>
 
-                        <p><span x-text="`${$store.data.input.length - 1} of ${Alpine.store('config').config.max} slots used`"></span> | <span class="fakelink"
+                        <p><span x-text="`${$store.data.input.length - 1} of ${Alpine.store('config').config.max} slots used`"></span><!--| <span class="fakelink"
                             @click="window.open(`https://shiny.psy.lmu.de/felix/RESQUE_profile?data=${LZString.compress(JSON.stringify($store.data.input))}`, '_blank')"
-                        >View Profile ↗</span></p>
+                        >View Profile ↗</span> --></p>
                     </div>
                     <div x-data="{ show: true }"
                         x-effect="if (show) document.querySelector('#tabs-sidebar').scrollTop = $store.tabsSidebarScrollTop;"
@@ -819,7 +839,7 @@
                                                 <div>
                                                     <div class="textbox" contenteditable
                                                         x-init="$el.innerText = $store.data.currentInput[elem.id] ?? ''"
-                                                        @input="$store.data.currentInput[elem.id] = $event.target.innerText"
+                                                        @input="$store.data.currentInput[elem.id] = $event.target.innerText.trim()"
                                                         :placeholder="elem.title || ''"></div>
                 
                                                     <template x-if="!!elem.maxwords">
