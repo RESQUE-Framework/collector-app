@@ -439,7 +439,7 @@
                             break;
                         case 'tabular_radio':
                             element.rows.forEach((row) => {
-                                defaultValues[element.id + '_' + row.id] = element.default;
+                                defaultValues[element.id + '_' + row.id] = element.default || '';
                             });
 
                             element.rows.forEach((row) => {
