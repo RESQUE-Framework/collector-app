@@ -1171,7 +1171,8 @@
             "id": "P_OpenMaterials_PartsExplanation",
             "type": "text",
             "title": "⤷ Partial open materials: What is missing? (optional)",
-            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials === 'YesParts'"
+            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials === 'YesParts'",
+            "optional": true
         },
         {
             "id": "P17P18SEP",

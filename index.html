@@ -374,7 +374,9 @@
 
             // Get visible elements (required)
             const filteredElements = fillableElements
-                .filter(e => evaluateConditionInContext(e.condition, result));
+                .filter(e => evaluateConditionInContext(e.condition, result))
+                // Filter out elements that are optional
+                .filter(e => !e.optional);
 
             // Get visible elements that are filled out
             const filledOutElements = filteredElements.filter(e => result[e.id] !== '');
