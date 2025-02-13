@@ -839,7 +839,7 @@
                                                 <div>
                                                     <div class="textbox" contenteditable
                                                         x-init="$el.innerText = $store.data.currentInput[elem.id] ?? ''"
-                                                        @input="$store.data.currentInput[elem.id] = $event.target.innerText"
+                                                        @input="$store.data.currentInput[elem.id] = $event.target.innerText.trim()"
                                                         :placeholder="elem.title || ''"></div>
                 
                                                     <template x-if="!!elem.maxwords">
