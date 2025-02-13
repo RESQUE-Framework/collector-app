@@ -8,7 +8,7 @@
 }
 
 :root {
-    --bg-color: #fcfcff;
+    --bg-color: #ffffff;
     --shadow-color: #ccc;
     --border-color: lightgray;
     --dark-color: #333333;
@@ -670,7 +670,7 @@ table {
     margin-bottom: 0.5rem;
 }
 
-canvas {
+#store-box canvas {
     display: block;
     width: 150px !important;
     height: 150px !important;

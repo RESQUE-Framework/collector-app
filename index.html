@@ -28,7 +28,8 @@
     <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <script src=" https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js "></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
 </head>
 
 <body>
@@ -37,6 +38,11 @@
 
     <script src="./utils/charts.js"></script>
     <script src="./utils/orcid.js"></script>
+
+    <!-- jsConfetti init -->
+    <script>
+        const jsConfetti = new JSConfetti();
+    </script>
 
     <script>
         const preprocessCondition = condition => {
@@ -173,7 +179,7 @@
                 .catch(() => {
                     return {
                         error: true,
-                        title: doi ? '⚠️ <b>Invalid DOI:</b> ' + doi : undefined,
+                        title: '',
                         year: undefined,
                         DOI: doi,
                         abstract: undefined
@@ -394,6 +400,12 @@
             return `hsl(${hue}, 100%, 38%)`;
         }
 
+        const celebrateCompletion = () => {      
+            jsConfetti.addConfetti({
+                emojis: ['✅']
+            });
+        }
+
         let prefixes = {
             meta: "M",
             pub: "P",
@@ -558,6 +570,8 @@
 
             const data = Alpine.store('data').input;
 
+            const currentTab = Alpine.store('data').currentTab;
+
             const newTopPapers = data.filter(r => r.type === 'pub' && r.P_TopPaper_Select === true);
 
             if (newTopPapers.length > Alpine.store('config').config.maxTopPapers) {
@@ -581,7 +595,15 @@
 
             Alpine.store('data').score = scores;
 
-            Alpine.store('data').completion = data.map(checkCompletion);
+            const previousCompletions = Alpine.store('data').completion;
+            const completions = data.map(checkCompletion);
+            Alpine.store('data').completion = completions;
+
+            if (completions[currentTab].progress.ratio === 1 && previousCompletions[currentTab].progress.ratio < 1) {
+                celebrateCompletion();
+            }
+
+            
 
             Alpine.store('warnings').reevaluate();
 
@@ -695,7 +717,9 @@
                             </div>
                         </div>
 
-                        <p x-text="`${$store.data.input.length - 1} of ${Alpine.store('config').config.max} slots used`"></p>
+                        <p><span x-text="`${$store.data.input.length - 1} of ${Alpine.store('config').config.max} slots used`"></span> | <span class="fakelink"
+                            @click="window.open(`https://shiny.psy.lmu.de/felix/RESQUE_profile?data=${LZString.compress(JSON.stringify($store.data.input))}`, '_blank')"
+                        >View Profile ↗</span></p>
                     </div>
                     <div x-data="{ show: true }"
                         x-effect="if (show) document.querySelector('#tabs-sidebar').scrollTop = $store.tabsSidebarScrollTop;"
@@ -886,7 +910,7 @@
                                             </template>
                                         </div>
 
-                                        <details x-show="$store.selectedIndicator.id === elem.id">
+                                        <details x-show="$store.selectedIndicator.id === elem.id && !elem.no_comment">
                                             <summary style="font-size: 0.9rem; color: gray; text-align: right;">Add comment</summary>
                                             <input x-model="$store.data.currentInput[elem.id + '_Comment']" type="text"
                                                 :placeholder="`Comment on '${elem.id}'`" />
@@ -1232,7 +1256,7 @@
                     { popover: { title: '👋🏻 Welcome to the RESQUE tool!', description: 'We need to change the way we assess research - with a focus on quality (over quantity). The RESearch QUality Evaluation (RESQUE) framework provides an evaluation scheme for publications, data sets, and research software. With this tool, you can enter the necessary information for your best research outputs, export a profile that shows your research style (not implemented yet), and use it for your CV or in hiring and tenure committees.' } },
                     { popover: { title: '🔒 Privacy', description: 'The data you enter never leaves your device. Everything is processed locally. (except fetching the information about a publications using the DOI)' } },
                     { popover: { title: 'Saving changes...', description: 'Your changes are saved automatically in your browser. You can reload the page or close this tab and come back another time, the data you entered will still be here.' } },
-                    { element: '.pdf-button', popover: { description: 'You can open a PDF file and extract the DOI automatically. Note that this might fail in rare cases.' } },
+                    // { element: '.pdf-button', popover: { description: 'You can open a PDF file and extract the DOI automatically. Note that this might fail in rare cases.' } },
                     { element: '.add-buttons', popover: { title: 'Add a new research output', description: 'You can use one of these three buttons to add new research outputs. RESQUE considers publications, software projects and data sets as research outputs.' } },
                     { element: '.clear-button', popover: { title: 'Starting fresh', description: 'You can use the \'Clear\' button to delete everything you entered and start with a fresh form.' } },
                     { element: '.load-button', popover: { title: 'Loading previously exported data', description: 'The \'Load\' button opens a file picker, the local JSON file you select will be loaded into the tool.' } },
@@ -1492,9 +1516,16 @@
                 .filter(e => e.type === 'checkbox')
                 .map(e => e.options.map(o => e.id + '_' + o.id))
                 .flat();
+            
+            const tabularRadioIds = filteredElements
+                .filter(e => e.type === 'tabular_radio')
+                .map(e => e.rows.map(r => e.id + '_' + r.id))
+                .flat();
 
             const filteredIds = [
-                ...(filteredElements.map(e => e.id).concat(checkboxIds)),
+                ...filteredElements.map(e => e.id),
+                ...checkboxIds,
+                ...tabularRadioIds,
                 ...(filteredElements.map(e => e.id + '_Comment')),
                 'date_added', 'position', 'type', 'version'
             ];
