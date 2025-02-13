@@ -363,9 +363,9 @@
                         current: 0,
                         total: 0,
                         ratio: 0,
-                        percent: 0
+                        percent: ""
                     },
-                    warnings: []
+                    warnings: {}
                 }
             }
 
@@ -382,7 +382,19 @@
             const filledOutElements = filteredElements.filter(e => result[e.id] !== '');
 
             const progress = filledOutElements.length / filteredElements.length;
-            const progressPercent = Math.round(progress * 100).toFixed(2);
+            const progressPercent = Math.round(progress * 100).toFixed(0);
+
+            let warnings = {};
+
+            const emptyRequiredElements = filteredElements.filter(e => !filledOutElements.includes(e));
+
+            emptyRequiredElements.forEach(e => {
+                warnings[e.id] = {
+                    importance: 'warning',
+                    reason: 'empty',
+                    text: 'This field is required.'
+                };
+            });
 
             return {
                 progress: {
@@ -391,7 +403,7 @@
                     ratio: progress,
                     percent: progressPercent
                 },
-                warnings: []
+                warnings: warnings
             }
         }
 
@@ -820,8 +832,25 @@
                                 <template x-if="$store.showIndicators">
                                     <div @click="$store.selectedIndicator = elem" x-show="evaluateCondition(elem.condition)"
                                         onblur="actions[elem.onchange]()"
-                                        :class="elem.style_classes">
-                                        <p class="title" x-html="preprocessText(elem.title)" style="font-weight: bold;"></p>
+                                        class="indicator-container"
+                                        :class="elem.style_classes"
+                                        :id="elem.id">
+                                        
+                                        <div x-data="{ showWarningText: false }">
+                                            <p>
+                                                <div
+                                                    x-show="elem.id in $store.data.completion[$store.data.currentTab].warnings"
+                                                    class="warning-indicator"
+                                                    @click="showWarningText = !showWarningText">
+                                                </div>
+                                                <span class="title" x-html="preprocessText(elem.title)"></span>
+                                            </p>
+                                            <p
+                                                 x-text="$store.data.completion[$store.data.currentTab].warnings[elem.id]?.text"
+                                                x-show="showWarningText && elem.id in $store.data.completion[$store.data.currentTab].warnings"
+                                                class="warning-text">
+                                            </p>
+                                        </div>
 
                                         <div class="content">
                                             <template x-if="elem.type === 'separator'">
@@ -944,9 +973,28 @@
                         </template>
                     </div>
                 </div>
-                <div id="menu">
+                <div id="menu" x-data="{ tab: 'main' }">
+                    <div id="menu-tabs">
+                        <span @click="tab = 'main'" :class="{ selected: tab === 'main' }">Score/Info</span> • <span @click="tab = 'problems'" :class="{ selected: tab === 'problems' }">Problems (<span x-text="Object.keys($store.data.completion[$store.data.currentTab].warnings).length"></span>)</span>
+                    </div>
+                    <div x-show="tab === 'problems'" class="warning-box card animate pop">
+                        <template x-if="Object.keys($store.data.completion[$store.data.currentTab].warnings).length > 0">
+                            <div>
+                                <template x-for="[id, warning] in Object.entries($store.data.completion[$store.data.currentTab].warnings)">
+                                    <div @click="document.getElementById(id).scrollIntoView({behavior: 'smooth', block: 'center'}); document.querySelector('html').scrollTop = 0;" class="warning-text">
+                                        <b><span x-text="id"></span></b>
+                                        <br>
+                                        <span x-text="warning.text"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                        <template x-if="Object.keys($store.data.completion[$store.data.currentTab].warnings).length === 0">
+                            <p style="margin: 0; color: gray;">No problems found.</p>
+                        </template>
+                    </div>
                     <div class="card animate pop" :class="{ warning: $store.warnings.any() }" id="score-box"
-                        x-show="$store.data.currentInput.type !== 'meta'">
+                        x-show="tab === 'main' && $store.data.currentInput.type !== 'meta'">
                         <div id="score-container">
                             <div id="current-score">
                                 <span class="sub">Selected research output</span>
@@ -954,11 +1002,16 @@
                                     <span id="no-score">Applicant requests<br>manual processing</span>
                                 </div>
 
-                                <canvas id="currentScoreChart" width="150" height="150" style="margin-top: 10px;"></canvas>
+                                <div style="width: 150px; height: 150px;">
+                                    <canvas id="currentScoreChart" width="150" height="150" style="margin-top: 10px;"></canvas>
+                                </div>
                             </div>
                             <div id="overall-score">
                                 <span class="sub">Overall Profile (mean)</span>
-                                <canvas id="overallScoreChart" width="150" height="150" style="margin-top: 10px;"></canvas>
+                                
+                                <div style="width: 150px; height: 150px;">
+                                    <canvas id="overallScoreChart" width="150" height="150" style="margin-top: 10px;"></canvas>
+                                </div>
                             </div>
                         </div>
 
@@ -1040,7 +1093,7 @@
                             research contributions that can be scored (e.g. by adding more empirical papers, data sets, or
                             software contributions)</p>
                     </div>
-                    <div id="info-box" class="card">
+                    <div x-show="tab === 'main'" id="info-box" class="card">
                         <template x-if="!$store.selectedIndicator.id">
                             <p id="item-info">Click on an indicator to see detailed information</p>
                         </template>
