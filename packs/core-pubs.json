@@ -1,6 +1,6 @@
 {
-    "version": "0.5.1",
-    "date": "2025-02-10",
+    "version": "0.5.2",
+    "date": "2025-02-13",
     "prefix": "P",
     "title": "Publication",
     "elements": [        
@@ -241,11 +241,11 @@
         {
             "id": "P_CRediT_InJournal",
             "type": "radio",
-            "title": "Was the CRediT information officially published in the paper itself?",
+            "title": "Was the CRediT information officially published in the paper itself? (Note: add the information in both cases in the table below)",
             "options": [
                 {
                     "id": "No",
-                    "text": "No (please still add the CRediT information here)"
+                    "text": "No"
                 },
                 {
                     "id": "Yes",
