@@ -428,14 +428,29 @@
             let defaultValues = {};
 
             for (element of Alpine.store('forms')[type].elements) {
-                if (element.default) {
-                    if (element.type !== 'checkbox') {
-                        defaultValues[element.id] = element.default;
-                    } else {
-                        element.default.forEach((optionId) => {
-                            defaultValues[element.id + '_' + optionId] = true;
-                        })
-                    }
+                if (element.default
+                    || element.rows?.some(row => row.default)
+                ) {
+                    switch (element.type) {
+                        case 'checkbox':
+                            element.default.forEach((optionId) => {
+                                defaultValues[element.id + '_' + optionId] = true;
+                            })
+                            break;
+                        case 'tabular_radio':
+                            element.rows.forEach((row) => {
+                                defaultValues[element.id + '_' + row.id] = element.default;
+                            });
+
+                            element.rows.forEach((row) => {
+                                if (row.default) {
+                                    defaultValues[element.id + '_' + row.id] = row.default;
+                                }
+                            });
+                            break;
+                        default:
+                            defaultValues[element.id] = element.default;
+                    }                   
                 } else {
                     // Define default values
                     switch (element.type) {
@@ -454,6 +469,11 @@
                         case 'checkbox':
                             element.options.forEach((option) => {
                                 defaultValues[element.id + '_' + option.id] = false;
+                            });
+                            break;
+                        case 'tabular_radio':
+                            element.rows.forEach((row) => {
+                                defaultValues[element.id + '_' + row.id] = '';
                             });
                             break;
                         default:
