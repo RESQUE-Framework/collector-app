@@ -1616,7 +1616,8 @@
             "id": "P_GeneralComments",
             "type": "textbox",
             "maxwords": 500,
-            "title": "(optional) General comments (max. 500 words)"
+            "title": "(optional) General comments (max. 500 words)",
+            "optional": true
         }
     ]
 }
