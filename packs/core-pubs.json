@@ -3,7 +3,7 @@
     "date": "2025-02-13",
     "prefix": "P",
     "title": "Publication",
-    "elements": [        
+    "elements": [       
         {
             "id": "P_Info",
             "type": "info",
@@ -1336,7 +1336,7 @@
         },
 
         {
-            "id": "P_Theory_Def",
+            "id": "P_Theorizing_Definition",
             "type": "info",
             "text": "<h4>Theory usage and development</h4>The following section aims to assess the <b>theoretical rigor</b> of your work, with a formalized version of a theory in a computational model being considered the highest standard.<br><ul><li>A <b>theory</b> is a set of assumptions about mechanisms that explain empirical phenomena.</li><li><b>Phenomena</b> are expressed in robust patterns in the world that have been confirmed in methodologically diverse empirical studies. They are usually not directly observable but implied by observed or measured data patterns. Notably, the assumption of the existence of the phenomenon may be false (e.g., due to errors in the measurement).</li><li><b>Mechanisms</b> that explain phenomena are typically described using concepts (e.g., person, situation, attitude, motive, etc.) and relations among these concepts. We call these the 'elements of a theory'. Eventually, the elements specified within the theory should be able to reproduce the data pattern that resembles the data pattern reflective of the assumed phenomenon.</li></ul>Whether or not the pattern exists in reality is relevant regarding the theory’s ultimate utility, but it is irrelevant in terms of how precisely, transparently and comprehensively the theory itself is presented. A theory may be well-specified and still wrong.<br><br>A <b>model</b> is a formalization of a (part of a) theory in accordance with some set of standard notation rules (e.g., algebra). A model always consists of mathematical or formal-logic elements such as variables, scalars and constants, as well as exact specifications of the ways in which these are related to one another. The formulation of a model should always enable to run concrete simulations, thereby increasing the precision, objectivity, and falsifiability of a theory. Please note that there is a difference between 1) a computational model of your theory, which aims to explain your data by formalizing a data-generating process, and 2) a statistical model of your data, which aims to describe patterns within the data but without offering an explanation of how that data was generated. In the following, the term “model” is used in the former way.",
             "info": "The following section aims to assess the theoretical rigor of your work, with a formalized version of a theory in a computational model being considered the highest standard.<br><br>It is important to distinguish between 1) a computational model of your theory, which aims to <i>explain</i> your data by formalizing a data-generating process, and 2) a statistical model of your data, which aims to <i>describe</i> patterns in your data.",
@@ -1475,7 +1475,7 @@
         },
 
         {
-            "id": "P_Theory_Eval_Def",
+            "id": "P_Theorizing_Test_Definition",
             "type": "info",
             "text": "<h4>Theory Evaluation</h4>Theories may be evaluated in terms of how well they predict or reproduce data patterns that are indicative of the to-be-explained phenomenon. To do so, the elements of the theory that are to be included in the evaluation need to be “operationalized”. Evaluating a theory does not require its formalization but doing so will usually result in a more precise and objective test. Evaluating only parts of a theory is possible and legitimate.<br><br>An optimal theory evaluation contains an explicit account of which of the theory’s elements are (not) evaluated, how each of these elements are represented in the design of the respective empirical study, and how the assumed  phenomenon is represented in the observable data. An optimal theory evaluation also contains precise predictions, criteria for how they may be falsified, an assessment of how well the theory’s predictions fit the observable data, and a discussion of what the findings mean for the theory.",
             "info": "The following section aims to assess the theoretical rigor of your work, with a formalized version of a theory in a computational model being considered the highest standard.<br><br>It is important to distinguish between 1) a computational model of your theory, which aims to <i>explain</i> your data by formalizing a data-generating process, and 2) a statistical model of your data, which aims to <i>describe</i> patterns in your data.",

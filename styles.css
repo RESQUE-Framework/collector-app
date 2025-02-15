@@ -238,11 +238,38 @@ label {
     text-align: left;
 }
 
-.indicator-container div {
+.indicator-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.indent {
+    margin-left: 20px;
+    width: 2px;
+    background-color: var(--border-color);
+    align-self: stretch;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+.indent:nth-child(2) {
+    margin-left: 10px;
+}
+
+.indent + .indicator-subcontainer {
+    margin-left: 10px;
+}
+
+.indicator-subcontainer {
+    flex-grow: 1;
+}
+
+.indicator-container .indicator-subcontainer div {
     position: relative;
 }
 
-.indicator-container div p {
+.indicator-container .indicator-subcontainer div p {
     align-items: center;
 }
 
