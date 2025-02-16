@@ -1017,7 +1017,9 @@
                                     <span id="no-score">Applicant requests<br>manual processing</span>
                                 </div>
 
-                                <div style="width: 150px; height: 150px;">
+                                <div
+                                    style="width: 150px; height: 150px;"
+                                    x-show="$store.data.score.scores[$store.data.currentTab].max > 0">
                                     <canvas id="currentScoreChart" width="150" height="150" style="margin-top: 10px;"></canvas>
                                 </div>
                             </div>
