@@ -430,7 +430,7 @@
             "tip_external": "Look in the abstract and/or method section. If no information can be found there, it might also be useful to look at the contributors of the repositories.<br><br><b>Search words:</b> simul*, data, OSF, availab*"
         },
         {
-            "id": "P_Sample_Type",
+            "id": "P_Sample",
             "type": "radio",
             "title": "Type of participant sample",
             "options": [
@@ -463,16 +463,16 @@
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
         },
         {
-            "id": "P_Sample_Type_Other",
+            "id": "P_Sample_Other",
             "type": "text",
             "title": "⤷ Please specify the sample type",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_Type == 'Other'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample == 'Other'"
         },
         {
-            "id": "P_Sample_Type_RareOther",
+            "id": "P_Sample_RareOther",
             "type": "text",
             "title": "⤷ Please specify the hard to acquire population",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_Type == 'Rare'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample == 'Rare'"
         },
 
 
@@ -530,7 +530,7 @@
         },
 
         {
-            "id": "P_CoG_ParcipantSample",
+            "id": "P_Sample_CoG",
             "type": "radio",
             "title": "Are Constraints on Generality explicitly discussed for the participant sample?",
             "options": [
@@ -584,7 +584,7 @@
 
 
         {
-            "id": "P_Stimuli_Relevance",
+            "id": "P_Stimuli",
             "type": "radio",
             "title": "Does the paper use stimuli in a substantive way?",
             "options": [
@@ -604,10 +604,10 @@
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
         },
         {
-            "id": "P_Stimuli_Relevance_NAexplanation",
+            "id": "P_Stimuli_NAexplanation",
             "type": "text",
             "title": "⤷ Not Applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli_Relevance == 'NotApplicable'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli == 'NotApplicable'"
         },
         {
             "id": "P_Stimuli_Representative",
@@ -631,17 +631,17 @@
                     "text": "Expliclty considered, stimuli randomly sampled from population"
                 }                
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli_Relevance == 'Yes'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli == 'Yes'"
         },
         {
             "id": "P_Stimuli_Representative_NAexplanation",
             "type": "text",
             "title": "⤷ Not Applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli_Relevance == 'Yes' && $P_Stimuli_Representative == 'NotApplicable'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli == 'Yes' && $P_Stimuli_Representative == 'NotApplicable'"
         },
 
         {
-            "id": "P_CoG_StimulusSample",
+            "id": "P_Stimuli_CoG",
             "type": "radio",
             "title": "Are Constraints on Generality explicitly discussed for the stimulus sample?",
             "options": [
@@ -654,7 +654,7 @@
                     "text": "Yes"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli_Relevance == 'Yes' && $P_Stimuli_Representative != 'NotApplicable'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli == 'Yes' && $P_Stimuli_Representative != 'NotApplicable'"
         },
 
         {
@@ -852,7 +852,11 @@
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_DesignExperimental == 'Experimental'"
         }, 
 
-
+        {
+            "id": "sep_before_data_open",
+            "type": "separator",
+            "condition": "$P_Suitable === 'Yes'"
+        },
 
         {
             "id": "P_Data_Open",
@@ -1058,6 +1062,13 @@
             "tip_external":"<ul><li>Search for <b>Open License</b>: This license could be stated in ...<ul><li>A LICENSE file in the top level folder</li><li>Within the README file</li><li>In the header of each source code file</li><li>The OSF project license</li></ul> </li></ul>",
             "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes' && $P_ReproducibleScripts =|= ['YesParts', 'YesEntire']"
         },
+
+        {
+            "id": "sep_before_correctness",
+            "type": "separator",
+            "condition": "$P_Suitable === 'Yes'"
+        },
+
         {
             "id": "P_IndependentVerification",
             "type": "radio",
@@ -1265,11 +1276,11 @@
             "tip_external":"For <b>Operationalizations</b>:<br><br>If you would be able to rebuild the experimental setup based on the preregistered description of the measurement instruments, then assign <b>'yes'</b>. If it is too vague (e.g. only 'we will use reaction times'), then assign <b>'no'</b>.<br><br>ClinicalTrials.gov often lack the details for most of these aspects (often only the operationalizations are provided, but no sufficiently precise hypotheses, or sample size planning)."
         },
         {
-            "id": "P_PreregisteredReplication",
+            "id": "P_Preregistration_Replication",
             "type": "radio",
             "title": "The paper contains a preregistered replication attempt (either direct/close or conceptual)",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_PreregisteredReplication === 'NotApplicable') && (exists($P_PreregisteredReplication_NAExplanation)))",
+                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration_Replication === 'NotApplicable') && (exists($P_Preregistration_Replication_NAExplanation)))",
                 "condition": ""
             },
             "options": [
@@ -1294,10 +1305,10 @@
             "tip_external":"If it is a replication of a previously reported effect, it is <b>'yes'</b>, even if the replication is not the main research question of the preregistration.<br><b>Search word</b> (in preregistration):replica*"
         },
         {
-            "id": "P_PreregisteredReplication_NAExplanation",
+            "id": "P_Preregistration_Replication_NAExplanation",
             "type": "text",
             "title": "⤷ Not applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && $P_PreregisteredReplication === 'NotApplicable'"
+            "condition": "$P_Suitable === 'Yes' && $P_Preregistration_Replication === 'NotApplicable'"
         },
         {
             "id": "P19P20SEP",
