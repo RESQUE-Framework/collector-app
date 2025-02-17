@@ -894,7 +894,8 @@
             "id": "P_Data_Open_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesParts', 'YesEntire']"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesParts', 'YesEntire']",
+            "info": "You can add multiple DOIs or URLs, separated by a semicolon (;)"
         },
         {
             "id": "P_Data_Open_AccessLevel",
@@ -1010,7 +1011,7 @@
             "id": "P_ReproducibleScripts_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL of the script",
-            "info": "If multiple sources are available, provide the link to the primary source only. E.g. if both Github and OSF links are available, provide the Github link, as OSF only mirrors the content from Github.",
+            "info": "If the material is distributed across multiple locations, you can provide multiple DOIs or URLs, separated by a semicolon (;). If multiple <i>duplicated</i> sources are available, provide the link to the primary source only. E.g. if both Github and OSF links are available, provide the Github link, as OSF only mirrors the content from Github.",
             "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes' && $P_ReproducibleScripts =|= ['YesParts', 'YesEntire']"
         },
         {
@@ -1125,7 +1126,8 @@
             "id": "P_IndependentVerification_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL of the verification report",
-            "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes' && $P_IndependentVerification =|= ['WorkflowReproducible', 'MainResultsReproducible', 'AllResultsReproducible', 'AnalysisReplication']"
+            "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes' && $P_IndependentVerification =|= ['WorkflowReproducible', 'MainResultsReproducible', 'AllResultsReproducible', 'AnalysisReplication']",
+            "info": "You can add multiple DOIs or URLs, separated by a semicolon (;)"
         },
         {
             "id": "OMSEP",
@@ -1176,7 +1178,8 @@
             "id": "P_OpenMaterials_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL of the open materials",
-            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials =|= ['YesParts', 'YesEntire']"
+            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials =|= ['YesParts', 'YesEntire']",
+            "info": "You can add multiple DOIs or URLs, separated by a semicolon (;)"
         },
         {
             "id": "P_OpenMaterials_PartsExplanation",
