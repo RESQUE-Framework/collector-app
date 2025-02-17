@@ -579,7 +579,7 @@
         {
             "id": "stimsep",
             "type": "separator",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && !$P_TypeMethod_MetaAnalysis"
         },
 
 
@@ -660,7 +660,7 @@
         {
             "id": "stimsep2",
             "type": "separator",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && !$P_TypeMethod_MetaAnalysis"
         },
 
         {
@@ -881,7 +881,7 @@
                 }
             ],
             "info": "If the data is only available on a personal website (including personal university websites) or 'upon (reasonable) request', select <i>not available</i>. When only aggregated data is available, generally select <i>not available</i> (there might be exceptions with high-volume physiological data).<br><br>When to choose <b>'Not applicable'</b>?<ul><li>If legal regulations or binding conditions of the data provider prohibit data publication and not even restricted access is possible.</li></ul>",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_Simulated)",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated)",
             "tip_external": "<b>Practical approach</b>: <ul><li>Is a <b>link</b> to a data set provided?</li><li>Is the data in a <b>repository</b> that also controls data access?</li></ul> <br><br><b>Search words:</b> open, data, availab*"
         },
         {
