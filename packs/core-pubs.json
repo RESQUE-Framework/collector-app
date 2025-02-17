@@ -579,7 +579,7 @@
         {
             "id": "stimsep",
             "type": "separator",
-            "condition": "$P_Suitable === 'Yes'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes'"
         },
 
 
@@ -660,7 +660,7 @@
         {
             "id": "stimsep2",
             "type": "separator",
-            "condition": "$P_Suitable === 'Yes'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes'"
         },
 
         {
@@ -855,7 +855,7 @@
         {
             "id": "sep_before_data_open",
             "type": "separator",
-            "condition": "$P_Suitable === 'Yes'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes'"
         },
 
         {
@@ -963,9 +963,9 @@
             "tip_external":"For <b>Codebook</b>:<ul><li>Check the availability of a codebook. Normally a separate document should be provided.</li><li>Exception: Variable labels, descriptions and scales are provided in a structured (e.g. tabular) format at the beginning of the syntax script.</li><li><b>Variable name, content</b> and <b>scale</b> must be provided in order to receive the point.</li></ul>"
         },
         {
-            "id": "P13P14SEP",
+            "id": "P_sep_before_reproducibility",
             "type": "separator",
-            "condition": "$P_Suitable === 'Yes'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes'"
         },
         {
             "id": "P_ReproducibleScripts",
@@ -1066,7 +1066,7 @@
         {
             "id": "sep_before_correctness",
             "type": "separator",
-            "condition": "$P_Suitable === 'Yes'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes'"
         },
 
         {
@@ -1241,7 +1241,7 @@
             "type": "checkbox",
             "title": "⤷ What has been preregistered? (check all that apply)",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation)))",
+                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation))) || ($P_TypeMethod_MetaAnalysis)",
                 "condition": ""
             },
             "options": [
@@ -1280,7 +1280,7 @@
             "type": "radio",
             "title": "The paper contains a preregistered replication attempt (either direct/close or conceptual)",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration_Replication === 'NotApplicable') && (exists($P_Preregistration_Replication_NAExplanation)))",
+                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration_Replication === 'NotApplicable') && (exists($P_Preregistration_Replication_NAExplanation))) || ($P_TypeMethod_MetaAnalysis)",
                 "condition": ""
             },
             "options": [
@@ -1301,14 +1301,14 @@
                 }
             ],
             "info": "As only <i>preregistered</i> replication attempts count, you need to provide the DOI or URL of the preregistration in the previous indicator. If the paper contains a replication which was not preregistered, please select <b>'No'</b>.<br><br>If the paper was preregistered, but does not contain a replication, select <b>'No'</b>. If you chose 'not applicable' at the previous indicator 'Preregistration', choose 'not applicable' here, too.",
-            "condition": "$P_Suitable === 'Yes'",
+            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis",
             "tip_external":"If it is a replication of a previously reported effect, it is <b>'yes'</b>, even if the replication is not the main research question of the preregistration.<br><b>Search word</b> (in preregistration):replica*"
         },
         {
             "id": "P_Preregistration_Replication_NAExplanation",
             "type": "text",
             "title": "⤷ Not applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && $P_Preregistration_Replication === 'NotApplicable'"
+            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis && $P_Preregistration_Replication === 'NotApplicable'"
         },
         {
             "id": "P19P20SEP",
