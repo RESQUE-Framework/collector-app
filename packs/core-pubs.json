@@ -958,7 +958,7 @@
                     "value": 0.25
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts'] && ($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1'] || $P_Data_Open_AccessLevel === 'ZK2' && $P_Data_Open_AccessLevel_ZK2Explanation)",
+            "condition": "($P_Suitable === 'Yes') && ($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts'] && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1'] || $P_Data_Open_AccessLevel === 'ZK2' && (exists($P_Data_Open_AccessLevel_ZK2Explanation))))",
             "info": "<ul><li>Persistent identifier: Data in an OSF project do count, as we consider OSF URLs to be persistent.</li></ul>",
             "tip_external":"For <b>Codebook</b>:<ul><li>Check the availability of a codebook. Normally a separate document should be provided.</li><li>Exception: Variable labels, descriptions and scales are provided in a structured (e.g. tabular) format at the beginning of the syntax script.</li><li><b>Variable name, content</b> and <b>scale</b> must be provided in order to receive the point.</li></ul>"
         },
