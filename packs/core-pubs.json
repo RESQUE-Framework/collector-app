@@ -499,7 +499,7 @@
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
         },
         {
-            "id": "P_Sample_RepresentativenessRelevance_NAexplanation",
+            "id": "P_Sample_RepresentativenessRelevance_NAExplanation",
             "type": "text",
             "title": "⤷ Not Applicable: Explanation",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_RepresentativenessRelevance == 'NotApplicable'"
@@ -570,7 +570,7 @@
             "info": "This question does not necessarily correlate with the nationality of participants. Please make a judgement whether, for example, multiple European subsamples actually qualify as 'Multiple cultural or ethnic backgrounds', or whether different ethnic backgrounds are sampled on purpose within one nation."
         },
         {
-            "id": "P_Sample_CrossCultural_NAexplanation",
+            "id": "P_Sample_CrossCultural_NAExplanation",
             "type": "text",
             "title": "⤷ Not Applicable: Explanation",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_CrossCultural == 'NotApplicable'"
@@ -604,7 +604,7 @@
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
         },
         {
-            "id": "P_Stimuli_NAexplanation",
+            "id": "P_Stimuli_NAExplanation",
             "type": "text",
             "title": "⤷ Not Applicable: Explanation",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli == 'NotApplicable'"
@@ -634,7 +634,7 @@
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli == 'Yes'"
         },
         {
-            "id": "P_Stimuli_Representative_NAexplanation",
+            "id": "P_Stimuli_Representative_NAExplanation",
             "type": "text",
             "title": "⤷ Not Applicable: Explanation",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli == 'Yes' && $P_Stimuli_Representative == 'NotApplicable'"
