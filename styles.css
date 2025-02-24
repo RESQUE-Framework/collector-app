@@ -238,6 +238,68 @@ label {
     text-align: left;
 }
 
+.indicator-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.indent {
+    margin-left: 20px;
+    width: 2px;
+    background-color: var(--border-color);
+    align-self: stretch;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+.indent:nth-child(2) {
+    margin-left: 10px;
+}
+
+.indent + .indicator-subcontainer {
+    margin-left: 10px;
+}
+
+.indicator-subcontainer {
+    flex-grow: 1;
+}
+
+.indicator-container .indicator-subcontainer div {
+    position: relative;
+}
+
+.indicator-container .indicator-subcontainer div p {
+    align-items: center;
+}
+
+.warning-indicator {
+    display: inline-block;
+    border-radius: 99px;
+    width: 12px;
+    height: 12px;
+    background-color: #ffa500;
+}
+
+.warning-text {
+    background-color: #ffa50015;
+    border: 1px solid #ffa500;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    margin-top: 0;
+    margin-bottom: 16px;
+    transition: 200ms;
+    cursor: pointer;
+}
+
+.warning-text:last-child {
+    margin-bottom: 0;
+}
+
+.warning-text:hover {
+    scale: 1.02;
+}
+
 form {
     margin-bottom: 10rem;
 }
@@ -395,6 +457,32 @@ details {
 
 summary:hover {
     color: var(--dark-color);
+}
+
+#menu-tabs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: gray;
+}
+
+#menu-tabs span {
+    margin: 0 4px;
+    cursor: pointer;
+}
+
+#menu-tabs span:hover {
+    text-decoration: underline;
+}
+
+#menu-tabs span.selected {
+    font-weight: bold;
+}
+
+#warning-box {
+    max-height: 40%;
 }
 
 #score-box {

@@ -26,6 +26,7 @@ function renderScoreChart(canvasId, categories, animation = true) {
     data: data,
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: {
           display: false // Disable the default legend

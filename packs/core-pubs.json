@@ -1,9 +1,9 @@
 {
-    "version": "0.5.2",
+    "version": "0.6.0",
     "date": "2025-02-13",
     "prefix": "P",
     "title": "Publication",
-    "elements": [        
+    "elements": [       
         {
             "id": "P_Info",
             "type": "info",
@@ -430,7 +430,7 @@
             "tip_external": "Look in the abstract and/or method section. If no information can be found there, it might also be useful to look at the contributors of the repositories.<br><br><b>Search words:</b> simul*, data, OSF, availab*"
         },
         {
-            "id": "P_Sample_Type",
+            "id": "P_Sample",
             "type": "radio",
             "title": "Type of participant sample",
             "options": [
@@ -463,16 +463,16 @@
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
         },
         {
-            "id": "P_Sample_Type_Other",
+            "id": "P_Sample_Other",
             "type": "text",
             "title": "⤷ Please specify the sample type",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_Type == 'Other'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample == 'Other'"
         },
         {
-            "id": "P_Sample_Type_RareOther",
+            "id": "P_Sample_RareOther",
             "type": "text",
             "title": "⤷ Please specify the hard to acquire population",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_Type == 'Rare'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample == 'Rare'"
         },
 
 
@@ -499,7 +499,7 @@
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
         },
         {
-            "id": "P_Sample_RepresentativenessRelevance_NAexplanation",
+            "id": "P_Sample_RepresentativenessRelevance_NAExplanation",
             "type": "text",
             "title": "⤷ Not Applicable: Explanation",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_RepresentativenessRelevance == 'NotApplicable'"
@@ -530,7 +530,7 @@
         },
 
         {
-            "id": "P_CoG_ParcipantSample",
+            "id": "P_Sample_CoG",
             "type": "radio",
             "title": "Are Constraints on Generality explicitly discussed for the participant sample?",
             "options": [
@@ -570,7 +570,7 @@
             "info": "The answer to this question does not necessarily correlate with the nationality of participants. Please make a judgement whether, for example, multiple European subsamples actually qualify as 'Multiple cultural or ethnic backgrounds', or whether different ethnic backgrounds are sampled on purpose within one nation."
         },
         {
-            "id": "P_Sample_CrossCultural_NAexplanation",
+            "id": "P_Sample_CrossCultural_NAExplanation",
             "type": "text",
             "title": "⤷ Not Applicable: Explanation",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_CrossCultural == 'NotApplicable'"
@@ -579,12 +579,12 @@
         {
             "id": "stimsep",
             "type": "separator",
-            "condition": "$P_Suitable === 'Yes'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && !$P_TypeMethod_MetaAnalysis"
         },
 
 
         {
-            "id": "P_Stimuli_Relevance",
+            "id": "P_Stimuli",
             "type": "radio",
             "title": "Does the paper use or vary stimuli in a substantive way?",
             "options": [
@@ -604,10 +604,10 @@
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
         },
         {
-            "id": "P_Stimuli_Relevance_NAexplanation",
+            "id": "P_Stimuli_NAExplanation",
             "type": "text",
             "title": "⤷ Not Applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli_Relevance == 'NotApplicable'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli == 'NotApplicable'"
         },
         {
             "id": "P_Stimuli_Representative",
@@ -631,17 +631,17 @@
                     "text": "Expliclty considered, stimuli randomly sampled from population"
                 }                
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli_Relevance == 'Yes'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli == 'Yes'"
         },
         {
-            "id": "P_Stimuli_Representative_NAexplanation",
+            "id": "P_Stimuli_Representative_NAExplanation",
             "type": "text",
             "title": "⤷ Not Applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli_Relevance == 'Yes' && $P_Stimuli_Representative == 'NotApplicable'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli == 'Yes' && $P_Stimuli_Representative == 'NotApplicable'"
         },
 
         {
-            "id": "P_CoG_StimulusSample",
+            "id": "P_Stimuli_CoG",
             "type": "radio",
             "title": "Are Constraints on Generality explicitly discussed for the stimulus sample?",
             "options": [
@@ -654,13 +654,13 @@
                     "text": "Yes"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli_Relevance == 'Yes' && $P_Stimuli_Representative != 'NotApplicable'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli == 'Yes' && $P_Stimuli_Representative != 'NotApplicable'"
         },
 
         {
             "id": "stimsep2",
             "type": "separator",
-            "condition": "$P_Suitable === 'Yes'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && !$P_TypeMethod_MetaAnalysis"
         },
 
         {
@@ -852,7 +852,11 @@
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_DesignExperimental == 'Experimental'"
         }, 
 
-
+        {
+            "id": "sep_before_data_open",
+            "type": "separator",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes'"
+        },
 
         {
             "id": "P_Data_Open",
@@ -877,7 +881,7 @@
                 }
             ],
             "info": "If the data is only available on a personal website (including personal university websites) or 'upon (reasonable) request', select <i>not available</i>. When only aggregated data is available, generally select <i>not available</i> (there might be exceptions with high-volume physiological data).<br><br>When to choose <b>'Not applicable'</b>?<ul><li>If legal regulations or binding conditions of the data provider prohibit data publication and not even restricted access is possible.</li></ul>",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_Simulated)",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated)",
             "tip_external": "<b>Practical approach</b>: <ul><li>Is a <b>link</b> to a data set provided?</li><li>Is the data in a <b>repository</b> that also controls data access?</li></ul> <br><br><b>Search words:</b> open, data, availab*"
         },
         {
@@ -890,7 +894,8 @@
             "id": "P_Data_Open_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesParts', 'YesEntire']"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesParts', 'YesEntire']",
+            "info": "You can add multiple DOIs or URLs, separated by a semicolon (;)"
         },
         {
             "id": "P_Data_Open_AccessLevel",
@@ -954,14 +959,14 @@
                     "value": 0.25
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts'] && ($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1'] || $P_Data_Open_AccessLevel === 'ZK2' && $P_Data_Open_AccessLevel_ZK2Explanation)",
+            "condition": "($P_Suitable === 'Yes') && ($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts'] && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || ($P_Data_Open_AccessLevel === 'ZK2' && exists($P_Data_Open_AccessLevel_ZK2Explanation)))",
             "info": "<ul><li>Persistent identifier: Data in an OSF project do count, as we consider OSF URLs to be persistent.</li></ul>",
             "tip_external":"For <b>Codebook</b>:<ul><li>Check the availability of a codebook. Normally a separate document should be provided.</li><li>Exception: Variable labels, descriptions and scales are provided in a structured (e.g. tabular) format at the beginning of the syntax script.</li><li><b>Variable name, content</b> and <b>scale</b> must be provided in order to receive the point.</li></ul>"
         },
         {
-            "id": "P13P14SEP",
+            "id": "P_sep_before_reproducibility",
             "type": "separator",
-            "condition": "$P_Suitable === 'Yes'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes'"
         },
         {
             "id": "P_ReproducibleScripts",
@@ -1006,7 +1011,7 @@
             "id": "P_ReproducibleScripts_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL of the script",
-            "info": "If multiple sources are available, provide the link to the primary source only. E.g. if both Github and OSF links are available, provide the Github link, as OSF only mirrors the content from Github.",
+            "info": "If the material is distributed across multiple locations, you can provide multiple DOIs or URLs, separated by a semicolon (;). If multiple <i>duplicated</i> sources are available, provide the link to the primary source only. E.g. if both Github and OSF links are available, provide the Github link, as OSF only mirrors the content from Github.",
             "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes' && $P_ReproducibleScripts =|= ['YesParts', 'YesEntire']"
         },
         {
@@ -1058,6 +1063,13 @@
             "tip_external":"<ul><li>Search for <b>Open License</b>: This license could be stated in ...<ul><li>A LICENSE file in the top level folder</li><li>Within the README file</li><li>In the header of each source code file</li><li>The OSF project license</li></ul> </li></ul>",
             "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes' && $P_ReproducibleScripts =|= ['YesParts', 'YesEntire']"
         },
+
+        {
+            "id": "sep_before_correctness",
+            "type": "separator",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes'"
+        },
+
         {
             "id": "P_IndependentVerification",
             "type": "radio",
@@ -1114,7 +1126,8 @@
             "id": "P_IndependentVerification_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL of the verification report",
-            "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes' && $P_IndependentVerification =|= ['WorkflowReproducible', 'MainResultsReproducible', 'AllResultsReproducible', 'AnalysisReplication']"
+            "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes' && $P_IndependentVerification =|= ['WorkflowReproducible', 'MainResultsReproducible', 'AllResultsReproducible', 'AnalysisReplication']",
+            "info": "You can add multiple DOIs or URLs, separated by a semicolon (;)"
         },
         {
             "id": "OMSEP",
@@ -1165,13 +1178,15 @@
             "id": "P_OpenMaterials_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL of the open materials",
-            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials =|= ['YesParts', 'YesEntire']"
+            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials =|= ['YesParts', 'YesEntire']",
+            "info": "You can add multiple DOIs or URLs, separated by a semicolon (;)"
         },
         {
             "id": "P_OpenMaterials_PartsExplanation",
             "type": "text",
             "title": "⤷ Partial open materials: What is missing? (optional)",
-            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials === 'YesParts'"
+            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials === 'YesParts'",
+            "optional": true
         },
         {
             "id": "P17P18SEP",
@@ -1229,7 +1244,7 @@
             "type": "checkbox",
             "title": "⤷ What has been preregistered? (check all that apply)",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation)))",
+                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation))) || ($P_TypeMethod_MetaAnalysis)",
                 "condition": ""
             },
             "options": [
@@ -1264,11 +1279,11 @@
             "tip_external":"For <b>Operationalizations</b>:<br><br>If you would be able to rebuild the experimental setup based on the preregistered description of the measurement instruments, then assign <b>'yes'</b>. If it is too vague (e.g. only 'we will use reaction times'), then assign <b>'no'</b>.<br><br>ClinicalTrials.gov often lack the details for most of these aspects (often only the operationalizations are provided, but no sufficiently precise hypotheses, or sample size planning)."
         },
         {
-            "id": "P_PreregisteredReplication",
+            "id": "P_Preregistration_Replication",
             "type": "radio",
             "title": "The paper contains a preregistered replication attempt (either direct/close or conceptual)",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_PreregisteredReplication === 'NotApplicable') && (exists($P_PreregisteredReplication_NAExplanation)))",
+                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration_Replication === 'NotApplicable') && (exists($P_Preregistration_Replication_NAExplanation))) || ($P_TypeMethod_MetaAnalysis)",
                 "condition": ""
             },
             "options": [
@@ -1289,14 +1304,14 @@
                 }
             ],
             "info": "As only <i>preregistered</i> replication attempts count, you need to provide the DOI or URL of the preregistration in the previous indicator. If the paper contains a replication which was not preregistered, please select <b>'No'</b>.<br><br>If the paper was preregistered, but does not contain a replication, select <b>'No'</b>. If you chose 'not applicable' at the previous indicator 'Preregistration', choose 'not applicable' here, too.",
-            "condition": "$P_Suitable === 'Yes'",
+            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis",
             "tip_external":"If it is a replication of a previously reported effect, it is <b>'yes'</b>, even if the replication is not the main research question of the preregistration.<br><b>Search word</b> (in preregistration):replica*"
         },
         {
-            "id": "P_PreregisteredReplication_NAExplanation",
+            "id": "P_Preregistration_Replication_NAExplanation",
             "type": "text",
             "title": "⤷ Not applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && $P_PreregisteredReplication === 'NotApplicable'"
+            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis && $P_Preregistration_Replication === 'NotApplicable'"
         },
         {
             "id": "P19P20SEP",
@@ -1335,7 +1350,7 @@
         },
 
         {
-            "id": "P_Theory_Def",
+            "id": "P_Theorizing_Definition",
             "type": "info",
             "text": "<h4>Theory usage and development</h4>The following section aims to assess the <b>theoretical rigor</b> of your work, with a formalized version of a theory in a computational model being considered the highest standard.<br><ul><li>A <b>theory</b> is a set of assumptions about mechanisms that explain empirical phenomena.</li><li><b>Phenomena</b> are expressed in robust patterns in the world that have been confirmed in methodologically diverse empirical studies. They are usually not directly observable but implied by observed or measured data patterns. Notably, the assumption of the existence of the phenomenon may be false (e.g., due to errors in the measurement).</li><li><b>Mechanisms</b> that explain phenomena are typically described using concepts (e.g., person, situation, attitude, motive, etc.) and relations among these concepts. We call these the 'elements of a theory'. Eventually, the elements specified within the theory should be able to reproduce the data pattern that resembles the data pattern reflective of the assumed phenomenon.</li></ul>Whether or not the pattern exists in reality is relevant regarding the theory’s ultimate utility, but it is irrelevant in terms of how precisely, transparently and comprehensively the theory itself is presented. A theory may be well-specified and still wrong.<br><br>A <b>model</b> is a formalization of a (part of a) theory in accordance with some set of standard notation rules (e.g., algebra). A model always consists of mathematical or formal-logic elements such as variables, scalars and constants, as well as exact specifications of the ways in which these are related to one another. The formulation of a model should always enable to run concrete simulations, thereby increasing the precision, objectivity, and falsifiability of a theory. Please note that there is a difference between 1) a computational model of your theory, which aims to explain your data by formalizing a data-generating process, and 2) a statistical model of your data, which aims to describe patterns within the data but without offering an explanation of how that data was generated. In the following, the term “model” is used in the former way.",
             "info": "The following section aims to assess the theoretical rigor of your work, with a formalized version of a theory in a computational model being considered the highest standard.<br><br>It is important to distinguish between 1) a computational model of your theory, which aims to <i>explain</i> your data by formalizing a data-generating process, and 2) a statistical model of your data, which aims to <i>describe</i> patterns in your data.",
@@ -1474,7 +1489,7 @@
         },
 
         {
-            "id": "P_Theory_Eval_Def",
+            "id": "P_Theorizing_Test_Definition",
             "type": "info",
             "text": "<h4>Theory Evaluation</h4>Theories may be evaluated in terms of how well they predict or reproduce data patterns that are indicative of the to-be-explained phenomenon. To do so, the elements of the theory that are to be included in the evaluation need to be “operationalized”. Evaluating a theory does not require its formalization but doing so will usually result in a more precise and objective test. Evaluating only parts of a theory is possible and legitimate.<br><br>An optimal theory evaluation contains an explicit account of which of the theory’s elements are (not) evaluated, how each of these elements are represented in the design of the respective empirical study, and how the assumed  phenomenon is represented in the observable data. An optimal theory evaluation also contains precise predictions, criteria for how they may be falsified, an assessment of how well the theory’s predictions fit the observable data, and a discussion of what the findings mean for the theory.",
             "info": "The following section aims to assess the theoretical rigor of your work, with a formalized version of a theory in a computational model being considered the highest standard.<br><br>It is important to distinguish between 1) a computational model of your theory, which aims to <i>explain</i> your data by formalizing a data-generating process, and 2) a statistical model of your data, which aims to <i>describe</i> patterns in your data.",
@@ -1615,7 +1630,8 @@
             "id": "P_GeneralComments",
             "type": "textbox",
             "maxwords": 500,
-            "title": "(optional) General comments (max. 500 words)"
+            "title": "(optional) General comments (max. 500 words)",
+            "optional": true
         }
     ]
 }
