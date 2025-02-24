@@ -70,7 +70,8 @@
         },
         {
             "id": "P5P6SEP",
-            "type": "separator"
+            "type": "separator",
+            "no_comment": true
         },
         {
             "id": "P_TypeMethod",
@@ -160,7 +161,8 @@
         },
         {
             "id": "SEP_Suitable",
-            "type": "separator"
+            "type": "separator",
+            "no_comment": true
         },
         {
             "id": "P_Suitable",
@@ -188,6 +190,7 @@
         {
             "id": "P8P9SEP",
             "type": "separator",
+            "no_comment": true,
             "condition": "$P_Suitable === 'Yes'"
         },
         {
@@ -221,6 +224,7 @@
         {
             "id": "P8P9bSEP",
             "type": "separator",
+            "no_comment": true,
             "condition": "$P_Suitable === 'Yes'"
         },
         {
@@ -371,6 +375,7 @@
         {
             "id": "P9P10SEP",
             "type": "separator",
+            "no_comment": true,
             "condition": "$P_Suitable === 'Yes'"
         },
 
@@ -579,7 +584,8 @@
         {
             "id": "stimsep",
             "type": "separator",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && !$P_TypeMethod_MetaAnalysis"
+            "no_comment": true,
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && !$P_TypeMethod_MetaAnalysis && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
         },
 
 
@@ -660,7 +666,8 @@
         {
             "id": "stimsep2",
             "type": "separator",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && !$P_TypeMethod_MetaAnalysis"
+            "no_comment": true,
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && !$P_TypeMethod_MetaAnalysis && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
         },
 
         {
@@ -855,6 +862,7 @@
         {
             "id": "sep_before_data_open",
             "type": "separator",
+            "no_comment": true,
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes'"
         },
 
@@ -966,6 +974,7 @@
         {
             "id": "P_sep_before_reproducibility",
             "type": "separator",
+            "no_comment": true,
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes'"
         },
         {
@@ -1067,6 +1076,7 @@
         {
             "id": "sep_before_correctness",
             "type": "separator",
+            "no_comment": true,
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes'"
         },
 
@@ -1132,6 +1142,7 @@
         {
             "id": "OMSEP",
             "type": "separator",
+            "no_comment": true,
             "condition": "$P_Suitable === 'Yes'"
         },
         {
@@ -1191,6 +1202,7 @@
         {
             "id": "P17P18SEP",
             "type": "separator",
+            "no_comment": true,
             "condition": "$P_Suitable === 'Yes'"
         },
         {
@@ -1316,6 +1328,7 @@
         {
             "id": "P19P20SEP",
             "type": "separator",
+            "no_comment": true,
             "condition": "$P_Suitable === 'Yes'"
         },
 
@@ -1576,6 +1589,7 @@
         {
             "id": "P22P23SEP",
             "type": "separator",
+            "no_comment": true,
             "condition": "$P_Suitable === 'Yes'"
         },
         {
@@ -1598,7 +1612,8 @@
         },
         {
             "id": "P23P24SEP",
-            "type": "separator"
+            "type": "separator",
+            "no_comment": true
         },
         {
             "id": "P_MeritStatement_Info",
@@ -1624,7 +1639,8 @@
         },
         {
             "id": "MeritSEP",
-            "type": "separator"
+            "type": "separator",
+            "no_comment": true
         },
         {
             "id": "P_GeneralComments",
