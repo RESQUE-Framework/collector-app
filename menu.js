@@ -1,7 +1,7 @@
 async function menu() {
     return {
         config: {            
-            main_title: "RESQUE",
+            main_title: "RESQUE Eichstätt",
             max: 10, // max number of publications that the committee expects
             maxTopPapers: 3,  // How many papers can be selected as "best papers"
             minROWarningThreshold: 0,
