@@ -1,8 +1,9 @@
 async function menu() {
     return {
-        config: {
-            max: 10,
-            maxTopPapers: 3,
+        config: {            
+            main_title: "RESQUE",
+            max: 10, // max number of publications that the committee expects
+            maxTopPapers: 3,  // How many papers can be selected as "best papers"
             minROWarningThreshold: 0,
         },
 

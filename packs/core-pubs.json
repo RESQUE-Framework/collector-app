@@ -453,7 +453,7 @@
                 },
                 {
                     "id": "Specific",
-                    "text": "Specific target population (e.g., working nurses)"
+                    "text": "Specific target population (e.g., working nurses; common psychiatric disorders)"
                 },
                 {
                     "id": "Rare",
@@ -634,7 +634,7 @@
                 },
                 {
                     "id": "ConsideredSampled",
-                    "text": "Expliclty considered, stimuli randomly sampled from population"
+                    "text": "Explicilty considered, stimuli randomly sampled from population"
                 }                
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli == 'Yes'"
@@ -1095,7 +1095,7 @@
                     "value": 0
                 },
                 {
-                    "id": "No",
+                    "id": "NotAvailable",
                     "text": "No / not published",
                     "value": 0
                 },
