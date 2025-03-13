@@ -2,7 +2,7 @@ function scaleValues(value, oldMin, oldMax, newMin, newMax) {
   return (value - oldMin) * (newMax - newMin) / (oldMax - oldMin) + newMin;
 }
 
-function renderScoreChart(canvasId, categories, animation = true) {
+export function renderScoreChart(canvasId, categories, animation = true) {
   const canvas = document.getElementById(canvasId);
 
   if (!canvas) {
@@ -71,7 +71,7 @@ function getDefaultColor(index) {
   return defaultColors[index % defaultColors.length];
 }
 
-function generateCustomLegend(categories) {
+export function generateCustomLegend(categories) {
   return categories.map((c, index) => `
     <div class="legend-item">
       <span class="legend-color" style="background-color: ${getDefaultColor(index)};"></span>

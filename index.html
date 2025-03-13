@@ -36,9 +36,25 @@
     <script src="https://cdn.jsdelivr.net/npm/@alpinejs/sort@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-    <script src="./utils/charts.js"></script>
-    <script src="./utils/orcid.js"></script>
-    <script src="./utils/prefixtree.js"></script>
+    <script type="module">
+        import { getDefaultValues } from "./utils/packutils.js";
+        import { getDepths } from "./utils/prefixtree.js";
+        import { score, scoreAll, generateScoringRules} from "./utils/score.js";
+        import { renderScoreChart } from "./utils/charts.js";
+        import { fetchAuthorByORCID, fetchPapersByORCID } from "./utils/orcid.js";
+        import { fetchInformationUsingDOI } from "./utils/doi.js";
+
+        window.getDefaultValues = getDefaultValues;
+        window.getDepths = getDepths;
+        window.score = score;
+        window.scoreAll = scoreAll;
+        window.generateScoringRules = generateScoringRules;
+        window.renderScoreChart = renderScoreChart;
+        window.fetchAuthorByORCID = fetchAuthorByORCID;
+        window.fetchPapersByORCID = fetchPapersByORCID;
+    </script>
+
+    </script>
 
     <!-- jsConfetti init -->
     <script>
@@ -137,58 +153,6 @@
 
         const preprocessTextWithIndicatorContext = (indicatorID, text) => text ? insertValuesIntoText(partialHighlight(indicatorID, text)) : '';
 
-        const fetchInformationUsingDOI = async (doi) => {
-            return await fetch("https://doi.org/" + doi, {
-                headers: {
-                    Accept: 'application/vnd.citationstyles.csl+json'
-                }
-            })
-                .then(response => response.json())
-                .then(response => {
-                    if (mode === MODE_PREVIEW || mode === MODE_PRINT) {
-                        console.log(response);
-                    }
-
-                    const authors = response.author;
-
-                    let authorString;
-
-                    switch (authors.length) {
-                        case 0:
-                            authorString = 'No author';
-                            break;
-                        case 1:
-                            authorString = authors[0].family;
-                            break;
-                        case 2:
-                            authorString = authors.map(a => a.family).join(' & ');
-                            break;
-                        default:
-                            authorString = authors[0].family + ' et al.';
-                            break;
-                    }
-
-                    const year = response.published?.["date-parts"][0][0] || response.issued?.["date-parts"][0][0] || null;
-
-                    return {
-                        title: `${authorString} (${year}): ${response.title}`,
-                        year: year,
-                        DOI: response.DOI,
-                        abstract: response.abstract
-                    }
-                })
-                .catch(() => {
-                    return {
-                        error: true,
-                        title: '',
-                        year: undefined,
-                        DOI: doi,
-                        abstract: undefined
-                        
-                    }
-                })
-        }
-
         const showSaving = () => {
             let saving = document.getElementById("saving");
 
@@ -215,145 +179,7 @@
                 });
         }
 
-        const score = r => {
-            const scoring = Alpine.store('forms')[r.type].scoring;
-
-            if (scoring === undefined) {
-                return {};
-            }
-
-            if (!Object.keys(scoring).length) {
-                return {};
-            }
-
-            let maxScore = 0;
-            let reachedScore = 0;
-
-            let itemScores = {};
-
-            for (indicator in scoring) {
-                if (indicator === 'post') {
-                    // skip post
-                    continue;
-                }
-                if (scoring[indicator].not_applicable && evaluateConditionInContext(scoring[indicator].not_applicable, r)) {
-                    continue;
-                }
-
-                itemMaxScore = scoring[indicator].max;
-                itemScore = 0;
-
-                switch (scoring[indicator].op) {
-                    case "sum":
-                        itemScore = scoring[indicator].points
-                            .filter(p => evaluateConditionInContext(p.condition, r))
-                            .reduce((sum, next) => sum + next.value, 0);
-                        break;
-                    case "select":
-                        itemScore = (scoring[indicator].points.find(p => evaluateConditionInContext(p.condition, r)) || { value: 0 }).value;
-                        break;
-                    default:
-                        break;
-                }
-
-                maxScore += itemMaxScore;
-                reachedScore += itemScore;
-
-                itemScores[indicator] = {
-                    max: itemMaxScore,
-                    score: itemScore
-                }
-            }
-
-            if (scoring.post) {
-                scoring.post.forEach(transformation => {
-                    if (evaluateConditionInContext(transformation.condition, r)) {
-                        console.log(transformation.factor)
-                        reachedScore *= transformation.factor;
-                    }
-                })
-            }
-
-            const categories = [
-                {
-                    title: "Theorizing & Formal Modeling",
-                    cue: "Theorizing"
-                },
-                {
-                    title: "Open Data",
-                    cue: "Data"
-                },
-                {
-                    title: "Open Materials",
-                    cue: "OpenMaterials"
-                },
-                {
-                    title: "Preregistration",
-                    cue: "Prereg"
-                },
-                {
-                    title: "Reproducible Code & Verification",
-                    cue: "ReproducibleScripts|IndependentVerification"
-                }
-            ]
-
-            const categoryScores = categories.map(category => {
-                const categoryIndicators = Object.keys(itemScores).filter(indicator => new RegExp(category.cue).test(indicator));
-                const categoryMax = categoryIndicators.map(indicator => itemScores[indicator].max).reduce((sum, current) => sum + current, 0);
-                const categoryScore = categoryIndicators.map(indicator => itemScores[indicator].score).reduce((sum, current) => sum + current, 0);
-
-                return {
-                    title: category.title,
-                    max: categoryMax,
-                    score: categoryScore
-                }
-            });
-
-            return {
-                max: maxScore,
-                score: reachedScore,
-                relative: reachedScore / maxScore,
-                percentage: ((reachedScore / maxScore) * 100).toFixed(1),
-                items: itemScores,
-                categories: categoryScores
-            }
-        }
-
-        const scoreAll = rs => {
-            const scores = rs.map(r => score(r));
-
-            const validScores = scores.filter(s => Object.keys(s).length && s.max > 0)
-
-            const relative = validScores
-                .map(s => s.relative)
-                .reduce((sum, current) => sum + current, 0) / validScores.length
-
-            const overallCategoryScores = validScores
-                .map(s => s.categories)
-                .reduce((sum, current) => {
-                    current.forEach(category => {
-                        const existingCategory = sum.find(c => c.title === category.title);
-
-                        if (existingCategory) {
-                            existingCategory.max += category.max;
-                            existingCategory.score += category.score;
-                        } else {
-                            sum.push({ ...category });
-                        }
-                    });
-
-                    return sum;
-                }, []);
-
-            return {
-                scores,
-                overall: {
-                    relative,
-                    percentage: (relative * 100).toFixed(1),
-                    categories: overallCategoryScores
-                }
-            };
-        }
+        
 
         const checkCompletion = (result) => {
             const elements = Alpine.store('forms')[result.type].elements;
@@ -447,67 +273,6 @@
             data: {}
         });
 
-        const getDefaultValues = type => {
-            let defaultValues = {};
-
-            for (element of Alpine.store('forms')[type].elements) {
-                if (element.default
-                    || element.rows?.some(row => row.default)
-                ) {
-                    switch (element.type) {
-                        case 'checkbox':
-                            element.default.forEach((optionId) => {
-                                defaultValues[element.id + '_' + optionId] = true;
-                            })
-                            break;
-                        case 'tabular_radio':
-                            element.rows.forEach((row) => {
-                                defaultValues[element.id + '_' + row.id] = element.default || '';
-                            });
-
-                            element.rows.forEach((row) => {
-                                if (row.default) {
-                                    defaultValues[element.id + '_' + row.id] = row.default;
-                                }
-                            });
-                            break;
-                        default:
-                            defaultValues[element.id] = element.default;
-                    }                   
-                } else {
-                    // Define default values
-                    switch (element.type) {
-                        case 'separator':
-                        case 'info':
-                            // No default values needed
-                            break;
-                        case 'text':
-                        case 'textbox':
-                        case 'number':
-                        case 'date':
-                        case 'dropdown':
-                        case 'radio':
-                            defaultValues[element.id] = '';
-                            break;
-                        case 'checkbox':
-                            element.options.forEach((option) => {
-                                defaultValues[element.id + '_' + option.id] = false;
-                            });
-                            break;
-                        case 'tabular_radio':
-                            element.rows.forEach((row) => {
-                                defaultValues[element.id + '_' + row.id] = '';
-                            });
-                            break;
-                        default:
-                            defaultValues[element.id] = '';
-                    }
-                }
-            }
-
-            return defaultValues;
-        }
-
         Alpine.store('config', {
             config: {},
             queryConfig: {}
@@ -536,7 +301,7 @@
                 }
 
                 this.currentInput = this.input[this.currentTab];
-                this.score = scoreAll(this.input);
+                this.score = window.scoreAll(this.input);
                 this.completion = this.input.map(checkCompletion);
                 this.topPapers = this.input.filter(r => r.type === 'pub' && r.P_TopPaper_Select === true);
             },
@@ -546,7 +311,7 @@
                     type,
                     version: Alpine.store('forms')[type].versions[prefixes[type]],
                     date_added: Date.now(),
-                    ...getDefaultValues(type)
+                    ...window.getDefaultValues(Alpine.store('forms')[type].elements)
                 }
             },
 
@@ -575,7 +340,7 @@
                     type: 'pub',
                     version: Alpine.store('forms')['pub'].versions[prefixes['pub']],
                     date_added: Date.now(),
-                    ...getDefaultValues('pub'),
+                    ...window.getDefaultValues(Alpine.store('forms').pub.elements),
                     ...details
                 });
             },
@@ -634,7 +399,7 @@
 
             Alpine.store('data').topPapers = newTopPapers;
 
-            const scores = scoreAll(data);
+            const scores = window.scoreAll(data);
 
             Alpine.store('data').score = scores;
 
@@ -660,12 +425,12 @@
 
             localStorage.setItem('data', JSON.stringify(data));
 
-            renderScoreChart('overallScoreChart', scores.overall.categories, animation = false);
+            window.renderScoreChart('overallScoreChart', scores.overall.categories, animation = false);
 
             const currentScore = scores.scores[Alpine.store('data').currentTab];
 
             if (currentScore && currentScore.categories) {
-                renderScoreChart('currentScoreChart', currentScore.categories, animation = false);
+                window.renderScoreChart('currentScoreChart', currentScore.categories, animation = false);
             }
         });
 
@@ -695,7 +460,7 @@
                 return;
             }
 
-            const publicationInformation = await fetchInformationUsingDOI(doi);
+            const publicationInformation = await window.fetchInformationUsingDOI(doi);
 
             Alpine.store('data').input[doiTab].Title = publicationInformation.title;
             Alpine.store('data').input[doiTab].Year = publicationInformation.year;
@@ -1246,7 +1011,7 @@
                 <div x-data="{ orcid: '', authorName: '', publications: [] }" class="modal-content">
                     <h3>Import publications using ORCID</h3>
                     <input id="orcid-modal-input" x-model="orcid" type="text" placeholder="ORCID" />
-                    <button id="orcid-modal-button" @click="fetchAuthorByORCID(orcid).then(name => authorName = name); fetchPapersByORCID(orcid).then(ps => publications = ps)">Fetch Publications</button>
+                    <button id="orcid-modal-button" @click="window.fetchAuthorByORCID(orcid).then(name => authorName = name); window.fetchPapersByORCID(orcid).then(ps => publications = ps)">Fetch Publications</button>
 
                     <template x-if="publications.length">
                         <div>
@@ -1725,66 +1490,11 @@
             Alpine.store('data').input[0].queryConfig = Alpine.store('config').queryConfig;
         }
 
-        const generateScoringRules = (items) => {
-            let rules = {};
-
-            items.forEach(item => {
-                if (!item.score) return;
-
-                rule = {
-                    not_applicable: item.score.not_applicable,
-                };
-
-                if (item.type === 'radio') {
-                    rule.op = 'select';
-                    rule.max = Math.max(...item.options.map(v => v.value));
-
-                    rule.points = item.options.map(option => {
-                        condition = `($${item.id} === '${option.id}')`
-                            + (item.score.condition ? ` && (${item.score.condition})` : '');
-
-                        if (option.explanation_required) {
-                            condition += ` && exists($${item.id}_${option.id}Explanation)`;
-                        }
-
-                        return {
-                            value: option.value,
-                            condition
-                        }
-                    })
-                }
-
-                if (item.type === 'checkbox') {
-                    rule.op = 'sum';
-                    rule.max = item.options.reduce((acc, option) => acc + option.value, 0);
-
-                    rule.points = item.options.map(option => {
-                        condition = `$${item.id}_${option.id}`
-                            + (item.score.condition ? ` && (${item.score.condition})` : '');
-
-                        if (option.explanation_required) {
-                            condition += ` && exists(${item.id}_${option.id}Explanation)`;
-                        }
-
-                        return {
-                            value: option.value,
-                            condition
-                        }
-                    })
-                }
-
-                rules[item.id] = rule;
-
-            });
-
-            return rules;
-        }
-
         menu().then(m => {
             for (const key in m) {
                 if (m[key].elements) {
-                    m[key].scoring = generateScoringRules(m[key].elements);
-                    Alpine.store('indentations')[key] = getDepths(m[key].elements);
+                    m[key].scoring = window.generateScoringRules(m[key].elements);
+                    Alpine.store('indentations')[key] = window.getDepths(m[key].elements);
                 }
                 Alpine.store('forms')[key] = m[key];
             }

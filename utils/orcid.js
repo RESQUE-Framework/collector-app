@@ -1,4 +1,4 @@
-async function fetchAuthorByORCID(orcid) {
+export async function fetchAuthorByORCID(orcid) {
     const url = `https://pub.orcid.org/v3.0/${orcid}`;
 
     try {
@@ -28,7 +28,7 @@ async function fetchAuthorByORCID(orcid) {
     }
 }
 
-async function fetchPapersByORCID(orcid) {    
+export async function fetchPapersByORCID(orcid) {    
     const url = `https://pub.orcid.org/v3.0/${orcid}/works`;
 
     try {

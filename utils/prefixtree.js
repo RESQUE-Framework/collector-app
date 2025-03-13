@@ -37,10 +37,8 @@ const getIndentations = idList => {
     return result;
 }
 
-function getDepths(indicators) {
+export function getDepths(indicators) {
     const result = {};
-
-    console.log(indicators);
 
     const indentedList = getIndentations(indicators.map(i => i.id));
 
