@@ -43,6 +43,7 @@
         import { renderScoreChart } from "./utils/charts.js";
         import { fetchAuthorByORCID, fetchPapersByORCID } from "./utils/orcid.js";
         import { fetchInformationUsingDOI } from "./utils/doi.js";
+        import { renameOldKeys} from "./utils/keyalias.js";
 
         window.getDefaultValues = getDefaultValues;
         window.getDepths = getDepths;
@@ -53,6 +54,7 @@
         window.fetchAuthorByORCID = fetchAuthorByORCID;
         window.fetchPapersByORCID = fetchPapersByORCID;
         window.fetchInformationUsingDOI = fetchInformationUsingDOI;
+        window.renameOldKeys = renameOldKeys;
     </script>
 
     </script>
@@ -1348,29 +1350,10 @@
         }
 
         const handleLoad = async files => {
-            const renameOldKeys = (obj) => {
-                const aliases = {
-                    // Pubs
-                    "P_CoG_ParcipantSample": "P_Sample_CoG",
-                    "P_Stimuli_Relevance": "P_Stimuli",
-                    "P_Stimuli_Relevance_NAexplanation": "P_Stimuli_NAexplanation",
-                    "P_CoG_StimulusSample": "P_Stimuli_CoG",
-                    "P_PreregisteredReplication": "P_Preregistration_Replication",
-                    "P_PreregisteredReplication_NAExplanation": "P_Preregistration_Replication_NAExplanation"
-                };
-
-                return Object.keys(obj).reduce((acc, key) => {
-                    // Change the key if it is in the aliases
-                    const newKey = aliases[key] || key;
-                    acc[newKey] = obj[key];
-                    return acc;
-                }, {});
-            };
-
             let loadedData = JSON.parse(await files[0].text());
 
             // Apply the aliases to all research outputs
-            loadedData = loadedData.map(renameOldKeys);
+            loadedData = loadedData.map(window.renameOldKeys);
 
             if (loadedData.every(r => Alpine.store('forms')[r.type].versions[prefixes[r.type]] === r.version)) {
                 Alpine.store('data').input = loadedData;

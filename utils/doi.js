@@ -6,10 +6,6 @@ export const fetchInformationUsingDOI = async (doi) => {
     })
         .then(response => response.json())
         .then(response => {
-            if (mode === MODE_PREVIEW || mode === MODE_PRINT) {
-                console.log(response);
-            }
-
             const authors = response.author;
 
             let authorString;
@@ -38,7 +34,8 @@ export const fetchInformationUsingDOI = async (doi) => {
                 abstract: response.abstract
             }
         })
-        .catch(() => {
+        .catch((e) => {
+            console.error(e);
             return {
                 error: true,
                 title: '',
