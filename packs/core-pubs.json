@@ -1,5 +1,5 @@
 {
-    "version": "0.5.2",
+    "version": "0.6.0",
     "date": "2025-02-13",
     "prefix": "P",
     "title": "Publication",
@@ -70,7 +70,8 @@
         },
         {
             "id": "P5P6SEP",
-            "type": "separator"
+            "type": "separator",
+            "no_comment": true
         },
         {
             "id": "P_TypeMethod",
@@ -160,7 +161,8 @@
         },
         {
             "id": "SEP_Suitable",
-            "type": "separator"
+            "type": "separator",
+            "no_comment": true
         },
         {
             "id": "P_Suitable",
@@ -188,6 +190,7 @@
         {
             "id": "P8P9SEP",
             "type": "separator",
+            "no_comment": true,
             "condition": "$P_Suitable === 'Yes'"
         },
         {
@@ -221,6 +224,7 @@
         {
             "id": "P8P9bSEP",
             "type": "separator",
+            "no_comment": true,
             "condition": "$P_Suitable === 'Yes'"
         },
         {
@@ -371,6 +375,7 @@
         {
             "id": "P9P10SEP",
             "type": "separator",
+            "no_comment": true,
             "condition": "$P_Suitable === 'Yes'"
         },
 
@@ -499,7 +504,7 @@
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
         },
         {
-            "id": "P_Sample_RepresentativenessRelevance_NAexplanation",
+            "id": "P_Sample_RepresentativenessRelevance_NAExplanation",
             "type": "text",
             "title": "⤷ Not Applicable: Explanation",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_RepresentativenessRelevance == 'NotApplicable'"
@@ -570,7 +575,7 @@
             "info": "This question does not necessarily correlate with the nationality of participants. Please make a judgement whether, for example, multiple European subsamples actually qualify as 'Multiple cultural or ethnic backgrounds', or whether different ethnic backgrounds are sampled on purpose within one nation."
         },
         {
-            "id": "P_Sample_CrossCultural_NAexplanation",
+            "id": "P_Sample_CrossCultural_NAExplanation",
             "type": "text",
             "title": "⤷ Not Applicable: Explanation",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_CrossCultural == 'NotApplicable'"
@@ -579,7 +584,8 @@
         {
             "id": "stimsep",
             "type": "separator",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes'"
+            "no_comment": true,
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && !$P_TypeMethod_MetaAnalysis && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
         },
 
 
@@ -604,7 +610,7 @@
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
         },
         {
-            "id": "P_Stimuli_NAexplanation",
+            "id": "P_Stimuli_NAExplanation",
             "type": "text",
             "title": "⤷ Not Applicable: Explanation",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli == 'NotApplicable'"
@@ -634,7 +640,7 @@
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli == 'Yes'"
         },
         {
-            "id": "P_Stimuli_Representative_NAexplanation",
+            "id": "P_Stimuli_Representative_NAExplanation",
             "type": "text",
             "title": "⤷ Not Applicable: Explanation",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli == 'Yes' && $P_Stimuli_Representative == 'NotApplicable'"
@@ -660,7 +666,8 @@
         {
             "id": "stimsep2",
             "type": "separator",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes'"
+            "no_comment": true,
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && !$P_TypeMethod_MetaAnalysis && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
         },
 
         {
@@ -855,6 +862,7 @@
         {
             "id": "sep_before_data_open",
             "type": "separator",
+            "no_comment": true,
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes'"
         },
 
@@ -881,7 +889,7 @@
                 }
             ],
             "info": "If the data is only available on a personal website (including personal university websites) or 'upon (reasonable) request', select <i>not available</i>. When only aggregated data is available, generally select <i>not available</i> (there might be exceptions with high-volume physiological data).<br><br>When to choose <b>'Not applicable'</b>?<ul><li>If legal regulations or binding conditions of the data provider prohibit data publication and not even restricted access is possible.</li></ul>",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_Simulated)",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated)",
             "tip_external": "<b>Practical approach</b>: <ul><li>Is a <b>link</b> to a data set provided?</li><li>Is the data in a <b>repository</b> that also controls data access?</li></ul> <br><br><b>Search words:</b> open, data, availab*"
         },
         {
@@ -894,7 +902,8 @@
             "id": "P_Data_Open_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesParts', 'YesEntire']"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesParts', 'YesEntire']",
+            "info": "You can add multiple DOIs or URLs, separated by a semicolon (;)"
         },
         {
             "id": "P_Data_Open_AccessLevel",
@@ -958,13 +967,14 @@
                     "value": 0.25
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts'] && ($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1'] || $P_Data_Open_AccessLevel === 'ZK2' && $P_Data_Open_AccessLevel_ZK2Explanation)",
+            "condition": "($P_Suitable === 'Yes') && ($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts'] && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || ($P_Data_Open_AccessLevel === 'ZK2' && exists($P_Data_Open_AccessLevel_ZK2Explanation)))",
             "info": "<ul><li>Persistent identifier: Data in an OSF project do count, as we consider OSF URLs to be persistent.</li></ul>",
             "tip_external":"For <b>Codebook</b>:<ul><li>Check the availability of a codebook. Normally a separate document should be provided.</li><li>Exception: Variable labels, descriptions and scales are provided in a structured (e.g. tabular) format at the beginning of the syntax script.</li><li><b>Variable name, content</b> and <b>scale</b> must be provided in order to receive the point.</li></ul>"
         },
         {
             "id": "P_sep_before_reproducibility",
             "type": "separator",
+            "no_comment": true,
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes'"
         },
         {
@@ -1010,7 +1020,7 @@
             "id": "P_ReproducibleScripts_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL of the script",
-            "info": "If multiple sources are available, provide the link to the primary source only. E.g. if both Github and OSF links are available, provide the Github link, as OSF only mirrors the content from Github.",
+            "info": "If the material is distributed across multiple locations, you can provide multiple DOIs or URLs, separated by a semicolon (;). If multiple <i>duplicated</i> sources are available, provide the link to the primary source only. E.g. if both Github and OSF links are available, provide the Github link, as OSF only mirrors the content from Github.",
             "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes' && $P_ReproducibleScripts =|= ['YesParts', 'YesEntire']"
         },
         {
@@ -1066,6 +1076,7 @@
         {
             "id": "sep_before_correctness",
             "type": "separator",
+            "no_comment": true,
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes'"
         },
 
@@ -1125,11 +1136,13 @@
             "id": "P_IndependentVerification_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL of the verification report",
-            "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes' && $P_IndependentVerification =|= ['WorkflowReproducible', 'MainResultsReproducible', 'AllResultsReproducible', 'AnalysisReplication']"
+            "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes' && $P_IndependentVerification =|= ['WorkflowReproducible', 'MainResultsReproducible', 'AllResultsReproducible', 'AnalysisReplication']",
+            "info": "You can add multiple DOIs or URLs, separated by a semicolon (;)"
         },
         {
             "id": "OMSEP",
             "type": "separator",
+            "no_comment": true,
             "condition": "$P_Suitable === 'Yes'"
         },
         {
@@ -1176,7 +1189,8 @@
             "id": "P_OpenMaterials_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL of the open materials",
-            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials =|= ['YesParts', 'YesEntire']"
+            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials =|= ['YesParts', 'YesEntire']",
+            "info": "You can add multiple DOIs or URLs, separated by a semicolon (;)"
         },
         {
             "id": "P_OpenMaterials_PartsExplanation",
@@ -1188,6 +1202,7 @@
         {
             "id": "P17P18SEP",
             "type": "separator",
+            "no_comment": true,
             "condition": "$P_Suitable === 'Yes'"
         },
         {
@@ -1313,6 +1328,7 @@
         {
             "id": "P19P20SEP",
             "type": "separator",
+            "no_comment": true,
             "condition": "$P_Suitable === 'Yes'"
         },
 
@@ -1573,6 +1589,7 @@
         {
             "id": "P22P23SEP",
             "type": "separator",
+            "no_comment": true,
             "condition": "$P_Suitable === 'Yes'"
         },
         {
@@ -1595,7 +1612,8 @@
         },
         {
             "id": "P23P24SEP",
-            "type": "separator"
+            "type": "separator",
+            "no_comment": true
         },
         {
             "id": "P_MeritStatement_Info",
@@ -1621,7 +1639,8 @@
         },
         {
             "id": "MeritSEP",
-            "type": "separator"
+            "type": "separator",
+            "no_comment": true
         },
         {
             "id": "P_GeneralComments",
