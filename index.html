@@ -1052,7 +1052,7 @@
                         <div class="tab"
                             :class="{ 'active': !excludedPublications.has(index + 1) }"
                             @click="if (excludedPublications.has(index + 1)) { excludedPublications.delete(index + 1); } else { excludedPublications.add(index + 1); }">
-                            <p style="margin: 0;" x-text="pub.Title"></p>
+                            <p style="margin: 0;"><span x-show="pub.P_TopPaper_Select">⭐️ </span><span x-text="pub.Title"></span></p>
                         </div>
                     </template>
                 </div>
