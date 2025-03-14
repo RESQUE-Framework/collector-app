@@ -522,7 +522,7 @@
                             stage and might change in the near future. If you want to use it in practice, please <a
                                 href="https://www.resque.info/team.html">contact</a> us.]</span><br><br>
                         <div class="top">
-                            <h3><a href="https://www.resque.info">RESQUE</a></h3>
+                            <h3><a href="https://www.resque.info" x-text="$store.config.config.main_title"></a></h3>
                             <div id="actions">
                                 <button class="clear-button" @click="showModal('clear-modal')">Clear</button>
                                 <button class="load-button" @click="triggerLoad()">Load</button>
@@ -1503,6 +1503,10 @@
             if (objectHash(Alpine.store('data').input[0].queryConfig) !== objectHash(Alpine.store('config').queryConfig)) {
                 showModal('config-incompatible-modal');
             }
+        }).then(() => {
+            document.body.style.backgroundColor = Alpine.store('config').config.background_color;
+            document.querySelector('.sidebar-top').style.backgroundColor = Alpine.store('config').config.background_color;
+            document.querySelector('#add-container').style.backgroundColor = Alpine.store('config').config.background_color;
         });
     </script>
 </body>

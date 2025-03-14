@@ -1,6 +1,8 @@
 async function menu() {
     return {
         config: {
+            main_title: "RESQUE",
+            background_color: "#ffffff",
             max: 10,
             maxTopPapers: 3,
             minROWarningThreshold: 5,
