@@ -1,5 +1,6 @@
 main_title: "RESQUE"
 background_color: "#ffffff"
 max: 10
-maxTopPapers: 3
-minROWarningThreshold: 5
+max_top_papers: 3
+min_RO_warning_threshold: 5
+show_instruction: true

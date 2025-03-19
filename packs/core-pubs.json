@@ -60,7 +60,7 @@
         {
             "id": "P_TopPaper",
             "type": "checkbox",
-            "title": "Top papers: currently selected: global$P_TopPaper_Select@paper_count/config$maxTopPapers",
+            "title": "Top papers: currently selected: global$P_TopPaper_Select@paper_count/config$max_top_papers",
             "options": [
                 {
                     "id": "Select",

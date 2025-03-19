@@ -363,8 +363,8 @@
             minScoreWarning: false,
 
             reevaluate() {
-                this.minIndicatorsWarning = Alpine.store('data').score.scores[Alpine.store('data').currentTab].max > 0 && Alpine.store('data').score.scores[Alpine.store('data').currentTab].max < Alpine.store('config').config.minIndicatorsWarningThreshold;
-                this.minROWarning = (Alpine.store('data').input.length - 1) < Alpine.store('config').config.minROWarningThreshold;
+                this.minIndicatorsWarning = Alpine.store('data').score.scores[Alpine.store('data').currentTab].max > 0 && Alpine.store('data').score.scores[Alpine.store('data').currentTab].max < Alpine.store('config').config.min_indicators_warning_threshold;
+                this.minROWarning = (Alpine.store('data').input.length - 1) < Alpine.store('config').config.min_ro_warning_threshold;
             },
 
             manualInit() {
@@ -387,7 +387,7 @@
 
             const newTopPapers = data.filter(r => r.type === 'pub' && r.P_TopPaper_Select === true);
 
-            if (newTopPapers.length > Alpine.store('config').config.maxTopPapers) {
+            if (newTopPapers.length > Alpine.store('config').config.max_top_papers) {
                 // set difference
                 const diff = newTopPapers.filter(paper => !Alpine.store('data').topPapers.includes(paper));
                 
@@ -397,7 +397,7 @@
                 }, 0);
 
                 // show warning
-                alert(`You can only select ${Alpine.store('config').config.maxTopPapers} top papers.`);
+                alert(`You can only select ${Alpine.store('config').config.max_top_papers} top papers.`);
 
                 return;
             }
