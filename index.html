@@ -31,6 +31,7 @@
     <script src=" https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js "></script>
     <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
 </head>
 
 <body>
@@ -40,11 +41,11 @@
     <script type="module">
         import { getDefaultValues } from "./utils/packutils.js";
         import { getDepths } from "./utils/prefixtree.js";
-        import { score, scoreAll, generateScoringRules} from "./utils/score.js";
+        import { score, scoreAll, generateScoringRules } from "./utils/score.js";
         import { renderScoreChart } from "./utils/charts.js";
         import { fetchAuthorByORCID, fetchPapersByORCID } from "./utils/orcid.js";
         import { fetchInformationUsingDOI } from "./utils/doi.js";
-        import { renameOldKeys} from "./utils/keyalias.js";
+        import { renameOldKeys } from "./utils/keyalias.js";
 
         window.getDefaultValues = getDefaultValues;
         window.getDepths = getDepths;
@@ -133,7 +134,7 @@
             const globals = {
                 paper_count: (value) => Alpine.store('data').input.filter(r => r.type === 'pub' && r[value] === true).length,
             }
-            
+
             return text
                 .replaceAll(/meta\$([a-zA-Z0-9_]+)/g, (match, variable) => results[0][variable])
                 .replaceAll(/global\$([a-zA-Z0-9_]+)@([a-zA-Z0-9_]+)/g, (match, variable, type) => {
@@ -183,7 +184,7 @@
                 });
         }
 
-        
+
 
         const checkCompletion = (result) => {
             const elements = Alpine.store('forms')[result.type].elements;
@@ -245,7 +246,7 @@
             return `hsl(${hue}, 100%, 38%)`;
         }
 
-        const celebrateCompletion = () => {      
+        const celebrateCompletion = () => {
             jsConfetti.addConfetti({
                 emojis: ['✅']
             });
@@ -390,7 +391,7 @@
             if (newTopPapers.length > Alpine.store('config').config.max_top_papers) {
                 // set difference
                 const diff = newTopPapers.filter(paper => !Alpine.store('data').topPapers.includes(paper));
-                
+
                 // undo change
                 setTimeout(() => {
                     diff.forEach(paper => paper.P_TopPaper_Select = false);
@@ -416,7 +417,7 @@
                 celebrateCompletion();
             }
 
-            
+
 
             Alpine.store('warnings').reevaluate();
 
@@ -519,7 +520,8 @@
             <div id="main">
                 <div class="tabs-sidebar" id="tabs-sidebar" x-on:scroll="$store.tabsSidebarScrollTop = $el.scrollTop">
                     <div class="sidebar-top">
-                        <span style='background-color: lightyellow; font-size:80%;'>[Note: The RESQUE collector app is in beta
+                        <span style='background-color: lightyellow; font-size:80%;'>[Note: The RESQUE collector app is
+                            in beta
                             stage and might change in the near future. If you want to use it in practice, please <a
                                 href="https://www.resque.info/team.html">contact</a> us.]</span><br><br>
                         <div class="top">
@@ -531,7 +533,8 @@
                             </div>
                         </div>
 
-                        <p><span x-text="`${$store.data.input.length - 1} of ${Alpine.store('config').config.max} slots used`"></span><!--| <span class="fakelink"
+                        <p><span
+                                x-text="`${$store.data.input.length - 1} of ${Alpine.store('config').config.max} slots used`"></span><!--| <span class="fakelink"
                             @click="window.open(`https://shiny.psy.lmu.de/felix/RESQUE_profile?data=${LZString.compress(JSON.stringify($store.data.input))}`, '_blank')"
                         >View Profile ↗</span> --></p>
                     </div>
@@ -541,17 +544,16 @@
                         <template x-if="show">
                             <div x-data="{ scrollY: 0 }">
                                 <div class="tab metadata" @click="switchToTab(0)"
-                                    :class="{ active: $store.data.currentTab === 0 }"
-                                    style="position: relative;">
+                                    :class="{ active: $store.data.currentTab === 0 }" style="position: relative;">
                                     <b>Author / Metadata</b>
                                     <div class="tab-progress-indicator"
                                         :style="`background-color: ${getProgressColor($store.data.completion[0].progress.ratio)};`"
                                         :title="`Progress: ${$store.data.completion[0].progress.percent}%`">
                                     </div>
                                 </div>
-                                <div x-sort="$store.data.reorderResearchOutputs($item, $position + 1); show = false; setTimeout(() => show = true, 0);">
-                                    <template x-for="tab, index in $store.data.input.slice(1)"
-                                        :key="index">
+                                <div
+                                    x-sort="$store.data.reorderResearchOutputs($item, $position + 1); show = false; setTimeout(() => show = true, 0);">
+                                    <template x-for="tab, index in $store.data.input.slice(1)" :key="index">
                                         <div x-sort:item="index + 1" style="position: relative;" x-data="tab">
                                             <div @mouseover="hoverStart" @mouseout="hoverEnd"
                                                 @click="switchToTab(index + 1)"
@@ -570,7 +572,7 @@
                                                 :style="`background-color: ${getProgressColor($store.data.completion[index + 1].progress.ratio)};`"
                                                 :title="`Progress: ${$store.data.completion[index + 1].progress.percent}%`">
                                             </div>
-                                            
+
                                         </div>
                                     </template>
                                 </div>
@@ -579,13 +581,15 @@
                     </div>
                     <div id="add-container">
                         <div class="doi-input" style="display:none">
-                            <button class="pdf-button" onclick="document.getElementById('add-pdf').click()">Extract DOI from
+                            <button class="pdf-button" onclick="document.getElementById('add-pdf').click()">Extract DOI
+                                from
                                 PDF</button>
                             <input id="add-doi" type="text" placeholder="DOI (optional)" />
                         </div>
 
                         <div class="add-buttons" x-show="($store.data.input.length - 1) < $store.config.config.max">
-                            <button class="add-pub" @click="$store.data.newResearchOutput('pub')">Add Publication</button>
+                            <button class="add-pub" @click="$store.data.newResearchOutput('pub')">Add
+                                Publication</button>
                             <br />
                             <!-- REMOVED TEMPORARILY
                             <button class="add-software" @click="$store.data.newResearchOutput('software')">Add
@@ -601,7 +605,9 @@
                 <div id="formview-container">
                     <div id="saving" class="animate pop" style="display: none;"></div>
                     <div class="progressbar-frame">
-                        <div class="progressbar-content" :style="`width: ${$store.data.completion[$store.data.currentTab].progress.percent}%;`"></div>
+                        <div class="progressbar-content"
+                            :style="`width: ${$store.data.completion[$store.data.currentTab].progress.percent}%;`">
+                        </div>
                     </div>
                     <div id="formview">
                         <h3 x-html="$store.forms[$store.data.currentInput.type].title"></h3>
@@ -610,12 +616,10 @@
                             <template x-for="(elem, index) in $store.forms[$store.data.currentInput.type].elements"
                                 :key="$store.data.currentInput.position + '_' + elem.id">
                                 <template x-if="$store.showIndicators">
-                                    <div @click="$store.selectedIndicator = elem" x-show="evaluateCondition(elem.condition)"
-                                        onblur="actions[elem.onchange]()"
-                                        class="indicator-container"
-                                        :class="elem.style_classes"
-                                        :id="elem.id">
-                                        
+                                    <div @click="$store.selectedIndicator = elem"
+                                        x-show="evaluateCondition(elem.condition)" onblur="actions[elem.onchange]()"
+                                        class="indicator-container" :class="elem.style_classes" :id="elem.id">
+
                                         <template x-for="_ in [...Array($store.indentations.current[elem.id])]">
                                             <div class="indent"></div>
                                         </template>
@@ -623,15 +627,13 @@
                                         <div class="indicator-subcontainer">
                                             <div x-data="{ showWarningText: false }">
                                                 <p>
-                                                    <div
-                                                        x-show="elem.id in $store.data.completion[$store.data.currentTab].warnings"
-                                                        class="warning-indicator"
-                                                        @click="showWarningText = !showWarningText">
-                                                    </div>
-                                                    <span class="title" x-html="preprocessText(elem.title)"></span>
+                                                <div x-show="elem.id in $store.data.completion[$store.data.currentTab].warnings"
+                                                    class="warning-indicator"
+                                                    @click="showWarningText = !showWarningText">
+                                                </div>
+                                                <span class="title" x-html="preprocessText(elem.title)"></span>
                                                 </p>
-                                                <p
-                                                    x-text="$store.data.completion[$store.data.currentTab].warnings[elem.id]?.text"
+                                                <p x-text="$store.data.completion[$store.data.currentTab].warnings[elem.id]?.text"
                                                     x-show="showWarningText && elem.id in $store.data.completion[$store.data.currentTab].warnings"
                                                     class="warning-text">
                                                 </p>
@@ -639,25 +641,26 @@
 
                                             <div class="content">
                                                 <template x-if="elem.type === 'separator'">
-                                                    <hr style="height: 3px; border:none; color: #333; background-color: #333;" />
+                                                    <hr
+                                                        style="height: 3px; border:none; color: #333; background-color: #333;" />
                                                 </template>
-                    
+
                                                 <template x-if="elem.type === 'info'">
                                                     <p x-html="preprocessText(elem.text)"></p>
                                                 </template>
-                    
+
                                                 <template x-if="elem.type === 'text'">
                                                     <input x-model="$store.data.currentInput[elem.id]" type="text"
                                                         :placeholder="elem.title || ''" />
                                                 </template>
-                    
+
                                                 <template x-if="elem.type === 'textbox'">
                                                     <div>
                                                         <div class="textbox" contenteditable
                                                             x-init="$el.innerText = $store.data.currentInput[elem.id] ?? ''"
                                                             @input="$store.data.currentInput[elem.id] = $event.target.innerText.trim()"
                                                             :placeholder="elem.title || ''"></div>
-                    
+
                                                         <template x-if="!!elem.maxwords">
                                                             <p class="wordcount"
                                                                 :class="(($store.data.currentInput[elem.id] ?? '').match(/\S+/g) ?? []).length > elem.maxwords ? 'wordcount-warning' : ''"
@@ -666,17 +669,17 @@
                                                         </template>
                                                     </div>
                                                 </template>
-                    
+
                                                 <template x-if="elem.type === 'number'">
                                                     <input x-model="$store.data.currentInput[elem.id]" type="text"
                                                         :placeholder="elem.title || ''" />
                                                 </template>
-                    
+
                                                 <template x-if="elem.type === 'date'">
                                                     <input x-model="$store.data.currentInput[elem.id]" type="date"
                                                         :placeholder="elem.title || ''" />
                                                 </template>
-                    
+
                                                 <template x-if="elem.type === 'dropdown'">
                                                     <select x-model="$store.data.currentInput[elem.id]">
                                                         <template x-for="option in elem.options" :key="option.id">
@@ -685,23 +688,27 @@
                                                         </template>
                                                     </select>
                                                 </template>
-                    
+
                                                 <template x-if="elem.type === 'radio'">
-                                                    <div :class="elem.alignment ? 'alignment-' + elem.alignment : 'alignment-vertical'">
+                                                    <div
+                                                        :class="elem.alignment ? 'alignment-' + elem.alignment : 'alignment-vertical'">
                                                         <template x-for="option in elem.options" :key="option.id">
                                                             <label :for="elem.id + '_' + option.id">
-                                                                <input x-model="$store.data.currentInput[elem.id]" type="radio"
-                                                                    :name="elem.id" :id="elem.id + '_' + option.id" :value="option.id" />
+                                                                <input x-model="$store.data.currentInput[elem.id]"
+                                                                    type="radio" :name="elem.id"
+                                                                    :id="elem.id + '_' + option.id"
+                                                                    :value="option.id" />
                                                                 <span x-html="option.text"></span>
                                                             </label>
                                                         </template>
                                                     </div>
                                                 </template>
-                    
+
                                                 <template x-if="elem.type === 'checkbox'">
                                                     <template x-for="option in elem.options" :key="option.id">
                                                         <label :for="elem.id + '_' + option.id">
-                                                            <input x-model="$store.data.currentInput[elem.id + '_' + option.id]"
+                                                            <input
+                                                                x-model="$store.data.currentInput[elem.id + '_' + option.id]"
                                                                 type="checkbox" :id="elem.id + '_' + option.id" />
                                                             <span x-html="option.text"></span>
                                                         </label>
@@ -714,7 +721,8 @@
                                                             <thead>
                                                                 <tr>
                                                                     <th></th>
-                                                                    <template x-for="option in elem.options" :key="option.id">
+                                                                    <template x-for="option in elem.options"
+                                                                        :key="option.id">
                                                                         <th x-html="option.text"></th>
                                                                     </template>
                                                                 </tr>
@@ -731,11 +739,17 @@
                                                                             tip_external: row.tip_external 
                                                                         };}">
                                                                         <td x-html="row.title"></td>
-                                                                        <template x-for="option in elem.options" :key="option.id">
+                                                                        <template x-for="option in elem.options"
+                                                                            :key="option.id">
                                                                             <td>
-                                                                                <input x-model="$store.data.currentInput[elem.id + '_' + row.id]" type="radio"
-                                                                                    :name="elem.id + '_' + row.id" :id="elem.id + '_' + row.id + '_' + option.id" :value="option.id" />
-                                                                                <div class="tabular-option-info" x-text="`${option.text}`"></div>
+                                                                                <input
+                                                                                    x-model="$store.data.currentInput[elem.id + '_' + row.id]"
+                                                                                    type="radio"
+                                                                                    :name="elem.id + '_' + row.id"
+                                                                                    :id="elem.id + '_' + row.id + '_' + option.id"
+                                                                                    :value="option.id" />
+                                                                                <div class="tabular-option-info"
+                                                                                    x-text="`${option.text}`"></div>
                                                                             </td>
                                                                         </template>
                                                                     </tr>
@@ -746,10 +760,12 @@
                                                 </template>
                                             </div>
 
-                                            <details x-show="$store.selectedIndicator.id === elem.id && !elem.no_comment">
-                                                <summary style="font-size: 0.9rem; color: gray; text-align: right;">Add comment</summary>
-                                                <input x-model="$store.data.currentInput[elem.id + '_Comment']" type="text"
-                                                    :placeholder="`Comment on '${elem.id}'`" />
+                                            <details
+                                                x-show="$store.selectedIndicator.id === elem.id && !elem.no_comment">
+                                                <summary style="font-size: 0.9rem; color: gray; text-align: right;">Add
+                                                    comment</summary>
+                                                <input x-model="$store.data.currentInput[elem.id + '_Comment']"
+                                                    type="text" :placeholder="`Comment on '${elem.id}'`" />
                                             </details>
                                         </div>
                                     </div>
@@ -760,13 +776,18 @@
                 </div>
                 <div id="menu" x-data="{ tab: 'main' }">
                     <div id="menu-tabs">
-                        <span @click="tab = 'main'" :class="{ selected: tab === 'main' }">Score/Info</span> • <span @click="tab = 'problems'" :class="{ selected: tab === 'problems' }">Problems (<span x-text="Object.keys($store.data.completion[$store.data.currentTab].warnings).length"></span>)</span>
+                        <span @click="tab = 'main'" :class="{ selected: tab === 'main' }">Score/Info</span> • <span
+                            @click="tab = 'problems'" :class="{ selected: tab === 'problems' }">Problems (<span
+                                x-text="Object.keys($store.data.completion[$store.data.currentTab].warnings).length"></span>)</span>
                     </div>
                     <div x-show="tab === 'problems'" class="warning-box card animate pop">
-                        <template x-if="Object.keys($store.data.completion[$store.data.currentTab].warnings).length > 0">
+                        <template
+                            x-if="Object.keys($store.data.completion[$store.data.currentTab].warnings).length > 0">
                             <div>
-                                <template x-for="[id, warning] in Object.entries($store.data.completion[$store.data.currentTab].warnings)">
-                                    <div @click="document.getElementById(id).scrollIntoView({behavior: 'smooth', block: 'center'}); document.querySelector('html').scrollTop = 0;" class="warning-text">
+                                <template
+                                    x-for="[id, warning] in Object.entries($store.data.completion[$store.data.currentTab].warnings)">
+                                    <div @click="document.getElementById(id).scrollIntoView({behavior: 'smooth', block: 'center'}); document.querySelector('html').scrollTop = 0;"
+                                        class="warning-text">
                                         <b><span x-text="id"></span></b>
                                         <br>
                                         <span x-text="warning.text"></span>
@@ -774,7 +795,8 @@
                                 </template>
                             </div>
                         </template>
-                        <template x-if="Object.keys($store.data.completion[$store.data.currentTab].warnings).length === 0">
+                        <template
+                            x-if="Object.keys($store.data.completion[$store.data.currentTab].warnings).length === 0">
                             <p style="margin: 0; color: gray;">No problems found.</p>
                         </template>
                     </div>
@@ -787,17 +809,18 @@
                                     <span id="no-score">Applicant requests<br>manual processing</span>
                                 </div>
 
-                                <div
-                                    style="width: 150px; height: 150px;"
+                                <div style="width: 150px; height: 150px;"
                                     x-show="$store.data.score.scores[$store.data.currentTab].max > 0">
-                                    <canvas id="currentScoreChart" width="150" height="150" style="margin-top: 10px;"></canvas>
+                                    <canvas id="currentScoreChart" width="150" height="150"
+                                        style="margin-top: 10px;"></canvas>
                                 </div>
                             </div>
                             <div id="overall-score">
                                 <span class="sub">Overall Profile (mean)</span>
-                                
+
                                 <div style="width: 150px; height: 150px;">
-                                    <canvas id="overallScoreChart" width="150" height="150" style="margin-top: 10px;"></canvas>
+                                    <canvas id="overallScoreChart" width="150" height="150"
+                                        style="margin-top: 10px;"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -805,7 +828,8 @@
                         <div id="legend-container"></div>
 
                         <p id="ro-count-container"><span class="tag"><span
-                                    x-text="$store.data.score.scores.filter(s => s.max && s.max > 0).length"></span> scored
+                                    x-text="$store.data.score.scores.filter(s => s.max && s.max > 0).length"></span>
+                                scored
                                 research output(s)</span>
                         </p>
 
@@ -817,11 +841,13 @@
                                 <div x-show="$store.data.score.scores[$store.data.currentTab].max > 0"
                                     id="current-score-container">
                                     <p id="score-percentage"><span
-                                            x-text="$store.data.score.scores[$store.data.currentTab].percentage"></span>%</p>
+                                            x-text="$store.data.score.scores[$store.data.currentTab].percentage"></span>%
+                                    </p>
                                     <p id="score-dot">•</p>
                                     <p id="score-minmax"><span
                                             x-text="$store.data.score.scores[$store.data.currentTab].score?.toFixed(2)"></span>/<span
-                                            x-text="$store.data.score.scores[$store.data.currentTab].max?.toFixed(2)"></span></p>
+                                            x-text="$store.data.score.scores[$store.data.currentTab].max?.toFixed(2)"></span>
+                                    </p>
                                 </div>
                                 <hr>
                                 <table>
@@ -871,13 +897,16 @@
                                 </table>
                             </div>
                         </details>
-                        <p id="warning-score-too-low" x-show="$store.warnings.minIndicatorsWarning">⚠️ Many indicators are not
+                        <p id="warning-score-too-low" x-show="$store.warnings.minIndicatorsWarning">⚠️ Many indicators
+                            are not
                             applicable. Manual processing of this
                             publication is recommended.
                         </p>
-                        <p id="warning-min-ro-threshold" x-show="$store.warnings.minROWarning">⚠️ Please provide at least <span
-                                id="minROWarningThreshold" x-text="$store.config.config.minROWarningThreshold"></span>
-                            research contributions that can be scored (e.g. by adding more empirical papers, data sets, or
+                        <p id="warning-min-ro-threshold" x-show="$store.warnings.minROWarning">⚠️ Please provide at
+                            least <span id="minROWarningThreshold"
+                                x-text="$store.config.config.minROWarningThreshold"></span>
+                            research contributions that can be scored (e.g. by adding more empirical papers, data sets,
+                            or
                             software contributions)</p>
                     </div>
                     <div x-show="tab === 'main'" id="info-box" class="card">
@@ -908,7 +937,8 @@
                                     </details>
                                 </template>
                                 <template x-if="$store.selectedIndicator.tip_external">
-                                    <details id="tip-external-details" :open="$store.data.input[0].RaterType === 'External'">
+                                    <details id="tip-external-details"
+                                        :open="$store.data.input[0].RaterType === 'External'">
                                         <summary>Tips for external raters</summary>
                                         <span id="tip-external"
                                             x-html="preprocessTextWithIndicatorContext($store.selectedIndicator.id, $store.selectedIndicator.tip_external)"></span>
@@ -932,11 +962,15 @@
 
                     <h2>👋🏻 Welcome to the RESQUE tool!</h2>
                     <p>We need to change the way we assess research - with a focus on quality (over quantity). The <a
-                            href="https://github.com/RESQUE-Framework/collector-app">RESearch QUality Evaluation (RESQUE)</a>
+                            href="https://github.com/RESQUE-Framework/collector-app">RESearch QUality Evaluation
+                            (RESQUE)</a>
                         framework
-                        provides an evaluation scheme for publications, data sets, and research software. With this tool, you
-                        can enter the necessary information for your best research outputs, export a profile that shows your
-                        research style (<i>not implemented yet</i>), and use it for your CV or in hiring and tenure committees.
+                        provides an evaluation scheme for publications, data sets, and research software. With this
+                        tool, you
+                        can enter the necessary information for your best research outputs, export a profile that shows
+                        your
+                        research style (<i>not implemented yet</i>), and use it for your CV or in hiring and tenure
+                        committees.
                     </p>
                     <hr>
                     <h3>👀 How to use the RESQUE tool?</h3>
@@ -952,24 +986,29 @@
                     </details>
                     <details>
                         <summary>How do I save my data?</summary>
-                        Clicking on the <button onclick="exp()">Save as file ...</button> button here or in the top left corner
-                        of this website exports a <code>.json</code> file. You can save this on your computer and share it with
+                        Clicking on the <button onclick="exp()">Save as file ...</button> button here or in the top left
+                        corner
+                        of this website exports a <code>.json</code> file. You can save this on your computer and share
+                        it with
                         others.
                     </details>
                     <details>
                         <summary>How do I load data I previously saved?</summary>
-                        You can use the <button onclick="triggerLoad()">Load</button> button here or in the top left corner of
+                        You can use the <button onclick="triggerLoad()">Load</button> button here or in the top left
+                        corner of
                         this website.
                     </details>
                     <details>
                         <summary>How can I clear all information I entered?</summary>
                         You can delete all data stored in the browser by clicking on the <button
-                            onclick="showModal('clear-modal')">Clear</button> button here or in the top left corner of this
+                            onclick="showModal('clear-modal')">Clear</button> button here or in the top left corner of
+                        this
                         website.
                     </details>
                     <details>
                         <summary>What should I do if I want to use RESQUE on a shared/public computer?</summary>
-                        Whenever you open this website, it loads the locally stored data. On public computers, make sure that
+                        Whenever you open this website, it loads the locally stored data. On public computers, make sure
+                        that
                         you clear your data after you saved them as a file.
                     </details>
                     <hr>
@@ -977,22 +1016,27 @@
                     <p>
                         <b>No data leaves your device.</b>
                         <br>
-                        We use the <a href="https://www.wikiwand.com/en/Web_storage">Web Storage API</a> supported by all major
+                        We use the <a href="https://www.wikiwand.com/en/Web_storage">Web Storage API</a> supported by
+                        all major
                         browsers. Although the website itself is hosted on a server, your data is <i>only</i> stored and
                         processed in the local browser:
                         <br><br>
-                        The data is processed only locally. Your score is calculated in the browser. The local PDF files you
+                        The data is processed only locally. Your score is calculated in the browser. The local PDF files
+                        you
                         open on this website are <i>not</i> uploaded to a server.
                         <br><br>
-                        To get a sense of how many users we have, we do a very basic access logging with Matomo. You are not
-                        identifiable by the logged information; none of your entered data is tracked; no cookies or third party
+                        To get a sense of how many users we have, we do a very basic access logging with Matomo. You are
+                        not
+                        identifiable by the logged information; none of your entered data is tracked; no cookies or
+                        third party
                         trackers are used.
                     </p>
                 </div>
             </div>
             <dialog id="clear-modal">
                 <h3>⚠️ Warning!</h3>
-                <p><b>This will delete all of your local data.</b><br><br>Do you want to save the data to a file first?</p>
+                <p><b>This will delete all of your local data.</b><br><br>Do you want to save the data to a file first?
+                </p>
                 <br>
                 <button onclick="closeModal('clear-modal')">Cancel</button> <button onclick="exp()">Save data to local
                     file</button>
@@ -1001,36 +1045,52 @@
 
             <dialog id="config-incompatible-modal">
                 <h3>Incompatible configuration</h3>
-                <p>You have old data present, which was created using a different configuration. Do you want to load it, or
+                <p>You have old data present, which was created using a different configuration. Do you want to load it,
+                    or
                     start with a fresh form?</p>
                 <p>Your data might be incompatible with the current configuration and lead to unexpected behavior.
                 </p>
                 <br>
                 <div class="buttons">
-                    <button onclick="saveCurrentQueryConfig(); closeModal('config-incompatible-modal')">Use old data</button>
-                    <button onclick="showModal('clear-modal')" class="critical">Clear everything and start fresh</button>
+                    <button onclick="saveCurrentQueryConfig(); closeModal('config-incompatible-modal')">Use old
+                        data</button>
+                    <button onclick="showModal('clear-modal')" class="critical">Clear everything and start
+                        fresh</button>
                 </div>
             </dialog>
+
+            <div id="instructions-modal" class="modal">
+                <div class="modal-content" x-html="$store.config.config?.instructions?.html">
+                </div>
+            </div>
 
             <div id="orcid-modal" class="modal">
                 <div x-data="{ orcid: '', authorName: '', publications: [] }" class="modal-content">
                     <h3>Import publications using ORCID</h3>
                     <input id="orcid-modal-input" x-model="orcid" type="text" placeholder="ORCID" />
-                    <button id="orcid-modal-button" @click="window.fetchAuthorByORCID(orcid).then(name => authorName = name); window.fetchPapersByORCID(orcid).then(ps => publications = ps)">Fetch Publications</button>
+                    <button id="orcid-modal-button"
+                        @click="window.fetchAuthorByORCID(orcid).then(name => authorName = name); window.fetchPapersByORCID(orcid).then(ps => publications = ps)">Fetch
+                        Publications</button>
 
                     <template x-if="publications.length">
                         <div>
                             <hr>
                             <div style="position: sticky; top: 0; background-color: white; padding: 2px 0;">
-                                <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
+                                <div
+                                    style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
                                     <h3 x-text="`${authorName} (${publications.length} publications)`"></h3>
-                                    <button @click="publications.filter(p => p.selected).forEach(p => $store.data.addPublicationWithDetails({DOI: 'https://doi.org/' + p.doi, Title: p.title, Year: p.year})); closeORCIDModal(); orcid = '', authorName ='', publications = []"><span x-text="`Add ${publications.filter(p => p.selected).length} Publications`"></span></button>
+                                    <button
+                                        @click="publications.filter(p => p.selected).forEach(p => $store.data.addPublicationWithDetails({DOI: 'https://doi.org/' + p.doi, Title: p.title, Year: p.year})); closeORCIDModal(); orcid = '', authorName ='', publications = []"><span
+                                            x-text="`Add ${publications.filter(p => p.selected).length} Publications`"></span></button>
                                 </div>
                             </div>
                             <template x-for="pub in publications">
-                                <div @click="pub.selected = !pub.selected" class="tab" :class="{ active: pub.selected }">
+                                <div @click="pub.selected = !pub.selected" class="tab"
+                                    :class="{ active: pub.selected }">
                                     <p style="margin-top: 0;"><b x-text="pub.title"></b></p>
-                                    <p style="margin-bottom: 0;"><span x-text="pub.year"></span> | <a style="color: inherit;" :href="`https://doi.org/${pub.doi}`" target="_blank"><span x-text="pub.doi"></span></a></p>
+                                    <p style="margin-bottom: 0;"><span x-text="pub.year"></span> | <a
+                                            style="color: inherit;" :href="`https://doi.org/${pub.doi}`"
+                                            target="_blank"><span x-text="pub.doi"></span></a></p>
                                 </div>
                             </template>
                         </div>
@@ -1039,28 +1099,34 @@
             </div>
 
             <div id="export-modal" class="modal">
-            <div x-data="{ excludedPublications: new Set() }" class="modal-content">
-                
-                <div style="position: sticky; top: 0; background-color: white; padding: 2px 0;">
-                    <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center">
-                        <h3>Export Data<span style="font-size: 70%; font-weight: normal;">&nbsp;&nbsp;Click publications to (de)select</span></h3>
-                        <button @click="exp(excludedPublications); excludedPublications = new Set(); closeExportModal();">Export <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> Research Outputs</button>
+                <div x-data="{ excludedPublications: new Set() }" class="modal-content">
+
+                    <div style="position: sticky; top: 0; background-color: white; padding: 2px 0;">
+                        <div
+                            style="display: flex; flex-direction: row; justify-content: space-between; align-items: center">
+                            <h3>Export Data<span style="font-size: 70%; font-weight: normal;">&nbsp;&nbsp;Click
+                                    publications to (de)select</span></h3>
+                            <button
+                                @click="exp(excludedPublications); excludedPublications = new Set(); closeExportModal();">Export
+                                <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> Research
+                                Outputs</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <template x-for="pub, index in $store.data.input.slice(1)">
+                            <div class="tab" :class="{ 'active': !excludedPublications.has(index + 1) }"
+                                @click="if (excludedPublications.has(index + 1)) { excludedPublications.delete(index + 1); } else { excludedPublications.add(index + 1); }">
+                                <p style="margin: 0;"><span x-show="pub.P_TopPaper_Select">⭐️ </span><span
+                                        x-text="pub.Title"></span></p>
+                            </div>
+                        </template>
                     </div>
                 </div>
-
-                <div>
-                    <template x-for="pub, index in $store.data.input.slice(1)">
-                        <div class="tab"
-                            :class="{ 'active': !excludedPublications.has(index + 1) }"
-                            @click="if (excludedPublications.has(index + 1)) { excludedPublications.delete(index + 1); } else { excludedPublications.add(index + 1); }">
-                            <p style="margin: 0;"><span x-show="pub.P_TopPaper_Select">⭐️ </span><span x-text="pub.Title"></span></p>
-                        </div>
-                    </template>
-                </div>
-            </div>
             </div>
 
-            <input id="fileInput" type="file" accept="application/json" style="visibility: hidden" @change="handleLoad($el.files)" />
+            <input id="fileInput" type="file" accept="application/json" style="visibility: hidden"
+                @change="handleLoad($el.files)" />
             <a id="download" style="visibility: hidden"></a>
             <input id="add-pdf" type="file" accept="application/pdf" onchange="handleSelectPDF(this.files)"
                 style="visibility: hidden;" />
@@ -1307,6 +1373,14 @@
             document.getElementById("info-modal").style.display = "none";
         }
 
+        const showInstructionsModal = () => {
+            document.getElementById("instructions-modal").style.display = "block";
+        }
+
+        const closeInstructionsModal = () => {
+            document.getElementById("instructions-modal").style.display = "none";
+        }
+
         const showORCIDModal = () => {
             const orcidInput = document.querySelector("#orcid-modal-input");
             const orcidButton = document.querySelector("#orcid-modal-button");
@@ -1317,7 +1391,7 @@
             // See orcid-modal to understand why the following lines work
 
             // Set the input
-            orcidInput.value =  extractedORCID;
+            orcidInput.value = extractedORCID;
             orcidInput.dispatchEvent(new Event('input'));
 
             // Click the button to fetch works
@@ -1338,7 +1412,7 @@
             document.getElementById("export-modal").style.display = "none";
         }
 
-      
+
         const reset = () => {
             results = {};
             localStorage.clear();
@@ -1381,7 +1455,7 @@
                 .filter(e => e.type === 'checkbox')
                 .map(e => e.options.map(o => e.id + '_' + o.id))
                 .flat();
-            
+
             const tabularRadioIds = filteredElements
                 .filter(e => e.type === 'tabular_radio')
                 .map(e => e.rows.map(r => e.id + '_' + r.id))
@@ -1477,11 +1551,18 @@
         }
 
         // Load config
-
         fetch('./config/config.yaml').then(response => response.text()).then(text => {
             const config = jsyaml.load(text);
 
             Alpine.store('forms').config = config;
+        });
+
+        // Load instructions
+        fetch('./config/instructions.md').then(response => response.text()).then(text => {
+            const converter = new showdown.Converter();
+            Alpine.store('forms').config.instructions = {};
+            Alpine.store('forms').config.instructions.md = text;
+            Alpine.store('forms').config.instructions.html = converter.makeHtml(text);
         });
 
         menu().then(m => {
@@ -1516,6 +1597,10 @@
             document.body.style.backgroundColor = Alpine.store('config').config.background_color;
             document.querySelector('.sidebar-top').style.backgroundColor = Alpine.store('config').config.background_color;
             document.querySelector('#add-container').style.backgroundColor = Alpine.store('config').config.background_color;
+        }).then(() => {
+            if (Alpine.store('config').config.show_instruction) {
+                showInstructionsModal();
+            }
         });
     </script>
 </body>
