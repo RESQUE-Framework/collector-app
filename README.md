@@ -1,4 +1,4 @@
-# collector-app
+# RESQUE Collector App
 
 A web app for applicants: Enter the [RESQUE](https://www.resque.info) indicators for your 10 best papers.
 

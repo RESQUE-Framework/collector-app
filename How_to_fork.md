@@ -53,7 +53,9 @@ In order to have a working website, you need to enable GitHub Pages for your for
    2. In line 5, you can change `max: 10` to the maximum number of publications that your committee expects.
    3. In line 6, you can change `maxTopPapers: 3` to how many papers can be selected as "best papers"
 
-4. Click on the green "Commit changes..." button at the top right of the page. In the pop-up window, you can add a description of the changes you made (or just keep the default commit message) and click "Commit changes". Then the changes are saved to your repository.
+4. In the same way, edit the file `packs/core-meta.json`. Search for "AcademicAgeBonus" and change the field `"title"` of that node. Define which life circumstances are valid to count towards a reduction of academic age (e.g.: "We consider the following life circumstances as valid for a reduction of academic age: Parental leave, long-term illness, refugee or migrant status-related interruptions, and natural disasters or geopolitical events.").
+
+5. Click on the green "Commit changes..." button at the top right of the page. In the pop-up window, you can add a description of the changes you made (or just keep the default commit message) and click "Commit changes". Then the changes are saved to your repository.
 
 Of course, if you know git, you can clone the repository to your local machine and make the changes there. Then you can push the changes back to your forked repository.
 
