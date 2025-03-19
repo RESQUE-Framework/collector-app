@@ -17,6 +17,14 @@
     --warning-color: #ffa50015;
 }
 
+/* To prevent a flash of unstyled content (FOUC), it's often a good practice to add the x-cloak directive.
+This ensures that any element with the x-cloak keyword (directive) doesn't flicker on initial page load
+before Alpine.js takes effect.
+ */
+[x-cloak] {
+    display: none !important;
+}
+
 body {
     font-family: "Montserrat", sans-serif;
     margin: 0;
