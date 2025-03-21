@@ -60,6 +60,7 @@ body {
     display: block;
     box-sizing: border-box;
     overflow: scroll;
+    background-color: white;
 }
 
 .card.warning {
