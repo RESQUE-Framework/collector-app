@@ -1104,15 +1104,17 @@
                 <div x-data="{ excludedPublications: new Set() }" class="modal-content">
 
                     <div style="position: sticky; top: 0; background-color: white; padding: 2px 0;">
-                        <div
-                            style="display: flex; flex-direction: row; justify-content: space-between; align-items: center">
-                            <h3>Export Data<span style="font-size: 70%; font-weight: normal;">&nbsp;&nbsp;Click
+                        <div>
+                            <h3>Save to file...<span style="font-size: 70%; font-weight: normal;">&nbsp;&nbsp;Click
                                     publications to (de)select</span></h3>
-                            <button
-                                :disabled="excludedPublications.size >= $store.data.input.length - 1 || $store.data.input.length - 1 - excludedPublications.size > $store.config.config.max || $store.data.input.filter(ro => ro.P_TopPaper_Select).length < $store.config.config.max_top_papers"
-                                @click="exp(excludedPublications); excludedPublications = new Set(); closeExportModal();">Export
-                                <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> Research
-                                Outputs</button>
+                            <div style="padding-bottom: 1rem;">
+                                <button @click="exp(); closeExportModal();">Export all data</button>
+                                <button
+                                    :disabled="excludedPublications.size >= $store.data.input.length - 1 || $store.data.input.length - 1 - excludedPublications.size > $store.config.config.max || $store.data.input.filter(ro => ro.P_TopPaper_Select).length < $store.config.config.max_top_papers"
+                                    @click="exp(excludedPublications); excludedPublications = new Set(); closeExportModal();">Export
+                                    <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> research
+                                    outputs for the hiring committee</button>
+                            </div>
                         </div>
 
                         <div class="warning-text" x-show="$store.data.input.length - 1 - excludedPublications.size > $store.config.config.max">
