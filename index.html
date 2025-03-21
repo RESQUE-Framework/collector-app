@@ -1605,11 +1605,11 @@
             if (objectHash(Alpine.store('data').input[0].queryConfig) !== objectHash(Alpine.store('config').queryConfig)) {
                 showModal('config-incompatible-modal');
             }
-        }).then(() => {
-            document.body.style.backgroundColor = Alpine.store('config').config.background_color;
-            document.querySelector('.sidebar-top').style.backgroundColor = Alpine.store('config').config.background_color;
-            document.querySelector('#add-container').style.backgroundColor = Alpine.store('config').config.background_color;
-        }).then(() => {
+
+            // Set background color from config
+            document.documentElement.style.setProperty('--bg-color', Alpine.store('config').config.background_color);
+
+            // Show instructions modal if configured
             if (Alpine.store('config').config.show_instruction) {
                 showInstructionsModal();
             }

@@ -188,7 +188,7 @@ select,
     width: 100%;
     font-size: large;
     box-sizing: border-box;
-    background-color: var(--bg-color);
+    background-color: white;
 }
 
 label {
@@ -694,7 +694,7 @@ button.critical:hover {
 
 @keyframes highlight {
     50% {
-        background-color: var(--bg-color);
+        background-color: white;
     }
 }
 
