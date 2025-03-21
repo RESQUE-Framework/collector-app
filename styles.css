@@ -301,10 +301,6 @@ label {
     cursor: pointer;
 }
 
-.warning-text:last-child {
-    margin-bottom: 0;
-}
-
 .warning-text:hover {
     scale: 1.02;
 }
@@ -798,3 +794,7 @@ table {
   .legend-label {
     font-size: 12px;
   }
+
+.list-item:last-child {
+    margin-bottom: 0;
+}

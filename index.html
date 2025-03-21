@@ -788,7 +788,7 @@
                                 <template
                                     x-for="[id, warning] in Object.entries($store.data.completion[$store.data.currentTab].warnings)">
                                     <div @click="document.getElementById(id).scrollIntoView({behavior: 'smooth', block: 'center'}); document.querySelector('html').scrollTop = 0;"
-                                        class="warning-text">
+                                        class="warning-text list-item">
                                         <b><span x-text="id"></span></b>
                                         <br>
                                         <span x-text="warning.text"></span>
@@ -1109,10 +1109,20 @@
                             <h3>Export Data<span style="font-size: 70%; font-weight: normal;">&nbsp;&nbsp;Click
                                     publications to (de)select</span></h3>
                             <button
+                                :disabled="excludedPublications.size >= $store.data.input.length - 1 || $store.data.input.length - 1 - excludedPublications.size > $store.config.config.max"
                                 @click="exp(excludedPublications); excludedPublications = new Set(); closeExportModal();">Export
                                 <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> Research
                                 Outputs</button>
                         </div>
+
+                        <div class="warning-text" x-show="$store.data.input.length - 1 - excludedPublications.size > $store.config.config.max">
+                            <span>The committee requests a maximum of <span x-text="$store.config.config.max"></span> publications - please select only <span x-text="$store.config.config.max"></span> entries.</span>
+                        </div>
+
+                        <div class="warning-text" x-show="$store.data.input.filter(ro => ro.P_TopPaper_Select).length < $store.config.config.max_top_papers">
+                            <span>The committee asks you to select <span x-text="$store.config.config.max_top_papers"></span> publications as your best publications - you only select <span x-text="$store.data.input.filter(ro => ro.P_TopPaper_Select).length"></span> entries. Please go back and select exactly <span x-text="$store.config.config.max_top_papers"></span>.</span>
+                        </div>
+
                     </div>
 
                     <div>
