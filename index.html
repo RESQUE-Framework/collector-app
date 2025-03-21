@@ -1109,7 +1109,7 @@
                             <h3>Export Data<span style="font-size: 70%; font-weight: normal;">&nbsp;&nbsp;Click
                                     publications to (de)select</span></h3>
                             <button
-                                :disabled="excludedPublications.size >= $store.data.input.length - 1 || $store.data.input.length - 1 - excludedPublications.size > $store.config.config.max"
+                                :disabled="excludedPublications.size >= $store.data.input.length - 1 || $store.data.input.length - 1 - excludedPublications.size > $store.config.config.max || $store.data.input.filter(ro => ro.P_TopPaper_Select).length < $store.config.config.max_top_papers"
                                 @click="exp(excludedPublications); excludedPublications = new Set(); closeExportModal();">Export
                                 <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> Research
                                 Outputs</button>
