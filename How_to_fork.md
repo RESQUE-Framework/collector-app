@@ -74,8 +74,14 @@ In order to have a working website, you need to enable GitHub Pages for your for
 
 > :bulb: Any changes will take a few minutes until they are visible online under your custom link. Furthermore, you have to do a **reload** in your browser to see the changes, as Github uses caching. Maybe you even have to **clear your browser cache** to see the changes.
 
+## Step 4: Test your customized app
 
-## Step 4: Adjust the computation applicants' profile
+Now the app is ready for testing. You can use the link to your GitHub Pages website to test the app.
+
+Before you distribute the link to your applicants, you should test the app yourself. Enter some test data and export it. Check if the exported data is in the format you expect. Check if you can [generate the profile](https://shiny.psy.lmu.de/felix/RESQUE_profile/).
+
+
+## Step 5: Adjust the computation of applicants' profiles
 
 TBD - just a few notes:
 
