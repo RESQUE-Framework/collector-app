@@ -30,15 +30,36 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src=" https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js "></script>
     <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
 </head>
 
 <body>
     <script src="https://cdn.jsdelivr.net/npm/@alpinejs/sort@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-    <script src="./utils/charts.js"></script>
-    <script src="./utils/orcid.js"></script>
-    <script src="./utils/prefixtree.js"></script>
+    <script type="module">
+        import { getDefaultValues } from "./utils/packutils.js";
+        import { getDepths } from "./utils/prefixtree.js";
+        import { score, scoreAll, generateScoringRules } from "./utils/score.js";
+        import { renderScoreChart } from "./utils/charts.js";
+        import { fetchAuthorByORCID, fetchPapersByORCID } from "./utils/orcid.js";
+        import { fetchInformationUsingDOI } from "./utils/doi.js";
+        import { renameOldKeys } from "./utils/keyalias.js";
+
+        window.getDefaultValues = getDefaultValues;
+        window.getDepths = getDepths;
+        window.score = score;
+        window.scoreAll = scoreAll;
+        window.generateScoringRules = generateScoringRules;
+        window.renderScoreChart = renderScoreChart;
+        window.fetchAuthorByORCID = fetchAuthorByORCID;
+        window.fetchPapersByORCID = fetchPapersByORCID;
+        window.fetchInformationUsingDOI = fetchInformationUsingDOI;
+        window.renameOldKeys = renameOldKeys;
+    </script>
+
+    </script>
 
     <!-- jsConfetti init -->
     <script>
@@ -113,7 +134,7 @@
             const globals = {
                 paper_count: (value) => Alpine.store('data').input.filter(r => r.type === 'pub' && r[value] === true).length,
             }
-            
+
             return text
                 .replaceAll(/meta\$([a-zA-Z0-9_]+)/g, (match, variable) => results[0][variable])
                 .replaceAll(/global\$([a-zA-Z0-9_]+)@([a-zA-Z0-9_]+)/g, (match, variable, type) => {
@@ -136,58 +157,6 @@
         const preprocessText = text => text ? insertValuesIntoText(partialHighlight(null, text)) : '';
 
         const preprocessTextWithIndicatorContext = (indicatorID, text) => text ? insertValuesIntoText(partialHighlight(indicatorID, text)) : '';
-
-        const fetchInformationUsingDOI = async (doi) => {
-            return await fetch("https://doi.org/" + doi, {
-                headers: {
-                    Accept: 'application/vnd.citationstyles.csl+json'
-                }
-            })
-                .then(response => response.json())
-                .then(response => {
-                    if (mode === MODE_PREVIEW || mode === MODE_PRINT) {
-                        console.log(response);
-                    }
-
-                    const authors = response.author;
-
-                    let authorString;
-
-                    switch (authors.length) {
-                        case 0:
-                            authorString = 'No author';
-                            break;
-                        case 1:
-                            authorString = authors[0].family;
-                            break;
-                        case 2:
-                            authorString = authors.map(a => a.family).join(' & ');
-                            break;
-                        default:
-                            authorString = authors[0].family + ' et al.';
-                            break;
-                    }
-
-                    const year = response.published?.["date-parts"][0][0] || response.issued?.["date-parts"][0][0] || null;
-
-                    return {
-                        title: `${authorString} (${year}): ${response.title}`,
-                        year: year,
-                        DOI: response.DOI,
-                        abstract: response.abstract
-                    }
-                })
-                .catch(() => {
-                    return {
-                        error: true,
-                        title: '',
-                        year: undefined,
-                        DOI: doi,
-                        abstract: undefined
-                        
-                    }
-                })
-        }
 
         const showSaving = () => {
             let saving = document.getElementById("saving");
@@ -215,145 +184,7 @@
                 });
         }
 
-        const score = r => {
-            const scoring = Alpine.store('forms')[r.type].scoring;
 
-            if (scoring === undefined) {
-                return {};
-            }
-
-            if (!Object.keys(scoring).length) {
-                return {};
-            }
-
-            let maxScore = 0;
-            let reachedScore = 0;
-
-            let itemScores = {};
-
-            for (indicator in scoring) {
-                if (indicator === 'post') {
-                    // skip post
-                    continue;
-                }
-                if (scoring[indicator].not_applicable && evaluateConditionInContext(scoring[indicator].not_applicable, r)) {
-                    continue;
-                }
-
-                itemMaxScore = scoring[indicator].max;
-                itemScore = 0;
-
-                switch (scoring[indicator].op) {
-                    case "sum":
-                        itemScore = scoring[indicator].points
-                            .filter(p => evaluateConditionInContext(p.condition, r))
-                            .reduce((sum, next) => sum + next.value, 0);
-                        break;
-                    case "select":
-                        itemScore = (scoring[indicator].points.find(p => evaluateConditionInContext(p.condition, r)) || { value: 0 }).value;
-                        break;
-                    default:
-                        break;
-                }
-
-                maxScore += itemMaxScore;
-                reachedScore += itemScore;
-
-                itemScores[indicator] = {
-                    max: itemMaxScore,
-                    score: itemScore
-                }
-            }
-
-            if (scoring.post) {
-                scoring.post.forEach(transformation => {
-                    if (evaluateConditionInContext(transformation.condition, r)) {
-                        console.log(transformation.factor)
-                        reachedScore *= transformation.factor;
-                    }
-                })
-            }
-
-            const categories = [
-                {
-                    title: "Theorizing & Formal Modeling",
-                    cue: "Theorizing"
-                },
-                {
-                    title: "Open Data",
-                    cue: "Data"
-                },
-                {
-                    title: "Open Materials",
-                    cue: "OpenMaterials"
-                },
-                {
-                    title: "Preregistration",
-                    cue: "Prereg"
-                },
-                {
-                    title: "Reproducible Code & Verification",
-                    cue: "ReproducibleScripts|IndependentVerification"
-                }
-            ]
-
-            const categoryScores = categories.map(category => {
-                const categoryIndicators = Object.keys(itemScores).filter(indicator => new RegExp(category.cue).test(indicator));
-                const categoryMax = categoryIndicators.map(indicator => itemScores[indicator].max).reduce((sum, current) => sum + current, 0);
-                const categoryScore = categoryIndicators.map(indicator => itemScores[indicator].score).reduce((sum, current) => sum + current, 0);
-
-                return {
-                    title: category.title,
-                    max: categoryMax,
-                    score: categoryScore
-                }
-            });
-
-            return {
-                max: maxScore,
-                score: reachedScore,
-                relative: reachedScore / maxScore,
-                percentage: ((reachedScore / maxScore) * 100).toFixed(1),
-                items: itemScores,
-                categories: categoryScores
-            }
-        }
-
-        const scoreAll = rs => {
-            const scores = rs.map(r => score(r));
-
-            const validScores = scores.filter(s => Object.keys(s).length && s.max > 0)
-
-            const relative = validScores
-                .map(s => s.relative)
-                .reduce((sum, current) => sum + current, 0) / validScores.length
-
-            const overallCategoryScores = validScores
-                .map(s => s.categories)
-                .reduce((sum, current) => {
-                    current.forEach(category => {
-                        const existingCategory = sum.find(c => c.title === category.title);
-
-                        if (existingCategory) {
-                            existingCategory.max += category.max;
-                            existingCategory.score += category.score;
-                        } else {
-                            sum.push({ ...category });
-                        }
-                    });
-
-                    return sum;
-                }, []);
-
-            return {
-                scores,
-                overall: {
-                    relative,
-                    percentage: (relative * 100).toFixed(1),
-                    categories: overallCategoryScores
-                }
-            };
-        }
 
         const checkCompletion = (result) => {
             const elements = Alpine.store('forms')[result.type].elements;
@@ -415,7 +246,7 @@
             return `hsl(${hue}, 100%, 38%)`;
         }
 
-        const celebrateCompletion = () => {      
+        const celebrateCompletion = () => {
             jsConfetti.addConfetti({
                 emojis: ['✅']
             });
@@ -447,67 +278,6 @@
             data: {}
         });
 
-        const getDefaultValues = type => {
-            let defaultValues = {};
-
-            for (element of Alpine.store('forms')[type].elements) {
-                if (element.default
-                    || element.rows?.some(row => row.default)
-                ) {
-                    switch (element.type) {
-                        case 'checkbox':
-                            element.default.forEach((optionId) => {
-                                defaultValues[element.id + '_' + optionId] = true;
-                            })
-                            break;
-                        case 'tabular_radio':
-                            element.rows.forEach((row) => {
-                                defaultValues[element.id + '_' + row.id] = element.default || '';
-                            });
-
-                            element.rows.forEach((row) => {
-                                if (row.default) {
-                                    defaultValues[element.id + '_' + row.id] = row.default;
-                                }
-                            });
-                            break;
-                        default:
-                            defaultValues[element.id] = element.default;
-                    }                   
-                } else {
-                    // Define default values
-                    switch (element.type) {
-                        case 'separator':
-                        case 'info':
-                            // No default values needed
-                            break;
-                        case 'text':
-                        case 'textbox':
-                        case 'number':
-                        case 'date':
-                        case 'dropdown':
-                        case 'radio':
-                            defaultValues[element.id] = '';
-                            break;
-                        case 'checkbox':
-                            element.options.forEach((option) => {
-                                defaultValues[element.id + '_' + option.id] = false;
-                            });
-                            break;
-                        case 'tabular_radio':
-                            element.rows.forEach((row) => {
-                                defaultValues[element.id + '_' + row.id] = '';
-                            });
-                            break;
-                        default:
-                            defaultValues[element.id] = '';
-                    }
-                }
-            }
-
-            return defaultValues;
-        }
-
         Alpine.store('config', {
             config: {},
             queryConfig: {}
@@ -536,7 +306,7 @@
                 }
 
                 this.currentInput = this.input[this.currentTab];
-                this.score = scoreAll(this.input);
+                this.score = window.scoreAll(this.input);
                 this.completion = this.input.map(checkCompletion);
                 this.topPapers = this.input.filter(r => r.type === 'pub' && r.P_TopPaper_Select === true);
             },
@@ -546,7 +316,7 @@
                     type,
                     version: Alpine.store('forms')[type].versions[prefixes[type]],
                     date_added: Date.now(),
-                    ...getDefaultValues(type)
+                    ...window.getDefaultValues(Alpine.store('forms')[type].elements)
                 }
             },
 
@@ -575,7 +345,7 @@
                     type: 'pub',
                     version: Alpine.store('forms')['pub'].versions[prefixes['pub']],
                     date_added: Date.now(),
-                    ...getDefaultValues('pub'),
+                    ...window.getDefaultValues(Alpine.store('forms').pub.elements),
                     ...details
                 });
             },
@@ -585,6 +355,7 @@
                 sessionStorage.clear();
                 this.input = [this.createResearchOutput('meta')];
                 this.currentTab = 0;
+                switchToTab(0);
             }
         });
 
@@ -593,8 +364,8 @@
             minScoreWarning: false,
 
             reevaluate() {
-                this.minIndicatorsWarning = Alpine.store('data').score.scores[Alpine.store('data').currentTab].max > 0 && Alpine.store('data').score.scores[Alpine.store('data').currentTab].max < Alpine.store('config').config.minIndicatorsWarningThreshold;
-                this.minROWarning = (Alpine.store('data').input.length - 1) < Alpine.store('config').config.minROWarningThreshold;
+                this.minIndicatorsWarning = Alpine.store('data').score.scores[Alpine.store('data').currentTab].max > 0 && Alpine.store('data').score.scores[Alpine.store('data').currentTab].max < Alpine.store('config').config.min_indicators_warning_threshold;
+                this.minROWarning = (Alpine.store('data').input.length - 1) < Alpine.store('config').config.min_ro_warning_threshold;
             },
 
             manualInit() {
@@ -617,24 +388,24 @@
 
             const newTopPapers = data.filter(r => r.type === 'pub' && r.P_TopPaper_Select === true);
 
-            if (newTopPapers.length > Alpine.store('config').config.maxTopPapers) {
+            if (newTopPapers.length > Alpine.store('config').config.max_top_papers) {
                 // set difference
                 const diff = newTopPapers.filter(paper => !Alpine.store('data').topPapers.includes(paper));
-                
+
                 // undo change
                 setTimeout(() => {
                     diff.forEach(paper => paper.P_TopPaper_Select = false);
                 }, 0);
 
                 // show warning
-                alert(`You can only select ${Alpine.store('config').config.maxTopPapers} top papers.`);
+                alert(`You can only select ${Alpine.store('config').config.max_top_papers} top papers.`);
 
                 return;
             }
 
             Alpine.store('data').topPapers = newTopPapers;
 
-            const scores = scoreAll(data);
+            const scores = window.scoreAll(data);
 
             Alpine.store('data').score = scores;
 
@@ -646,7 +417,7 @@
                 celebrateCompletion();
             }
 
-            
+
 
             Alpine.store('warnings').reevaluate();
 
@@ -660,12 +431,12 @@
 
             localStorage.setItem('data', JSON.stringify(data));
 
-            renderScoreChart('overallScoreChart', scores.overall.categories, animation = false);
+            window.renderScoreChart('overallScoreChart', scores.overall.categories, animation = false);
 
             const currentScore = scores.scores[Alpine.store('data').currentTab];
 
             if (currentScore && currentScore.categories) {
-                renderScoreChart('currentScoreChart', currentScore.categories, animation = false);
+                window.renderScoreChart('currentScoreChart', currentScore.categories, animation = false);
             }
         });
 
@@ -695,7 +466,7 @@
                 return;
             }
 
-            const publicationInformation = await fetchInformationUsingDOI(doi);
+            const publicationInformation = await window.fetchInformationUsingDOI(doi);
 
             Alpine.store('data').input[doiTab].Title = publicationInformation.title;
             Alpine.store('data').input[doiTab].Year = publicationInformation.year;
@@ -749,13 +520,13 @@
             <div id="main">
                 <div class="tabs-sidebar" id="tabs-sidebar" x-on:scroll="$store.tabsSidebarScrollTop = $el.scrollTop">
                     <div class="sidebar-top">
-                        <span style='background-color: lightyellow; font-size:80%;'>[Note: The RESQUE collector app is in beta
-                            stage and might change in the near future. If you want to use it in practice, please <a
-                                href="https://www.resque.info/team.html">contact</a> us.]</span><br><br>
+                        <div x-show="$store.config.config.show_beta_warning" x-cloak>
+                            <span style='background-color: lightyellow; font-size:80%;'>[Note: The RESQUE collector app is in beta
+                                stage and might change in the near future. If you want to use it in practice, please <a
+                                    href="https://www.resque.info/team.html">contact</a> us.]</span><br><br>
+                        </div>
                         <div class="top">
-                            <h3>
-                                <a href="https://www.resque.info" x-text="Alpine.store('config').config.main_title"></a>
-                            </h3>
+                            <h3><a href="https://www.resque.info" x-text="$store.config.config.main_title"></a></h3>
                             <div id="actions">
                                 <button class="clear-button" @click="showModal('clear-modal')">Clear</button>
                                 <button class="load-button" @click="triggerLoad()">Load</button>
@@ -763,7 +534,8 @@
                             </div>
                         </div>
 
-                        <p><span x-text="`${$store.data.input.length - 1} of ${Alpine.store('config').config.max} slots used`"></span><!--| <span class="fakelink"
+                        <p><span
+                                x-text="`${$store.data.input.length - 1} of ${Alpine.store('config').config.max} slots used`"></span><!--| <span class="fakelink"
                             @click="window.open(`https://shiny.psy.lmu.de/felix/RESQUE_profile?data=${LZString.compress(JSON.stringify($store.data.input))}`, '_blank')"
                         >View Profile ↗</span> --></p>
                     </div>
@@ -773,17 +545,16 @@
                         <template x-if="show">
                             <div x-data="{ scrollY: 0 }">
                                 <div class="tab metadata" @click="switchToTab(0)"
-                                    :class="{ active: $store.data.currentTab === 0 }"
-                                    style="position: relative;">
+                                    :class="{ active: $store.data.currentTab === 0 }" style="position: relative;">
                                     <b>Author / Metadata</b>
                                     <div class="tab-progress-indicator"
                                         :style="`background-color: ${getProgressColor($store.data.completion[0].progress.ratio)};`"
                                         :title="`Progress: ${$store.data.completion[0].progress.percent}%`">
                                     </div>
                                 </div>
-                                <div x-sort="$store.data.reorderResearchOutputs($item, $position + 1); show = false; setTimeout(() => show = true, 0);">
-                                    <template x-for="tab, index in $store.data.input.slice(1)"
-                                        :key="index">
+                                <div
+                                    x-sort="$store.data.reorderResearchOutputs($item, $position + 1); show = false; setTimeout(() => show = true, 0);">
+                                    <template x-for="tab, index in $store.data.input.slice(1)" :key="index">
                                         <div x-sort:item="index + 1" style="position: relative;" x-data="tab">
                                             <div @mouseover="hoverStart" @mouseout="hoverEnd"
                                                 @click="switchToTab(index + 1)"
@@ -802,7 +573,7 @@
                                                 :style="`background-color: ${getProgressColor($store.data.completion[index + 1].progress.ratio)};`"
                                                 :title="`Progress: ${$store.data.completion[index + 1].progress.percent}%`">
                                             </div>
-                                            
+
                                         </div>
                                     </template>
                                 </div>
@@ -811,13 +582,15 @@
                     </div>
                     <div id="add-container">
                         <div class="doi-input" style="display:none">
-                            <button class="pdf-button" onclick="document.getElementById('add-pdf').click()">Extract DOI from
+                            <button class="pdf-button" onclick="document.getElementById('add-pdf').click()">Extract DOI
+                                from
                                 PDF</button>
                             <input id="add-doi" type="text" placeholder="DOI (optional)" />
                         </div>
 
                         <div class="add-buttons" x-show="($store.data.input.length - 1) < $store.config.config.max">
-                            <button class="add-pub" @click="$store.data.newResearchOutput('pub')">Add Publication</button>
+                            <button class="add-pub" @click="$store.data.newResearchOutput('pub')">Add
+                                Publication</button>
                             <br />
                             <!-- REMOVED TEMPORARILY
                             <button class="add-software" @click="$store.data.newResearchOutput('software')">Add
@@ -833,7 +606,9 @@
                 <div id="formview-container">
                     <div id="saving" class="animate pop" style="display: none;"></div>
                     <div class="progressbar-frame">
-                        <div class="progressbar-content" :style="`width: ${$store.data.completion[$store.data.currentTab].progress.percent}%;`"></div>
+                        <div class="progressbar-content"
+                            :style="`width: ${$store.data.completion[$store.data.currentTab].progress.percent}%;`">
+                        </div>
                     </div>
                     <div id="formview">
                         <h3 x-html="$store.forms[$store.data.currentInput.type].title"></h3>
@@ -842,12 +617,10 @@
                             <template x-for="(elem, index) in $store.forms[$store.data.currentInput.type].elements"
                                 :key="$store.data.currentInput.position + '_' + elem.id">
                                 <template x-if="$store.showIndicators">
-                                    <div @click="$store.selectedIndicator = elem" x-show="evaluateCondition(elem.condition)"
-                                        onblur="actions[elem.onchange]()"
-                                        class="indicator-container"
-                                        :class="elem.style_classes"
-                                        :id="elem.id">
-                                        
+                                    <div @click="$store.selectedIndicator = elem"
+                                        x-show="evaluateCondition(elem.condition)" onblur="actions[elem.onchange]()"
+                                        class="indicator-container" :class="elem.style_classes" :id="elem.id">
+
                                         <template x-for="_ in [...Array($store.indentations.current[elem.id])]">
                                             <div class="indent"></div>
                                         </template>
@@ -855,15 +628,13 @@
                                         <div class="indicator-subcontainer">
                                             <div x-data="{ showWarningText: false }">
                                                 <p>
-                                                    <div
-                                                        x-show="elem.id in $store.data.completion[$store.data.currentTab].warnings"
-                                                        class="warning-indicator"
-                                                        @click="showWarningText = !showWarningText">
-                                                    </div>
-                                                    <span class="title" x-html="preprocessText(elem.title)"></span>
+                                                <div x-show="elem.id in $store.data.completion[$store.data.currentTab].warnings"
+                                                    class="warning-indicator"
+                                                    @click="showWarningText = !showWarningText">
+                                                </div>
+                                                <span class="title" x-html="preprocessText(elem.title)"></span>
                                                 </p>
-                                                <p
-                                                    x-text="$store.data.completion[$store.data.currentTab].warnings[elem.id]?.text"
+                                                <p x-text="$store.data.completion[$store.data.currentTab].warnings[elem.id]?.text"
                                                     x-show="showWarningText && elem.id in $store.data.completion[$store.data.currentTab].warnings"
                                                     class="warning-text">
                                                 </p>
@@ -871,25 +642,26 @@
 
                                             <div class="content">
                                                 <template x-if="elem.type === 'separator'">
-                                                    <hr style="height: 3px; border:none; color: #333; background-color: #333;" />
+                                                    <hr
+                                                        style="height: 3px; border:none; color: #333; background-color: #333;" />
                                                 </template>
-                    
+
                                                 <template x-if="elem.type === 'info'">
                                                     <p x-html="preprocessText(elem.text)"></p>
                                                 </template>
-                    
+
                                                 <template x-if="elem.type === 'text'">
                                                     <input x-model="$store.data.currentInput[elem.id]" type="text"
                                                         :placeholder="elem.title || ''" />
                                                 </template>
-                    
+
                                                 <template x-if="elem.type === 'textbox'">
                                                     <div>
                                                         <div class="textbox" contenteditable
                                                             x-init="$el.innerText = $store.data.currentInput[elem.id] ?? ''"
                                                             @input="$store.data.currentInput[elem.id] = $event.target.innerText.trim()"
                                                             :placeholder="elem.title || ''"></div>
-                    
+
                                                         <template x-if="!!elem.maxwords">
                                                             <p class="wordcount"
                                                                 :class="(($store.data.currentInput[elem.id] ?? '').match(/\S+/g) ?? []).length > elem.maxwords ? 'wordcount-warning' : ''"
@@ -898,17 +670,17 @@
                                                         </template>
                                                     </div>
                                                 </template>
-                    
+
                                                 <template x-if="elem.type === 'number'">
                                                     <input x-model="$store.data.currentInput[elem.id]" type="text"
                                                         :placeholder="elem.title || ''" />
                                                 </template>
-                    
+
                                                 <template x-if="elem.type === 'date'">
                                                     <input x-model="$store.data.currentInput[elem.id]" type="date"
                                                         :placeholder="elem.title || ''" />
                                                 </template>
-                    
+
                                                 <template x-if="elem.type === 'dropdown'">
                                                     <select x-model="$store.data.currentInput[elem.id]">
                                                         <template x-for="option in elem.options" :key="option.id">
@@ -917,23 +689,27 @@
                                                         </template>
                                                     </select>
                                                 </template>
-                    
+
                                                 <template x-if="elem.type === 'radio'">
-                                                    <div :class="elem.alignment ? 'alignment-' + elem.alignment : 'alignment-vertical'">
+                                                    <div
+                                                        :class="elem.alignment ? 'alignment-' + elem.alignment : 'alignment-vertical'">
                                                         <template x-for="option in elem.options" :key="option.id">
                                                             <label :for="elem.id + '_' + option.id">
-                                                                <input x-model="$store.data.currentInput[elem.id]" type="radio"
-                                                                    :name="elem.id" :id="elem.id + '_' + option.id" :value="option.id" />
+                                                                <input x-model="$store.data.currentInput[elem.id]"
+                                                                    type="radio" :name="elem.id"
+                                                                    :id="elem.id + '_' + option.id"
+                                                                    :value="option.id" />
                                                                 <span x-html="option.text"></span>
                                                             </label>
                                                         </template>
                                                     </div>
                                                 </template>
-                    
+
                                                 <template x-if="elem.type === 'checkbox'">
                                                     <template x-for="option in elem.options" :key="option.id">
                                                         <label :for="elem.id + '_' + option.id">
-                                                            <input x-model="$store.data.currentInput[elem.id + '_' + option.id]"
+                                                            <input
+                                                                x-model="$store.data.currentInput[elem.id + '_' + option.id]"
                                                                 type="checkbox" :id="elem.id + '_' + option.id" />
                                                             <span x-html="option.text"></span>
                                                         </label>
@@ -946,7 +722,8 @@
                                                             <thead>
                                                                 <tr>
                                                                     <th></th>
-                                                                    <template x-for="option in elem.options" :key="option.id">
+                                                                    <template x-for="option in elem.options"
+                                                                        :key="option.id">
                                                                         <th x-html="option.text"></th>
                                                                     </template>
                                                                 </tr>
@@ -963,11 +740,17 @@
                                                                             tip_external: row.tip_external 
                                                                         };}">
                                                                         <td x-html="row.title"></td>
-                                                                        <template x-for="option in elem.options" :key="option.id">
+                                                                        <template x-for="option in elem.options"
+                                                                            :key="option.id">
                                                                             <td>
-                                                                                <input x-model="$store.data.currentInput[elem.id + '_' + row.id]" type="radio"
-                                                                                    :name="elem.id + '_' + row.id" :id="elem.id + '_' + row.id + '_' + option.id" :value="option.id" />
-                                                                                <div class="tabular-option-info" x-text="`${option.text}`"></div>
+                                                                                <input
+                                                                                    x-model="$store.data.currentInput[elem.id + '_' + row.id]"
+                                                                                    type="radio"
+                                                                                    :name="elem.id + '_' + row.id"
+                                                                                    :id="elem.id + '_' + row.id + '_' + option.id"
+                                                                                    :value="option.id" />
+                                                                                <div class="tabular-option-info"
+                                                                                    x-text="`${option.text}`"></div>
                                                                             </td>
                                                                         </template>
                                                                     </tr>
@@ -978,10 +761,12 @@
                                                 </template>
                                             </div>
 
-                                            <details x-show="$store.selectedIndicator.id === elem.id && !elem.no_comment">
-                                                <summary style="font-size: 0.9rem; color: gray; text-align: right;">Add comment</summary>
-                                                <input x-model="$store.data.currentInput[elem.id + '_Comment']" type="text"
-                                                    :placeholder="`Comment on '${elem.id}'`" />
+                                            <details
+                                                x-show="$store.selectedIndicator.id === elem.id && !elem.no_comment">
+                                                <summary style="font-size: 0.9rem; color: gray; text-align: right;">Add
+                                                    comment</summary>
+                                                <input x-model="$store.data.currentInput[elem.id + '_Comment']"
+                                                    type="text" :placeholder="`Comment on '${elem.id}'`" />
                                             </details>
                                         </div>
                                     </div>
@@ -992,13 +777,18 @@
                 </div>
                 <div id="menu" x-data="{ tab: 'main' }">
                     <div id="menu-tabs">
-                        <span @click="tab = 'main'" :class="{ selected: tab === 'main' }">Score/Info</span> • <span @click="tab = 'problems'" :class="{ selected: tab === 'problems' }">Problems (<span x-text="Object.keys($store.data.completion[$store.data.currentTab].warnings).length"></span>)</span>
+                        <span @click="tab = 'main'" :class="{ selected: tab === 'main' }">Score/Info</span> • <span
+                            @click="tab = 'problems'" :class="{ selected: tab === 'problems' }">Problems (<span
+                                x-text="Object.keys($store.data.completion[$store.data.currentTab].warnings).length"></span>)</span>
                     </div>
                     <div x-show="tab === 'problems'" class="warning-box card animate pop">
-                        <template x-if="Object.keys($store.data.completion[$store.data.currentTab].warnings).length > 0">
+                        <template
+                            x-if="Object.keys($store.data.completion[$store.data.currentTab].warnings).length > 0">
                             <div>
-                                <template x-for="[id, warning] in Object.entries($store.data.completion[$store.data.currentTab].warnings)">
-                                    <div @click="document.getElementById(id).scrollIntoView({behavior: 'smooth', block: 'center'}); document.querySelector('html').scrollTop = 0;" class="warning-text">
+                                <template
+                                    x-for="[id, warning] in Object.entries($store.data.completion[$store.data.currentTab].warnings)">
+                                    <div @click="document.getElementById(id).scrollIntoView({behavior: 'smooth', block: 'center'}); document.querySelector('html').scrollTop = 0;"
+                                        class="warning-text list-item">
                                         <b><span x-text="id"></span></b>
                                         <br>
                                         <span x-text="warning.text"></span>
@@ -1006,7 +796,8 @@
                                 </template>
                             </div>
                         </template>
-                        <template x-if="Object.keys($store.data.completion[$store.data.currentTab].warnings).length === 0">
+                        <template
+                            x-if="Object.keys($store.data.completion[$store.data.currentTab].warnings).length === 0">
                             <p style="margin: 0; color: gray;">No problems found.</p>
                         </template>
                     </div>
@@ -1019,17 +810,18 @@
                                     <span id="no-score">Applicant requests<br>manual processing</span>
                                 </div>
 
-                                <div
-                                    style="width: 150px; height: 150px;"
+                                <div style="width: 150px; height: 150px;"
                                     x-show="$store.data.score.scores[$store.data.currentTab].max > 0">
-                                    <canvas id="currentScoreChart" width="150" height="150" style="margin-top: 10px;"></canvas>
+                                    <canvas id="currentScoreChart" width="150" height="150"
+                                        style="margin-top: 10px;"></canvas>
                                 </div>
                             </div>
                             <div id="overall-score">
                                 <span class="sub">Overall Profile (mean)</span>
-                                
+
                                 <div style="width: 150px; height: 150px;">
-                                    <canvas id="overallScoreChart" width="150" height="150" style="margin-top: 10px;"></canvas>
+                                    <canvas id="overallScoreChart" width="150" height="150"
+                                        style="margin-top: 10px;"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -1037,7 +829,8 @@
                         <div id="legend-container"></div>
 
                         <p id="ro-count-container"><span class="tag"><span
-                                    x-text="$store.data.score.scores.filter(s => s.max && s.max > 0).length"></span> scored
+                                    x-text="$store.data.score.scores.filter(s => s.max && s.max > 0).length"></span>
+                                scored
                                 research output(s)</span>
                         </p>
 
@@ -1049,11 +842,13 @@
                                 <div x-show="$store.data.score.scores[$store.data.currentTab].max > 0"
                                     id="current-score-container">
                                     <p id="score-percentage"><span
-                                            x-text="$store.data.score.scores[$store.data.currentTab].percentage"></span>%</p>
+                                            x-text="$store.data.score.scores[$store.data.currentTab].percentage"></span>%
+                                    </p>
                                     <p id="score-dot">•</p>
                                     <p id="score-minmax"><span
                                             x-text="$store.data.score.scores[$store.data.currentTab].score?.toFixed(2)"></span>/<span
-                                            x-text="$store.data.score.scores[$store.data.currentTab].max?.toFixed(2)"></span></p>
+                                            x-text="$store.data.score.scores[$store.data.currentTab].max?.toFixed(2)"></span>
+                                    </p>
                                 </div>
                                 <hr>
                                 <table>
@@ -1103,13 +898,16 @@
                                 </table>
                             </div>
                         </details>
-                        <p id="warning-score-too-low" x-show="$store.warnings.minIndicatorsWarning">⚠️ Many indicators are not
+                        <p id="warning-score-too-low" x-show="$store.warnings.minIndicatorsWarning">⚠️ Many indicators
+                            are not
                             applicable. Manual processing of this
                             publication is recommended.
                         </p>
-                        <p id="warning-min-ro-threshold" x-show="$store.warnings.minROWarning">⚠️ Please provide at least <span
-                                id="minROWarningThreshold" x-text="$store.config.config.minROWarningThreshold"></span>
-                            research contributions that can be scored (e.g. by adding more empirical papers, data sets, or
+                        <p id="warning-min-ro-threshold" x-show="$store.warnings.minROWarning">⚠️ Please provide at
+                            least <span id="minROWarningThreshold"
+                                x-text="$store.config.config.minROWarningThreshold"></span>
+                            research contributions that can be scored (e.g. by adding more empirical papers, data sets,
+                            or
                             software contributions)</p>
                     </div>
                     <div x-show="tab === 'main'" id="info-box" class="card">
@@ -1140,7 +938,8 @@
                                     </details>
                                 </template>
                                 <template x-if="$store.selectedIndicator.tip_external">
-                                    <details id="tip-external-details" :open="$store.data.input[0].RaterType === 'External'">
+                                    <details id="tip-external-details"
+                                        :open="$store.data.input[0].RaterType === 'External'">
                                         <summary>Tips for external raters</summary>
                                         <span id="tip-external"
                                             x-html="preprocessTextWithIndicatorContext($store.selectedIndicator.id, $store.selectedIndicator.tip_external)"></span>
@@ -1153,7 +952,8 @@
                         <a class="fakelink" href="https://www.resque.info">RESQUE Website</a> • <span
                             onclick="showInfoModal()" class="fakelink">FAQ</span> • <a class="github-link"
                             href="https://github.com/RESQUE-Framework/collector-app">GitHub</a> • <span
-                            onclick="driver(tourAnytime()).drive()" class="fakelink">Tour</span>
+                            onclick="driver(tourAnytime()).drive()" class="fakelink">Tour</span> • <span
+                            onclick="showInstructionsModal()" class="fakelink">Instructions</span>
                     </div>
                 </div>
             </div>
@@ -1164,11 +964,15 @@
 
                     <h2>👋🏻 Welcome to the RESQUE tool!</h2>
                     <p>We need to change the way we assess research - with a focus on quality (over quantity). The <a
-                            href="https://github.com/RESQUE-Framework/collector-app">RESearch QUality Evaluation (RESQUE)</a>
+                            href="https://github.com/RESQUE-Framework/collector-app">RESearch QUality Evaluation
+                            (RESQUE)</a>
                         framework
-                        provides an evaluation scheme for publications, data sets, and research software. With this tool, you
-                        can enter the necessary information for your best research outputs, export a profile that shows your
-                        research style (<i>not implemented yet</i>), and use it for your CV or in hiring and tenure committees.
+                        provides an evaluation scheme for publications, data sets, and research software. With this
+                        tool, you
+                        can enter the necessary information for your best research outputs, export a profile that shows
+                        your
+                        research style (<i>not implemented yet</i>), and use it for your CV or in hiring and tenure
+                        committees.
                     </p>
                     <hr>
                     <h3>👀 How to use the RESQUE tool?</h3>
@@ -1184,24 +988,29 @@
                     </details>
                     <details>
                         <summary>How do I save my data?</summary>
-                        Clicking on the <button onclick="exp()">Save as file ...</button> button here or in the top left corner
-                        of this website exports a <code>.json</code> file. You can save this on your computer and share it with
+                        Clicking on the <button onclick="exp()">Save as file ...</button> button here or in the top left
+                        corner
+                        of this website exports a <code>.json</code> file. You can save this on your computer and share
+                        it with
                         others.
                     </details>
                     <details>
                         <summary>How do I load data I previously saved?</summary>
-                        You can use the <button onclick="triggerLoad()">Load</button> button here or in the top left corner of
+                        You can use the <button onclick="triggerLoad()">Load</button> button here or in the top left
+                        corner of
                         this website.
                     </details>
                     <details>
                         <summary>How can I clear all information I entered?</summary>
                         You can delete all data stored in the browser by clicking on the <button
-                            onclick="showModal('clear-modal')">Clear</button> button here or in the top left corner of this
+                            onclick="showModal('clear-modal')">Clear</button> button here or in the top left corner of
+                        this
                         website.
                     </details>
                     <details>
                         <summary>What should I do if I want to use RESQUE on a shared/public computer?</summary>
-                        Whenever you open this website, it loads the locally stored data. On public computers, make sure that
+                        Whenever you open this website, it loads the locally stored data. On public computers, make sure
+                        that
                         you clear your data after you saved them as a file.
                     </details>
                     <hr>
@@ -1209,22 +1018,27 @@
                     <p>
                         <b>No data leaves your device.</b>
                         <br>
-                        We use the <a href="https://www.wikiwand.com/en/Web_storage">Web Storage API</a> supported by all major
+                        We use the <a href="https://www.wikiwand.com/en/Web_storage">Web Storage API</a> supported by
+                        all major
                         browsers. Although the website itself is hosted on a server, your data is <i>only</i> stored and
                         processed in the local browser:
                         <br><br>
-                        The data is processed only locally. Your score is calculated in the browser. The local PDF files you
+                        The data is processed only locally. Your score is calculated in the browser. The local PDF files
+                        you
                         open on this website are <i>not</i> uploaded to a server.
                         <br><br>
-                        To get a sense of how many users we have, we do a very basic access logging with Matomo. You are not
-                        identifiable by the logged information; none of your entered data is tracked; no cookies or third party
+                        To get a sense of how many users we have, we do a very basic access logging with Matomo. You are
+                        not
+                        identifiable by the logged information; none of your entered data is tracked; no cookies or
+                        third party
                         trackers are used.
                     </p>
                 </div>
             </div>
             <dialog id="clear-modal">
                 <h3>⚠️ Warning!</h3>
-                <p><b>This will delete all of your local data.</b><br><br>Do you want to save the data to a file first?</p>
+                <p><b>This will delete all of your local data.</b><br><br>Do you want to save the data to a file first?
+                </p>
                 <br>
                 <button onclick="closeModal('clear-modal')">Cancel</button> <button onclick="exp()">Save data to local
                     file</button>
@@ -1233,36 +1047,52 @@
 
             <dialog id="config-incompatible-modal">
                 <h3>Incompatible configuration</h3>
-                <p>You have old data present, which was created using a different configuration. Do you want to load it, or
+                <p>You have old data present, which was created using a different configuration. Do you want to load it,
+                    or
                     start with a fresh form?</p>
                 <p>Your data might be incompatible with the current configuration and lead to unexpected behavior.
                 </p>
                 <br>
                 <div class="buttons">
-                    <button onclick="saveCurrentQueryConfig(); closeModal('config-incompatible-modal')">Use old data</button>
-                    <button onclick="showModal('clear-modal')" class="critical">Clear everything and start fresh</button>
+                    <button onclick="saveCurrentQueryConfig(); closeModal('config-incompatible-modal')">Use old
+                        data</button>
+                    <button onclick="showModal('clear-modal')" class="critical">Clear everything and start
+                        fresh</button>
                 </div>
             </dialog>
+
+            <div id="instructions-modal" class="modal">
+                <div class="modal-content" x-html="$store.config.config?.instructions?.html">
+                </div>
+            </div>
 
             <div id="orcid-modal" class="modal">
                 <div x-data="{ orcid: '', authorName: '', publications: [] }" class="modal-content">
                     <h3>Import publications using ORCID</h3>
                     <input id="orcid-modal-input" x-model="orcid" type="text" placeholder="ORCID" />
-                    <button id="orcid-modal-button" @click="fetchAuthorByORCID(orcid).then(name => authorName = name); fetchPapersByORCID(orcid).then(ps => publications = ps)">Fetch Publications</button>
+                    <button id="orcid-modal-button"
+                        @click="window.fetchAuthorByORCID(orcid).then(name => authorName = name); window.fetchPapersByORCID(orcid).then(ps => publications = ps)">Fetch
+                        Publications</button>
 
                     <template x-if="publications.length">
                         <div>
                             <hr>
                             <div style="position: sticky; top: 0; background-color: white; padding: 2px 0;">
-                                <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
+                                <div
+                                    style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
                                     <h3 x-text="`${authorName} (${publications.length} publications)`"></h3>
-                                    <button @click="publications.filter(p => p.selected).forEach(p => $store.data.addPublicationWithDetails({DOI: 'https://doi.org/' + p.doi, Title: p.title, Year: p.year})); closeORCIDModal(); orcid = '', authorName ='', publications = []"><span x-text="`Add ${publications.filter(p => p.selected).length} Publications`"></span></button>
+                                    <button
+                                        @click="publications.filter(p => p.selected).forEach(p => $store.data.addPublicationWithDetails({DOI: 'https://doi.org/' + p.doi, Title: p.title, Year: p.year})); closeORCIDModal(); orcid = '', authorName ='', publications = []"><span
+                                            x-text="`Add ${publications.filter(p => p.selected).length} Publications`"></span></button>
                                 </div>
                             </div>
                             <template x-for="pub in publications">
-                                <div @click="pub.selected = !pub.selected" class="tab" :class="{ active: pub.selected }">
+                                <div @click="pub.selected = !pub.selected" class="tab"
+                                    :class="{ active: pub.selected }">
                                     <p style="margin-top: 0;"><b x-text="pub.title"></b></p>
-                                    <p style="margin-bottom: 0;"><span x-text="pub.year"></span> | <a style="color: inherit;" :href="`https://doi.org/${pub.doi}`" target="_blank"><span x-text="pub.doi"></span></a></p>
+                                    <p style="margin-bottom: 0;"><span x-text="pub.year"></span> | <a
+                                            style="color: inherit;" :href="`https://doi.org/${pub.doi}`"
+                                            target="_blank"><span x-text="pub.doi"></span></a></p>
                                 </div>
                             </template>
                         </div>
@@ -1271,28 +1101,46 @@
             </div>
 
             <div id="export-modal" class="modal">
-            <div x-data="{ excludedPublications: new Set() }" class="modal-content">
-                
-                <div style="position: sticky; top: 0; background-color: white; padding: 2px 0;">
-                    <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center">
-                        <h3>Export Data<span style="font-size: 70%; font-weight: normal;">&nbsp;&nbsp;Click publications to (de)select</span></h3>
-                        <button @click="exp(excludedPublications); excludedPublications = new Set(); closeExportModal();">Export <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> Research Outputs</button>
+                <div x-data="{ excludedPublications: new Set() }" class="modal-content">
+
+                    <div style="position: sticky; top: 0; background-color: white; padding: 2px 0;">
+                        <div>
+                            <h3>Save to file...<span style="font-size: 70%; font-weight: normal;">&nbsp;&nbsp;Click
+                                    publications to (de)select</span></h3>
+                            <div style="padding-bottom: 1rem;">
+                                <button @click="exp(); closeExportModal();">Export all data</button>
+                                <button
+                                    :disabled="excludedPublications.size >= $store.data.input.length - 1 || $store.data.input.length - 1 - excludedPublications.size > $store.config.config.max || $store.data.input.filter(ro => ro.P_TopPaper_Select).length < $store.config.config.max_top_papers"
+                                    @click="exp(excludedPublications); excludedPublications = new Set(); closeExportModal();">Export
+                                    <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> research
+                                    outputs for the hiring committee</button>
+                            </div>
+                        </div>
+
+                        <div class="warning-text" x-show="$store.data.input.length - 1 - excludedPublications.size > $store.config.config.max">
+                            <span>The committee requests a maximum of <span x-text="$store.config.config.max"></span> publications - please select only <span x-text="$store.config.config.max"></span> entries.</span>
+                        </div>
+
+                        <div class="warning-text" x-show="$store.data.input.filter(ro => ro.P_TopPaper_Select).length < $store.config.config.max_top_papers">
+                            <span>The committee asks you to select <span x-text="$store.config.config.max_top_papers"></span> publications as your best publications - you only select <span x-text="$store.data.input.filter(ro => ro.P_TopPaper_Select).length"></span> entries. Please go back and select exactly <span x-text="$store.config.config.max_top_papers"></span>.</span>
+                        </div>
+
+                    </div>
+
+                    <div>
+                        <template x-for="pub, index in $store.data.input.slice(1)">
+                            <div class="tab" :class="{ 'active': !excludedPublications.has(index + 1) }"
+                                @click="if (excludedPublications.has(index + 1)) { excludedPublications.delete(index + 1); } else { excludedPublications.add(index + 1); }">
+                                <p style="margin: 0;"><span x-show="pub.P_TopPaper_Select">⭐️ </span><span
+                                        x-text="pub.Title"></span></p>
+                            </div>
+                        </template>
                     </div>
                 </div>
-
-                <div>
-                    <template x-for="pub, index in $store.data.input.slice(1)">
-                        <div class="tab"
-                            :class="{ 'active': !excludedPublications.has(index + 1) }"
-                            @click="if (excludedPublications.has(index + 1)) { excludedPublications.delete(index + 1); } else { excludedPublications.add(index + 1); }">
-                            <p style="margin: 0;" x-text="pub.Title"></p>
-                        </div>
-                    </template>
-                </div>
-            </div>
             </div>
 
-            <input id="fileInput" type="file" accept="application/json" style="visibility: hidden" @change="handleLoad($el.files)" />
+            <input id="fileInput" type="file" accept="application/json" style="visibility: hidden"
+                @change="handleLoad($el.files)" />
             <a id="download" style="visibility: hidden"></a>
             <input id="add-pdf" type="file" accept="application/pdf" onchange="handleSelectPDF(this.files)"
                 style="visibility: hidden;" />
@@ -1539,6 +1387,14 @@
             document.getElementById("info-modal").style.display = "none";
         }
 
+        const showInstructionsModal = () => {
+            document.getElementById("instructions-modal").style.display = "block";
+        }
+
+        const closeInstructionsModal = () => {
+            document.getElementById("instructions-modal").style.display = "none";
+        }
+
         const showORCIDModal = () => {
             const orcidInput = document.querySelector("#orcid-modal-input");
             const orcidButton = document.querySelector("#orcid-modal-button");
@@ -1549,7 +1405,7 @@
             // See orcid-modal to understand why the following lines work
 
             // Set the input
-            orcidInput.value =  extractedORCID;
+            orcidInput.value = extractedORCID;
             orcidInput.dispatchEvent(new Event('input'));
 
             // Click the button to fetch works
@@ -1570,7 +1426,7 @@
             document.getElementById("export-modal").style.display = "none";
         }
 
-      
+
         const reset = () => {
             results = {};
             localStorage.clear();
@@ -1584,37 +1440,10 @@
         }
 
         const handleLoad = async files => {
-            const renameOldKeys = (obj) => {
-                const aliases = {
-                    // Pubs
-                    "P_Sample_Type": "P_Sample",
-                    "P_Sample_Type_Other": "P_Sample_Other",
-                    "P_Sample_Type_RareOther": "P_Sample_RareOther",
-                    "P_CoG_ParcipantSample": "P_Sample_CoG",
-                    "P_Stimuli_Relevance": "P_Stimuli",
-                    "P_Stimuli_Relevance_NAexplanation": "P_Stimuli_NAExplanation",
-                    "P_Sample_RepresentativenessRelevance_NAexplanation": "P_Sample_RepresentativenessRelevance_NAExplanation",
-                    "P_Sample_CrossCultural_NAexplanation": "P_Sample_CrossCultural_NAExplanation",
-                    "P_Stimuli_NAexplanation": "P_Stimuli_NAExplanation",
-                    "P_Stimuli_Representative_NAexplanation": "P_Stimuli_Representative_NAExplanation",
-                    "P_CoG_StimulusSample": "P_Stimuli_CoG",
-                    "P_PreregisteredReplication": "P_Preregistration_Replication",
-                    "P_PreregisteredReplication_NAExplanation": "P_Preregistration_Replication_NAExplanation",
-                    "P_TypeMethod_Simulation": "P_TypeMethod_Computational"
-                };
-
-                return Object.keys(obj).reduce((acc, key) => {
-                    // Change the key if it is in the aliases
-                    const newKey = aliases[key] || key;
-                    acc[newKey] = obj[key];
-                    return acc;
-                }, {});
-            };
-
             let loadedData = JSON.parse(await files[0].text());
 
             // Apply the aliases to all research outputs
-            loadedData = loadedData.map(renameOldKeys);
+            loadedData = loadedData.map(window.renameOldKeys);
 
             if (loadedData.every(r => Alpine.store('forms')[r.type].versions[prefixes[r.type]] === r.version)) {
                 Alpine.store('data').input = loadedData;
@@ -1640,7 +1469,7 @@
                 .filter(e => e.type === 'checkbox')
                 .map(e => e.options.map(o => e.id + '_' + o.id))
                 .flat();
-            
+
             const tabularRadioIds = filteredElements
                 .filter(e => e.type === 'tabular_radio')
                 .map(e => e.rows.map(r => e.id + '_' + r.id))
@@ -1735,66 +1564,26 @@
             Alpine.store('data').input[0].queryConfig = Alpine.store('config').queryConfig;
         }
 
-        const generateScoringRules = (items) => {
-            let rules = {};
+        // Load config
+        fetch('./config/config.yaml').then(response => response.text()).then(text => {
+            const config = jsyaml.load(text);
 
-            items.forEach(item => {
-                if (!item.score) return;
+            Alpine.store('forms').config = config;
+        });
 
-                rule = {
-                    not_applicable: item.score.not_applicable,
-                };
-
-                if (item.type === 'radio') {
-                    rule.op = 'select';
-                    rule.max = Math.max(...item.options.map(v => v.value));
-
-                    rule.points = item.options.map(option => {
-                        condition = `($${item.id} === '${option.id}')`
-                            + (item.score.condition ? ` && (${item.score.condition})` : '');
-
-                        if (option.explanation_required) {
-                            condition += ` && exists($${item.id}_${option.id}Explanation)`;
-                        }
-
-                        return {
-                            value: option.value,
-                            condition
-                        }
-                    })
-                }
-
-                if (item.type === 'checkbox') {
-                    rule.op = 'sum';
-                    rule.max = item.options.reduce((acc, option) => acc + option.value, 0);
-
-                    rule.points = item.options.map(option => {
-                        condition = `$${item.id}_${option.id}`
-                            + (item.score.condition ? ` && (${item.score.condition})` : '');
-
-                        if (option.explanation_required) {
-                            condition += ` && exists(${item.id}_${option.id}Explanation)`;
-                        }
-
-                        return {
-                            value: option.value,
-                            condition
-                        }
-                    })
-                }
-
-                rules[item.id] = rule;
-
-            });
-
-            return rules;
-        }
+        // Load instructions
+        fetch('./config/instructions.md').then(response => response.text()).then(text => {
+            const converter = new showdown.Converter();
+            Alpine.store('forms').config.instructions = {};
+            Alpine.store('forms').config.instructions.md = text;
+            Alpine.store('forms').config.instructions.html = converter.makeHtml(text);
+        });
 
         menu().then(m => {
             for (const key in m) {
                 if (m[key].elements) {
-                    m[key].scoring = generateScoringRules(m[key].elements);
-                    Alpine.store('indentations')[key] = getDepths(m[key].elements);
+                    m[key].scoring = window.generateScoringRules(m[key].elements);
+                    Alpine.store('indentations')[key] = window.getDepths(m[key].elements);
                 }
                 Alpine.store('forms')[key] = m[key];
             }
@@ -1817,6 +1606,14 @@
             // Check config compatibility
             if (objectHash(Alpine.store('data').input[0].queryConfig) !== objectHash(Alpine.store('config').queryConfig)) {
                 showModal('config-incompatible-modal');
+            }
+
+            // Set background color from config
+            document.documentElement.style.setProperty('--bg-color', Alpine.store('config').config.background_color);
+
+            // Show instructions modal if configured
+            if (Alpine.store('config').config.show_instruction) {
+                showInstructionsModal();
             }
         });
     </script>

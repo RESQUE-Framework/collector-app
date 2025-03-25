@@ -17,6 +17,14 @@
     --warning-color: #ffa50015;
 }
 
+/* To prevent a flash of unstyled content (FOUC), it's often a good practice to add the x-cloak directive.
+This ensures that any element with the x-cloak keyword (directive) doesn't flicker on initial page load
+before Alpine.js takes effect.
+ */
+[x-cloak] {
+    display: none !important;
+}
+
 body {
     font-family: "Montserrat", sans-serif;
     margin: 0;
@@ -52,6 +60,7 @@ body {
     display: block;
     box-sizing: border-box;
     overflow: scroll;
+    background-color: white;
 }
 
 .card.warning {
@@ -179,7 +188,7 @@ select,
     width: 100%;
     font-size: large;
     box-sizing: border-box;
-    background-color: var(--bg-color);
+    background-color: white;
 }
 
 label {
@@ -290,10 +299,6 @@ label {
     margin-bottom: 16px;
     transition: 200ms;
     cursor: pointer;
-}
-
-.warning-text:last-child {
-    margin-bottom: 0;
 }
 
 .warning-text:hover {
@@ -689,7 +694,7 @@ button.critical:hover {
 
 @keyframes highlight {
     50% {
-        background-color: var(--bg-color);
+        background-color: white;
     }
 }
 
@@ -789,3 +794,7 @@ table {
   .legend-label {
     font-size: 12px;
   }
+
+.list-item:last-child {
+    margin-bottom: 0;
+}
