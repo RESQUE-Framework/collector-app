@@ -3,7 +3,7 @@
 We assume the following:
 
 - You have a GitHub account
-- You have a basic understanding of Git (although, if you follow the instructions closely, you don't need to use Git directly)
+- You have a basic understanding of Git (although, if you follow the instructions below closely, you don't need to use Git directly)
 
 
 ## Step 1: Fork the Collector App repository
@@ -43,7 +43,7 @@ In order to have a working website, you need to enable GitHub Pages for your for
 
 ## Step 3: Customize the Collector App
 
-1. In the main menu, go to the *Code* tab, click on `config` folder (this brings you to another view of all files), and then in the left file tree on the file `config/config.yaml`.
+1. In the main menu, go to the *Code* tab, click on the `config` folder (this brings you to another view of all files), and then in the left file tree on the file `config/config.yaml`.
 2. Click on the pencil icon (top right) to edit the file
 
 ![](img/fork5.png)
@@ -59,17 +59,28 @@ In order to have a working website, you need to enable GitHub Pages for your for
 
 4. Click on the green "Commit changes..." button at the top right of the page. In the pop-up window, you can add a description of the changes you made (or just keep the default commit message) and click "Commit changes". Then the changes are saved to your repository.
 
-> :bulb: Of course, if you know git, you can clone the repository to your local machine and make the changes there. Then you can push the changes back to your forked repository.
+> :bulb: Of course, if you know git, you can clone the repository to your local machine and make the changes there. Then you can push the changes to your forked repository.
 
 5. In the same way, edit the file `config/instructions.md`. Change the text to fit the requirements of your university. The text must be in Markdown format. You can use the [Markdown Cheatsheet](https://www.markdownguide.org/cheat-sheet/) for help.
 
-6. In the same way, edit the file `packs/core-meta.json`. Search for "AcademicAgeBonus" and change the content of the field `"title"`. Define which life circumstances are valid to count towards a reduction of academic age (e.g.: "We consider the following life circumstances as valid for a reduction of academic age: Parental leave, long-term illness, refugee or migrant status-related interruptions, and natural disasters or geopolitical events.").
+6. Edit the file `packs/core-meta.json`. Search for "AcademicAgeBonus" and change the content of the field `"title"`. Define which life circumstances are valid to count towards a reduction of academic age (e.g.: "We consider the following life circumstances as valid for a reduction of academic age: Parental leave, long-term illness, refugee or migrant status-related interruptions, and natural disasters or geopolitical events.").
 
-7. The indicators are defined in `packs/core-pubs.json`. You can edit this json file to change the indicators that are shown to the applicants. You can change the wording of indicators, add new indicators, or remove existing ones. Make sure that you don't break the json format. You can use an [online json validator](https://jsonlint.com) to check your changes.
+> :bulb: `.json` files are in a specific format. Make sure you don't break the format when editing them. You can use an [online json validator](https://jsonlint.com) to check your changes. A common error is that json does not support line breaks within a string. If you want to have a line break, you can use `<br>` (e.g., `"We consider the following life circumstances as valid for a reduction of academic age:<br>Parental leave, long-term illness [...]"`).
+
+7. The indicators are defined in `packs/core-pubs.json`. You can edit this json file to change the indicators that are shown to the applicants. You can change the wording of indicators, add new indicators, or remove existing ones.
+   1. You can change the wording, but do not change the `id` of an indicator - this would break the creation of the applicant's profile.
+   2. Also, deleting some of the "core indicators" might break the profile creation.
 
 
 > :bulb: Any changes will take a few minutes until they are visible online under your custom link. Furthermore, you have to do a **reload** in your browser to see the changes, as Github uses caching. Maybe you even have to **clear your browser cache** to see the changes.
 
+
+## Step 4: Adjust the computation applicants' profile
+
+TBD - just a few notes:
+
+- The profiles are computed with the [RESQUER](https://resque-framework.github.io/RESQUER/) R package.
+- It provides both an individual profile (see `RESQUE_profile.qmd`) and a comparative overview of multiple applicants (see `RESQUE_overview.qmd`)
 
 
 ## Advanced considerations
