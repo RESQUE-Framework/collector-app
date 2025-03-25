@@ -1073,72 +1073,7 @@
             "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes' && $P_ReproducibleScripts =|= ['YesParts', 'YesEntire']"
         },
 
-        {
-            "id": "sep_before_correctness",
-            "type": "separator",
-            "no_comment": true,
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes'"
-        },
-
-        {
-            "id": "P_IndependentVerification",
-            "type": "radio",
-            "title": "Correctness of computational results has been independently verified",
-            "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_IndependentVerification === 'NotApplicable') && (exists($P_IndependentVerification_NAExplanation)))",
-                "condition": "(exists($P_IndependentVerification_Identifier))"
-            },
-            "options": [
-                {
-                    "id": "NotApplicable",
-                    "text": "Not applicable [provide explanation]",
-                    "value": 0
-                },
-                {
-                    "id": "NotAvailable",
-                    "text": "No / not published",
-                    "value": 0
-                },
-                {
-                    "id": "WorkflowReproducible",
-                    "text": "Workflow reproducibility / code completeness check",
-                    "value": 0.5
-                },
-                {
-                    "id": "MainResultsReproducible",
-                    "text": "Computational reproducibility of MAIN results has been independently verified using the original code",
-                    "value": 1
-                },
-                {
-                    "id": "AllResultsReproducible",
-                    "text": "Computational reproducibility of ALL numerical results has been independently verified using the original code",
-                    "value": 1.5
-                },
-                {
-                    "id": "AnalysisReplication",
-                    "text": "Analysis replication (independent implementation & verification)",
-                    "value": 2
-                }
-            ],
-            "eval_dimension": "rigor",
-            "info": "<ul><li><i>Independent</i> means that someone who is not a co-author verified the computational reproducibility.</li><li>This only counts if a <i>verification report</i> is published and the doi is provided here (otherwise select 'no').</li></ul> <br><br>This has rarely been implemented so far, but some <a href='https://social-science-data-editors.github.io/guidance/'>journals</a> already do these independent checks, and universities start to provide <a href='https://www.ukrn.org/2024/01/30/pre-submission-certification-of-computational-reproducibility/'>pre-submission certification of computational reproducibility</a>.<br><br><ul><li>{:'WorkflowReproducible' | <b>Workflow reproducibility / code completeness check</b>: Code runs without errors or critical warnings on another machine by another person (without comparing the numbers). This is also known as <i>process reproducibility</i>.}</li><li>{:'MainResultsReproducible' | <b>Computational reproducibility of main results has been independently verified using the original code</b>: Someone compared the <i>figures and main results</i> and asserts a sufficient correspondence with the reported main results.}</li><li>{:'AllResultsReproducible' | <b>Computational reproducibility of <i>all numerical results</i> has been independently verified using the original code</b>: Someone compared <i>all figures and numbers</i> and asserts a sufficient correspondence with the reported results.}</li><li>{:'AnalysisReplication' | <b>Analysis replication (independent implementation)</b>: Somebody independently implemented the analyses, without looking at the original code, and asserts a sufficient correspondence with the reported main results.}</li></ul><br> {:'WorkflowReproducible', 'MainResultsReproducible', 'AllResultsReproducible', 'AnalysisReplication' | The bonus point is only given when a public verification report/certificate with a persistent identifier is available.}",
-            "background": "'In the context of mathematics, Stodden et al. distinguish between <i>verification</i> and <i>validation</i>; following their definition, <b>a CODECHECK [or reproducibility check] ensures verification of computational results, i.e., checking that code generates the output it claims to create</b>, but <i>not</i> a validation, i.e., checking that the code implements the right algorithm [or statistical model] to solve the specific research problem.' (see <a href='https://f1000research.com/articles/10-253/v2'>Nüst & Eglen, 2021</a>).",
-            "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes'",
-            "tip_external": "<b>Search words:</b> reprodu*, verify, independent"
-        },
-        {
-            "id": "P_IndependentVerification_NAExplanation",
-            "type": "text",
-            "title": "⤷ Not Applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes' && $P_IndependentVerification === 'NotApplicable'"
-        },
-        {
-            "id": "P_IndependentVerification_Identifier",
-            "type": "text",
-            "title": "⤷ DOI or URL of the verification report",
-            "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes' && $P_IndependentVerification =|= ['WorkflowReproducible', 'MainResultsReproducible', 'AllResultsReproducible', 'AnalysisReplication']",
-            "info": "You can add multiple DOIs or URLs, separated by a semicolon (;)"
-        },
+       
         {
             "id": "OMSEP",
             "type": "separator",
@@ -1610,33 +1545,7 @@
             "title": "Sample size (if applicable, differentiate by levels / items / ...)",
             "condition": "$P_Suitable === 'Yes'"
         },
-        {
-            "id": "P23P24SEP",
-            "type": "separator",
-            "no_comment": true
-        },
-        {
-            "id": "P_MeritStatement_Info",
-            "type": "info",
-            "text": "<h3>Merit Statement</h3>A merit statement summarizes why this research output made an important substantive contribution to the field. Such statements could reflect upon, for example:<ul><li>an interdisciplinary setting</li><li>a new theory that was developed or tested for the first time</li><li<an experiment that rejected or confirmed a long debated effect</li><li>a methodological set-up that was specifically innovative</li><li>an unusually great effort was needed to collect the sample</li><li>generalizability was particularly high</li></ul><br><i>Do not provide information on societal or scientific impact or information on citation statistics here, but focus on the intrinsic quality of the research output itself - regardless whether it had impact yet or not.</i>"
-        },
-        {
-            "id": "P_MeritStatement",
-            "type": "textbox",
-            "maxwords": 150,
-            "title": "Provide your Merit Statement here (narrative, max. 150 words. Box will expand):"
-        },
-        {
-            "id": "P_ImpactStatement_Info",
-            "type": "info",
-            "text": "<h3>Scientific Impact Statement</h2>Age- and field-normalized citation statistics will be automatically retrieved for each submitted work. Here you can describe the scientific impact that this work made ignoring these bibliometric indicators (e.g., explain how your methodological contribution was recommended as the go-to-approach in a consensus paper on best practice in the field)."
-        },
-        {
-            "id": "P_ImpactStatement",
-            "type": "textbox",
-            "maxwords": 150,
-            "title": "Provide your Scientific Impact Statement here (narrative, max. 150 words. Box will expand):"
-        },
+       
         {
             "id": "MeritSEP",
             "type": "separator",
