@@ -3,7 +3,7 @@
 We assume the following:
 
 - You have a GitHub account
-- You have a basic understanding of Git
+- You have a basic understanding of Git (although, if you follow the instructions closely, you don't need to use Git directly)
 
 
 ## Step 1: Fork the Collector App repository
@@ -43,21 +43,30 @@ In order to have a working website, you need to enable GitHub Pages for your for
 
 ## Step 3: Customize the Collector App
 
-1. In the main menu, go to the *Code* tab and click on the *menu.js* file
-2. Click on the pencil icon to edit the file
+1. In the main menu, go to the *Code* tab, click on `config` folder (this brings you to another view of all files), and then in the left file tree on the file `config/config.yaml`.
+2. Click on the pencil icon (top right) to edit the file
 
 ![](img/fork5.png)
 
-3. Make adjustments:
-   1. In line 4, change `main_title: "RESQUE"` to `main_title: "RESQUE MYUNIVERSITY"`. This makes your app visually distinguishable from the generic Collector App.
-   2. In line 5, you can change `max: 10` to the maximum number of publications that your committee expects.
-   3. In line 6, you can change `maxTopPapers: 3` to how many papers can be selected as "best papers"
+3. Make adjustments in `config/config.yaml`:
+   1. Change `main_title: "RESQUE"` to `main_title: "RESQUE MYUNIVERSITY"`. 
+   2. Change `background_color: "#ffffff"`. This makes your app visually distinguishable from the generic Collector App.
+   3. Change `show_instruction: false` to `true`. Then the welcome text (defined in `config/instructions.md`, see below) will be shown to the applicants.
+   4. You can change `max: 10` to the maximum number of publications that your committee expects. Candidates can enter more publications, but are asked to export only `max` publications for their submission to the committee.
+   5. You can change `maxTopPapers: 3` to how many papers can (and mnust) be selected as "best papers".
+   6. You can change `show_beta_warning` to `false` to hide the message in the top left box.
 
-4. In the same way, edit the file `packs/core-meta.json`. Search for "AcademicAgeBonus" and change the field `"title"` of that node. Define which life circumstances are valid to count towards a reduction of academic age (e.g.: "We consider the following life circumstances as valid for a reduction of academic age: Parental leave, long-term illness, refugee or migrant status-related interruptions, and natural disasters or geopolitical events.").
 
-5. Click on the green "Commit changes..." button at the top right of the page. In the pop-up window, you can add a description of the changes you made (or just keep the default commit message) and click "Commit changes". Then the changes are saved to your repository.
+4. Click on the green "Commit changes..." button at the top right of the page. In the pop-up window, you can add a description of the changes you made (or just keep the default commit message) and click "Commit changes". Then the changes are saved to your repository.
 
-Of course, if you know git, you can clone the repository to your local machine and make the changes there. Then you can push the changes back to your forked repository.
+> :bulb: Of course, if you know git, you can clone the repository to your local machine and make the changes there. Then you can push the changes back to your forked repository.
+
+5. In the same way, edit the file `config/instructions.md`. Change the text to fit the requirements of your university. The text must be in Markdown format. You can use the [Markdown Cheatsheet](https://www.markdownguide.org/cheat-sheet/) for help.
+
+6. In the same way, edit the file `packs/core-meta.json`. Search for "AcademicAgeBonus" and change the content of the field `"title"`. Define which life circumstances are valid to count towards a reduction of academic age (e.g.: "We consider the following life circumstances as valid for a reduction of academic age: Parental leave, long-term illness, refugee or migrant status-related interruptions, and natural disasters or geopolitical events.").
+
+7. The indicators are defined in `packs/core-pubs.json`. You can edit this json file to change the indicators that are shown to the applicants. You can change the wording of indicators, add new indicators, or remove existing ones. Make sure that you don't break the json format. You can use an [online json validator](https://jsonlint.com) to check your changes.
+
 
 > :bulb: Any changes will take a few minutes until they are visible online under your custom link. Furthermore, you have to do a **reload** in your browser to see the changes, as Github uses caching. Maybe you even have to **clear your browser cache** to see the changes.
 
@@ -65,4 +74,4 @@ Of course, if you know git, you can clone the repository to your local machine a
 
 ## Advanced considerations
 
-- You want your app to be stable while applicants enter their data. Therefore, you should not change the `main` branch of your Collector App fork after data collection started. Furthermore, **do not sync your fork with the original repository** - we might make breaking changes there, which can disrupt your data collection.
+- You want your app to be stable while applicants enter their data. Therefore, you should not change the `main` branch of your Collector App fork after data collection started. Furthermore, **do not sync your fork with the original repository** (i.e., pulling changes from the general RESQUE Collector app into your fork) - we might make breaking changes there, which can disrupt your data collection.
