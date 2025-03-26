@@ -70,6 +70,7 @@ In order to have a working website, you need to enable GitHub Pages for your for
 7. The indicators are defined in `packs/core-pubs.json`. You can edit this json file to change the indicators that are shown to the applicants. You can change the wording of indicators, add new indicators, or remove existing ones.
    1. You can change the wording, but do not change the `id` of an indicator - this would break the creation of the applicant's profile.
    2. Also, deleting some of the "core indicators" might break the profile creation.
+   3. If you remove an indicator, make sure that it is not used in a condition. For that, search for the `id` of the indicator and check whether it is referenced (with a leading `$`) in a `condition` or `not_applicable` field. If that is the case, evaluate the condition, and remove it appropriately.
 
 
 > :bulb: Any changes will take a few minutes until they are visible online under your custom link. Furthermore, you have to do a **reload** in your browser to see the changes, as Github uses caching. Maybe you even have to **clear your browser cache** to see the changes.

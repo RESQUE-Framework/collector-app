@@ -1,6 +1,6 @@
 {
-    "version": "0.6.0",
-    "date": "2025-02-13",
+    "version": "0.7.0",
+    "date": "2025-03-28",
     "prefix": "P",
     "title": "Publication",
     "elements": [       
@@ -221,6 +221,14 @@
             "title": "Which of the multiple studies is rated? (Enter a number)",
             "condition": "$P_Suitable === 'Yes' && $P_MultiStudy === 'Yes'"
         },
+        {
+            "id": "P_MultiStudy_Note",
+            "type": "info",
+            "title": "<span style='background-color: yellow; font-size:100%; font-weight:normal;'>Please note: All following questions should <i>only</i> be applied to the select study within the multi-study paper!</span>",
+            "condition": "$P_Suitable === 'Yes' && $P_MultiStudy === 'Yes'"
+        },
+
+
         {
             "id": "P8P9bSEP",
             "type": "separator",
@@ -476,7 +484,7 @@
         {
             "id": "P_Sample_RareOther",
             "type": "text",
-            "title": "⤷ Please specify the hard to acquire population",
+            "title": "⤷ Why was the population hard to acquire?",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample == 'Rare'"
         },
 
@@ -1591,6 +1599,12 @@
             "type": "separator",
             "no_comment": true,
             "condition": "$P_Suitable === 'Yes'"
+        },
+        {
+            "id": "P_MultiStudy_Note2",
+            "type": "info",
+            "title": "<span style='background-color: yellow; font-size:100%; font-weight:normal;'>As a reminder: All questions should <i>only</i> be applied to the select study within the multi-study paper!</span>",
+            "condition": "$P_Suitable === 'Yes' && $P_MultiStudy === 'Yes'"
         },
         {
             "id": "P_Power_Info",
