@@ -15,9 +15,40 @@
             "title": "First name"
         },
         {
+            "id": "Gender",
+            "type": "radio",
+            "title": "Your gender:",
+            "options": [
+                {
+                    "id": "Female",
+                    "text": "Female"
+                },
+                {
+                    "id": "Male",
+                    "text": "Male"
+                },
+                {
+                    "id": "Diverse",
+                    "text": "Diverse"
+                },
+                {
+                    "id": "NoReply",
+                    "text": "Prefer not to answer"
+                }
+            ]
+        },
+        
+        {
             "id": "YearPhD",
             "type": "number",
             "title": "Year of PhD / Dr."
+        },
+
+        {
+            "id": "NumberChildren",
+            "type": "number",
+            "title": "Number of children",
+            "default": 0
         },
         {
             "id": "AcademicAgeBonus",
@@ -28,22 +59,6 @@
             "id": "ORCID",
             "type": "text",
             "title": "ORCID identifier (as full link, e.g. https://orcid.org/0000-0002-1825-0097)"
-        },
-        {
-            "id": "RaterType",
-            "type": "radio",
-            "title": "Who enters the data?",
-            "options": [
-                {
-                    "id": "Applicant",
-                    "text": "I am the applicant & a (co-)author of these research outputs"
-                },
-                {
-                    "id": "External",
-                    "text": "I am an external rater"
-                }
-            ],
-            "default": "Applicant"
         },
         {
             "id": "ExternalRaterName",
@@ -61,24 +76,6 @@
                     "text": "Yes"
                 }
             ]
-        },
-        {
-            "id": "METASEP0",
-            "type": "separator",
-            "condition":"$RaterType === 'Applicant'"
-        },
-        {
-            "id": "M_MeritStatement_Info",
-            "type": "info",
-            "text": "<h3>Overall Merit Statement</h3>The overall merit statement summarizes why your research output - across all or some of your publications, data sets, or research software contributions - made an important substantive contribution to the field. This could include, for example:<ul><li>a consistent research programme across multiple papers</li><li>a new theory that was developed or tested for the first time</li><li>a series of experiments that rejected or confirmed a long debated effect</li></ul>Please focus on the merit of your overarching research program. Later, you will be able to add specific merit statements for individual research outputs.<br><br><i>Do not provide information on societal or scientific impact or information on citation statistics here, but focus on the intrinsic quality of the research output itself - regardless whether it had impact yet or not. Age- and field-normalized citation statistics will be automatically retrieved for each submitted work.</i>",
-            "condition":"$RaterType === 'Applicant'"
-        },
-        {
-            "id": "P_MeritStatement",
-            "type": "textbox",
-            "maxwords": 300,
-            "title": "Merit Statement (narrative, max. 300 words. Box will expand)",
-            "condition":"$RaterType === 'Applicant'"
         },
 
         {
