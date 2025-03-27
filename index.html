@@ -1071,7 +1071,9 @@
                 <div class="modal-content">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <h2 x-text="$store.config?.config?.main_title"></h2>
-                        <img :src="$store.config?.config?.image_url" alt="University Logo" style="height: 80px;">
+                        <template x-if="$store.config?.config?.image_url">
+                            <img :src="$store.config?.config?.image_url" alt="University Logo" style="height: 80px;">
+                        </template>
                     </div>
                     <template x-if="$store.config.config?.instructions?.html">
                         <div x-html="$store.config.config?.instructions?.html || ''"></div>
