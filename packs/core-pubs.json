@@ -114,6 +114,7 @@
             "title": "⤷ Publication type: Other",
             "condition": "$P_TypeMethod_OtherMethod"
         },
+
         {
             "id": "P_TypePublication",
             "type": "radio",
@@ -167,7 +168,7 @@
         {
             "id": "P_Suitable",
             "type": "radio",
-            "title": "Does this contribution fit well into the assessment scheme? (If 'No': All indicators are skipped but you can still add a Merit Statement and an Impact Statement. The paper will not be included in the scoring but processed manually)",
+            "title": "Does this contribution fit well into the RESQUE assessment scheme? (If 'No': All indicators are skipped but you can still add a Merit Statement and an Impact Statement. The paper will not be included in the scoring but processed manually)",
             "options": [
                 {
                     "id": "No",
@@ -179,7 +180,7 @@
                 }
             ],
             "default": "Yes",
-            "tip_external": "If the fit is not clear already try answer the other indicators first. Most unsuitable papers will have lots of 'not applicable'."
+            "tip_external": "If the fit is not already clear, try to answer the other indicators first. Most unsuitable papers will have lots of 'not applicable'."
         },
         {
             "id": "P_Suitable_Explanation",
@@ -193,6 +194,7 @@
             "no_comment": true,
             "condition": "$P_Suitable === 'Yes'"
         },
+
         {
             "id": "P_MultiStudy",
             "type": "radio",
@@ -379,6 +381,51 @@
             "condition": "$P_Suitable === 'Yes'"
         },
 
+
+
+        {
+            "id": "P_Data_PRISMA",
+            "type": "radio",
+            "title": "Were the PRISMA guidelines followed (i.e. are all items of the “PRISMA 2020 checklist” reported in the paper)?",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No' || !$P_TypeMethod_MetaAnalysis)"
+            },
+            "options": [
+                {
+                    "id": "No",
+                    "text": "No",
+                    "value": 0
+                },
+                {
+                    "id": "Yes",
+                    "text": "Yes",
+                    "value": 1
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_TypeMethod_MetaAnalysis"
+        },
+
+        {
+            "id": "P_Data_MetaAnalysisRaters",
+            "type": "radio",
+            "title": "Was study inclusion, information extraction, and quality rating performed by at least two independent raters?",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No' || !$P_TypeMethod_MetaAnalysis)"
+            },
+            "options": [
+                {
+                    "id": "No",
+                    "text": "No",
+                    "value": 0
+                },
+                {
+                    "id": "Yes",
+                    "text": "Yes",
+                    "value": 1
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_TypeMethod_MetaAnalysis"
+        },
 
 
         {
@@ -802,7 +849,6 @@
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Data_Type_Physiological && $P_Data_TypePhysiological_Other"
         },
 
-
         {
             "id": "P_Longitudinal",
             "type": "radio",
@@ -880,15 +926,23 @@
                     "text": "Not available"
                 },
                 {
-                    "id": "YesParts",
-                    "text": "Yes, parts of data [provide doi or URL]"
+                    "id": "YesEntire",
+                    "text": "Yes, the entire primary data are available [provide doi or URL]"
                 },
                 {
-                    "id": "YesEntire",
-                    "text": "Yes, entire data [provide doi or URL]"
+                    "id": "YesParts",
+                    "text": "Parts of the primary data are available [provide doi or URL]"
+                },
+                {
+                    "id": "YesSynthetic",
+                    "text": "A synthesized dataset with statistical properties similar to the original data is available [provide doi or URL]"
+                },
+                {
+                    "id": "YesAggregate",
+                    "text": "Only aggregated data that could be shared are available, because primary data could not be shared [provide doi or URL]"
                 }
             ],
-            "info": "If the data is only available on a personal website (including personal university websites) or 'upon (reasonable) request', select <i>not available</i>. When only aggregated data is available, generally select <i>not available</i> (there might be exceptions with high-volume physiological data).<br><br>When to choose <b>'Not applicable'</b>?<ul><li>If legal regulations or binding conditions of the data provider prohibit data publication and not even restricted access is possible.</li></ul>",
+            "info": "If the data is only available on a personal website (including personal university websites) or 'upon (reasonable) request', select <i>not available</i>. When only few aggregated data is available, select <i>not available</i> (there might be exceptions with high-volume physiological data, and when primary data justifiably could not be shared).<br><br>When to choose <b>'Not applicable'</b>?<ul><li>If legal regulations or binding conditions of the data provider prohibit data publication and not even restricted access is possible.</li></ul>",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated)",
             "tip_external": "<b>Practical approach</b>: <ul><li>Is a <b>link</b> to a data set provided?</li><li>Is the data in a <b>repository</b> that also controls data access?</li></ul> <br><br><b>Search words:</b> open, data, availab*"
         },
@@ -902,7 +956,7 @@
             "id": "P_Data_Open_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesParts', 'YesEntire']",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts', 'YesSynthetic', 'YesAggregate']",
             "info": "You can add multiple DOIs or URLs, separated by a semicolon (;)"
         },
         {
@@ -911,7 +965,7 @@
             "title": "⤷ Access level",
             "score": {
                 "not_applicable": "($P_Suitable === 'No') || (($P_Data_Open === 'NotApplicable') && (exists($P_Data_Open_NAExplanation))) || ($P_Data === 'No') || (!($P_Data_Source_NewOwn) && !($P_Data_Source_ReuseOwn) && !($P_Data_Source_ReuseCompilation) && !($P_Data_Source_Simulated))",
-                "condition": "($P_Data === 'Yes')",
+                "condition": "($P_Data === 'Yes' && $P_Data_Open != 'NotAvailable')",
                 "op": "select" 
             },
             "options": [
@@ -933,14 +987,14 @@
                 }
             ],
             "info": "For information about access levels, see <a href='https://rdc-psychology.org/access-data'>here</a>. <br> <ul><li>{:'ZK0' | <b>ZK0 / Sharing level 0 ('open for public use')</b>: Neither access to nor use of the data is restricted in any way. Research data provided in this category are typically licensed through standard licenses (e.g., CC-BY-SA 4.0)}</li><li>{:'ZK1' | <b>ZK1 / Sharing level 1 ('open for scientific use')</b>: Data re-use is limited to exclusively scientific purposes by means of a general use license. Proof of affiliation with a scientific institution and a brief description of the intended use must be provided.}</li><li>{:'ZK2' | <b>ZK2 / Sharing level 2 ('restricted scientific use')</b>: Comparable to ZK1, access and re-use is restricted to scientific purposes. In contrast to ZK1, however, individual license agreements are made that may contain other restrictions.}</li></ul>",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts']",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts', 'YesSynthetic', 'YesAggregate']",
             "tip_external":"<b>Practical Approach:</b><br><br> Follow the link and determine the access level. The data must be hosted at a repository and access control decisions must be guarded by a <b>predefined</b> set of rules by the repository <mark>(not by the author!)</mark>."
         },
         {
             "id": "P_Data_Open_AccessLevel_ZK2Explanation",
             "type": "text",
             "title": "⤷ Access level ZK2: Justification for restricted access",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts'] && $P_Data_Open_AccessLevel === 'ZK2'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts', 'YesSynthetic', 'YesAggregate'] && $P_Data_Open_AccessLevel === 'ZK2'"
         },
         {
             "id": "P_Data_Open_FAIR",
@@ -948,7 +1002,7 @@
             "title": "⤷ FAIR format",
             "score": {
                 "not_applicable": "($P_Suitable === 'No') || (($P_Data_Open === 'NotApplicable') && (exists($P_Data_Open_NAExplanation))) || ($P_Data === 'No')  || (!($P_Data_Source_NewOwn) && !($P_Data_Source_ReuseOwn) && !($P_Data_Source_ReuseCompilation) && !($P_Data_Source_Simulated))",
-                "condition": "($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts'] && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || (($P_Data_Open_AccessLevel === 'ZK2') && (exists($P_Data_Open_AccessLevel_ZK2Explanation))))"
+                "condition": "($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts', 'YesSynthetic', 'YesAggregate']  && !$P_Data_Open =|= ['NotApplicable', 'NotAvailable'] && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || (($P_Data_Open_AccessLevel === 'ZK2') && (exists($P_Data_Open_AccessLevel_ZK2Explanation))))"
             },
             "options": [
                 {
@@ -967,7 +1021,7 @@
                     "value": 0.25
                 }
             ],
-            "condition": "($P_Suitable === 'Yes') && ($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts'] && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || ($P_Data_Open_AccessLevel === 'ZK2' && exists($P_Data_Open_AccessLevel_ZK2Explanation)))",
+            "condition": "($P_Suitable === 'Yes') && ($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts', 'YesSynthetic', 'YesAggregate'] && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || ($P_Data_Open_AccessLevel === 'ZK2' && exists($P_Data_Open_AccessLevel_ZK2Explanation)))",
             "info": "<ul><li>Persistent identifier: Data in an OSF project do count, as we consider OSF URLs to be persistent.</li></ul>",
             "tip_external":"For <b>Codebook</b>:<ul><li>Check the availability of a codebook. Normally a separate document should be provided.</li><li>Exception: Variable labels, descriptions and scales are provided in a structured (e.g. tabular) format at the beginning of the syntax script.</li><li><b>Variable name, content</b> and <b>scale</b> must be provided in order to receive the point.</li></ul>"
         },
@@ -1007,7 +1061,7 @@
                     "value": 1
                 }
             ],
-            "info":"{'YesParts', 'YesEntire' | Only choose <b>`Yes`</b> if a doi or URL can be provided.} <br><br><b>When only parts of scripts available:</b><br>Choose `Yes, parts of scripts` if no justification is given.<br>Choose `Yes, entire scripts` if a reasonable justification for all missing scripts are provided.<br><br> When to choose <b>'Not applicable'</b>:<br>If no scripts have been used in the publication.",
+            "info":"{'YesEntire', 'YesParts', 'YesSynthetic', 'YesAggregate' | Only choose <b>`Yes`</b> if a doi or URL can be provided.} <br><br><b>When only parts of scripts available:</b><br>Choose `Yes, parts of scripts` if no justification is given.<br>Choose `Yes, entire scripts` if a reasonable justification for all missing scripts are provided.<br><br> When to choose <b>'Not applicable'</b>:<br>If no scripts have been used in the publication.",
             "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes'"
         },
         {
@@ -1228,7 +1282,7 @@
         {
             "id": "P_Preregistration_Replication",
             "type": "radio",
-            "title": "The paper contains a preregistered replication attempt (either direct/close or conceptual)",
+            "title": "The paper contains a preregistered replication attempt of a existing study (either direct/close or conceptual).",
             "score": {
                 "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration_Replication === 'NotApplicable') && (exists($P_Preregistration_Replication_NAExplanation))) || ($P_TypeMethod_MetaAnalysis)",
                 "condition": ""
@@ -1250,7 +1304,7 @@
                     "value": 1
                 }
             ],
-            "info": "As only <i>preregistered</i> replication attempts count, you need to provide the DOI or URL of the preregistration in the previous indicator. If the paper contains a replication which was not preregistered, please select <b>'No'</b>.<br><br>If the paper was preregistered, but does not contain a replication, select <b>'No'</b>. If you chose 'not applicable' at the previous indicator 'Preregistration', choose 'not applicable' here, too.",
+            "info": "As only <i>preregistered</i> replication attempts count, you need to provide the DOI or URL of the preregistration in the previous indicator. If the paper contains a replication which was not preregistered, please select <b>'No'</b>.<br><br>If the paper was preregistered, but does not contain a replication, select <b>'No'</b>. If you chose 'not applicable' at the previous indicator 'Preregistration', choose 'not applicable' here, too.<br><br>This indicator refers both to within-paper replication studies (e.g., Study 2 is a preregistered replication of Study 1) and to replications of other studies that have been published in other papers.",
             "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis",
             "tip_external":"If it is a replication of a previously reported effect, it is <b>'yes'</b>, even if the replication is not the main research question of the preregistration.<br><b>Search word</b> (in preregistration):replica*"
         },

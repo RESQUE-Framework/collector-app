@@ -61,12 +61,6 @@
             "title": "ORCID identifier (as full link, e.g. https://orcid.org/0000-0002-1825-0097)"
         },
         {
-            "id": "ExternalRaterName",
-            "type": "text",
-            "title": "Name of external rater (optional)",
-            "condition": "$RaterType === 'External'"
-        },
-        {
             "id": "HonestyDisclaimer",
             "type": "checkbox",
             "title": "I am aware that all information can be verified. I provide accurate information to the best of my knowledge.",
