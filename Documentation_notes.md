@@ -10,3 +10,9 @@ Under `<template>`, only **one** root element is allowed. If you want to return 
 - Make sure that every indicator id starts with this prefix of the pack!
 - The indicator id must have this format: `<Prefix>_<IndicatorNamePascalCase>`
   - Subcategories are separated by an underscore: `<Prefix>_<IndicatorNamePascalCase>_<SubcategoryNamePascalCase>`
+
+### How scoring works
+
+- "condition": When the condition is met, the maximum of the possible values of the indicator is added to the maximum of the POMP score, and the actual value is added to the actual POMP score - except when the `not_applicabble` condition is also met (see below).
+- "not_applicable": When this condition is met, the indicator is not applicable. Then it is removed from the maximum POMP score and ignored in the score computation.
+- "op": TODO

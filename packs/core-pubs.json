@@ -114,6 +114,52 @@
             "title": "⤷ Publication type: Other",
             "condition": "$P_TypeMethod_OtherMethod"
         },
+
+        {
+            "id": "P_Data_PRISMA",
+            "type": "radio",
+            "title": "Were the PRISMA guidelines followed (i.e. are all items of the “PRISMA 2020 checklist” reported in the paper)?",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No' || !$P_TypeMethod_MetaAnalysis)"
+            },
+            "options": [
+                {
+                    "id": "No",
+                    "text": "No",
+                    "value": 0
+                },
+                {
+                    "id": "Yes",
+                    "text": "Yes",
+                    "value": 1
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_TypeMethod_MetaAnalysis"
+        },
+
+        {
+            "id": "P_Data_MetaAnalysisRaters",
+            "type": "radio",
+            "title": "Was study inclusion, information extraction, and quality rating performed by at least two independent raters?",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No' || !$P_TypeMethod_MetaAnalysis)"
+            },
+            "options": [
+                {
+                    "id": "No",
+                    "text": "No",
+                    "value": 0
+                },
+                {
+                    "id": "Yes",
+                    "text": "Yes",
+                    "value": 1
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_TypeMethod_MetaAnalysis"
+        },
+
+
         {
             "id": "P_TypePublication",
             "type": "radio",
@@ -809,7 +855,6 @@
             "title": "⤷ Type of physiological data: Other",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Data_Type_Physiological && $P_Data_TypePhysiological_Other"
         },
-
 
         {
             "id": "P_Longitudinal",
