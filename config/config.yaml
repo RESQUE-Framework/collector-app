@@ -1,8 +1,8 @@
-main_title: "RESQUE LMU"
+main_title: "RESQUE"
 background_color: "#ffffff"
-max: 8
+max: 10
 max_top_papers: 3
 min_RO_warning_threshold: 2
-show_instruction: true
-show_beta_warning: false
+show_instruction: false
+show_beta_warning: true
 image_url: https://upload.wikimedia.org/wikipedia/commons/0/06/LMU_Muenchen_Logo.svg
