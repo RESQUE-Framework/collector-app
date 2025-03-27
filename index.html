@@ -515,7 +515,6 @@
         const switchToTab = (index) => {
             Alpine.store('showIndicators', false);
             Alpine.store('data').currentTab = index;
-            Alpine.store('indentations').current = Alpine.store('indentations')[Alpine.store('data').input[index].type];
             setTimeout(() => Alpine.store('showIndicators', true), 0);
             document.querySelector('#formview').scrollTop = 0;
         }
@@ -562,23 +561,27 @@
                                     x-sort="$store.data.reorderResearchOutputs($item, $position + 1); show = false; setTimeout(() => show = true, 0);">
                                     <template x-for="tab, index in $store.data.input.slice(1)" :key="index">
                                         <div x-sort:item="index + 1" style="position: relative;" x-data="tab">
-                                            <div @mouseover="hoverStart" @mouseout="hoverEnd"
-                                                @click="switchToTab(index + 1)"
-                                                x-html="`${$store.data.input[index + 1].P_TopPaper_Select ? '⭐️ ' : ''}<b>${types[tab.type]}</b><br>${$store.data.input[index + 1].Title ?? ''}`"
-                                                :class="{tab: true, active: $store.data.currentTab === index + 1}">
-                                            </div>
-                                            <span @mouseover="hoverStart" class="tab-delete-button tab-delete-menu"
-                                                @click="showRemoveButton" x-show="hovering && !showRemove">
-                                                X
-                                            </span>
-                                            <button class="critical tab-delete-menu" x-show="showRemove"
-                                                @click="$store.data.removeResearchOutput(index + 1)">
-                                                Remove
-                                            </button>
-                                            <div class="tab-progress-indicator"
-                                                :style="`background-color: ${getProgressColor($store.data.completion[index + 1].progress.ratio)};`"
-                                                :title="`Progress: ${$store.data.completion[index + 1].progress.percent}%`">
-                                            </div>
+                                            <template x-if="$store.data.input[index + 1]">
+                                                <div @mouseover="hoverStart" @mouseout="hoverEnd"
+                                                    @click="switchToTab(index + 1)"
+                                                    x-html="`${$store.data.input[index + 1].P_TopPaper_Select ? '⭐️ ' : ''}<b>${types[tab.type]}</b><br>${$store.data.input[index + 1].Title ?? ''}`"
+                                                    :class="{tab: true, active: $store.data.currentTab === index + 1}">
+                                                </div>
+                                                <span @mouseover="hoverStart" class="tab-delete-button tab-delete-menu"
+                                                    @click="showRemoveButton" x-show="hovering && !showRemove">
+                                                    X
+                                                </span>
+                                                <button class="critical tab-delete-menu" x-show="showRemove"
+                                                    @click="$store.data.removeResearchOutput(index + 1)">
+                                                    Remove
+                                                </button>
+                                            </template>
+                                            <template x-if="$store.data.completion[index + 1]">
+                                                <div class="tab-progress-indicator"
+                                                    :style="`background-color: ${getProgressColor($store.data.completion[index + 1].progress.ratio)};`"
+                                                    :title="`Progress: ${$store.data.completion[index + 1].progress.percent}%`">
+                                                </div>
+                                            </template>
 
                                         </div>
                                     </template>
@@ -626,8 +629,8 @@
                                     <div @click="$store.selectedIndicator = elem"
                                         x-show="evaluateCondition(elem.condition)" onblur="actions[elem.onchange]()"
                                         class="indicator-container" :class="elem.style_classes" :id="elem.id">
-
-                                        <template x-for="_ in [...Array($store.indentations.current[elem.id])]">
+                 
+                                        <template x-for="_ in [...Array($store.indentations[$store.data.currentInput.type][elem.id])]">
                                             <div class="indent"></div>
                                         </template>
 
