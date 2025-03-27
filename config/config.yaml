@@ -1,7 +1,8 @@
-main_title: "RESQUE Eichstätt"
-background_color: "#f0f6f9"
+main_title: "RESQUE LMU"
+background_color: "#ffffff"
 max: 8
 max_top_papers: 3
 min_RO_warning_threshold: 2
 show_instruction: true
 show_beta_warning: false
+image_url: https://upload.wikimedia.org/wikipedia/commons/0/06/LMU_Muenchen_Logo.svg
