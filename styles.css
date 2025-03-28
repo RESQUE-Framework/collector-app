@@ -329,6 +329,7 @@ button {
     font-weight: bold;
     margin: 3px;
     transition: 150ms;
+    border: 1px solid #ccc;
 }
 
 button:hover {
@@ -374,6 +375,7 @@ button:hover {
     padding: 0.5rem 1rem;
     margin-bottom: 16px;
     cursor: pointer;
+    border: 1px solid #ccc;
 }
 
 .tab:hover:not(.active),
