@@ -267,7 +267,13 @@
             meta: {},
             pub: {},
             software: {},
-            data: {}
+            data: {},
+            config: {
+                instructions: {
+                    md: '',
+                    html: ''
+                }
+            }
         });
 
         Alpine.store('indentations', {
@@ -1064,10 +1070,20 @@
             <div id="instructions-modal" class="modal">
                 <div class="modal-content">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <h2 x-text="$store.config.config?.main_title"></h2>
-                        <img :src="$store.config.config?.image_url" alt="RESQUE Logo" style="height: 80px;">
+                        <h2 x-text="$store.config?.config?.main_title"></h2>
+                        <template x-if="$store.config?.config?.image_url">
+                            <img :src="$store.config?.config?.image_url" alt="University Logo" style="height: 80px;">
+                        </template>
                     </div>
-                    <div x-html="$store.config.config?.instructions?.html"></div>
+                    <template x-if="$store.config.config?.instructions?.html">
+                        <div x-html="$store.config.config?.instructions?.html || ''"></div>
+                    </template>
+                    <div 
+                        x-show="$store.data.input.length <= 1"
+                        style="text-align: right; position: sticky; bottom: 0;">
+                        <button style="background-color: #333; color: #efefef; border-radius: 99px; border: 4px solid #00000055; background-clip: padding-box;"
+                            @click="closeInstructionsModal(); driver(tourMain).drive()">Start tour →</button>
+                    </div>
                 </div>
             </div>
 
@@ -1560,11 +1576,6 @@
         const mode = params.get("mode");
         const details = params.get("details") !== "false";
 
-        if (!localStorage.getItem("data")) {
-            //showInfoModal();
-            driver(tourMain).drive();
-        }
-
         function saveCurrentQueryConfig() {
             Alpine.store('data').input[0].queryConfig = Alpine.store('config').queryConfig;
         }
@@ -1574,14 +1585,6 @@
             const config = jsyaml.load(text);
 
             Alpine.store('forms').config = config;
-        });
-
-        // Load instructions
-        fetch('./config/instructions.md').then(response => response.text()).then(text => {
-            const converter = new showdown.Converter();
-            Alpine.store('forms').config.instructions = {};
-            Alpine.store('forms').config.instructions.md = text;
-            Alpine.store('forms').config.instructions.html = converter.makeHtml(text);
         });
 
         menu().then(m => {
@@ -1616,9 +1619,22 @@
             // Set background color from config
             document.documentElement.style.setProperty('--bg-color', Alpine.store('config').config.background_color);
 
+             // Load instructions
+            fetch('./config/instructions.md').then(response => response.text()).then(text => {
+                const converter = new showdown.Converter();
+                Alpine.store('forms').config.instructions = {};
+                Alpine.store('forms').config.instructions.md = text;
+                Alpine.store('forms').config.instructions.html = converter.makeHtml(text);
+            });
+
             // Show instructions modal if configured
             if (Alpine.store('config').config.show_instruction) {
                 showInstructionsModal();
+            }
+
+            if (!Alpine.store('config').config.show_instruction && Alpine.store('data').input.length <= 1) {
+                //showInfoModal();
+                driver(tourMain).drive();
             }
         });
     </script>
