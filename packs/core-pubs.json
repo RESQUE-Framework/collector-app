@@ -168,7 +168,7 @@
         {
             "id": "P_Suitable",
             "type": "radio",
-            "title": "Does this contribution fit well into the RESQUE assessment scheme? (If 'No': All indicators are skipped but you can still add a Merit Statement and an Impact Statement. The paper will not be included in the scoring but processed manually)",
+            "title": "Does this contribution fit well into the RESQUE assessment scheme? (If 'No': All indicators are skipped but you can still add the CRediT information. The paper will not be included in the scoring but processed manually)",
             "options": [
                 {
                     "id": "No",
