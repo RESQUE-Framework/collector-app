@@ -1133,13 +1133,12 @@
                         <div>
                             <h3>Save to file...<span style="font-size: 70%; font-weight: normal;">&nbsp;&nbsp;Click
                                     publications to (de)select</span></h3>
-                            <div style="padding-bottom: 1rem;">
-                                <button @click="exp(); closeExportModal();">Export all data</button>
+                            <div style="padding-bottom: 1rem;">                                
                                 <button
                                     :disabled="excludedPublications.size >= $store.data.input.length - 1 || $store.data.input.length - 1 - excludedPublications.size > $store.config.config.max || $store.data.input.filter(ro => ro.P_TopPaper_Select).length < $store.config.config.max_top_papers"
                                     @click="exp(excludedPublications); excludedPublications = new Set(); closeExportModal();">Export
-                                    <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> research
-                                    outputs for the hiring committee</button>
+                                    <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> selected outputs for hiring committee</button>
+                                    <button @click="exp(); closeExportModal();">Export all data (for personal archive)</button>
                             </div>
                         </div>
 

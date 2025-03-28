@@ -2,10 +2,10 @@ main_title: "RESQUE Eichstätt"
 background_color: "#e7f2f7"
 max: 10
 max_top_papers: 3
-min_RO_warning_threshold: 2
+min_RO_warning_threshold: 3
 show_instruction: true
 show_beta_warning: false
-image_url: https://www.unibayern.de/assets/Uploads/mitglieder/91224117e5/KU_Logo_ub__ScaleWidthWzUwMF0.png
+image_url: https://www.squeaker.net/1517840745/image/paragraph/Universitaet-Eichstaett-Ingolstadt.png
 
 meta:
   sources: ["packs/core-meta.json"]
