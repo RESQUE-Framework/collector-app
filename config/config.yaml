@@ -1,21 +1,8 @@
-# Title of the app (shown on top left)
-main_title: "RESQUE Eichstätt"
-
-# Background color of the app
-background_color: "#f0f6f9"
-
-# Maximum number of papers that are expected by the committee
-max: 10
-
-# Number of top papers that must be selected
+main_title: "RESQUE LMU"
+background_color: "#ffffff"
+max: 8
 max_top_papers: 3
-
-# Minimum number of papers that must be entered before 
-# showing a warning is shown at the scoring box
-min_RO_warning_threshold: 0
-
-# Show the welcome message (text is defined in config/instructions.md)
+min_RO_warning_threshold: 2
 show_instruction: true
-
-# Show the beta warning message
 show_beta_warning: false
+image_url: https://upload.wikimedia.org/wikipedia/commons/0/06/LMU_Muenchen_Logo.svg

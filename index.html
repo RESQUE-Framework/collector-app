@@ -1062,7 +1062,12 @@
             </dialog>
 
             <div id="instructions-modal" class="modal">
-                <div class="modal-content" x-html="$store.config.config?.instructions?.html">
+                <div class="modal-content">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h2 x-text="$store.config.config?.main_title"></h2>
+                        <img :src="$store.config.config?.image_url" alt="RESQUE Logo" style="height: 80px;">
+                    </div>
+                    <div x-html="$store.config.config?.instructions?.html"></div>
                 </div>
             </div>
 
