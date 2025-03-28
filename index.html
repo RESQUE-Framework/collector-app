@@ -531,8 +531,13 @@
                                     href="https://www.resque.info/team.html">contact</a> us.]</span><br><br>
                         </div>
                         <div class="top">
-                            <h3><a href="https://www.resque.info" x-text="$store.config.config.main_title"></a></h3>
-                            <div id="actions">
+                            <div style="display: flex; align-items: center;">
+                                <h3><a href="https://www.resque.info" x-text="$store.config.config.main_title"></a></h3>
+                                <template x-if="$store.config?.config?.image_url">
+                                    <img :src="$store.config?.config?.image_url" alt="University Logo" style="width: 120px; margin-left: 20px;">
+                                </template>
+                            </div>
+                            <div id="actions" style="margin-top: 10px; display: flex; flex-direction: row; gap: 10px;">
                                 <button class="clear-button" @click="showModal('clear-modal')">Clear</button>
                                 <button class="load-button" @click="triggerLoad()">Load</button>
                                 <button class="save-button" @click="showExportModal()">Save to file ...</button>
