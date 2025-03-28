@@ -431,7 +431,7 @@
         {
             "id": "P_Data",
             "type": "radio",
-            "title": "Does this paper use any kind of data in a substantive way (new data, reuse of existing data, or simulated data?)",
+            "title": "Does this paper use any kind of data (new data, reuse of existing data, or simulated data)?",
             "options": [
                 {
                     "id": "No",
@@ -626,88 +626,6 @@
             "type": "text",
             "title": "⤷ Not Applicable: Explanation",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_CrossCultural == 'NotApplicable'"
-        },
-
-        {
-            "id": "stimsep",
-            "type": "separator",
-            "no_comment": true,
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && !$P_TypeMethod_MetaAnalysis && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
-        },
-
-
-        {
-            "id": "P_Stimuli",
-            "type": "radio",
-            "title": "Does the paper use or vary stimuli in a substantive way?",
-            "options": [
-                {
-                    "id": "NotApplicable",
-                    "text": "Not applicable"
-                },
-                {
-                    "id": "No",
-                    "text": "No"
-                },
-                {
-                    "id": "Yes",
-                    "text": "Yes"
-                }                
-            ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
-        },
-        {
-            "id": "P_Stimuli_NAExplanation",
-            "type": "text",
-            "title": "⤷ Not Applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli == 'NotApplicable'"
-        },
-        {
-            "id": "P_Stimuli_Representative",
-            "type": "radio",
-            "title": "Representativeness of stimulus sample (within the relevant stimulus population) ",
-            "options": [
-                {
-                    "id": "NotApplicable",
-                    "text": "Not applicable"
-                },
-                {
-                    "id": "NotConsidered",
-                    "text": "Not explicitly considered"
-                },
-                {
-                    "id": "ConsideredInvestigator",
-                    "text": "Explicitly considered, stimuli chosen by investigators"
-                },
-                {
-                    "id": "ConsideredSampled",
-                    "text": "Explicilty considered, stimuli randomly sampled from population"
-                }                
-            ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli == 'Yes'"
-        },
-        {
-            "id": "P_Stimuli_Representative_NAExplanation",
-            "type": "text",
-            "title": "⤷ Not Applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli == 'Yes' && $P_Stimuli_Representative == 'NotApplicable'"
-        },
-
-        {
-            "id": "P_Stimuli_CoG",
-            "type": "radio",
-            "title": "Are Constraints on Generality explicitly discussed for the stimulus sample?",
-            "options": [
-                {
-                    "id": "No",
-                    "text": "No"
-                },
-                {
-                    "id": "Yes",
-                    "text": "Yes"
-                }
-            ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli == 'Yes' && $P_Stimuli_Representative != 'NotApplicable'"
         },
 
         {
@@ -1282,7 +1200,7 @@
         {
             "id": "P_Preregistration_Replication",
             "type": "radio",
-            "title": "The paper contains a preregistered replication attempt of a existing study (either direct/close or conceptual).",
+            "title": "The paper contains a preregistered replication attempt of a existing study (either a direct/close or conceptual replication of any study in this or another paper).",
             "score": {
                 "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration_Replication === 'NotApplicable') && (exists($P_Preregistration_Replication_NAExplanation))) || ($P_TypeMethod_MetaAnalysis)",
                 "condition": ""
@@ -1355,7 +1273,7 @@
             "id": "P_GeneralComments",
             "type": "textbox",
             "maxwords": 500,
-            "title": "(optional) General comments (max. 500 words)",
+            "title": "(optional) General comments",
             "optional": true
         }
     ]
