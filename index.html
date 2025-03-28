@@ -1315,7 +1315,7 @@
             const pool = [];
 
             const ps = await Promise.all(packs.map(async pack => {
-                const response = await fetch("./packs/" + pack + ".json");
+                const response = await fetch("./" + pack);
                 return response.json();
             }));
 
@@ -1588,58 +1588,61 @@
             const config = jsyaml.load(text);
 
             Alpine.store('forms').config = config;
-        });
 
-        menu().then(m => {
-            for (const key in m) {
-                if (m[key].elements) {
-                    m[key].scoring = window.generateScoringRules(m[key].elements);
-                    Alpine.store('indentations')[key] = window.getDepths(m[key].elements);
+            return config;
+        }).then((config) => {
+            menu(config).then(m => {
+                for (const key in m) {
+                    if (m[key].elements) {
+                        m[key].scoring = window.generateScoringRules(m[key].elements);
+                        Alpine.store('indentations')[key] = window.getDepths(m[key].elements);
+                    }
+                    Alpine.store('forms')[key] = m[key];
                 }
-                Alpine.store('forms')[key] = m[key];
-            }
 
-            Alpine.store('data').manualInit();
-            Alpine.store('warnings').manualInit();
+                Alpine.store('data').manualInit();
+                Alpine.store('warnings').manualInit();
 
-            if (!Alpine.store('data').input[0].queryConfig) {
-                // save query config
-                Alpine.store('data').input[0].queryConfig = Alpine.store('config').queryConfig;
-            }
+                if (!Alpine.store('data').input[0].queryConfig) {
+                    // save query config
+                    Alpine.store('data').input[0].queryConfig = Alpine.store('config').queryConfig;
+                }
 
-            Alpine.store('loaded', true);
+                Alpine.store('loaded', true);
 
-            setTimeout(() => {
-                switchToTab(0);
-            }, 0)
+                setTimeout(() => {
+                    switchToTab(0);
+                }, 0)
 
-        }).then(() => {
-            // Check config compatibility
-            if (objectHash(Alpine.store('data').input[0].queryConfig) !== objectHash(Alpine.store('config').queryConfig)) {
-                showModal('config-incompatible-modal');
-            }
+            }).then(() => {
+                // Check config compatibility
+                if (objectHash(Alpine.store('data').input[0].queryConfig) !== objectHash(Alpine.store('config').queryConfig)) {
+                    showModal('config-incompatible-modal');
+                }
 
-            // Set background color from config
-            document.documentElement.style.setProperty('--bg-color', Alpine.store('config').config.background_color);
+                // Set background color from config
+                document.documentElement.style.setProperty('--bg-color', Alpine.store('config').config.background_color);
 
-             // Load instructions
-            fetch('./config/instructions.md').then(response => response.text()).then(text => {
-                const converter = new showdown.Converter();
-                Alpine.store('forms').config.instructions = {};
-                Alpine.store('forms').config.instructions.md = text;
-                Alpine.store('forms').config.instructions.html = converter.makeHtml(text);
+                // Load instructions
+                fetch('./config/instructions.md').then(response => response.text()).then(text => {
+                    const converter = new showdown.Converter();
+                    Alpine.store('forms').config.instructions = {};
+                    Alpine.store('forms').config.instructions.md = text;
+                    Alpine.store('forms').config.instructions.html = converter.makeHtml(text);
+                });
+
+                // Show instructions modal if configured
+                if (Alpine.store('config').config.show_instruction) {
+                    showInstructionsModal();
+                }
+
+                if (!Alpine.store('config').config.show_instruction && Alpine.store('data').input.length <= 1) {
+                    //showInfoModal();
+                    driver(tourMain).drive();
+                }
             });
-
-            // Show instructions modal if configured
-            if (Alpine.store('config').config.show_instruction) {
-                showInstructionsModal();
-            }
-
-            if (!Alpine.store('config').config.show_instruction && Alpine.store('data').input.length <= 1) {
-                //showInfoModal();
-                driver(tourMain).drive();
-            }
         });
+
     </script>
 </body>
 
