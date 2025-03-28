@@ -22,7 +22,12 @@
         {
             "id": "AcademicAgeBonus",
             "type": "number",
-            "title": "Years that are subtracted from active academic life (e.g. due to child care). You can enter fractional years, e.g. 0.5."
+            "title": "Years that are subtracted from active academic life (e.g., due to parental leave, care for family members, long-term illness). Please enter only the number; you can enter fractional years, e.g. 0.5."
+        },
+        {
+            "id": "AcademicAgeBonus_Explanation",
+            "type": "text",
+            "title": "Please describe the circumstances that led to this reduction."
         },
         {
             "id": "ORCID",
