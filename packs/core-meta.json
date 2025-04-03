@@ -79,7 +79,7 @@
             "condition":"$RaterType === 'Applicant'"
         },
         {
-            "id": "P_MeritStatement",
+            "id": "MeritStatement",
             "type": "textbox",
             "maxwords": 300,
             "title": "Merit Statement (narrative, max. 300 words. Box will expand)",
