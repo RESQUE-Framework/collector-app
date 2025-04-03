@@ -53,7 +53,7 @@ export const generateScoringRules = (items) => {
     return rules;
 }
 
-export const score = r => {
+export const score = (r, categories) => {
     const scoring = Alpine.store('forms')[r.type].scoring;
 
     if (scoring === undefined) {
@@ -112,29 +112,6 @@ export const score = r => {
         })
     }
 
-    const categories = [
-        {
-            title: "Theorizing & Formal Modeling",
-            cue: "Theorizing"
-        },
-        {
-            title: "Open Data",
-            cue: "Data"
-        },
-        {
-            title: "Open Materials",
-            cue: "OpenMaterials"
-        },
-        {
-            title: "Preregistration",
-            cue: "Prereg"
-        },
-        {
-            title: "Reproducible Code & Verification",
-            cue: "ReproducibleScripts|IndependentVerification"
-        }
-    ]
-
     const categoryScores = categories.map(category => {
         const categoryIndicators = Object.keys(itemScores).filter(indicator => new RegExp(category.cue).test(indicator));
         const categoryMax = categoryIndicators.map(indicator => itemScores[indicator].max).reduce((sum, current) => sum + current, 0);
@@ -157,8 +134,8 @@ export const score = r => {
     }
 }
 
-export const scoreAll = rs => {
-    const scores = rs.map(r => score(r));
+export const scoreAll = (rs, categories) => {
+    const scores = rs.map(r => score(r, categories));
 
     const validScores = scores.filter(s => Object.keys(s).length && s.max > 0)
 

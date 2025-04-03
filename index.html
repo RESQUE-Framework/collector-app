@@ -312,7 +312,7 @@
                 }
 
                 this.currentInput = this.input[this.currentTab];
-                this.score = window.scoreAll(this.input);
+                this.score = window.scoreAll(this.input, Alpine.store('config').config.score_categories || []);
                 this.completion = this.input.map(checkCompletion);
                 this.topPapers = this.input.filter(r => r.type === 'pub' && r.P_TopPaper_Select === true);
             },
@@ -411,7 +411,7 @@
 
             Alpine.store('data').topPapers = newTopPapers;
 
-            const scores = window.scoreAll(data);
+            const scores = window.scoreAll(data, Alpine.store('config').config.score_categories || []);
 
             Alpine.store('data').score = scores;
 
