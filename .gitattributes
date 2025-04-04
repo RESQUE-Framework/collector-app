@@ -1,7 +1,0 @@
-# This file is used to define merge strategies for specific files or directories in the repository.
-# The merge=ours strategy means that during a merge, the version of the file from the current branch will be kept, and the changes from the other branch (e.g., the upstream dev branch) will be ignored.
-
-# run `git config merge.ours.driver true` once to set up the merge driver
-config/config.yaml merge=ours
-config/instructions.md merge=ours
-packs/* merge=ours
