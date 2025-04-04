@@ -534,7 +534,10 @@
                             <div style="display: flex; align-items: center;">
                                 <h3><a href="https://www.resque.info" x-text="$store.config.config.main_title"></a></h3>
                                 <template x-if="$store.config?.config?.image_url">
-                                    <img :src="$store.config?.config?.image_url" alt="University Logo" style="width: 120px; margin-left: 20px;">
+                                    <img :src="$store.config?.config?.image_url" 
+                                        alt="University Logo" 
+                                        style="height: 70px; max-width: 350px; object-fit: contain; margin: 10px; margin-left: 20px;"
+                                    >
                                 </template>
                             </div>
                             <div id="actions" style="margin-top: 10px; display: flex; flex-direction: row; gap: 10px;">
