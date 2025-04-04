@@ -19,6 +19,20 @@
             "type": "number",
             "title": "Year of PhD / Dr."
         },
+
+        {
+            "id": "YearHabil",
+            "type": "number",
+            "title": "(if available) Year of habilitation or positive mid-term evaluation of W1/assistant professorship (Juniorprofessur)"
+        },
+
+        {
+            "id": "NumberChildren",
+            "type": "number",
+            "title": "Number of children",
+            "default": 0,
+            "optional": true
+        },
         {
             "id": "AcademicAgeBonus",
             "type": "number",
