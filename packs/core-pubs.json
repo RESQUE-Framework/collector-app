@@ -528,6 +528,42 @@
         },
 
 
+        {
+            "id": "P_Sample_Location",
+            "type": "checkbox",
+            "title": "Location of data collection (check all that apply)",
+            "options": [
+                {
+                    "id": "Lab",
+                    "text": "Lab / Controlled in-person setting"
+                },
+                {
+                    "id": "Field",
+                    "text": "Field / Naturalistic in-person setting"
+                },
+                {
+                    "id": "OnlineSurvey",
+                    "text": "Online: Survey"
+                },
+                {
+                    "id": "OnlineEMA",
+                    "text": "Mobile / Ecological Momentary Assessment (EMA)"
+                },
+                {
+                    "id": "OtherType",
+                    "text": "Other"
+                }                  
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
+        },
+
+        {
+            "id": "P_Sample_Location_Other",
+            "type": "text",
+            "title": "⤷ Specify the location of data collection:",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_Location_OtherType"
+        },
+
 
 
         {
@@ -1270,10 +1306,15 @@
             "no_comment": true
         },
         {
+            "id": "P_GeneralComments_Info",
+            "type": "info",
+            "text": "<h3>General comments</h3>"
+        },
+        {
             "id": "P_GeneralComments",
             "type": "textbox",
             "maxwords": 500,
-            "title": "(optional) General comments",
+            "title": "You can (optionally) add general comments here:",
             "optional": true
         }
     ]
