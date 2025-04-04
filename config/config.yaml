@@ -1,11 +1,11 @@
-main_title: "RESQUE"
-background_color: "#ffffff"
+main_title: "RESQUE Eichstätt"
+background_color: "#e7f2f7"
 max: 10
 max_top_papers: 3
-min_RO_warning_threshold: 2
-show_instruction: false
-show_beta_warning: true
-image_url: https://upload.wikimedia.org/wikipedia/commons/0/06/LMU_Muenchen_Logo.svg
+min_RO_warning_threshold: 3
+show_instruction: true
+show_beta_warning: false
+image_url: https://www.squeaker.net/1517840745/image/paragraph/Universitaet-Eichstaett-Ingolstadt.png
 
 meta:
   sources: ["packs/core-meta.json"]
@@ -28,8 +28,6 @@ software:
     min_indicators_warning_threshold: 0
 
 score_categories:
-  - title: "Theorizing & Formal Modeling"
-    cue: "Theorizing"
 
   - title: "Open Data"
     cue: "Data"
@@ -40,5 +38,5 @@ score_categories:
   - title: "Preregistration"
     cue: "Prereg"
     
-  - title: "Reproducible Code & Verification"
-    cue: "ReproducibleScripts|IndependentVerification"
+  - title: "Reproducible Code"
+    cue: "ReproducibleScripts"

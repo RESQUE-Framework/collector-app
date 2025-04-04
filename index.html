@@ -1082,7 +1082,11 @@
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <h2 x-text="$store.config?.config?.main_title"></h2>
                         <template x-if="$store.config?.config?.image_url">
-                            <img :src="$store.config?.config?.image_url" alt="University Logo" style="height: 80px;">
+                            <img 
+                                :src="$store.config?.config?.image_url" 
+                                alt="University Logo" 
+                                style="height: 70px; max-width: 350px; object-fit: contain; margin: 10px; margin-left: 20px;"
+                            >
                         </template>
                     </div>
                     <template x-if="$store.config.config?.instructions?.html">
