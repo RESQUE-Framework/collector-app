@@ -1010,7 +1010,7 @@
             "title": "⤷ Access level",
             "score": {
                 "not_applicable": "($P_Suitable === 'No') || (($P_Data_Open === 'NotApplicable') && (exists($P_Data_Open_NAExplanation))) || ($P_Data === 'No') || (!($P_Data_Source_NewOwn) && !($P_Data_Source_ReuseOwn) && !($P_Data_Source_ReuseCompilation) && !($P_Data_Source_Simulated))",
-                "condition": "($P_Data === 'Yes' && $P_Data_Open != 'NotAvailable')",
+                "condition": "($P_Data === 'Yes' && $P_Data_Open != 'NotAvailable' && exists($P_Data_Open_Identifier))",
                 "op": "select" 
             },
             "options": [
