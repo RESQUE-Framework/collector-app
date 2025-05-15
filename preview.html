@@ -13,6 +13,8 @@
 
     <script src="//unpkg.com/alpinejs" defer></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.min.js"></script>
+
     <script>
         const getPacks = async () => {
             const response = await fetch('./packs/info.json');
@@ -52,6 +54,8 @@
             Alpine.store('showLabels', packInQuery.showLabels);
 
             Alpine.store('showPoints', packInQuery.showPoints);
+
+            Alpine.store('manualMode', packInQuery.manualMode);
         });
 
         const evaluateFilter = (filter, elemId) => {
@@ -130,6 +134,54 @@
             };
         }
 
+        function getVisibleHTML(parentSelector) {
+            const parent = document.querySelector(parentSelector);
+            if (!parent) return '';
+
+            const visibleElements = [];
+
+            const elements = parent.querySelectorAll('*');
+            elements.forEach(el => {
+                const style = window.getComputedStyle(el);
+                const rect = el.getBoundingClientRect();
+
+                const isVisible = (
+                style.display !== 'none' &&
+                style.visibility !== 'hidden' &&
+                parseFloat(style.opacity) !== 0 &&
+                rect.width > 0 &&
+                rect.height > 0
+                );
+
+                if (isVisible) {
+                visibleElements.push(el.outerHTML);
+                }
+            });
+
+            return visibleElements.join('\n');
+            }
+
+
+        const toDOCX = () => {
+            const docx = htmlDocx.asBlob(getVisibleHTML('#formview'), {
+                orientation: 'portrait',
+                margins: {
+                    top: 100,
+                    right: 100,
+                    bottom: 100,
+                    left: 100
+                }
+            });
+
+            const url = URL.createObjectURL(docx);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'resque:manual.docx';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
     </script>
 
     <div x-data="{selectedPack: ''}" x-effect="getPack(selectedPack).then(d => $store.pack = d)">
@@ -165,6 +217,14 @@
                 Show points
             </label>
 
+            <!-- Checkbox for manual mode -->
+             <label style="display: inline-block;">
+                <input type="checkbox" x-model="$store.manualMode" />
+                Manual mode
+            </label>
+
+            <button @click="toDOCX">Download DOCX</button>
+
         </div>
 
         <div>
@@ -185,6 +245,7 @@
                     <div x-show="evaluateFilter($store.filter, elem.id)">
                         <p>
                             <span class="label" x-show="$store.showLabels" x-text="`[${elem.id}]`"></span>
+                            <h3 x-show="elem.id && $store.manualMode" style="color: navy;"><span>Indicator: </span><span x-text="elem.id"></span></h3>
                             <span x-show="elem.title" x-html="preprocessText(elem.title)"
                                 style="font-weight: bold;"></span>
                             <span x-show="elem.info" x-data="{ hover: false }">
@@ -198,7 +259,7 @@
                                     @mouseenter="hover = true"
                                     @mouseleave="hover = false"
                                 >
-                                    <span x-html="clearMarkup(elem.info)"></span>
+                                    <span x-html="clearMarkup(elem.info ?? '')"></span>
                                 </span>
                             </span>
                         </p>
@@ -264,6 +325,23 @@
                                     <span x-html="option.text"></span>
                                 </label>
                             </template>
+                        </template>
+
+                        <template x-if="$store.manualMode">
+                            <div style="margin: 2rem 0;">
+                                <div x-show="elem.info">
+                                    <p>
+                                        <b>Manual:</b><br>
+                                        <span x-html="clearMarkup(elem.info ?? '')"></span>
+                                    </p>
+                                </div>
+                                <div x-show="elem.tip_external">
+                                    <p>
+                                        <b>Tips for external raters:</b><br>
+                                        <span x-html="clearMarkup(elem.tip_external ?? '')"></span>
+                                    </p>
+                                </div>
+                            </div>
                         </template>
                     </div>
                 </template>
