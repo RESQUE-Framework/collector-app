@@ -781,12 +781,16 @@
                                             </div>
 
                                             <details
-                                                x-show="$store.selectedIndicator.id === elem.id && !elem.no_comment">
+                                                :open="!!$store.data.currentInput[elem.id + '_Comment']"
+                                                x-show="($store.selectedIndicator.id === elem.id && !elem.no_comment)">
                                                 <summary style="font-size: 0.9rem; color: gray; text-align: right;">Add
                                                     comment</summary>
                                                 <input x-model="$store.data.currentInput[elem.id + '_Comment']"
                                                     type="text" :placeholder="`Comment on '${elem.id}'`" />
                                             </details>
+                                            <div x-show="$store.data.currentInput[elem.id + '_Comment'] && !($store.selectedIndicator.id === elem.id && !elem.no_comment)">
+                                                <i style="color: gray;" ><span><b>Comment:</b> </span><span x-text="$store.data.currentInput[elem.id + '_Comment']"></span></i>
+                                            </div>
                                         </div>
                                     </div>
                                 </template>
