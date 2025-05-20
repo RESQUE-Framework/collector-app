@@ -644,14 +644,14 @@
                                             <div class="indent"></div>
                                         </template>
 
-                                        <div class="indicator-subcontainer" x-data="{ comment: false }">
+                                        <div class="indicator-subcontainer" x-data="{ comment: false, hovering: false }" @mouseover="hovering = true" @mouseout="hovering = false">
                                             <div x-data="{ showWarningText: false }">
                                                 <p>
                                                 <div x-show="elem.id in $store.data.completion[$store.data.currentTab].warnings"
                                                     class="warning-indicator"
                                                     @click="showWarningText = !showWarningText">
                                                 </div>
-                                                <span class="title" x-html="preprocessText(elem.title)"></span> <span class="fakelink" @click="comment = !comment" style="text-wrap: nowrap;"><span x-show="!comment && !$store.data.currentInput[elem.id + '_Comment']">Add</span><span x-show="!comment && $store.data.currentInput[elem.id + '_Comment']">Edit</span><span x-show="comment">Save</span> comment</span>
+                                                <span class="title" x-html="preprocessText(elem.title)"></span> <span x-show="(hovering || comment) && !['separator', 'info'].includes(elem.type)" class="fakelink" @click="comment = !comment" style="display: inline-block; white-space: nowrap;"><span x-show="!comment && !$store.data.currentInput[elem.id + '_Comment']">Add</span><span x-show="!comment && $store.data.currentInput[elem.id + '_Comment']">Edit</span><span x-show="comment">Save</span> comment</span>
                                                 </p>
                                                 <p x-text="$store.data.completion[$store.data.currentTab].warnings[elem.id]?.text"
                                                     x-show="showWarningText && elem.id in $store.data.completion[$store.data.currentTab].warnings"
