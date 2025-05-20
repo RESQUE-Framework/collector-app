@@ -168,7 +168,8 @@
         {
             "id": "P_Suitable",
             "type": "radio",
-            "title": "Does this contribution fit well into the RESQUE assessment scheme? (If 'No': All indicators are skipped but you can still add a Merit Statement and an Impact Statement. The paper will not be included in the scoring but processed manually)",
+
+            "title": "Does this contribution fit well into the RESQUE assessment scheme? (If 'No': All indicators are skipped but you can still add the CRediT information and a Merit and Impact Statement. The paper will not be included in the scoring but processed manually)",
             "options": [
                 {
                     "id": "No",
@@ -439,7 +440,7 @@
         {
             "id": "P_Data",
             "type": "radio",
-            "title": "Does this paper use any kind of data in a substantive way (new data, reuse of existing data, or simulated data?)",
+            "title": "Does this paper use any kind of data (new data, reuse of existing data, or simulated data?)",
             "options": [
                 {
                     "id": "No",
@@ -534,6 +535,44 @@
             "title": "⤷ Why was the population hard to acquire?",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample == 'Rare'"
         },
+
+
+        {
+            "id": "P_Sample_Location",
+            "type": "checkbox",
+            "title": "Location of data collection (check all that apply)",
+            "options": [
+                {
+                    "id": "Lab",
+                    "text": "Lab / Controlled in-person setting"
+                },
+                {
+                    "id": "Field",
+                    "text": "Field / Naturalistic in-person setting"
+                },
+                {
+                    "id": "OnlineSurvey",
+                    "text": "Online: Survey"
+                },
+                {
+                    "id": "OnlineEMA",
+                    "text": "Mobile / Ecological Momentary Assessment (EMA)"
+                },
+                {
+                    "id": "OtherType",
+                    "text": "Other"
+                }                  
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
+        },
+
+        {
+            "id": "P_Sample_Location_Other",
+            "type": "text",
+            "title": "⤷ Specify the location of data collection:",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_Location_OtherType"
+        },
+
 
 
 
@@ -973,7 +1012,7 @@
             "title": "⤷ Access level",
             "score": {
                 "not_applicable": "($P_Suitable === 'No') || (($P_Data_Open === 'NotApplicable') && (exists($P_Data_Open_NAExplanation))) || ($P_Data === 'No') || (!($P_Data_Source_NewOwn) && !($P_Data_Source_ReuseOwn) && !($P_Data_Source_ReuseCompilation) && !($P_Data_Source_Simulated))",
-                "condition": "($P_Data === 'Yes' && $P_Data_Open != 'NotAvailable')",
+                "condition": "($P_Data === 'Yes' && $P_Data_Open != 'NotAvailable' && exists($P_Data_Open_Identifier))",
                 "op": "select" 
             },
             "options": [
@@ -1355,7 +1394,7 @@
         {
             "id": "P_Preregistration_Replication",
             "type": "radio",
-            "title": "The paper contains a preregistered replication attempt of a existing study (either direct/close or conceptual).",
+            "title": "The paper contains a preregistered replication attempt of a existing study (either a direct/close or conceptual replication of any study in this or another paper).",
             "score": {
                 "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration_Replication === 'NotApplicable') && (exists($P_Preregistration_Replication_NAExplanation))) || ($P_TypeMethod_MetaAnalysis)",
                 "condition": ""
@@ -1711,11 +1750,17 @@
             "no_comment": true
         },
         {
+            "id": "P_GeneralComments_Info",
+            "type": "info",
+            "text": "<h3>General comments</h3>"
+        },
+        {
             "id": "P_GeneralComments",
             "type": "textbox",
             "maxwords": 500,
-            "title": "(optional) General comments (max. 500 words)",
+            "title": "You can (optionally) add general comments here:",
             "optional": true
         }
+
     ]
 }

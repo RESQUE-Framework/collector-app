@@ -267,7 +267,13 @@
             meta: {},
             pub: {},
             software: {},
-            data: {}
+            data: {},
+            config: {
+                instructions: {
+                    md: '',
+                    html: ''
+                }
+            }
         });
 
         Alpine.store('indentations', {
@@ -306,7 +312,7 @@
                 }
 
                 this.currentInput = this.input[this.currentTab];
-                this.score = window.scoreAll(this.input);
+                this.score = window.scoreAll(this.input, Alpine.store('config').config.score_categories || []);
                 this.completion = this.input.map(checkCompletion);
                 this.topPapers = this.input.filter(r => r.type === 'pub' && r.P_TopPaper_Select === true);
             },
@@ -405,7 +411,7 @@
 
             Alpine.store('data').topPapers = newTopPapers;
 
-            const scores = window.scoreAll(data);
+            const scores = window.scoreAll(data, Alpine.store('config').config.score_categories || []);
 
             Alpine.store('data').score = scores;
 
@@ -509,7 +515,6 @@
         const switchToTab = (index) => {
             Alpine.store('showIndicators', false);
             Alpine.store('data').currentTab = index;
-            Alpine.store('indentations').current = Alpine.store('indentations')[Alpine.store('data').input[index].type];
             setTimeout(() => Alpine.store('showIndicators', true), 0);
             document.querySelector('#formview').scrollTop = 0;
         }
@@ -526,8 +531,16 @@
                                     href="https://www.resque.info/team.html">contact</a> us.]</span><br><br>
                         </div>
                         <div class="top">
-                            <h3><a href="https://www.resque.info" x-text="$store.config.config.main_title"></a></h3>
-                            <div id="actions">
+                            <div style="display: flex; align-items: center;">
+                                <h3><a href="https://www.resque.info" x-text="$store.config.config.main_title"></a></h3>
+                                <template x-if="$store.config?.config?.image_url">
+                                    <img :src="$store.config?.config?.image_url" 
+                                        alt="University Logo" 
+                                        style="height: 70px; max-width: 350px; object-fit: contain; margin: 10px; margin-left: 20px;"
+                                    >
+                                </template>
+                            </div>
+                            <div id="actions" style="margin-top: 10px; display: flex; flex-direction: row; gap: 10px;">
                                 <button class="clear-button" @click="showModal('clear-modal')">Clear</button>
                                 <button class="load-button" @click="triggerLoad()">Load</button>
                                 <button class="save-button" @click="showExportModal()">Save to file ...</button>
@@ -556,23 +569,29 @@
                                     x-sort="$store.data.reorderResearchOutputs($item, $position + 1); show = false; setTimeout(() => show = true, 0);">
                                     <template x-for="tab, index in $store.data.input.slice(1)" :key="index">
                                         <div x-sort:item="index + 1" style="position: relative;" x-data="tab">
-                                            <div @mouseover="hoverStart" @mouseout="hoverEnd"
-                                                @click="switchToTab(index + 1)"
-                                                x-html="`${$store.data.input[index + 1].P_TopPaper_Select ? '⭐️ ' : ''}<b>${types[tab.type]}</b><br>${$store.data.input[index + 1].Title ?? ''}`"
-                                                :class="{tab: true, active: $store.data.currentTab === index + 1}">
-                                            </div>
-                                            <span @mouseover="hoverStart" class="tab-delete-button tab-delete-menu"
-                                                @click="showRemoveButton" x-show="hovering && !showRemove">
-                                                X
-                                            </span>
-                                            <button class="critical tab-delete-menu" x-show="showRemove"
-                                                @click="$store.data.removeResearchOutput(index + 1)">
-                                                Remove
-                                            </button>
-                                            <div class="tab-progress-indicator"
-                                                :style="`background-color: ${getProgressColor($store.data.completion[index + 1].progress.ratio)};`"
-                                                :title="`Progress: ${$store.data.completion[index + 1].progress.percent}%`">
-                                            </div>
+                                            <template x-if="$store.data.input[index + 1]">
+                                                <div>
+                                                    <div @mouseover="hoverStart" @mouseout="hoverEnd"
+                                                        @click="switchToTab(index + 1)"
+                                                        x-html="`${$store.data.input[index + 1].P_TopPaper_Select ? '⭐️ ' : ''}<b>${types[tab.type]}</b><br>${$store.data.input[index + 1].Title ?? ''}`"
+                                                        :class="{tab: true, active: $store.data.currentTab === index + 1}">
+                                                    </div>
+                                                    <span @mouseover="hoverStart" class="tab-delete-button tab-delete-menu"
+                                                        @click="showRemoveButton" x-show="hovering && !showRemove">
+                                                        X
+                                                    </span>
+                                                    <button class="critical tab-delete-menu" x-show="showRemove"
+                                                        @click="$store.data.removeResearchOutput(index + 1)">
+                                                        Remove
+                                                    </button>
+                                                </div>
+                                            </template>
+                                            <template x-if="$store.data.completion[index + 1]">
+                                                <div class="tab-progress-indicator"
+                                                    :style="`background-color: ${getProgressColor($store.data.completion[index + 1].progress.ratio)};`"
+                                                    :title="`Progress: ${$store.data.completion[index + 1].progress.percent}%`">
+                                                </div>
+                                            </template>
 
                                         </div>
                                     </template>
@@ -619,25 +638,31 @@
                                 <template x-if="$store.showIndicators">
                                     <div @click="$store.selectedIndicator = elem"
                                         x-show="evaluateCondition(elem.condition)" onblur="actions[elem.onchange]()"
-                                        class="indicator-container" :class="elem.style_classes" :id="elem.id">
-
-                                        <template x-for="_ in [...Array($store.indentations.current[elem.id])]">
+                                        class="indicator-container" :class="{ selected: $store.selectedIndicator.id === elem.id }" :class="elem.style_classes" :id="elem.id">
+                 
+                                        <template x-for="_ in [...Array($store.indentations[$store.data.currentInput.type][elem.id])]">
                                             <div class="indent"></div>
                                         </template>
 
-                                        <div class="indicator-subcontainer">
+                                        <div class="indicator-subcontainer" x-data="{ comment: false, hovering: false }" @mouseover="hovering = true" @mouseout="hovering = false">
                                             <div x-data="{ showWarningText: false }">
                                                 <p>
                                                 <div x-show="elem.id in $store.data.completion[$store.data.currentTab].warnings"
                                                     class="warning-indicator"
                                                     @click="showWarningText = !showWarningText">
                                                 </div>
-                                                <span class="title" x-html="preprocessText(elem.title)"></span>
+                                                <span class="title" x-html="preprocessText(elem.title)"></span> <span x-show="(hovering || comment) && !['separator', 'info'].includes(elem.type)" class="fakelink" @click="comment = !comment" style="display: inline-block; white-space: nowrap;"><span x-show="!comment && !$store.data.currentInput[elem.id + '_Comment']">Add</span><span x-show="!comment && $store.data.currentInput[elem.id + '_Comment']">Edit</span><span x-show="comment">Save</span> comment</span>
                                                 </p>
                                                 <p x-text="$store.data.completion[$store.data.currentTab].warnings[elem.id]?.text"
                                                     x-show="showWarningText && elem.id in $store.data.completion[$store.data.currentTab].warnings"
                                                     class="warning-text">
                                                 </p>
+                                            </div>
+
+                                            <div x-show="comment && !elem.no_comment" class="card comment-box" style="position: absolute; z-index: 2;">
+                                                <p><b>Add a comment for '<span x-text="elem.id"></span>'</b></p>
+                                                <input x-model="$store.data.currentInput[elem.id + '_Comment']"
+                                                    type="text" :placeholder="`Comment on '${elem.id}'`" />
                                             </div>
 
                                             <div class="content">
@@ -761,13 +786,9 @@
                                                 </template>
                                             </div>
 
-                                            <details
-                                                x-show="$store.selectedIndicator.id === elem.id && !elem.no_comment">
-                                                <summary style="font-size: 0.9rem; color: gray; text-align: right;">Add
-                                                    comment</summary>
-                                                <input x-model="$store.data.currentInput[elem.id + '_Comment']"
-                                                    type="text" :placeholder="`Comment on '${elem.id}'`" />
-                                            </details>
+                                            <div x-show="$store.data.currentInput[elem.id + '_Comment'] && !elem.no_comment">
+                                                <i style="color: gray;" ><span><b>Comment:</b> </span><span x-text="$store.data.currentInput[elem.id + '_Comment']"></span></i>
+                                            </div>
                                         </div>
                                     </div>
                                 </template>
@@ -1060,7 +1081,22 @@
             </dialog>
 
             <div id="instructions-modal" class="modal">
-                <div class="modal-content" x-html="$store.config.config?.instructions?.html">
+                <div class="modal-content">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h2 x-text="$store.config?.config?.main_title"></h2>
+                        <template x-if="$store.config?.config?.image_url">
+                            <img :src="$store.config?.config?.image_url" alt="University Logo" style="height: 80px;">
+                        </template>
+                    </div>
+                    <template x-if="$store.config.config?.instructions?.html">
+                        <div x-html="$store.config.config?.instructions?.html || ''"></div>
+                    </template>
+                    <div 
+                        x-show="$store.data.input.length <= 1"
+                        style="text-align: right; position: sticky; bottom: 0;">
+                        <button style="background-color: #333; color: #efefef; border-radius: 99px; border: 4px solid #00000055; background-clip: padding-box;"
+                            @click="closeInstructionsModal(); driver(tourMain).drive()">Start tour →</button>
+                    </div>
                 </div>
             </div>
 
@@ -1105,13 +1141,12 @@
                         <div>
                             <h3>Save to file...<span style="font-size: 70%; font-weight: normal;">&nbsp;&nbsp;Click
                                     publications to (de)select</span></h3>
-                            <div style="padding-bottom: 1rem;">
-                                <button @click="exp(); closeExportModal();">Export all data</button>
+                            <div style="padding-bottom: 1rem;">                                
                                 <button
                                     :disabled="excludedPublications.size >= $store.data.input.length - 1 || $store.data.input.length - 1 - excludedPublications.size > $store.config.config.max || $store.data.input.filter(ro => ro.P_TopPaper_Select).length < $store.config.config.max_top_papers"
                                     @click="exp(excludedPublications); excludedPublications = new Set(); closeExportModal();">Export
-                                    <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> research
-                                    outputs for the hiring committee</button>
+                                    <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> selected outputs for hiring committee</button>
+                                    <button @click="exp(); closeExportModal();">Export all data (for personal archive)</button>
                             </div>
                         </div>
 
@@ -1197,7 +1232,7 @@
                     { popover: { title: '🔒 Privacy', description: 'The data you enter never leaves your device. Everything is processed locally. (except fetching the information about a publications using the DOI)' } },
                     { popover: { title: 'Saving changes...', description: 'Your changes are saved automatically in your browser. You can reload the page or close this tab and come back another time, the data you entered will still be here.' } },
                     // { element: '.pdf-button', popover: { description: 'You can open a PDF file and extract the DOI automatically. Note that this might fail in rare cases.' } },
-                    { element: '.add-buttons', popover: { title: 'Add a new research output', description: 'You can use one of these three buttons to add new research outputs. RESQUE considers publications, software projects and data sets as research outputs.' } },
+                    { element: '.add-buttons', popover: { title: 'Add a new research output', description: 'You can use one of these two buttons to add new research outputs. RESQUE currently only considers publications as research outputs (software projects and data sets are in development). Use the ORCID button to bulk import multiple publications.' } },
                     { element: '.clear-button', popover: { title: 'Starting fresh', description: 'You can use the \'Clear\' button to delete everything you entered and start with a fresh form.' } },
                     { element: '.load-button', popover: { title: 'Loading previously exported data', description: 'The \'Load\' button opens a file picker, the local JSON file you select will be loaded into the tool.' } },
                     { element: '.save-button', popover: { title: 'Saving to a local file', description: 'If you want to export your data and save it to a local file (for example if you want to send the data to another person), you can use this button. A JSON file will be saved to your computer.' } },
@@ -1289,7 +1324,7 @@
             const pool = [];
 
             const ps = await Promise.all(packs.map(async pack => {
-                const response = await fetch("./packs/" + pack + ".json");
+                const response = await fetch("./" + pack);
                 return response.json();
             }));
 
@@ -1553,11 +1588,6 @@
         const mode = params.get("mode");
         const details = params.get("details") !== "false";
 
-        if (!localStorage.getItem("data")) {
-            //showInfoModal();
-            driver(tourMain).drive();
-        }
-
         function saveCurrentQueryConfig() {
             Alpine.store('data').input[0].queryConfig = Alpine.store('config').queryConfig;
         }
@@ -1567,53 +1597,61 @@
             const config = jsyaml.load(text);
 
             Alpine.store('forms').config = config;
-        });
 
-        // Load instructions
-        fetch('./config/instructions.md').then(response => response.text()).then(text => {
-            const converter = new showdown.Converter();
-            Alpine.store('forms').config.instructions = {};
-            Alpine.store('forms').config.instructions.md = text;
-            Alpine.store('forms').config.instructions.html = converter.makeHtml(text);
-        });
-
-        menu().then(m => {
-            for (const key in m) {
-                if (m[key].elements) {
-                    m[key].scoring = window.generateScoringRules(m[key].elements);
-                    Alpine.store('indentations')[key] = window.getDepths(m[key].elements);
+            return config;
+        }).then((config) => {
+            menu(config).then(m => {
+                for (const key in m) {
+                    if (m[key].elements) {
+                        m[key].scoring = window.generateScoringRules(m[key].elements);
+                        Alpine.store('indentations')[key] = window.getDepths(m[key].elements);
+                    }
+                    Alpine.store('forms')[key] = m[key];
                 }
-                Alpine.store('forms')[key] = m[key];
-            }
 
-            Alpine.store('data').manualInit();
-            Alpine.store('warnings').manualInit();
+                Alpine.store('data').manualInit();
+                Alpine.store('warnings').manualInit();
 
-            if (!Alpine.store('data').input[0].queryConfig) {
-                // save query config
-                Alpine.store('data').input[0].queryConfig = Alpine.store('config').queryConfig;
-            }
+                if (!Alpine.store('data').input[0].queryConfig) {
+                    // save query config
+                    Alpine.store('data').input[0].queryConfig = Alpine.store('config').queryConfig;
+                }
 
-            Alpine.store('loaded', true);
+                Alpine.store('loaded', true);
 
-            setTimeout(() => {
-                switchToTab(0);
-            }, 0)
+                setTimeout(() => {
+                    switchToTab(0);
+                }, 0)
 
-        }).then(() => {
-            // Check config compatibility
-            if (objectHash(Alpine.store('data').input[0].queryConfig) !== objectHash(Alpine.store('config').queryConfig)) {
-                showModal('config-incompatible-modal');
-            }
+            }).then(() => {
+                // Check config compatibility
+                if (objectHash(Alpine.store('data').input[0].queryConfig) !== objectHash(Alpine.store('config').queryConfig)) {
+                    showModal('config-incompatible-modal');
+                }
 
-            // Set background color from config
-            document.documentElement.style.setProperty('--bg-color', Alpine.store('config').config.background_color);
+                // Set background color from config
+                document.documentElement.style.setProperty('--bg-color', Alpine.store('config').config.background_color);
 
-            // Show instructions modal if configured
-            if (Alpine.store('config').config.show_instruction) {
-                showInstructionsModal();
-            }
+                // Load instructions
+                fetch('./config/instructions.md').then(response => response.text()).then(text => {
+                    const converter = new showdown.Converter();
+                    Alpine.store('forms').config.instructions = {};
+                    Alpine.store('forms').config.instructions.md = text;
+                    Alpine.store('forms').config.instructions.html = converter.makeHtml(text);
+                });
+
+                // Show instructions modal if configured
+                if (Alpine.store('config').config.show_instruction) {
+                    showInstructionsModal();
+                }
+
+                if (!Alpine.store('config').config.show_instruction && Alpine.store('data').input.length <= 1) {
+                    //showInfoModal();
+                    driver(tourMain).drive();
+                }
+            });
         });
+
     </script>
 </body>
 

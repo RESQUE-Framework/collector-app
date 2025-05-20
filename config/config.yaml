@@ -19,3 +19,40 @@ show_instruction: false
 
 # Show the beta warning message
 show_beta_warning: true
+image_url: https://upload.wikimedia.org/wikipedia/commons/0/06/LMU_Muenchen_Logo.svg
+
+meta:
+  sources: ["packs/core-meta.json"]
+  config:
+    min_indicators_warning_threshold: 0
+
+pubs:
+  sources: ["packs/core-pubs.json"]
+  config:
+    min_indicators_warning_threshold: 0
+
+data:
+  sources: ["packs/core-data.json"]
+  config:
+    min_indicators_warning_threshold: 0
+
+software:
+  sources: ["packs/core-software.json"]
+  config:
+    min_indicators_warning_threshold: 0
+
+score_categories:
+  - title: "Theorizing & Formal Modeling"
+    cue: "Theorizing"
+
+  - title: "Open Data"
+    cue: "Data"
+
+  - title: "Open Materials"
+    cue: "OpenMaterials"
+
+  - title: "Preregistration"
+    cue: "Prereg"
+    
+  - title: "Reproducible Code & Verification"
+    cue: "ReproducibleScripts|IndependentVerification"

@@ -251,6 +251,12 @@ label {
     display: flex;
     flex-direction: row;
     align-items: center;
+    padding: 4px;
+    border-radius: 8px;
+}
+
+.indicator-container.selected {
+    background-color: #00000010;
 }
 
 .indent {
@@ -272,6 +278,7 @@ label {
 
 .indicator-subcontainer {
     flex-grow: 1;
+    position: relative;
 }
 
 .indicator-container .indicator-subcontainer div {
@@ -280,6 +287,26 @@ label {
 
 .indicator-container .indicator-subcontainer div p {
     align-items: center;
+}
+
+.comment-box {
+    background-color: var(--dark-color);
+}
+
+.comment-box p, .comment-box input {
+    margin: 0;
+}
+
+.comment-box p {
+    color: var(--light-color);
+    margin-bottom: 1rem;
+}
+
+.comment-box input {
+    color: var(--light-color);
+    background-color: transparent;
+    border: 1px solid var(--light-color);
+    border-radius: 8px;
 }
 
 .warning-indicator {
@@ -311,7 +338,8 @@ form {
 
 .top {
     display: flex;
-    justify-content: space-between;
+    justify-content: column;
+    flex-direction: column; 
     align-items: center;
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 16px;
@@ -328,6 +356,7 @@ button {
     font-weight: bold;
     margin: 3px;
     transition: 150ms;
+    border: 1px solid #ccc;
 }
 
 button:hover {
@@ -373,6 +402,7 @@ button:hover {
     padding: 0.5rem 1rem;
     margin-bottom: 16px;
     cursor: pointer;
+    border: 1px solid #ccc;
 }
 
 .tab:hover:not(.active),
