@@ -114,6 +114,7 @@
             "title": "⤷ Publication type: Other",
             "condition": "$P_TypeMethod_OtherMethod"
         },
+
         {
             "id": "P_TypePublication",
             "type": "radio",
@@ -167,6 +168,7 @@
         {
             "id": "P_Suitable",
             "type": "radio",
+
             "title": "Does this contribution fit well into the RESQUE assessment scheme? (If 'No': All indicators are skipped but you can still add the CRediT information and a Merit and Impact Statement. The paper will not be included in the scoring but processed manually)",
             "options": [
                 {
