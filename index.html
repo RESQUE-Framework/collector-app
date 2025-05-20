@@ -638,7 +638,7 @@
                                 <template x-if="$store.showIndicators">
                                     <div @click="$store.selectedIndicator = elem"
                                         x-show="evaluateCondition(elem.condition)" onblur="actions[elem.onchange]()"
-                                        class="indicator-container" :class="elem.style_classes" :id="elem.id">
+                                        class="indicator-container" :class="{ selected: $store.selectedIndicator.id === elem.id }" :class="elem.style_classes" :id="elem.id">
                  
                                         <template x-for="_ in [...Array($store.indentations[$store.data.currentInput.type][elem.id])]">
                                             <div class="indent"></div>

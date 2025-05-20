@@ -251,6 +251,12 @@ label {
     display: flex;
     flex-direction: row;
     align-items: center;
+    padding: 4px;
+    border-radius: 8px;
+}
+
+.indicator-container.selected {
+    background-color: #00000010;
 }
 
 .indent {
