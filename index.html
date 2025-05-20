@@ -644,19 +644,25 @@
                                             <div class="indent"></div>
                                         </template>
 
-                                        <div class="indicator-subcontainer">
+                                        <div class="indicator-subcontainer" x-data="{ comment: false }">
                                             <div x-data="{ showWarningText: false }">
                                                 <p>
                                                 <div x-show="elem.id in $store.data.completion[$store.data.currentTab].warnings"
                                                     class="warning-indicator"
                                                     @click="showWarningText = !showWarningText">
                                                 </div>
-                                                <span class="title" x-html="preprocessText(elem.title)"></span>
+                                                <span class="title" x-html="preprocessText(elem.title)"></span> <span class="fakelink" @click="comment = !comment" style="text-wrap: nowrap;"><span x-show="!comment && !$store.data.currentInput[elem.id + '_Comment']">Add</span><span x-show="!comment && $store.data.currentInput[elem.id + '_Comment']">Edit</span><span x-show="comment">Save</span> comment</span>
                                                 </p>
                                                 <p x-text="$store.data.completion[$store.data.currentTab].warnings[elem.id]?.text"
                                                     x-show="showWarningText && elem.id in $store.data.completion[$store.data.currentTab].warnings"
                                                     class="warning-text">
                                                 </p>
+                                            </div>
+
+                                            <div x-show="comment && !elem.no_comment" class="card comment-box" style="position: absolute; z-index: 2;">
+                                                <p><b>Add a comment for '<span x-text="elem.id"></span>'</b></p>
+                                                <input x-model="$store.data.currentInput[elem.id + '_Comment']"
+                                                    type="text" :placeholder="`Comment on '${elem.id}'`" />
                                             </div>
 
                                             <div class="content">
@@ -780,15 +786,7 @@
                                                 </template>
                                             </div>
 
-                                            <details
-                                                :open="!!$store.data.currentInput[elem.id + '_Comment']"
-                                                x-show="($store.selectedIndicator.id === elem.id && !elem.no_comment)">
-                                                <summary style="font-size: 0.9rem; color: gray; text-align: right;">Add
-                                                    comment</summary>
-                                                <input x-model="$store.data.currentInput[elem.id + '_Comment']"
-                                                    type="text" :placeholder="`Comment on '${elem.id}'`" />
-                                            </details>
-                                            <div x-show="$store.data.currentInput[elem.id + '_Comment'] && !($store.selectedIndicator.id === elem.id && !elem.no_comment)">
+                                            <div x-show="$store.data.currentInput[elem.id + '_Comment'] && !elem.no_comment">
                                                 <i style="color: gray;" ><span><b>Comment:</b> </span><span x-text="$store.data.currentInput[elem.id + '_Comment']"></span></i>
                                             </div>
                                         </div>
