@@ -100,6 +100,8 @@
 
             const c = insertValuesIntoCondition(preprocessCondition(condition))
 
+            console.log('Evaluating condition:', c);
+
             return eval(c);
         }
 
@@ -786,6 +788,10 @@
                                                         </table>
                                                     </div>
                                                 </template>
+                                            </div>
+
+                                            <div class="warning-text" x-show="elem.validation && (!RegExp(elem.validation.pattern).test($store.data.currentInput[elem.id]) || !evaluateCondition(elem.validation.condition))">
+                                                <span x-text="elem.validation?.message"></span>
                                             </div>
 
                                             <div x-show="$store.data.currentInput[elem.id + '_Comment'] && !elem.no_comment">

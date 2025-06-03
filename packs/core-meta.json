@@ -17,7 +17,12 @@
         {
             "id": "YearPhD",
             "type": "number",
-            "title": "Year of PhD / Dr."
+            "title": "Year of PhD / Dr.",
+            "validation": {
+                "pattern": "^(19|20)\\d{2}$",
+                "condition": "1950 <= $YearPhD && $YearPhD <= 2030",
+                "message": "Please enter a valid year between 1950 and 2030."
+            }
         },
         {
             "id": "AcademicAgeBonus",
