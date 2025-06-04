@@ -100,6 +100,8 @@
 
             const c = insertValuesIntoCondition(preprocessCondition(condition))
 
+            console.log('Evaluating condition:', c);
+
             return eval(c);
         }
 
@@ -659,10 +661,12 @@
                                                 </p>
                                             </div>
 
-                                            <div x-show="comment && !elem.no_comment" class="card comment-box" style="position: absolute; z-index: 2;">
+                                            <div x-show="comment && !elem.no_comment &&  $store.selectedIndicator.id === elem.id" class="card comment-box" style="position: absolute; z-index: 2;">
                                                 <p><b>Add a comment for '<span x-text="elem.id"></span>'</b></p>
-                                                <input x-model="$store.data.currentInput[elem.id + '_Comment']"
-                                                    type="text" :placeholder="`Comment on '${elem.id}'`" />
+                                                <form @submit.prevent="comment = false;" style="margin-bottom: 0;">
+                                                    <input x-model="$store.data.currentInput[elem.id + '_Comment']"
+                                                        type="text" :placeholder="`Comment on '${elem.id}'`" />
+                                                </form>
                                             </div>
 
                                             <div class="content">
@@ -784,6 +788,10 @@
                                                         </table>
                                                     </div>
                                                 </template>
+                                            </div>
+
+                                            <div class="warning-text" x-show="elem.validation && (!RegExp(elem.validation.pattern).test($store.data.currentInput[elem.id]) || !evaluateCondition(elem.validation.condition))">
+                                                <span x-text="elem.validation?.message"></span>
                                             </div>
 
                                             <div x-show="$store.data.currentInput[elem.id + '_Comment'] && !elem.no_comment">

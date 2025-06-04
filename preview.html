@@ -54,8 +54,6 @@
             Alpine.store('showLabels', packInQuery.showLabels);
 
             Alpine.store('showPoints', packInQuery.showPoints);
-
-            Alpine.store('manualMode', packInQuery.manualMode);
         });
 
         const evaluateFilter = (filter, elemId) => {
@@ -134,36 +132,94 @@
             };
         }
 
-        function getVisibleHTML(parentSelector) {
-            const parent = document.querySelector(parentSelector);
-            if (!parent) return '';
-
-            const visibleElements = [];
-
-            const elements = parent.querySelectorAll('*');
-            elements.forEach(el => {
-                const style = window.getComputedStyle(el);
-                const rect = el.getBoundingClientRect();
-
-                const isVisible = (
-                style.display !== 'none' &&
-                style.visibility !== 'hidden' &&
-                parseFloat(style.opacity) !== 0 &&
-                rect.width > 0 &&
-                rect.height > 0
-                );
-
-                if (isVisible) {
-                visibleElements.push(el.outerHTML);
-                }
-            });
-
-            return visibleElements.join('\n');
+        const packToHTML = (pack) => {
+            if (!pack || !pack.elements) {
+            return '';
             }
 
+            let html = `<h2>RESQUE: ${pack.title} (v${pack.version})</h2>`;
+
+            const elementsHTML = pack.elements
+            .filter(el => el.type !== 'separator')
+            .map(el => {
+                return { 
+                el: el, 
+                html: (() => {
+                    switch (el.type) {
+                    case 'info':
+                        return `<p>${el.text}</p>`;
+
+                    case 'text':
+                        return `
+                        <p>
+                          <br/>
+                          Please specify: ___________
+                        </p>
+                        `;
+
+                    case 'textbox':
+                        return `
+                        <p>
+                          <br/>
+                          <div style="border: 1px solid #ccc; padding: 0.5rem; min-height: 3rem;">
+                        ___________
+                          </div>
+                        </p>
+                        `;
+
+                    case 'number':
+                        return `
+                        <p>
+                          <br/>
+                          Please specify: ___________
+                        </p>
+                        `;
+
+                    case 'date':
+                        return `
+                        <p>
+                          <br/>
+                          Please specify date: ___________
+                        </p>
+                        `;
+
+                    case 'dropdown':
+                        return `
+                        <ul>
+                          ${el.options
+                        .map(opt => `<li>${opt.text}</li>`)
+                        .join('')}
+                        </ul>
+                        `;
+
+                    case 'radio':
+                        return `
+                        ${el.options
+                        .map(opt => `<p>◯ ${opt.value ? ('(' + opt.value + 'P) ') : ''}${opt.text}</p>`)
+                        .join('')}
+                        `;
+
+                    case 'checkbox':
+                        return `
+                        ${el.options
+                        .map(opt => `<p>☐ ${opt.value ? ('(' + opt.value + 'P) ') : ''}${opt.text}</p>`)
+                        .join('')}
+                        `;
+
+                    default:
+                        return '';
+                    }
+                })()
+                };
+            })
+            .map(({ el, html }) => `<h3 style="color: blue">Indicator: ${el.id || ''}</h3><p><b>${el.title || ''}</b></p>${html}<p><b>Manual:</b><br>${clearMarkup(el.info || '-')}</p><p><b>Tips for external raters:</b><br>${clearMarkup(el.tip_external || '-')}</p>`)
+            .join('<hr />');
+
+            return `<div style="font-family: sans-serif">${html}${elementsHTML}</div>`;
+        };
 
         const toDOCX = () => {
-            const docx = htmlDocx.asBlob(getVisibleHTML('#formview'), {
+            const docx = htmlDocx.asBlob(packToHTML(Alpine.store('pack')), {
                 orientation: 'portrait',
                 margins: {
                     top: 100,
@@ -187,7 +243,8 @@
     <div x-data="{selectedPack: ''}" x-effect="getPack(selectedPack).then(d => $store.pack = d)">
         <div x-show="!$store.packInQuery?.filename" class="no-print"
             style="padding: 16px; border-bottom: 1px solid lightgray;">
-            <select x-effect="console.log(selectedPack)" x-model="selectedPack" style="width: fit-content; display: inline-block; margin-bottom: 0;">
+            <select x-effect="console.log(selectedPack)" x-model="selectedPack"
+                style="width: fit-content; display: inline-block; margin-bottom: 0;">
                 <option value="" selected disabled hidden>Choose pack for preview</option>
 
                 <option value="core-meta">core-meta</option>
@@ -197,7 +254,8 @@
 
                 <template x-for="pack in $store.packs" :key="pack.path + pack.type + '_' + pack.version ?? ''">
                     <option x-text="`${pack.type} ${pack.version ? 'v' + pack.version : ''} (${pack.path ?? 'root'})`"
-                        :value="`${pack.path ?? '.'}/${pack.type}${pack.version ? ('-' + pack.version.replaceAll('.', '_')) : ''}`"></option>
+                        :value="`${pack.path ?? '.'}/${pack.type}${pack.version ? ('-' + pack.version.replaceAll('.', '_')) : ''}`">
+                    </option>
                 </template>
             </select>
 
@@ -211,19 +269,13 @@
                 Show indicator labels
             </label>
 
-             <!-- Checkbox for showing points -->
-             <label style="display: inline-block;">
+            <!-- Checkbox for showing points -->
+            <label style="display: inline-block;">
                 <input type="checkbox" x-model="$store.showPoints" />
                 Show points
             </label>
 
-            <!-- Checkbox for manual mode -->
-             <label style="display: inline-block;">
-                <input type="checkbox" x-model="$store.manualMode" />
-                Manual mode
-            </label>
-
-            <button @click="toDOCX">Download DOCX</button>
+            <button @click="toDOCX">Download Manual</button>
 
         </div>
 
@@ -245,23 +297,13 @@
                     <div x-show="evaluateFilter($store.filter, elem.id)">
                         <p>
                             <span class="label" x-show="$store.showLabels" x-text="`[${elem.id}]`"></span>
-                            <h3 x-show="elem.id && $store.manualMode" style="color: navy;"><span>Indicator: </span><span x-text="elem.id"></span></h3>
-                            <span x-show="elem.title" x-html="preprocessText(elem.title)"
-                                style="font-weight: bold;"></span>
-                            <span x-show="elem.info" x-data="{ hover: false }">
-                                <span
-                                    @mouseenter="hover = true"
-                                    @mouseleave="hover = false"
-                                > ℹ️</span>
-                                <span
-                                    x-show="hover"
-                                    class="tooltip"
-                                    @mouseenter="hover = true"
-                                    @mouseleave="hover = false"
-                                >
-                                    <span x-html="clearMarkup(elem.info ?? '')"></span>
-                                </span>
+                        <span x-show="elem.title" x-html="preprocessText(elem.title)" style="font-weight: bold;"></span>
+                        <span x-show="elem.info" x-data="{ hover: false }">
+                            <span @mouseenter="hover = true" @mouseleave="hover = false"> ℹ️</span>
+                            <span x-show="hover" class="tooltip" @mouseenter="hover = true" @mouseleave="hover = false">
+                                <span x-html="clearMarkup(elem.info ?? '')"></span>
                             </span>
+                        </span>
                         </p>
                         <template x-if="elem.type === 'separator'">
                             <hr style="height: 3px; border:none; color: #333; background-color: #333;" />
@@ -306,11 +348,13 @@
                         </template>
 
                         <template x-if="elem.type === 'radio'">
-                            <div :class="elem.alignment ? 'alignment-' + elem.alignment : 'alignment-vertical'">
+                            <div :class="elem.alignment ? 'alignment-' + elem.alignment : 'alignment-vertical'"> 
                                 <template x-for="option in elem.options" :key="option.id">
                                     <label :for="elem.id + '_' + option.id">
                                         <input type="radio" :id="elem.id + '_' + option.id" :value="option.id" />
-                                        <i><span class="hl" x-show="option.value !== undefined  && $store.showPoints" x-text="`(${option.value}P) `"></span></i>
+                                        <i><span class="hl"
+                                                x-show="option.value !== undefined  && $store.showPoints"
+                                                x-text="`(${option.value}P) `"></span></i>
                                         <span x-html="option.text"></span>
                                     </label>
                                 </template>
@@ -318,29 +362,16 @@
                         </template>
 
                         <template x-if="elem.type === 'checkbox'">
-                            <template x-for="option in elem.options" :key="option.id">
-                                <label :for="elem.id + '_' + option.id">
-                                    <input type="checkbox" :id="elem.id + '_' + option.id" />
-                                    <i><span class="hl" x-show="option.value !== undefined  && $store.showPoints" x-text="`(${option.value}P) `"></span></i>
-                                    <span x-html="option.text"></span>
-                                </label>
-                            </template>
-                        </template>
-
-                        <template x-if="$store.manualMode">
-                            <div style="margin: 2rem 0;">
-                                <div x-show="elem.info">
-                                    <p>
-                                        <b>Manual:</b><br>
-                                        <span x-html="clearMarkup(elem.info ?? '')"></span>
-                                    </p>
-                                </div>
-                                <div x-show="elem.tip_external">
-                                    <p>
-                                        <b>Tips for external raters:</b><br>
-                                        <span x-html="clearMarkup(elem.tip_external ?? '')"></span>
-                                    </p>
-                                </div>
+                            <div>
+                                <template x-for="option in elem.options" :key="option.id">
+                                    <label :for="elem.id + '_' + option.id">
+                                        <input type="checkbox" :id="elem.id + '_' + option.id" />
+                                        <i><span class="hl"
+                                                x-show="option.value !== undefined  && $store.showPoints"
+                                                x-text="`(${option.value}P) `"></span></i>
+                                        <span x-html="option.text"></span>
+                                    </label>
+                                </template>
                             </div>
                         </template>
                     </div>
