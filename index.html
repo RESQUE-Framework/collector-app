@@ -526,12 +526,7 @@
         <div id="root">
             <div id="main">
                 <div class="tabs-sidebar" id="tabs-sidebar" x-on:scroll="$store.tabsSidebarScrollTop = $el.scrollTop">
-                    <div class="sidebar-top">
-                        <div x-show="$store.config.config.show_beta_warning" x-cloak>
-                            <span style='background-color: lightyellow; font-size:80%;'>[Note: The RESQUE collector app is in beta
-                                stage and might change in the near future. If you want to use it in practice, please <a
-                                    href="https://www.resque.info/team.html">contact</a> us.]</span><br><br>
-                        </div>
+                    <div class="sidebar-top">                        
                         <div class="top">
                             <div style="display: flex; align-items: center;">
                                 <h3><a href="https://www.resque.info" x-text="$store.config.config.main_title"></a></h3>
@@ -544,7 +539,7 @@
                             </div>
                             <div id="actions" style="margin-top: 10px; display: flex; flex-direction: row; gap: 10px;">
                                 <button class="clear-button" @click="showModal('clear-modal')">Clear</button>
-                                <button class="load-button" @click="triggerLoad()">Load</button>
+                                <button class="load-button" @click="triggerLoad()">Import from file ...</button>
                                 <button class="save-button" @click="showExportModal()">Save to file ...</button>
                             </div>
                         </div>
@@ -981,6 +976,9 @@
                             href="https://github.com/RESQUE-Framework/collector-app">GitHub</a> • <span
                             onclick="driver(tourAnytime()).drive()" class="fakelink">Tour</span> • <span
                             onclick="showInstructionsModal()" class="fakelink">Instructions</span>
+                    </div>
+                    <div x-show="$store.config.config.show_beta_warning" style="margin-top: 20px;" x-cloak>
+                            <span style='background-color: lightyellow; font-size:80%;'>[Note: The RESQUE collector app is in beta stage and might change in the near future. If you want to use it in practice, please <a href="https://www.resque.info/team.html">contact</a> us.]</span>
                     </div>
                 </div>
             </div>
