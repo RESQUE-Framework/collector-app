@@ -1,8 +1,8 @@
 # Title of the app (shown on top left)
-main_title: "RESQUE"
+main_title: "RESQUE CP-S2"
 
 # Background color of the app
-background_color: "#ffffff"
+background_color: "#ffeeee"
 
 # Maximum number of papers that are expected by the committee
 max: 10
@@ -18,16 +18,20 @@ min_RO_warning_threshold: 0
 show_instruction: false
 
 # Show the beta warning message
-show_beta_warning: true
+show_beta_warning: false
+
+# Logo
 image_url: https://upload.wikimedia.org/wikipedia/commons/0/06/LMU_Muenchen_Logo.svg
 
 meta:
   sources: ["packs/core-meta.json"]
+  exclude: ["AcademicAgeBonus", "AcademicAgeBonus_Explanation", "HonestyDisclaimer"]
   config:
     min_indicators_warning_threshold: 0
 
 pubs:
   sources: ["packs/core-pubs.json"]
+  exclude: ["P_TopPaper", "P_Stimuli", "P_Sample_RepresentativenessRelevance", "P_Sample_Representative", "P_Sample_Representative_Details", "P_MultiStudy_Note2", "P_Power_Info", "P_PowerConsiderations", "P_SampleSize", "P_MeritStatement_Info", "P_MeritStatement", "P_ImpactStatement_Info", "P_ImpactStatement", "P_Theorizing"]
   config:
     min_indicators_warning_threshold: 0
 
