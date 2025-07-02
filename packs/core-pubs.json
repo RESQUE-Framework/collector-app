@@ -514,8 +514,11 @@
                 {
                     "id": "Rare",
                     "text": "Specific target population, hard to acquire (e.g., babies, inmates, rare disorders)"
-                }
-                ,
+                },
+                {
+                    "id": "Unknown",
+                    "text": "Unspecified / do not know"
+                },
                 {
                     "id": "Other",
                     "text": "Other"
@@ -563,7 +566,8 @@
                     "text": "Other"
                 }                  
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
+            "info": "Sometimes multiple locations of data collection are used in a single study:<ul><li>Select <i>multiple</i> available locations if they are roughly equally important</li><li>Select only one location if is clearly dominant (e.g., if a small online pretest happened before an elaborate lab study, choose only 'lab').</li></ul>"
         },
 
         {
@@ -634,6 +638,10 @@
             "title": "Are Constraints on Generality explicitly discussed for the participant sample?",
             "options": [
                 {
+                    "id": "NotApplicable",
+                    "text": "Not applicable [provide explanation]"
+                },
+                {
                     "id": "No",
                     "text": "No"
                 },
@@ -643,6 +651,12 @@
                 }
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_RepresentativenessRelevance != 'NotApplicable'"
+        },
+        {
+            "id": "P_Sample_CoG_NAExplanation",
+            "type": "text",
+            "title": "⤷ Not Applicable: Explanation",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_RepresentativenessRelevance != 'NotApplicable' && $P_Sample_CoG === 'NotApplicable'"
         },
 
 
@@ -663,6 +677,10 @@
                 {
                     "id": "MultipleCultures",
                     "text": "Multiple cultural or ethnic backgrounds"
+                },
+                {
+                    "id": "Unknown",
+                    "text": "Unspecified / do not know"
                 }
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
@@ -911,7 +929,7 @@
                 }
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
-            "info": "When you measure multiple conditions within a single session, this still counts as 'cross-sectional'."
+            "info": "When you measure multiple conditions within a single session, this still counts as 'cross-sectional'. As soon as participants are measured at more than one day, this counts as 'longitudinal'."
         }, 
 
         {
