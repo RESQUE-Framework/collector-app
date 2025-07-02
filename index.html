@@ -526,12 +526,7 @@
         <div id="root">
             <div id="main">
                 <div class="tabs-sidebar" id="tabs-sidebar" x-on:scroll="$store.tabsSidebarScrollTop = $el.scrollTop">
-                    <div class="sidebar-top">
-                        <div x-show="$store.config.config.show_beta_warning" x-cloak>
-                            <span style='background-color: lightyellow; font-size:80%;'>[Note: The RESQUE collector app is in beta
-                                stage and might change in the near future. If you want to use it in practice, please <a
-                                    href="https://www.resque.info/team.html">contact</a> us.]</span><br><br>
-                        </div>
+                    <div class="sidebar-top">                        
                         <div class="top">
                             <div style="display: flex; align-items: center;">
                                 <h3><a href="https://www.resque.info" x-text="$store.config.config.main_title"></a></h3>
@@ -544,7 +539,7 @@
                             </div>
                             <div id="actions" style="margin-top: 10px; display: flex; flex-direction: row; gap: 10px;">
                                 <button class="clear-button" @click="showModal('clear-modal')">Clear</button>
-                                <button class="load-button" @click="triggerLoad()">Load</button>
+                                <button class="load-button" @click="triggerLoad()">Import from file ...</button>
                                 <button class="save-button" @click="showExportModal()">Save to file ...</button>
                             </div>
                         </div>
@@ -653,7 +648,7 @@
                                                     class="warning-indicator"
                                                     @click="showWarningText = !showWarningText">
                                                 </div>
-                                                <span class="title" x-html="preprocessText(elem.title)"></span> <span x-show="(hovering || comment) && !['separator', 'info'].includes(elem.type)" class="fakelink" @click="comment = !comment" style="display: inline-block; white-space: nowrap;"><span x-show="!comment && !$store.data.currentInput[elem.id + '_Comment']">Add</span><span x-show="!comment && $store.data.currentInput[elem.id + '_Comment']">Edit</span><span x-show="comment">Save</span> comment</span>
+                                                <span class="title" x-html="preprocessText(elem.title)"></span> <span x-show="(hovering || comment) && !['separator', 'info'].includes(elem.type)" class="fakelink" @click="comment = !comment;" style="display: inline-block; white-space: nowrap;"><span x-show="!comment && !$store.data.currentInput[elem.id + '_Comment']">Add</span><span x-show="!comment && $store.data.currentInput[elem.id + '_Comment']">Edit</span><span x-show="comment">Save</span> comment</span>
                                                 </p>
                                                 <p x-text="$store.data.completion[$store.data.currentTab].warnings[elem.id]?.text"
                                                     x-show="showWarningText && elem.id in $store.data.completion[$store.data.currentTab].warnings"
@@ -661,10 +656,10 @@
                                                 </p>
                                             </div>
 
-                                            <div x-show="comment && !elem.no_comment &&  $store.selectedIndicator.id === elem.id" class="card comment-box" style="position: absolute; z-index: 2;">
+                                            <div :id="`comment_${elem.id}`" tabindex="0" @blur="comment = false" @focus="comment = true" x-show="comment && !elem.no_comment" class="card comment-box" style="position: absolute; z-index: 2;">
                                                 <p><b>Add a comment for '<span x-text="elem.id"></span>'</b></p>
                                                 <form @submit.prevent="comment = false;" style="margin-bottom: 0;">
-                                                    <input x-model="$store.data.currentInput[elem.id + '_Comment']"
+                                                    <input @focus="comment = true" @blur="comment = false" x-model="$store.data.currentInput[elem.id + '_Comment']"
                                                         type="text" :placeholder="`Comment on '${elem.id}'`" />
                                                 </form>
                                             </div>
@@ -981,6 +976,9 @@
                             href="https://github.com/RESQUE-Framework/collector-app">GitHub</a> • <span
                             onclick="driver(tourAnytime()).drive()" class="fakelink">Tour</span> • <span
                             onclick="showInstructionsModal()" class="fakelink">Instructions</span>
+                    </div>
+                    <div x-show="$store.config.config.show_beta_warning" style="margin-top: 20px;" x-cloak>
+                            <span style='background-color: lightyellow; font-size:80%;'>[Note: The RESQUE collector app is in beta stage and might change in the near future. If you want to use it in practice, please <a href="https://www.resque.info/team.html">contact</a> us.]</span>
                     </div>
                 </div>
             </div>
