@@ -43,7 +43,7 @@
                     "text": "Yes, a substantial or new development"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials =|= ['YesParts', 'YesEntire']"
+            "condition": "$P_Suitable === 'Yes'"
         },
         {
             "id": "CP_OpenMaterials_Manual",
@@ -75,7 +75,7 @@
                     "value": 1
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials =|= ['YesParts', 'YesEntire'] && $CP_TherapeuticIntervention =|= ['YesIncremental', 'YesSubstantial']"
+            "condition": "$P_Suitable === 'Yes' && $CP_TherapeuticIntervention =|= ['YesIncremental', 'YesSubstantial']"
         },
         {
             "id": "CP_OpenMaterials_Manual_NAExplanation",
