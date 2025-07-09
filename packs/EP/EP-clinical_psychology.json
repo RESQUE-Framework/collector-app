@@ -1,0 +1,243 @@
+{
+    "version": "0.1.0",
+    "date": "2025-07-09",
+    "prefix": "CP",
+    "title": "Clinical Psychology Expansion Pack",
+    "elements": [
+        {
+            "id": "CP_Intro",
+            "type": "info",
+            "title": "<h3>Clinical Psychology Expansion Pack</h3>"
+        },
+        {
+            "id": "CP_RCT",
+            "type": "radio",
+            "title": "Was this study a randomized controlled trial (RCT)?",
+            "options": [
+                {
+                    "id": "No",
+                    "text": "No"
+                },
+                {
+                    "id": "Yes",
+                    "text": "Yes"
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_TypeMethod_EmpiricalQuantitative && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis"
+        },
+        {
+            "id": "CP_TherapeuticIntervention",
+            "type": "radio",
+            "title": "Does the study evaluate a new therapeutic intervention (i.e. stage 3/4 study)?",
+            "options": [
+                {
+                    "id": "No",
+                    "text": "No"
+                },
+                {
+                    "id": "YesIncremental",
+                    "text": "Yes, an incremental development, modification or translation of an existing intervention"
+                },
+                {
+                    "id": "YesSubstantial",
+                    "text": "Yes, a substantial or new development"
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials =|= ['YesParts', 'YesEntire']"
+        },
+        {
+            "id": "CP_OpenMaterials_Manual",
+            "type": "radio",
+            "title": "Is the manual published?",
+             "score": {
+                "not_applicable": "($P_Suitable === 'No') || (($P_OpenMaterials === 'NotApplicable') && (exists($P_OpenMaterials_NAExplanation))) || (($CP_OpenMaterials_Manual === 'NotApplicable') && (exists($CP_OpenMaterials_Manual_NAExplanation))) || ($CP_TherapeuticIntervention =|= ['No'])",
+                "condition": "(exists($CP_OpenMaterials_Manual_Identifier))"
+            },
+            "options": [
+                {
+                    "id": "NotApplicable",
+                    "text": "Not applicable [provide explanation]",
+                    "value": 0
+                },
+                {
+                    "id": "No",
+                    "text": "No, the manual is not published or only accessible upon reasonable request",
+                    "value": 0
+                },
+                {
+                    "id": "YesClosed",
+                    "text": "Yes, the manual is published with a restrictive/commercial license",
+                    "value": 0.5
+                },
+                {
+                    "id": "YesOpen",
+                    "text": "Yes, the manual is published under an open license (e.g., CC-BY)",
+                    "value": 1
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials =|= ['YesParts', 'YesEntire'] && $CP_TherapeuticIntervention =|= ['YesIncremental', 'YesSubstantial']"
+        },
+        {
+            "id": "CP_OpenMaterials_Manual_NAExplanation",
+            "type": "text",
+            "title": "⤷ Not applicable: Explanation",
+            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials =|= ['YesParts', 'YesEntire'] && $CP_TherapeuticIntervention =|= ['YesIncremental', 'YesSubstantial'] && $CP_OpenMaterials_Manual === 'NotApplicable'"
+        },
+        {
+            "id": "CP_OpenMaterials_Manual_Identifier",
+            "type": "text",
+            "title": "⤷ DOI or URL of the manual",
+            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials =|= ['YesParts', 'YesEntire'] && $CP_TherapeuticIntervention =|= ['YesIncremental', 'YesSubstantial'] && $CP_OpenMaterials_Manual =|= ['YesClosed', 'YesOpen']",
+            "info": "You can add multiple DOIs or URLs, separated by a semicolon (;)"
+        },
+
+
+
+        {
+            "id": "CP_Preregistration_PrimaryMainOutcome",
+            "type": "radio",
+            "title": "Was the primary outcome from the preregistration reported as the main finding in the paper?",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation)))  || (($CP_Preregistration_PrimaryMainOutcome === 'NotApplicable') && (exists($CP_Preregistration_PrimaryMainOutcome_NAExplanation))) || ($P_TypeMethod_MetaAnalysis) || ($CP_RCT != ['Yes'])",
+                "condition": ""
+            },
+            "options": [
+                {
+                    "id": "NotApplicable",
+                    "text": "Not applicable [provide explanation]",
+                    "value": 0
+                },
+                {
+                    "id": "No",
+                    "text": "No",
+                    "value": 0
+                },
+                {
+                    "id": "Yes",
+                    "text": "Yes",
+                    "value": 1
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis && $CP_RCT === 'Yes'"
+        },
+        {
+            "id": "CP_Preregistration_PrimaryMainOutcome_NAExplanation",
+            "type": "text",
+            "title": "⤷ Not applicable: Explanation",
+            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis && $CP_RCT === 'Yes' && $CP_Preregistration_PrimaryMainOutcome === 'NotApplicable'"
+        },
+        {
+            "id": "CP_Preregistration_PrimaryMainOutcome_Name",
+            "type": "text",
+            "title": "⤷ Provide the name of the primary outcome",
+            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis && $CP_RCT === 'Yes' && $CP_Preregistration_PrimaryMainOutcome === 'Yes'"
+        },
+
+
+        {
+            "id": "CP_Methods_RCTCriteria",
+            "type": "checkbox",
+            "title": "Which criteria apply to this RCT?",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation))) || $P_Preregistration === 'No' || ($P_TypeMethod_MetaAnalysis) || ($CP_RCT != ['Yes'])",
+                "condition": ""
+            },
+            "options": [
+                {
+                    "id": "IndependentAssessors",
+                    "text": "Assessments were conducted by independent assessors",
+                    "value": 0.5
+                },
+                {
+                    "id": "DefinedControlGroup",
+                    "text": "Control group was specifically defined (not just TAU but explicit statement of the performed interventions)",
+                    "value": 0.5
+                },
+                {
+                    "id": "RandomAssignment",
+                    "text": "Group assignment was truly random (e.g. assignment through random numbers generator, not by time of inclusion)",
+                    "value": 0.5
+                },
+                {
+                    "id": "Adherence",
+                    "text": "Adherence of therapists was operationalized, controlled and reported",
+                    "value": 0.5
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis && $CP_RCT === 'Yes'"
+        },
+        {
+            "id": "CP_Methods_RCTCriteria_RandomizationMethod",
+            "type": "text",
+            "title": "⤷ Provide the type of the randomization method",
+            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis && $CP_RCT === 'Yes' && $CP_Methods_RCTCriteria_RandomAssignment"
+        },
+
+
+
+        {
+            "id": "CP_Methods_PatientRepresentatives",
+            "type": "radio",
+            "title": "Were patient representatives (experts by experience) included at any stage of the research process for this study?",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($P_TypeMethod_MetaAnalysis) || (($CP_Methods_PatientRepresentatives === 'NotApplicable') && (exists($CP_Methods_PatientRepresentatives_NAExplanation)))",
+                "condition": ""
+            },
+            "options": [
+                {
+                    "id": "NotApplicable",
+                    "text": "Not applicable [provide explanation]",
+                    "value": 0
+                },
+                {
+                    "id": "No",
+                    "text": "No",
+                    "value": 0
+                },
+                {
+                    "id": "Yes",
+                    "text": "Yes",
+                    "value": 1
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_MetaAnalysis"
+        },
+        {
+            "id": "CP_Methods_PatientRepresentatives_NAExplanation",
+            "type": "text",
+            "title": "⤷ Not applicable: Explanation",
+            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_MetaAnalysis && $CP_Methods_PatientRepresentatives === 'NotApplicable'"
+        },
+
+
+
+        {
+            "id": "CP_Methods_NullResults",
+            "type": "radio",
+            "title": "Does the study publish results that overall disconfirm or even contradict the original hypotheses?",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($P_TypeMethod_MetaAnalysis)",
+                "condition": ""
+            },
+            "options": [
+                {
+                    "id": "No",
+                    "text": "No",
+                    "value": 0
+                },
+                {
+                    "id": "Yes",
+                    "text": "Yes",
+                    "value": 1
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_MetaAnalysis"
+        },
+        {
+            "id": "CP_Methods_NullResults_Explanation",
+            "type": "text",
+            "title": "⤷ Describe why the publication of this null result was important. ",
+            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_MetaAnalysis && $CP_Methods_NullResults === 'Yes'"
+        }
+    ]
+}

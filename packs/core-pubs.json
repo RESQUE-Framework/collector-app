@@ -393,9 +393,9 @@
 
 
         {
-            "id": "P_Data_PRISMA",
+            "id": "P_Methods_PRISMA",
             "type": "radio",
-            "title": "Were the PRISMA guidelines followed (i.e. are all items of the “PRISMA 2020 checklist” reported in the paper)?",
+            "title": "Were the PRISMA guidelines followed (i.e. are all items of the 'PRISMA 2020 checklist' reported in the paper)?",
             "score": {
                 "not_applicable": "($P_Suitable === 'No' || !$P_TypeMethod_MetaAnalysis)"
             },
@@ -415,7 +415,7 @@
         },
 
         {
-            "id": "P_Data_MetaAnalysisRaters",
+            "id": "P_Methods_MetaAnalysisRaters",
             "type": "radio",
             "title": "Was study inclusion, information extraction, and quality rating performed by at least two independent raters?",
             "score": {
@@ -546,12 +546,12 @@
             "title": "Location of data collection (check all that apply)",
             "options": [
                 {
-                    "id": "Lab",
-                    "text": "Lab / Controlled in-person setting"
+                    "id": "Controlled",
+                    "text": "Controlled in-person setting (e.g., lab, standardized conditions)"
                 },
                 {
-                    "id": "Field",
-                    "text": "Field / Naturalistic in-person setting"
+                    "id": "Naturalistic",
+                    "text": "Naturalistic in-person setting (e.g., less standardized field observations)"
                 },
                 {
                     "id": "OnlineSurvey",
@@ -559,7 +559,7 @@
                 },
                 {
                     "id": "OnlineEMA",
-                    "text": "Mobile / Ecological Momentary Assessment (EMA)"
+                    "text": "Ecological Momentary Assessment (i.e., repeated assessments in daily life)"
                 },
                 {
                     "id": "OtherType",
@@ -567,7 +567,7 @@
                 }                  
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
-            "info": "Sometimes multiple locations of data collection are used in a single study:<ul><li>Select <i>multiple</i> available locations if they are roughly equally important</li><li>Select only one location if is clearly dominant (e.g., if a small online pretest happened before an elaborate lab study, choose only 'lab').</li></ul>"
+            "info": "Focus on the variables that were relevant for the research question (and ignore variables that may have been additionally collected in the study).<br><br>Sometimes multiple locations of data collection are used in a single study:<ul><li>Select <i>multiple</i> available locations if they are roughly equally important</li><li>Select only one location if is clearly dominant (e.g., if a small online pretest happened before an elaborate lab study, choose only 'lab').</li></ul>"
         },
 
         {
@@ -813,7 +813,7 @@
                 },
                 {
                     "id": "Coding",
-                    "text": "Content or behavioral coding (i.e., converting rich qualitative data into numeric scores)"
+                    "text": "Content or behavioral coding (i.e., converting qualitative data, such as interviews, behavioral observations or videos, into numeric scores)"
                 },
                 {
                     "id": "MetaAnalysis",
@@ -825,7 +825,7 @@
                 }
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
-            "info": "{ $P_Data_Type_MetaAnalysis | In case of meta-analysis, only check 'Meta-analysis: Effect sizes from primary studies'. The data type of the primary studies is irrelevant.} <ul><li>If you process data (for example when you derive numeric scores from a content analysis of interviews), check both the original data type (in the example, 'interviews') and the derived data type (in the example, 'Content or behavioral coding').</li><li>Some data types are combinations, e.g. if you do an <b>ESM study with mobile sensing</b>, you would choose 'Questionnaire (self report)' <b>and</b> 'Behavioral data' (--> 'Observed behavior (naturalistic situation)' in the next question) <b>and</b> 'longitudinal design' in the question on the study design.</li></ul>",
+            "info": "<ul>{ $P_Data_Type_MetaAnalysis | <li>In case of meta-analysis, only check 'Meta-analysis: Effect sizes from primary studies'. The data type of the primary studies is irrelevant.</li>} <li>If you process data (for example when you derive numeric scores from a content analysis of interviews), check both the original data type (in the example, 'interviews') and the derived data type (in the example, 'Content or behavioral coding').</li><li>Some data types are combinations, e.g. if you do an <b>ESM study with mobile sensing</b>, you would choose 'Questionnaire (self report)' <b>and</b> 'Behavioral data' (--> 'Observed behavior (naturalistic situation)' in the next question) <b>and</b> 'longitudinal design' in the question on the study design.</li></ul>",
             "tip_external":"Look in the method section, more specifically at parts called procedure, data collection or variables."
         },
 
@@ -1284,13 +1284,13 @@
                     "value": 0
                 },
                 {
-                    "id": "YesParts",
-                    "text": "Yes, parts of material [provide doi or URL]",
+                    "id": "Minimal",
+                    "text": "The bare minimum [provide doi or URL]",
                     "value": 0.5
                 },
                 {
-                    "id": "YesEntire",
-                    "text": "Yes, all material necessary for a replication [provide doi or URL]",
+                    "id": "Rich",
+                    "text": "Diverse & well-structured open material for multiple aspects of the study [provide doi or URL]",
                     "value": 1
                 }
             ],
@@ -1310,13 +1310,6 @@
             "title": "⤷ DOI or URL of the open materials",
             "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials =|= ['YesParts', 'YesEntire']",
             "info": "You can add multiple DOIs or URLs, separated by a semicolon (;)"
-        },
-        {
-            "id": "P_OpenMaterials_PartsExplanation",
-            "type": "text",
-            "title": "⤷ Partial open materials: What is missing? (optional)",
-            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials === 'YesParts'",
-            "optional": true
         },
         {
             "id": "P17P18SEP",
@@ -1354,7 +1347,7 @@
                     "value": 2
                 }
             ],
-            "info": "{:'Yes' | Only choose <b>'Yes'</b> if the preregistration is time-stamped/registered before the publication of the study (check date).}<br><br><b>Multi Study Paper Case</b>: Only choose 'Yes' if your nominated study has been preregistered. <br><br> When to choose <b>'No'</b> <br> If the study was not preregistered or if preregistration is not time-stamped/registered <br><br> When to choose <b>'Not applicable'</b>:<ul><li>If the study type is 'Simulation' (except from benchmarking experiments), 'mainly theoretical Review' or no data has been used in a substantive way.</li>In rare cases: When the theory arguably is so precise that no preregistration is necessary.<li></li><li>There also might be other cases with reasonable justifications for no preregistration.</li></ul>",
+            "info": "{:'Yes' | Only choose <b>'Yes'</b> if the preregistration is time-stamped/registered before the publication of the study (check date). Typical preregistration platforms include: OSF, aspredicted.org, ZPID Prereg, ClinicalTrials.gov/.org, Euclinicaltrials.eu, Clinicaltrialsregister.eu, DRKS.}<br><br><b>Multi Study Paper Case</b>: Only choose 'Yes' if your nominated study has been preregistered. <br><br> When to choose <b>'No'</b> <br> If the study was not preregistered or if preregistration is not time-stamped/registered <br><br> When to choose <b>'Not applicable'</b>:<ul><li>If the study type is 'Simulation' (except from benchmarking experiments), 'mainly theoretical Review' or no data has been used in a substantive way.</li>In rare cases: When the theory arguably is so precise that no preregistration is necessary.<li></li><li>There also might be other cases with reasonable justifications for no preregistration.</li></ul>",
             "condition": "$P_Suitable === 'Yes'",
             "tip_external":"<ul><li>It only counts if a <b>link</b> to the preregistration is provided.</li><li><b>Search words:</b> <code>preregist*</code>, <code>pre-regist*</code>, <code>regist*</code>, <code>aspredicted</code>, <code>OSF</code>. For clinical trials: <code>Prospero</code>, <code>ClinicalTrials</code>"
         },

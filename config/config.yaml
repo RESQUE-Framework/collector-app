@@ -30,7 +30,7 @@ meta:
     min_indicators_warning_threshold: 0
 
 pubs:
-  sources: ["packs/core-pubs.json"]
+  sources: ["packs/core-pubs.json", "packs/EP/EP-clinical_psychology.json"]
   exclude: ["P_TopPaper", "P_Stimuli", "P_Sample_RepresentativenessRelevance", "P_Sample_Representative", "P_Sample_Representative_Details", "P_MultiStudy_Note2", "P_Power_Info", "P_PowerConsiderations", "P_SampleSize", "P_MeritStatement_Info", "P_MeritStatement", "P_ImpactStatement_Info", "P_ImpactStatement", "P_Theorizing"]
   config:
     min_indicators_warning_threshold: 0
@@ -60,3 +60,6 @@ score_categories:
     
   - title: "Reproducible Code & Verification"
     cue: "ReproducibleScripts|IndependentVerification"
+
+  - title: "Methodological Rigor"
+    cue: "_Methods_"
