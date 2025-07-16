@@ -9,22 +9,7 @@
             "type": "info",
             "title": "<h3>Clinical Psychology Expansion Pack</h3>"
         },
-        {
-            "id": "CP_RCT",
-            "type": "radio",
-            "title": "Was this study a randomized controlled trial (RCT)?",
-            "options": [
-                {
-                    "id": "No",
-                    "text": "No"
-                },
-                {
-                    "id": "Yes",
-                    "text": "Yes"
-                }
-            ],
-            "condition": "$P_Suitable === 'Yes' && $P_TypeMethod_EmpiricalQuantitative && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis"
-        },
+        
         {
             "id": "CP_TherapeuticIntervention",
             "type": "radio",
@@ -81,18 +66,33 @@
             "id": "CP_OpenMaterials_Manual_NAExplanation",
             "type": "text",
             "title": "⤷ Not applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials =|= ['YesParts', 'YesEntire'] && $CP_TherapeuticIntervention =|= ['YesIncremental', 'YesSubstantial'] && $CP_OpenMaterials_Manual === 'NotApplicable'"
+            "condition": "$P_Suitable === 'Yes' && $CP_TherapeuticIntervention =|= ['YesIncremental', 'YesSubstantial'] && $CP_OpenMaterials_Manual === 'NotApplicable'"
         },
         {
             "id": "CP_OpenMaterials_Manual_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL of the manual",
-            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials =|= ['YesParts', 'YesEntire'] && $CP_TherapeuticIntervention =|= ['YesIncremental', 'YesSubstantial'] && $CP_OpenMaterials_Manual =|= ['YesClosed', 'YesOpen']",
+            "condition": "$P_Suitable === 'Yes' && $CP_TherapeuticIntervention =|= ['YesIncremental', 'YesSubstantial'] && $CP_OpenMaterials_Manual =|= ['YesClosed', 'YesOpen']",
             "info": "You can add multiple DOIs or URLs, separated by a semicolon (;)"
         },
 
 
-
+        {
+            "id": "CP_RCT",
+            "type": "radio",
+            "title": "Was this study a randomized controlled trial (RCT)?",
+            "options": [
+                {
+                    "id": "No",
+                    "text": "No"
+                },
+                {
+                    "id": "Yes",
+                    "text": "Yes"
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_TypeMethod_EmpiricalQuantitative && !$P_TypeMethod_MetaAnalysis"
+        },
         {
             "id": "CP_Preregistration_PrimaryMainOutcome",
             "type": "radio",
@@ -118,19 +118,19 @@
                     "value": 1
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis && $CP_RCT === 'Yes'"
+            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_MetaAnalysis && $CP_RCT === 'Yes'"
         },
         {
             "id": "CP_Preregistration_PrimaryMainOutcome_NAExplanation",
             "type": "text",
             "title": "⤷ Not applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis && $CP_RCT === 'Yes' && $CP_Preregistration_PrimaryMainOutcome === 'NotApplicable'"
+            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_MetaAnalysis && $CP_RCT === 'Yes' && $CP_Preregistration_PrimaryMainOutcome === 'NotApplicable'"
         },
         {
             "id": "CP_Preregistration_PrimaryMainOutcome_Name",
             "type": "text",
             "title": "⤷ Provide the name of the primary outcome",
-            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis && $CP_RCT === 'Yes' && $CP_Preregistration_PrimaryMainOutcome === 'Yes'"
+            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_MetaAnalysis && $CP_RCT === 'Yes' && $CP_Preregistration_PrimaryMainOutcome === 'Yes'"
         },
 
 
@@ -164,13 +164,13 @@
                     "value": 0.5
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis && $CP_RCT === 'Yes'"
+            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_MetaAnalysis && $CP_RCT === 'Yes'"
         },
         {
             "id": "CP_Methods_RCTCriteria_RandomizationMethod",
             "type": "text",
             "title": "⤷ Provide the type of the randomization method",
-            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis && $CP_RCT === 'Yes' && $CP_Methods_RCTCriteria_RandomAssignment"
+            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_MetaAnalysis && $CP_RCT === 'Yes' && $CP_Methods_RCTCriteria_RandomAssignment"
         },
 
 

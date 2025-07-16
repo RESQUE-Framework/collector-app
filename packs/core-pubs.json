@@ -1308,7 +1308,7 @@
             "id": "P_OpenMaterials_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL of the open materials",
-            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials =|= ['YesParts', 'YesEntire']",
+            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials =|= ['Minimal', 'Rich']",
             "info": "You can add multiple DOIs or URLs, separated by a semicolon (;)"
         },
         {
