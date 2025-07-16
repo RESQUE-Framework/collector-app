@@ -216,10 +216,15 @@
             "type": "radio",
             "title": "Does the study publish results that overall disconfirm or even contradict the original hypotheses?",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($P_TypeMethod_MetaAnalysis)",
+                "not_applicable": "($P_Suitable === 'No') || ($P_TypeMethod_MetaAnalysis) || (($CP_Methods_NullResults === 'NotApplicable') && (exists($CP_Methods_NullResults_NAExplanation)))",
                 "condition": ""
             },
             "options": [
+                {
+                    "id": "NotApplicable",
+                    "text": "Not applicable (e.g., the study was purely explorative) [provide explanation]",
+                    "value": 0
+                },
                 {
                     "id": "No",
                     "text": "No",
@@ -232,6 +237,12 @@
                 }
             ],
             "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_MetaAnalysis"
+        },
+        {
+            "id": "CP_Methods_NullResults_NAExplanation",
+            "type": "text",
+            "title": "⤷ Not applicable: Explanation",
+            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_MetaAnalysis && $CP_Methods_NullResults === 'NotApplicable'"
         },
         {
             "id": "CP_Methods_NullResults_Explanation",

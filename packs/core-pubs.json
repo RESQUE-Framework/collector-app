@@ -92,11 +92,15 @@
                 },
                 {
                     "id": "Computational",
-                    "text": " Computational (e.g., agent-based modeling, simulations, etc.)"
+                    "text": "Computational (e.g., agent-based modeling, simulations, etc.)"
+                },
+                {
+                    "id": "Measurement",
+                    "text": "Psychometric / Development of new measurement methods"
                 },
                 {
                     "id": "Theoretical",
-                    "text": "Theoretical contribution (Theory development, formal modeling, etc.)"
+                    "text": "Theoretical contribution (Theory development, mathematical methods development, formal modeling, etc.)"
                 },
                 {
                     "id": "Nonempirical",
@@ -106,7 +110,8 @@
                     "id": "OtherMethod",
                     "text": "Other (please specify)"
                 }
-            ]
+            ],
+            "tip_external": "A <b>computational</b> contribution does not analyze empirical data in themselves, but generates data based on simulations, ABMs or other computational methods (it might use empirical data for calibration of the simulations, but does not analyze them as a primary focus).<br>If you are uncertain whether to check 'computational'. If the central finding of a paper pertains to empirical data ('Group 1 has a higher mean than Group 2') - regardless how fancy the computational method applied to the data - it is primarily an 'Empirical: Quantitative' contribution. If the the central finding is about a method or a simulation itself (“The new method works well; Method 1 has a lower prediction error than Method 2; the simulation found interesting patterns”) - i.e., we learned something about a method, and not about a population - than it is 'Computational'"
         },
         {
             "id": "P_TypeMethod_Other",
@@ -488,7 +493,7 @@
             ],
             "info": "Data set acquisition often is a collaborative enterprise with different contributor roles. { $P_Data_Source_ReuseOwn | Select 'Reuse of own existing data set' only, if you would qualify as a co-author with substantive contributions in a stand-alone data set publication of that data set. Otherwise, select 'Reuse of someone else's existing data set'.}<br><br>{ $P_TypeMethod_MetaAnalysis | In case of a meta-analysis, the extraction of effect sizes from the primary literature counts as 'Own new data collection' (but <i>not</i> as 'Reuse of someone else's existing data set'.}",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes'",
-            "tip_external": "Look in the abstract and/or method section. If no information can be found there, it might also be useful to look at the contributors of the repositories.<br><br><b>Search words:</b> simul*, data, OSF, availab*"
+            "tip_external": "Look in the abstract and/or method section. If no information can be found there, it might also be useful to look at the contributors of the repositories.<br><b>Search words:</b> simul*, data, OSF, availab*<br>If it is unclear whether the applicant (who should be the focus of this analysis) was part of the data collection ('Reuse of own existing data set'), check the authors of the data set citation. If the person is not part of that, select 'Reuse of someone else's existing data set')"
         },
         {
             "id": "P_Sample",
