@@ -1014,7 +1014,7 @@
             ],
             "info": "If the data is only available on a personal website (including personal university websites) or 'upon (reasonable) request', select <i>not available</i>. When only few aggregated data is available, select <i>not available</i> (there might be exceptions with high-volume physiological data, and when primary data justifiably could not be shared).<br><br>When to choose <b>'Not applicable'</b>?<ul><li>If legal regulations or binding conditions of the data provider prohibit data publication and not even restricted access is possible.</li></ul>",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated)",
-            "tip_external": "<b>Practical approach</b>: <ul><li>Is a <b>link</b> to a data set provided?</li><li>Is the data in a <b>repository</b> that also controls data access?</li></ul> <br><br><b>Search words:</b> open, data, availab*"
+            "tip_external": "<b>Practical approach</b>: <ul><li>Is a <b>link</b> to a data set provided?</li><li>Is the data in a <b>repository</b> that also controls data access?</li></ul><br><b>Search words:</b> open, data, availab*<br>A difficult situation is the distinction between “not applicable” and “not available”. Sometimes authors argue that it is “not possible” to share the data, while data sharing on a restrictive level (Zugriffsklasse 2) actually <i>would</i> be possible. In this case, you have to judge whether it actually was impossible to share (→ “not applicable”). Also sensitive data could be shared if you ask for consent and use a restrictive re-use license. Hence, if they <i>could</i> have shared the data (probably with some effort), choose “not available”."
         },
         {
             "id": "P_Data_Open_NAExplanation",
@@ -1132,7 +1132,8 @@
                 }
             ],
             "info":"{'YesEntire', 'YesParts', 'YesSynthetic', 'YesAggregate' | Only choose <b>`Yes`</b> if a doi or URL can be provided.} <br><br><b>When only parts of scripts available:</b><br>Choose `Yes, parts of scripts` if no justification is given.<br>Choose `Yes, entire scripts` if a reasonable justification for all missing scripts are provided.<br><br> When to choose <b>'Not applicable'</b>:<br>If no scripts have been used in the publication.",
-            "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes'"
+            "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes'",
+            "tip_external":"To judge whether “Parts” or “Entire” scripts have been shared you need to take a quick look into the scripts themselves.<br>A typical situation for “parts of scripts” is when the main analyses are provided (e.g., a set of t-tests or a linear regression), but no data preprocessing is shared. In this case, one can typically expect that data preprocessing has been done but not shared.<br>If you are uncertain, in doubt choose “The entire analysis pipeline is available”, and only choose “Parts of scripts” if <i>obviously</i> something is missing."
         },
         {
             "id": "P_ReproducibleScripts_NAExplanation",
@@ -1192,7 +1193,7 @@
                     "value": 0.2
                 }
             ],
-            "info": "<ul><li>{$P_ReproducibleScripts_FAIR_TimestampedRepository | <b>Timestamped repository</b>: Any repository that records and displays the timestamp when a file has been first uploaded and the last time it has been modified (e.g., GitHub, GitLab, OSF, Zenodo)</li> } <li>{$P_ReproducibleScripts_FAIR_VersionControl |<b>Version control</b>: Any repository that allows to go back in the history of a file with an established version control system, such as <code>git</code> (e.g., GitHub, GitLab. <i>Not</i> OSF or Zenodo.)</li> } <li>{$P_ReproducibleScripts_FAIR_Documentation | <b>Proper documentation of code</b>: The source code has sufficiently detailed comments so that a knowledgable re-user can understand what (and why) something has been done.</li> } <li>{$P_ReproducibleScripts_FAIR_ReproducibleSoftwareEnvironments | <b>Reproducible software environment</b>: The software environment is fully reproducible with an established tool such as <code>conda</code>, <code>renv</code> or <code>groundhog</code>. Just recording the <code>sessionInfo()</code> in R is not sufficient, as it places too much burden on reproduction attempts.</li> } <li>{$P_ReproducibleScripts_FAIR_ReproducibleManuscripts | <b>Reproducible manuscripts</b>: The final manuscript combines computations and text (e.g. Rmarkdown, Quarto, Jupyter notebooks) }</li></ul>",
+            "info": "<ul><li>{$P_ReproducibleScripts_FAIR_TimestampedRepository | <b>Timestamped repository</b>: Any repository that records and displays the timestamp when a file has been first uploaded and the last time it has been modified (e.g., GitHub, GitLab, OSF, Zenodo)</li> } <li>{$P_ReproducibleScripts_FAIR_VersionControl |<b>Version control</b>: Any repository that allows to go back in the history of a file with an established version control system, such as <code>git</code> (e.g., GitHub, GitLab. <i>Not</i> OSF or Zenodo.)</li> } <li>{$P_ReproducibleScripts_FAIR_Documentation | <b>Proper documentation of code</b>: The source code has sufficiently detailed comments so that a knowledgable re-user can understand what (and why) something has been done.</li> } <li>{$P_ReproducibleScripts_FAIR_ReproducibleSoftwareEnvironments | <b>Reproducible software environment</b>: The software environment is fully reproducible with an established tool such as <code>conda</code>, <code>renv</code> or <code>groundhog</code>. Just recording the <code>sessionInfo()</code> in R is not sufficient, as it places too much burden on reproduction attempts.</li> } <li>{$P_ReproducibleScripts_FAIR_ReproducibleManuscripts | <b>Reproducible manuscripts</b>: The final manuscript combines computations and text (e.g. Rmarkdown, Quarto, Jupyter notebooks). It is OK if the computations are in separate scripts, but are loaded within the manuscript file.}</li></ul>",
             "tip_external":"<ul><li>Search for <b>Open License</b>: This license could be stated in ...<ul><li>A LICENSE file in the top level folder</li><li>Within the README file</li><li>In the header of each source code file</li><li>The OSF project license</li></ul> </li></ul>",
             "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes' && $P_ReproducibleScripts =|= ['YesParts', 'YesEntire']"
         },
@@ -1285,23 +1286,23 @@
                 },
                 {
                     "id": "NotAvailable",
-                    "text": "Not available",
+                    "text": "Not available at all",
                     "value": 0
                 },
                 {
                     "id": "Minimal",
-                    "text": "The bare minimum [provide doi or URL]",
+                    "text": "Obviously incomplete material [provide doi or URL]",
                     "value": 0.5
                 },
                 {
                     "id": "Rich",
-                    "text": "Diverse & well-structured open material for multiple aspects of the study [provide doi or URL]",
+                    "text": " The complete material / Diverse & well-structured open material for multiple aspects of the study [provide doi or URL]",
                     "value": 1
                 }
             ],
-            "info": "Open Material refers to all material that is necessary to replicate a study. It typically includes questionnaire items, stimuli, texts for vignettes, or code for software that controls the experimental flow. {:'YesParts', 'YesEntire' | Only choose 'Yes' if the material substantially exceeds the open reproducible scripts. }<br><br><ul><li>{:'YesEntire' | Choose 'Yes, entire material' if a reasonable justification for only parts of material is given.}</li><li>{:'YesParts' | Choose 'Yes, parts of material' if no justification is given. }</li><li>{:'NotApplicable' | When to choose <b>'Not applicable'</b>: If no material has been used in the publication, or the entire material is contained in the open reproducible scripts. }</li></ul><br>The pure existence of an Electronic Supplemental Material does not necessarily count as Open Material, for example if it only contains additional analyses or tables.",
+            "info": "Open Material refers to all material that is necessary to replicate a study. It typically includes questionnaire items, stimuli, texts for vignettes, or code for software that controls the experimental flow. {:'YesParts', 'YesEntire' | Only choose 'Yes' if the material substantially exceeds the open reproducible scripts. }<br><br><ul><li>{:'YesEntire' | Choose 'Yes, entire material' if a reasonable justification for only parts of material is given.}</li><li>{:'YesParts' | Choose 'Yes, parts of material' if no justification is given. }</li><li>{:'NotApplicable' | When to choose <b>'Not applicable'</b>:<ul><li>If no material has been used in the publication, or the entire material is contained in the open reproducible scripts.</li><li>'Not applicable' is the default if you chose 'reuse of existing data set', 'meta-analysis' or 'simulation' above; but if there is additional material that shows an own contribution then assign 'Yes, entire material'.</li></ul> }</li></ul><br>The pure existence of an Electronic Supplemental Material does not necessarily count as Open Material, for example if it only contains additional analyses or tables.",
             "condition": "$P_Suitable === 'Yes'",
-            "tip_external":"<ul><li>Is a <b>link</b> to open materials provided (don't forget to check Appendix and Supplemental Materials)</li><li>Expect <b>'entire material'</b> as default if materials are available (only if the material is obviously <i>not</i> complete and no reasonable explanation is given, assign <b>'parts of materials'</b>)</li><li><b>'Not applicable'</b> is the default if 'reuse of existing data set', 'meta analysis' or 'simulation', <mark>but</mark> if there is additional material that shows an own contribution then assign <b>'Yes, entire material'</b></li></ul> "
+            "tip_external":"<ul><li>Is a <b>link</b> to open materials provided (don't forget to check Appendix and Supplemental Materials)</li><li>Expect <b>'entire material'</b> as default if materials are available (only if the material is obviously <i>not</i> complete and no reasonable explanation is given, assign <b>'parts of materials'</b>)</li><li>We want to reward effort. Hence, if “Diverse & well-structured open material for multiple aspects of the study” is available, we award full points, even if some material might be missing; we do not check all material for 100% completeness.</li></ul>"
         },
         {
             "id": "P_OpenMaterials_NAExplanation",
@@ -1327,7 +1328,7 @@
             "type": "radio",
             "title": "Preregistration",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation)))",
+                "not_applicable": "($P_Suitable === 'No') || ($P_TypeMethod_Nonempirical) || ($P_TypeMethod_Measurement) || ($P_TypeMethod_Theoretical) || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation)))",
                 "condition": "(exists($P_Preregistration_Identifier))"
             },
             "options": [
@@ -1353,20 +1354,20 @@
                 }
             ],
             "info": "{:'Yes' | Only choose <b>'Yes'</b> if the preregistration is time-stamped/registered before the publication of the study (check date). Typical preregistration platforms include: OSF, aspredicted.org, ZPID Prereg, ClinicalTrials.gov/.org, Euclinicaltrials.eu, Clinicaltrialsregister.eu, DRKS.}<br><br><b>Multi Study Paper Case</b>: Only choose 'Yes' if your nominated study has been preregistered. <br><br> When to choose <b>'No'</b> <br> If the study was not preregistered or if preregistration is not time-stamped/registered <br><br> When to choose <b>'Not applicable'</b>:<ul><li>If the study type is 'Simulation' (except from benchmarking experiments), 'mainly theoretical Review' or no data has been used in a substantive way.</li>In rare cases: When the theory arguably is so precise that no preregistration is necessary.<li></li><li>There also might be other cases with reasonable justifications for no preregistration.</li></ul>",
-            "condition": "$P_Suitable === 'Yes'",
+            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_Nonempirical && !$P_TypeMethod_Theoretical && !$P_TypeMethod_Measurement",
             "tip_external":"<ul><li>It only counts if a <b>link</b> to the preregistration is provided.</li><li><b>Search words:</b> <code>preregist*</code>, <code>pre-regist*</code>, <code>regist*</code>, <code>aspredicted</code>, <code>OSF</code>. For clinical trials: <code>Prospero</code>, <code>ClinicalTrials</code>"
         },
         {
             "id": "P_Preregistration_NAExplanation",
             "type": "text",
             "title": "⤷ Not applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && $P_Preregistration === 'NotApplicable'"
+            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_Nonempirical && !$P_TypeMethod_Theoretical && !$P_TypeMethod_Measurement && $P_Preregistration === 'NotApplicable'"
         },
         {
             "id": "P_Preregistration_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL of the preregistration",
-            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport']"
+            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_Nonempirical && !$P_TypeMethod_Theoretical && !$P_TypeMethod_Measurement && $P_Preregistration =|= ['Yes', 'RegisteredReport']"
         },
         {
             "id": "P_Preregistration_Content",
@@ -1384,7 +1385,7 @@
                 },
                 {
                     "id": "Hypotheses",
-                    "text": "Hypotheses",
+                    "text": "Hypotheses are clearly and explicitly stated.",
                     "value": 0.20
                 },
                 {
@@ -1403,9 +1404,9 @@
                     "value": 0.20
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis",
-            "info": "<ul><li><b>Sample size</b>: Typically, an a priori power analysis was conducted and is reported. <b>Not enough</b> to receive points:<ul><li>'We will collect as many participants as possible'</li><li>Only saying which sample size is aimed at <b>without any rationale.</b> Be careful: The AsPredicted template states 'No need to justify decision'. This would <i>not</i> be sufficient in RESQUE.</li><li> If <b>'reuse of existing data set'</b>: Only reporting how many participants the original study had.</li></ul></li></ul><br><br><b>Hypothesis</b><br><br> Hypotheses in the preregistration should be the <b>same</b> as reported in the paper. Deviations must be explained.<br><br><b>Operationalizations</b><br><br><ul><li>If it is ambiguous ('I will use either questionnaire A or B') - without a decision rule - it is <b>'no'</b>.</li><li>In a secondary data preregistration ('reuse of existing data set'), the primary outcome should be defined</li></ul><br><br><b>Analysis Plan</b><br><br>Required to receive points:<ul><li>Dependent and independent variables must be <b>specified</b> (what’s the primary outcome?)</li><li><b>Specified decision rule:</b> What’s the alpha-level? When does a result speak in favor of the hypothesis, when against? (especially when multiple testing was conducted)</li></ul>",
-            "tip_external":"For <b>Operationalizations</b>:<br><br>If you would be able to rebuild the experimental setup based on the preregistered description of the measurement instruments, then assign <b>'yes'</b>. If it is too vague (e.g. only 'we will use reaction times'), then assign <b>'no'</b>.<br><br>ClinicalTrials.gov often lack the details for most of these aspects (often only the operationalizations are provided, but no sufficiently precise hypotheses, or sample size planning)."
+            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_Nonempirical && !$P_TypeMethod_Theoretical && !$P_TypeMethod_Measurement && !$P_TypeMethod_MetaAnalysis && $P_Preregistration =|= ['Yes', 'RegisteredReport']",
+            "info": "<b>Sample size</b>: Typically, an a priori power analysis was conducted and is reported. <b>Not enough</b> to receive points:<ul><li>'We will collect as many participants as possible'</li><li>Only saying which sample size is aimed at <b>without any rationale.</b> Be careful: The AsPredicted template states 'No need to justify decision'. This would <i>not</i> be sufficient in RESQUE.</li><li> If <b>'reuse of existing data set'</b>: We only require that is reported how many participants the original study had.</li></ul><br><br><b>Hypothesis</b><br><br> Hypotheses in the preregistration should be the <b>same</b> as reported in the paper. Deviations must be explained.<br>. (External raters: See note below).<br>A generally formulated research question (“Is there a difference between control and experimental group?”) is not sufficient for a hypothesis. Also if a section states “This study aims to… (e.g., identify effect moderators”, these a general explorative goals, but no hypotheses.<br><b>A proper hypothesis should state</b>: (a) the operationalization of the outcome variable (what is the primary outcome?), (b) operationalization of the predictor variable or intervention, and (c) the direction (or explicitly say “undirected test”).<br><br><b>Operationalizations</b><br><br><ul><li>If it is ambiguous ('I will use either questionnaire A or B') - without a decision rule - it is <b>'no'</b>.</li><li>In a secondary data preregistration ('reuse of existing data set'), the primary outcome should be defined</li></ul><br><br><b>Analysis Plan</b><br><br>Required to receive points:<ul><li>Dependent and independent variables must be <b>specified</b> (what’s the primary outcome?)</li><li><b>Specified decision rule:</b> What’s the alpha-level? When does a result speak in favor of the hypothesis, when against? (especially when multiple testing was conducted)</li></ul>",
+            "tip_external":"For <b>Operationalizations</b>:<br><br>If you would be able to rebuild the experimental setup based on the preregistered description of the measurement instruments, then assign <b>'yes'</b>. If it is too vague (e.g. only 'we will use reaction times'), then assign <b>'no'</b>.<br><br>ClinicalTrials.gov often lack the details for most of these aspects (often only the operationalizations are provided, but no sufficiently precise hypotheses, or sample size planning).<br><br>For <b>hypotheses</b>: For practical reasons, external raters do <i>not</i> need to check whether the hypotheses in the preregistration match to the hypotheses in the paper - just whether hypotheses have been preregistered at all."
         },
         {
             "id": "P_Preregistration_Replication",
@@ -1433,14 +1434,14 @@
                 }
             ],
             "info": "As only <i>preregistered</i> replication attempts count, you need to provide the DOI or URL of the preregistration in the previous indicator. If the paper contains a replication which was not preregistered, please select <b>'No'</b>.<br><br>If the paper was preregistered, but does not contain a replication, select <b>'No'</b>. If you chose 'not applicable' at the previous indicator 'Preregistration', choose 'not applicable' here, too.<br><br>This indicator refers both to within-paper replication studies (e.g., Study 2 is a preregistered replication of Study 1) and to replications of other studies that have been published in other papers.",
-            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis",
+            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis && !$P_TypeMethod_Nonempirical && !$P_TypeMethod_Theoretical && !$P_TypeMethod_Measurement",
             "tip_external":"If it is a replication of a previously reported effect, it is <b>'yes'</b>, even if the replication is not the main research question of the preregistration.<br><b>Search word</b> (in preregistration):replica*"
         },
         {
             "id": "P_Preregistration_Replication_NAExplanation",
             "type": "text",
             "title": "⤷ Not applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis && $P_Preregistration_Replication === 'NotApplicable'"
+            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis && !$P_TypeMethod_Nonempirical && !$P_TypeMethod_Theoretical && !$P_TypeMethod_Measurement && $P_Preregistration_Replication === 'NotApplicable'"
         },
         {
             "id": "P19P20SEP",
