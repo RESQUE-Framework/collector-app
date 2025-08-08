@@ -204,7 +204,8 @@
                     "value": 1
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_MetaAnalysis"
+            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_MetaAnalysis",
+            "info": "This includes but is not limited to: involvement of patients in study design, dissemination or translation of results. Exemplary keywords in the text are:<ul><li>patient (/family/caretaker) perspective</li><li>patient and public involvement (PPI)</li><li>patient partner</li><li>patient(/family/caretaker) insights</li></ul>The Information could also be stated in the acknowledgements. <b>Two examples</b> from publications that included patients:<br><br><ul><li>'We enhanced the usability of our findings by engaging key stakeholders (i.e. clinicians, parents and researchers) as part of our integrated knowledge translation activities […]. Their guidance ensured that the review findings were both clinically meaningful and family-centred.” (<a href='https://doi.org/10.1111/obr.12485'>McPherson et al., 2017</a>)'</li><li>'Patient discussion groups were used as a means of involving patients in setting the research question and for determining the outcome measures' (<a href='https://doi.org/10.1136/bmj.l352'>Wilson et al., 2019</a>)</li></ul>"
         },
         {
             "id": "CP_Methods_PatientRepresentatives_NAExplanation",
