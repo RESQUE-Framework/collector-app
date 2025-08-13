@@ -92,7 +92,7 @@
                 },
                 {
                     "id": "Computational",
-                    "text": "Computational (e.g., agent-based modeling, simulations, etc.)"
+                    "text": "Computational / Methodological (e.g., simulations, statistical test development, tutorial, etc.)"
                 },
                 {
                     "id": "Measurement",
@@ -310,14 +310,14 @@
                 {
                     "id": "DataCuration",
                     "title": "Data curation",
-                    "tooltip": "Management activities to annotate (produce metadata), scrub data and maintain research data (including software code, where it is necessary for interpreting the data itself) for initial use and later re-use.",
+                    "tooltip": "Management activities to annotate (produce metadata), scrub data and maintain research data (including software code, where it is necessary for interpreting the data itself) for initial use and later re-use. This applies to both empirical and simulated data.",
                     "info": "Management activities to annotate (produce metadata), scrub data and maintain research data (including software code, where it is necessary for interpreting the data itself) for initial use and later re-use.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
                 },
                 {
                     "id": "FormalAnalysis",
                     "title": "Formal analysis (≙ statistical data analysis)",
-                    "tooltip": "Application of statistical, mathematical, computational, or other formal techniques to analyse or synthesize study data.",
-                    "info": "Application of statistical, mathematical, computational, or other formal techniques to analyse or synthesize study data.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
+                    "tooltip": "Application of statistical, mathematical, computational, or other formal techniques to analyse or synthesize empirical or simulated data.",
+                    "info": "Application of statistical, mathematical, computational, or other formal techniques to analyse or synthesize empirical or simulated data.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
                 },
                 {
                     "id": "FundingAcquisition",
@@ -334,8 +334,8 @@
                 {
                     "id": "Methodology",
                     "title": "Methodology",
-                    "tooltip": "Development or design of methodology; creation of models.",
-                    "info": "Development or design of methodology; creation of models.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
+                    "tooltip": "Development or design of methodology; creation of formal or statistical models",
+                    "info": "Development or design of methodology; creation of formal or statistical models.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
                 },
                 {
                     "id": "ProjectAdministration",
@@ -1008,6 +1008,10 @@
                     "text": "A synthesized dataset with statistical properties similar to the original data is available [provide doi or URL]"
                 },
                 {
+                    "id": "YesDataGeneratingScript",
+                    "text": "A computational script is available that reproduces the exact simulated data set (e.g., using seeds) [provide doi or URL]"
+                },
+                {
                     "id": "YesAggregate",
                     "text": "Only aggregated data that could be shared are available, because primary data could not be shared [provide doi or URL]"
                 }
@@ -1026,7 +1030,7 @@
             "id": "P_Data_Open_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts', 'YesSynthetic', 'YesAggregate']",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts', 'YesSynthetic', 'YesAggregate', 'YesDataGeneratingScript']",
             "info": "You can add multiple DOIs or URLs, separated by a semicolon (;)"
         },
         {
@@ -1034,7 +1038,7 @@
             "type": "radio",
             "title": "⤷ Access level",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_Data_Open === 'NotApplicable') && (exists($P_Data_Open_NAExplanation))) || ($P_Data === 'No') || (!($P_Data_Source_NewOwn) && !($P_Data_Source_ReuseOwn) && !($P_Data_Source_ReuseCompilation) && !($P_Data_Source_Simulated))",
+                "not_applicable": "($P_Suitable === 'No') || (($P_Data_Open === 'NotApplicable') && (exists($P_Data_Open_NAExplanation))) || ($P_Data === 'No') || (!($P_Data_Source_NewOwn) && !($P_Data_Source_ReuseOwn) && !($P_Data_Source_ReuseCompilation) && !($P_Data_Source_Simulated)) || ($P_Data_Open == 'YesDataGeneratingScript')",
                 "condition": "($P_Data === 'Yes' && $P_Data_Open != 'NotAvailable' && exists($P_Data_Open_Identifier))",
                 "op": "select" 
             },
@@ -1072,7 +1076,7 @@
             "title": "⤷ FAIR format",
             "score": {
                 "not_applicable": "($P_Suitable === 'No') || (($P_Data_Open === 'NotApplicable') && (exists($P_Data_Open_NAExplanation))) || ($P_Data === 'No')  || (!($P_Data_Source_NewOwn) && !($P_Data_Source_ReuseOwn) && !($P_Data_Source_ReuseCompilation) && !($P_Data_Source_Simulated))",
-                "condition": "($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts', 'YesSynthetic', 'YesAggregate']  && !$P_Data_Open =|= ['NotApplicable', 'NotAvailable'] && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || (($P_Data_Open_AccessLevel === 'ZK2') && (exists($P_Data_Open_AccessLevel_ZK2Explanation))))"
+                "condition": "($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts', 'YesSynthetic', 'YesAggregate', 'YesDataGeneratingScript']  && !$P_Data_Open =|= ['NotApplicable', 'NotAvailable'] && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || (($P_Data_Open_AccessLevel === 'ZK2') && (exists($P_Data_Open_AccessLevel_ZK2Explanation))) || ($P_Data_Open == 'YesDataGeneratingScript'))"
             },
             "options": [
                 {
@@ -1091,8 +1095,8 @@
                     "value": 0.25
                 }
             ],
-            "condition": "($P_Suitable === 'Yes') && ($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts', 'YesSynthetic', 'YesAggregate'] && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || ($P_Data_Open_AccessLevel === 'ZK2' && exists($P_Data_Open_AccessLevel_ZK2Explanation)))",
-            "info": "<ul><li>Persistent identifier: Data in an OSF project do count, as we consider OSF URLs to be persistent.</li><li>Valid structured and open file formats for data sets are, for example: .csv, .tsv, .tab, .txt, .json, .xlsx. <b>Not valid</b> are: .sav, .pdf.</li></ul>",
+            "condition": "($P_Suitable === 'Yes') && ($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts', 'YesSynthetic', 'YesAggregate', 'YesDataGeneratingScript'] && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || ($P_Data_Open_AccessLevel === 'ZK2' && exists($P_Data_Open_AccessLevel_ZK2Explanation)) || ($P_Data_Open == 'YesDataGeneratingScript'))",
+            "info": "<ul><li>Persistent identifier: Data in an OSF project do count, as we consider OSF URLs to be persistent.</li><li>Valid structured and open file formats for data sets are, for example: .csv, .tsv, .tab, .txt, .json, .xlsx, the BIDS format. <b>Not valid</b> are: .sav, .pdf.</li></ul>",
             "tip_external":"For <b>Codebook</b>:<ul><li>Check the availability of a codebook. Normally a separate document should be provided.</li><li>Exception: Variable labels, descriptions and scales are provided in a structured (e.g. tabular) format at the beginning of the syntax script.</li><li><b>Variable name, content</b> and <b>scale</b> must be provided in order to receive the point.</li></ul>"
         },
         {
