@@ -100,7 +100,7 @@
             "type": "radio",
             "title": "Was the primary outcome from the preregistration reported as the main finding in the paper?",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation)))  || (($CP_Preregistration_PrimaryMainOutcome === 'NotApplicable') && (exists($CP_Preregistration_PrimaryMainOutcome_NAExplanation))) || ($P_TypeMethod_MetaAnalysis) || ($P_TypeMethod_EmpiricalQuantitative) || ($P_TypeMethod_Nonempirical) || ($P_TypeMethod_Theoretical) || ($P_TypeMethod_Measurement) ||($CP_RCT != ['Yes'])",
+                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation)))  || (($CP_Preregistration_PrimaryMainOutcome === 'NotApplicable') && (exists($CP_Preregistration_PrimaryMainOutcome_NAExplanation))) || ($P_TypeMethod_MetaAnalysis) || ($P_TypeMethod_EmpiricalQualitative) || ($P_TypeMethod_Nonempirical) || ($P_TypeMethod_Theoretical) || ($P_TypeMethod_Measurement) ||($CP_RCT != ['Yes'])",
                 "condition": ""
             },
             "options": [
@@ -142,7 +142,7 @@
             "type": "checkbox",
             "title": "Which criteria apply to this RCT?",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation))) || $P_Preregistration === 'No' || ($P_TypeMethod_MetaAnalysis) || ($P_TypeMethod_EmpiricalQuantitative) || ($P_TypeMethod_Nonempirical) || ($P_TypeMethod_Theoretical) || ($P_TypeMethod_Measurement)|| ($CP_RCT != ['Yes'])",
+                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation))) || ($P_TypeMethod_MetaAnalysis) || ($P_TypeMethod_EmpiricalQualitative) || ($P_TypeMethod_Nonempirical) || ($P_TypeMethod_Theoretical) || ($P_TypeMethod_Measurement)|| ($CP_RCT != ['Yes'])",
                 "condition": ""
             },
             "options": [

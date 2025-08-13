@@ -303,7 +303,7 @@
             "rows": [
                 {
                     "id": "Conceptualization",
-                    "title": "Conceptualization",
+                    "title": "Conceptualization / Idea",
                     "tooltip": "Ideas; formulation or evolution of overarching research goals and aims.",
                     "info": "Ideas; formulation or evolution of overarching research goals and aims.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'.}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
                 },
@@ -476,7 +476,7 @@
                 },
                 {
                     "id": "ReuseOther",
-                    "text": "Reuse of someone else's existing data set"
+                    "text": "Reuse of someone else's existing data set (including archival data)"
                 },
                 {
                     "id": "ReuseCompilation",
@@ -798,7 +798,7 @@
                 },
                 {
                     "id": "QuestionnaireOtherreport",
-                    "text": "Questionnaire (other/informant report)"
+                    "text": "Questionnaire (other/informant report; e.g. supervisor or peer ratings)"
                 },
                 {
                     "id": "Behavioral",
