@@ -86,6 +86,10 @@
         const insertValuesIntoCondition = condition => {
             return condition
                 .replaceAll(/meta\$([a-zA-Z0-9_]+)/g, `Alpine.store('data').input[0]['$1']`)
+                .replaceAll(/config\$([a-zA-Z0-9_.]+)/g, (match, keySequence) => {
+                    const keys = keySequence.split('.');
+                    return `Alpine.store('config').config['${keys.join("']['")}']`;
+                })
                 .replaceAll(/\$(\w*)/g, `context['$1']`);
         }
 
@@ -142,11 +146,15 @@
                 .replaceAll(/global\$([a-zA-Z0-9_]+)@([a-zA-Z0-9_]+)/g, (match, variable, type) => {
                     return globals[type](variable);
                 })
-                .replaceAll(/config\$([a-zA-Z0-9_]+)/g, (match, variable) => {
-                    return Alpine.store('config').config[variable];
+                .replaceAll(/config\$([a-zA-Z0-9_.]+)/g, (match, keySequence) => {
+                    const keys = keySequence.split('.');
+                    const value = eval(`Alpine.store('config').config['${keys.join("']['")}']`);
+                    return value;
                 })
-                .replaceAll(/config\$([a-zA-Z0-9_]+)@([a-zA-Z0-9_]+)/g, (match, variable, type) => {
-                    return processType[type](Alpine.store('config').config[variable]);
+                .replaceAll(/config\$([a-zA-Z0-9_]+)@([a-zA-Z0-9_]+)/g, (match, keySequence, type) => {
+                    const keys = keySequence.split('.');
+                    const value = eval(`Alpine.store('config').config['${keys.join("']['")}']`);
+                    return processType[type](value);
                 })
                 .replaceAll(/\$([a-zA-Z0-9_]+?)@([a-zA-Z0-9_]+)/g, (match, variable, type) => {
                     return processType[type](Alpine.store('data').currentInput[variable]);
