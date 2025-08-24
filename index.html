@@ -449,12 +449,12 @@
 
             localStorage.setItem('data ' + Alpine.store('forms').config.main_title, JSON.stringify(data));
 
-            window.renderScoreChart('overallScoreChart', scores.overall.categories, animation = false);
+            window.renderScoreChart('overallScoreChart', scores.overall.categories, Alpine.store('config').config?.score_categories?.map(c => c.color) ?? [], animation = false);
 
             const currentScore = scores.scores[Alpine.store('data').currentTab];
 
             if (currentScore && currentScore.categories) {
-                window.renderScoreChart('currentScoreChart', currentScore.categories, animation = false);
+                window.renderScoreChart('currentScoreChart', currentScore.categories, Alpine.store('config').config?.score_categories?.map(c => c.color) ?? [], animation = false);
             }
         });
 

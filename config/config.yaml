@@ -46,15 +46,20 @@ software:
 score_categories:
   - title: "Theorizing & Formal Modeling"
     cue: "Theorizing"
+    color: '#7fb1d3'
 
   - title: "Open Data"
     cue: "Data"
+    color: '#8ed3c7'
 
   - title: "Open Materials"
     cue: "OpenMaterials"
+    color: '#efd59d'
 
   - title: "Preregistration"
     cue: "Prereg"
-    
+    color: '#bebada'
+
   - title: "Reproducible Code & Verification"
     cue: "ReproducibleScripts|IndependentVerification"
+    color: '#fb8072'
