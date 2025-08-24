@@ -369,7 +369,7 @@
             },
 
             clear() {
-                localStorage.clear();
+                localStorage.removeItem('data ' + Alpine.store('forms').config.main_title);
                 sessionStorage.clear();
                 this.input = [this.createResearchOutput('meta')];
                 this.currentTab = 0;
