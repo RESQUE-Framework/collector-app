@@ -21,6 +21,8 @@ show_instruction: false
 show_beta_warning: true
 image_url: https://upload.wikimedia.org/wikipedia/commons/0/06/LMU_Muenchen_Logo.svg
 
+hide_score: false
+
 meta:
   sources: ["packs/core-meta.json"]
   config:

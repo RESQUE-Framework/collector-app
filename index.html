@@ -834,7 +834,7 @@
                         </template>
                     </div>
                     <div class="card animate pop" :class="{ warning: $store.warnings.any() }" id="score-box"
-                        x-show="tab === 'main' && $store.data.currentInput.type !== 'meta'">
+                        x-show="!$store.config.config.hide_score && tab === 'main' && $store.data.currentInput.type !== 'meta'">
                         <div id="score-container">
                             <div id="current-score">
                                 <span class="sub">Selected research output</span>
