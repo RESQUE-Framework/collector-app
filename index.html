@@ -309,7 +309,7 @@
         Alpine.store('selectedIndicator', {});
 
         Alpine.store('data', {
-            input: JSON.parse(localStorage.getItem('data') ?? '[]'),
+            input: {},
             topPapers: [],
             currentTab: parseInt(sessionStorage.getItem('currentTab') ?? '0'),
             currentInput: {},
@@ -317,6 +317,8 @@
             completion: {},
 
             manualInit() {
+                this.input = JSON.parse(localStorage.getItem('data ' + Alpine.store('forms').config.main_title) ?? '[]');
+
                 if (typeof this.input === "object" && this.input.length === 0) {
                     this.newResearchOutput('meta');
                 }
@@ -445,7 +447,7 @@
 
             showSaving();
 
-            localStorage.setItem('data', JSON.stringify(data));
+            localStorage.setItem('data ' + Alpine.store('forms').config.main_title, JSON.stringify(data));
 
             window.renderScoreChart('overallScoreChart', scores.overall.categories, animation = false);
 
