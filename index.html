@@ -1552,7 +1552,6 @@
             data.date_exported = millis;
 
             data[0].forms = Alpine.store('forms');
-            data[0].config = Alpine.store('config').config;
 
             data = data.filter((_, index) => !excluded.has(index));
 
