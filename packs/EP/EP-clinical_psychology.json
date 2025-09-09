@@ -28,7 +28,8 @@
                     "text": "Yes, a substantial or new development"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes'"
+            "condition": "$P_Suitable === 'Yes'",
+            "tip_external": "Only award points for evaluations of therapeutic interventions, not for newly developed measurements and alike.<ul><li>Choose “Yes, an incremental development“ if the intervention has already been evaluated before and only a small change, translation or addition is being evaluated.</li><li>Choose “Yes, a substantial or new development” if a new intervention or major changes are being evaluated.</li></ul>Look at the references to understand whether the intervention has been evaluated before."
         },
         {
             "id": "CP_OpenMaterials_Manual",
@@ -205,7 +206,7 @@
                 }
             ],
             "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_MetaAnalysis",
-            "info": "This includes but is not limited to: involvement of patients in study design, dissemination or translation of results. Exemplary keywords in the text are:<ul><li>patient (/family/caretaker) perspective</li><li>patient and public involvement (PPI)</li><li>patient partner</li><li>patient(/family/caretaker) insights</li></ul>The Information could also be stated in the acknowledgements. <b>Two examples</b> from publications that included patients:<br><br><ul><li>'We enhanced the usability of our findings by engaging key stakeholders (i.e. clinicians, parents and researchers) as part of our integrated knowledge translation activities […]. Their guidance ensured that the review findings were both clinically meaningful and family-centred.” (<a href='https://doi.org/10.1111/obr.12485'>McPherson et al., 2017</a>)'</li><li>'Patient discussion groups were used as a means of involving patients in setting the research question and for determining the outcome measures' (<a href='https://doi.org/10.1136/bmj.l352'>Wilson et al., 2019</a>)</li></ul>"
+            "info": "This includes but is not limited to: involvement of patients in study design, dissemination or translation of results. Exemplary keywords in the text are:<ul><li>patient (/family/caretaker) perspective</li><li>patient and public involvement (PPI)</li><li>patient partner</li><li>patient(/family/caretaker) insights</li></ul>The Information could also be stated in the acknowledgements. <b>Two examples</b> from publications that included patients:<br><br><ul><li>'We enhanced the usability of our findings by engaging key stakeholders (i.e. clinicians, parents and researchers) as part of our integrated knowledge translation activities […]. Their guidance ensured that the review findings were both clinically meaningful and family-centred.” (<a href='https://doi.org/10.1111/obr.12485'>McPherson et al., 2017</a>)'</li><li>'Patient discussion groups were used as a means of involving patients in setting the research question and for determining the outcome measures' (<a href='https://doi.org/10.1136/bmj.l352'>Wilson et al., 2019</a>)</li></ul>When to select what?<ul><li>Select “Yes” if such involvement is documented at any stage of the research process.</li><li>Select “No” if no patient representatives were involved or if their involvement is not described.</li><li>Select “Not applicable” only if the study is conducted in a context where meaningful or feasible involvement of patient representatives is not possible (e.g., purely methodological simulations without connection to a specific patient population).</li></ul>"
         },
         {
             "id": "CP_Methods_PatientRepresentatives_NAExplanation",
@@ -241,7 +242,8 @@
                     "value": 1
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_MetaAnalysis"
+            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_MetaAnalysis",
+            "info": "Think counterfactually: Could the study in theory have provided a result that leads to a disconfirmation? If yes (but it did not disconfirm any prior hypothesis), then you choose “No” (it did not contradict or disconfirm). Most qualitative studies fall into the “not applicable” category, as they rarely test a priori hypotheses."
         },
         {
             "id": "CP_Methods_NullResults_NAExplanation",

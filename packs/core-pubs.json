@@ -111,6 +111,7 @@
                     "text": "Other (please specify)"
                 }
             ],
+            "info": "Generally choose the primary type of the paper. If multiple methods have been used in a substantial way, check all of them. If only a very small add-on was used with a different method (e.g. a very small quantitative analysis within a qualitative paper), only choose the dominant type.",
             "tip_external": "A <b>computational</b> contribution does not analyze empirical data in themselves, but generates data based on simulations, ABMs or other computational methods (it might use empirical data for calibration of the simulations, but does not analyze them as a primary focus).<br>If you are uncertain whether to check 'computational'. If the central finding of a paper pertains to empirical data ('Group 1 has a higher mean than Group 2') - regardless how fancy the computational method applied to the data - it is primarily an 'Empirical: Quantitative' contribution. If the the central finding is about a method or a simulation itself (“The new method works well; Method 1 has a lower prediction error than Method 2; the simulation found interesting patterns”) - i.e., we learned something about a method, and not about a population - than it is 'Computational'"
         },
         {
@@ -491,7 +492,7 @@
             "default": [
                 "NewOwn"
             ],
-            "info": "Data set acquisition often is a collaborative enterprise with different contributor roles. { $P_Data_Source_ReuseOwn | Select 'Reuse of own existing data set' only, if you would qualify as a co-author with substantive contributions in a stand-alone data set publication of that data set. Otherwise, select 'Reuse of someone else's existing data set'.}<br><br>{ $P_TypeMethod_MetaAnalysis | In case of a meta-analysis, the extraction of effect sizes from the primary literature counts as 'Own new data collection' (but <i>not</i> as 'Reuse of someone else's existing data set'.}",
+            "info": "Data set acquisition often is a collaborative enterprise with different contributor roles. If the data has been collected with substantive contribution of the current author team and not been used before, select ‘Own new data collection’. If the data has been used in other publications before and is re-used in the current publication (e.g. with keyword “secondary data analysis”), select one of both ‘Reuse’ options. { $P_Data_Source_ReuseOwn | Select 'Reuse of own existing data set' only, if you would qualify as a co-author with substantive contributions in a stand-alone data set publication of that data set. Otherwise, select 'Reuse of someone else's existing data set'.}<br><br>{ $P_TypeMethod_MetaAnalysis | In case of a meta-analysis, the extraction of effect sizes from the primary literature counts as 'Own new data collection' (but <i>not</i> as 'Reuse of someone else's existing data set'.}",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes'",
             "tip_external": "Look in the abstract and/or method section. If no information can be found there, it might also be useful to look at the contributors of the repositories.<br><b>Search words:</b> simul*, data, OSF, availab*<br>If it is unclear whether the applicant (who should be the focus of this analysis) was part of the data collection ('Reuse of own existing data set'), check the authors of the data set citation. If the person is not part of that, select 'Reuse of someone else's existing data set')"
         },
@@ -552,7 +553,7 @@
             "options": [
                 {
                     "id": "Controlled",
-                    "text": "Controlled in-person setting (e.g., lab, standardized conditions)"
+                    "text": "Controlled in-person setting (e.g., lab, standardized conditions), including in-person paper & pencil questionnaires and interviews (both in-person and online)"
                 },
                 {
                     "id": "Naturalistic",
@@ -560,7 +561,7 @@
                 },
                 {
                     "id": "OnlineSurvey",
-                    "text": "Online Survey"
+                    "text": "Online Survey (self-report) or mailed questionnaires"
                 },
                 {
                     "id": "OnlineEMA",
@@ -830,7 +831,7 @@
                 }
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
-            "info": "<ul>{ $P_Data_Type_MetaAnalysis | <li>In case of meta-analysis, only check 'Meta-analysis: Effect sizes from primary studies'. The data type of the primary studies is irrelevant.</li>} <li>If you process data (for example when you derive numeric scores from a content analysis of interviews), check both the original data type (in the example, 'interviews') and the derived data type (in the example, 'Content or behavioral coding').</li><li>Some data types are combinations, e.g. if you do an <b>ESM study with mobile sensing</b>, you would choose 'Questionnaire (self report)' <b>and</b> 'Behavioral data' (--> 'Observed behavior (naturalistic situation)' in the next question) <b>and</b> 'longitudinal design' in the question on the study design.</li></ul>",
+            "info": "If multiple types of data have been used, check only those which are central to the research questions. If, for example, an additional type of data has been used only for a demographic description, don’t list it here. <ul>{ $P_Data_Type_MetaAnalysis | <li>In case of meta-analysis, only check 'Meta-analysis: Effect sizes from primary studies'. The data type of the primary studies is irrelevant.</li>} <li>If you process data (for example when you derive numeric scores from a content analysis of interviews), check both the original data type (in the example, 'interviews') and the derived data type (in the example, 'Content or behavioral coding').</li><li>Some data types are combinations, e.g. if you do an <b>ESM study with mobile sensing</b>, you would choose 'Questionnaire (self report)' <b>and</b> 'Behavioral data' (--> 'Observed behavior (naturalistic situation)' in the next question) <b>and</b> 'longitudinal design' in the question on the study design.</li></ul>",
             "tip_external":"Look in the method section, more specifically at parts called procedure, data collection or variables."
         },
 
@@ -951,7 +952,8 @@
                     "text": "Experimental manipulation"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
+            "info": "The crucial point is whether a (randomized) manipulation has been carried out that was relevant for the research question and a control or comparison group was present."
         }, 
 
         {
@@ -1016,7 +1018,7 @@
                     "text": "Only aggregated data that could be shared are available, because primary data could not be shared [provide doi or URL]"
                 }
             ],
-            "info": "If the data is only available on a personal website (including personal university websites) or 'upon (reasonable) request', select <i>not available</i>. When only few aggregated data is available, select <i>not available</i> (there might be exceptions with high-volume physiological data, and when primary data justifiably could not be shared).<br><br>When to choose <b>'Not applicable'</b>?<ul><li>If legal regulations or binding conditions of the data provider prohibit data publication and not even restricted access is possible.</li></ul>",
+            "info": "If the data is only available on a personal website (including personal university websites) or 'upon (reasonable) request', select <i>not available</i>. When only few aggregated data is available, select <i>not available</i> (there might be exceptions with high-volume physiological data, and when primary data justifiably could not be shared).<br><br>When to choose <b>'Not applicable'</b>?<ul><li>If legal regulations or binding conditions of the data provider prohibit data publication and not even restricted access is possible.</li><li>If the paper explicitly states that participants did not consent in data sharing.</li></ul>",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated)",
             "tip_external": "<b>Practical approach</b>: <ul><li>Is a <b>link</b> to a data set provided?</li><li>Is the data in a <b>repository</b> that also controls data access?</li></ul><br><b>Search words:</b> open, data, availab*<br>A difficult situation is the distinction between “not applicable” and “not available”. Sometimes authors argue that it is “not possible” to share the data, while data sharing on a restrictive level (Zugriffsklasse 2) actually <i>would</i> be possible. In this case, you have to judge whether it actually was impossible to share (→ “not applicable”). Also sensitive data could be shared if you ask for consent and use a restrictive re-use license. Hence, if they <i>could</i> have shared the data (probably with some effort), choose “not available”."
         },
@@ -1300,13 +1302,13 @@
                 },
                 {
                     "id": "Rich",
-                    "text": " The complete material / Diverse & well-structured open material for multiple aspects of the study [provide doi or URL]",
+                    "text": "Complete material / Diverse & well-structured open material for multiple aspects of the study [provide doi or URL]",
                     "value": 1
                 }
             ],
-            "info": "Open Material refers to all material that is necessary to replicate a study. It typically includes questionnaire items, stimuli, texts for vignettes, or code for software that controls the experimental flow. {:'YesParts', 'YesEntire' | Only choose 'Yes' if the material substantially exceeds the open reproducible scripts. }<br><br><ul><li>{:'YesEntire' | Choose 'Yes, entire material' if a reasonable justification for only parts of material is given.}</li><li>{:'YesParts' | Choose 'Yes, parts of material' if no justification is given. }</li><li>{:'NotApplicable' | When to choose <b>'Not applicable'</b>:<ul><li>If no material has been used in the publication, or the entire material is contained in the open reproducible scripts.</li><li>'Not applicable' is the default if you chose 'reuse of existing data set', 'meta-analysis' or 'simulation' above; but if there is additional material that shows an own contribution then assign 'Yes, entire material'.</li></ul> }</li></ul><br>The pure existence of an Electronic Supplemental Material does not necessarily count as Open Material, for example if it only contains additional analyses or tables.",
+            "info": "Open Material refers to all material that is necessary to replicate a study. It typically includes questionnaire items, stimuli, texts for vignettes, or code for software that controls the experimental flow. {:'YesParts', 'YesEntire' | Only choose 'Yes' if the material substantially exceeds the open reproducible scripts. }<br>The main question for this item is: Was there material that could have been uploaded (i.e., without copyright restrictions)?<br><ul><li>{:'Rich' | Choose 'Complete material ...' if a reasonable justification for only parts of material is given.}</li><li>{:'Minimal' | Choose ‘Obviously 'iIncomplete material' if some material could have been uploaded, but no justification for the ommission is given. }</li><li>{:'NotApplicable' | When to choose <b>'Not applicable'</b>:<ul><li>If no material has been used in the publication, or the entire material is contained in the open reproducible scripts.</li><li>'Not applicable' is the default if you chose 'reuse of existing data set', 'meta-analysis' or 'simulation' above; but if there is additional material that shows an own contribution then assign 'Yes, entire material'.</li><li>If only commercial, copyrighted questionnaires have been used which cannot be published as open material.</li><li>If some material has been uploaded (e.g., some additional supplemental results) but the questionnaires not because they were copyrighted, and no other material was ommitted, choose “not applicable” in favor of the applicant.</li></ul> }</li></ul><br>The pure existence of an Electronic Supplemental Material does not necessarily count as Open Material, for example if it only contains additional analyses or tables.",
             "condition": "$P_Suitable === 'Yes'",
-            "tip_external":"<ul><li>Is a <b>link</b> to open materials provided (don't forget to check Appendix and Supplemental Materials)</li><li>Expect <b>'entire material'</b> as default if materials are available (only if the material is obviously <i>not</i> complete and no reasonable explanation is given, assign <b>'parts of materials'</b>)</li><li>We want to reward effort. Hence, if “Diverse & well-structured open material for multiple aspects of the study” is available, we award full points, even if some material might be missing; we do not check all material for 100% completeness.</li></ul>"
+            "tip_external":"<ul><li>Is a <b>link</b> to open materials provided (don't forget to check Appendix and Supplemental Materials)</li><li>Expect <b>'entire material'</b> as default if materials are available (only if the material is obviously <i>not</i> complete and no reasonable explanation is given, assign <b>'parts of materials'</b>)</li><li>We want to reward effort. Hence, if “Diverse & well-structured open material for multiple aspects of the study” is available, we award full points, even if some material might be missing; we do not check all material for 100% completeness.</li><li>If published questionnaires are used, we expect by default that they are copyrighted and cannot be uploaded (and therefore check “not applicable” and give the justification “commercial questionnaire”). We do not manually check the actual licenses - too much work.</li></ul>"
         },
         {
             "id": "P_OpenMaterials_NAExplanation",
@@ -1357,7 +1359,7 @@
                     "value": 2
                 }
             ],
-            "info": "{:'Yes' | Only choose <b>'Yes'</b> if the preregistration is time-stamped/registered before the publication of the study (check date). Typical preregistration platforms include: OSF, aspredicted.org, ZPID Prereg, ClinicalTrials.gov/.org, Euclinicaltrials.eu, Clinicaltrialsregister.eu, DRKS.}<br><br><b>Multi Study Paper Case</b>: Only choose 'Yes' if your nominated study has been preregistered. <br><br> When to choose <b>'No'</b> <br> If the study was not preregistered or if preregistration is not time-stamped/registered <br><br> When to choose <b>'Not applicable'</b>:<ul><li>If the study type is 'Simulation' (except from benchmarking experiments), 'mainly theoretical Review' or no data has been used in a substantive way.</li>In rare cases: When the theory arguably is so precise that no preregistration is necessary.<li></li><li>There also might be other cases with reasonable justifications for no preregistration.</li></ul>",
+            "info": "{:'Yes' | Only choose <b>'Yes'</b> if the preregistration is time-stamped/registered before the publication of the study (check date). Typical preregistration platforms include: OSF, aspredicted.org, ZPID Prereg, ClinicalTrials.gov/.org, Euclinicaltrials.eu, Clinicaltrialsregister.eu, DRKS.}<br><br><b>Multi Study Paper Case</b>: Only choose 'Yes' if your nominated study has been preregistered. <br><br> When to choose <b>'No'</b> <ul><li> If the study was not preregistered or if preregistration is not time-stamped/registered </li><li> If a preregistration exists, but does not contain information about the research question/hypothesis of this specific paper.</li></ul><br> When to choose <b>'Not applicable'</b>:<ul><li>If the study type is 'Simulation' (except from benchmarking experiments), 'mainly theoretical Review' or no data has been used in a substantive way.</li>In rare cases: When the theory arguably is so precise that no preregistration is necessary.<li></li><li>There also might be other cases with reasonable justifications for no preregistration.</li></ul>",
             "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_Nonempirical && !$P_TypeMethod_Theoretical && !$P_TypeMethod_Measurement",
             "tip_external":"<ul><li>It only counts if a <b>link</b> to the preregistration is provided.</li><li><b>Search words:</b> <code>preregist*</code>, <code>pre-regist*</code>, <code>regist*</code>, <code>aspredicted</code>, <code>OSF</code>. For clinical trials: <code>Prospero</code>, <code>ClinicalTrials</code>"
         },
