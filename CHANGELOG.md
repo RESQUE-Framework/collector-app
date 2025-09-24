@@ -1,3 +1,7 @@
+## core-pubs version 0.8.0 (2025-09-28)
+
+The final version for the second round of coding in the Clinical Psychology Study (CP2).
+
 ## core-pubs version 0.7 (2025-03-28)
 
 ### New indicators

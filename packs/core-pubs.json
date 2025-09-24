@@ -1,6 +1,6 @@
 {
-    "version": "0.7.0",
-    "date": "2025-03-28",
+    "version": "0.8.0",
+    "date": "2025-09-24",
     "prefix": "P",
     "title": "Publication",
     "elements": [       
@@ -954,7 +954,7 @@
                 }
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
-            "info": "The crucial point is whether a (randomized) manipulation has been carried out that was relevant for the research question and a control or comparison group was present."
+            "info": "The crucial point is whether a (randomized) manipulation has been carried out that was relevant for the research question and a control or comparison group (or in the case of within-person designs, a control condition) was present."
         }, 
 
         {
@@ -1140,7 +1140,7 @@
             ],
             "info":"{'YesEntire', 'YesParts', 'YesSynthetic', 'YesAggregate' | Only choose <b>`Yes`</b> if a doi or URL can be provided.} <br><br><b>When only parts of scripts available:</b><br>Choose `Yes, parts of scripts` if no justification is given.<br>Choose `Yes, entire scripts` if a reasonable justification for all missing scripts are provided.<br><br> When to choose <b>'Not applicable'</b>:<br>If no scripts have been used in the publication.",
             "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes'",
-            "tip_external":"To judge whether “Parts” or “Entire” scripts have been shared you need to take a quick look into the scripts themselves.<br>A typical situation for “parts of scripts” is when the main analyses are provided (e.g., a set of t-tests or a linear regression), but no data preprocessing is shared. In this case, one can typically expect that data preprocessing has been done but not shared.<br>If you are uncertain, in doubt choose “The entire analysis pipeline is available”, and only choose “Parts of scripts” if <i>obviously</i> something is missing."
+            "tip_external":"To judge whether “Parts” or “Entire” scripts have been shared you need to take a quick look into the scripts themselves.<br>A typical situation for “parts of scripts” is when the main analyses are provided (e.g., a set of t-tests or a linear regression), but no data preprocessing is shared. A typical case is when a data file is read that already contains sum or mean scores of questionnaires. If questionnaire scales have been used, but the script does not aggregate the items to a scale, you can expect that data preprocessing has been done but not shared.<br>If you are uncertain, in doubt choose “The entire analysis pipeline is available”, and only choose “Parts of scripts” if <i>obviously</i> something is missing."
         },
         {
             "id": "P_ReproducibleScripts_NAExplanation",
