@@ -86,6 +86,10 @@
         const insertValuesIntoCondition = condition => {
             return condition
                 .replaceAll(/meta\$([a-zA-Z0-9_]+)/g, `Alpine.store('data').input[0]['$1']`)
+                .replaceAll(/config\$([a-zA-Z0-9_.]+)/g, (match, keySequence) => {
+                    const keys = keySequence.split('.');
+                    return `Alpine.store('config').config['${keys.join("']['")}']`;
+                })
                 .replaceAll(/\$(\w*)/g, `context['$1']`);
         }
 
@@ -142,11 +146,15 @@
                 .replaceAll(/global\$([a-zA-Z0-9_]+)@([a-zA-Z0-9_]+)/g, (match, variable, type) => {
                     return globals[type](variable);
                 })
-                .replaceAll(/config\$([a-zA-Z0-9_]+)/g, (match, variable) => {
-                    return Alpine.store('config').config[variable];
+                .replaceAll(/config\$([a-zA-Z0-9_.]+)/g, (match, keySequence) => {
+                    const keys = keySequence.split('.');
+                    const value = eval(`Alpine.store('config').config['${keys.join("']['")}']`);
+                    return value;
                 })
-                .replaceAll(/config\$([a-zA-Z0-9_]+)@([a-zA-Z0-9_]+)/g, (match, variable, type) => {
-                    return processType[type](Alpine.store('config').config[variable]);
+                .replaceAll(/config\$([a-zA-Z0-9_]+)@([a-zA-Z0-9_]+)/g, (match, keySequence, type) => {
+                    const keys = keySequence.split('.');
+                    const value = eval(`Alpine.store('config').config['${keys.join("']['")}']`);
+                    return processType[type](value);
                 })
                 .replaceAll(/\$([a-zA-Z0-9_]+?)@([a-zA-Z0-9_]+)/g, (match, variable, type) => {
                     return processType[type](Alpine.store('data').currentInput[variable]);
@@ -301,7 +309,7 @@
         Alpine.store('selectedIndicator', {});
 
         Alpine.store('data', {
-            input: JSON.parse(localStorage.getItem('data') ?? '[]'),
+            input: {},
             topPapers: [],
             currentTab: parseInt(sessionStorage.getItem('currentTab') ?? '0'),
             currentInput: {},
@@ -309,6 +317,8 @@
             completion: {},
 
             manualInit() {
+                this.input = JSON.parse(localStorage.getItem('data ' + Alpine.store('forms').config.main_title) ?? '[]');
+
                 if (typeof this.input === "object" && this.input.length === 0) {
                     this.newResearchOutput('meta');
                 }
@@ -359,7 +369,7 @@
             },
 
             clear() {
-                localStorage.clear();
+                localStorage.removeItem('data ' + Alpine.store('forms').config.main_title);
                 sessionStorage.clear();
                 this.input = [this.createResearchOutput('meta')];
                 this.currentTab = 0;
@@ -437,14 +447,14 @@
 
             showSaving();
 
-            localStorage.setItem('data', JSON.stringify(data));
+            localStorage.setItem('data ' + Alpine.store('forms').config.main_title, JSON.stringify(data));
 
-            window.renderScoreChart('overallScoreChart', scores.overall.categories, animation = false);
+            window.renderScoreChart('overallScoreChart', scores.overall.categories, Alpine.store('config').config?.score_categories?.map(c => c.color) ?? [], animation = false);
 
             const currentScore = scores.scores[Alpine.store('data').currentTab];
 
             if (currentScore && currentScore.categories) {
-                window.renderScoreChart('currentScoreChart', currentScore.categories, animation = false);
+                window.renderScoreChart('currentScoreChart', currentScore.categories, Alpine.store('config').config?.score_categories?.map(c => c.color) ?? [], animation = false);
             }
         });
 
@@ -743,7 +753,7 @@
                                                 <template x-if="elem.type === 'tabular_radio'">
                                                     <div>
                                                         <table>
-                                                            <thead>
+                                                            <thead style="background-color: var(--bg-color); position: sticky; top: 0; z-index: 1;">
                                                                 <tr>
                                                                     <th></th>
                                                                     <template x-for="option in elem.options"
@@ -826,7 +836,7 @@
                         </template>
                     </div>
                     <div class="card animate pop" :class="{ warning: $store.warnings.any() }" id="score-box"
-                        x-show="tab === 'main' && $store.data.currentInput.type !== 'meta'">
+                        x-show="!$store.config.config.hide_score && tab === 'main' && $store.data.currentInput.type !== 'meta'">
                         <div id="score-container">
                             <div id="current-score">
                                 <span class="sub">Selected research output</span>
@@ -1529,6 +1539,7 @@
             return filteredData;
         }
 
+        // The export function "Save to file ..."
         const exp = (excluded) => {
             if (!excluded) {
                 excluded = new Set();
@@ -1541,13 +1552,25 @@
             let millis = Date.now();
             data.date_exported = millis;
 
+            // get an ISO string and sanitize it for use in filenames
+            const now = new Date();
+            const isoNoMs = now.toISOString().split('.')[0];
+            const safeIso = isoNoMs.replace(/:/g, '-');
+
+
             data[0].forms = Alpine.store('forms');
 
             data = data.filter((_, index) => !excluded.has(index));
 
             let json = JSON.stringify(data, null, 2);
             let blob = new Blob([json], { type: "text/json;charset=utf-8" });
-            let filename = `resque_${data[0].LastName ? data[0].LastName.toLowerCase() + "_" : ""}${millis}.json`;
+            // let filename = `resque_${data[0].LastName ? data[0].LastName.toLowerCase() + "_" : ""}${millis}.json`;
+            
+            // build filename using ISO timestamp
+            const namePart = data[0].LastName
+            ? data[0].LastName.toLowerCase() + '_'
+            : '';
+            const filename = `resque_${namePart}${safeIso}.json`;
 
             let a = document.getElementById("download");
             a.innerText = filename;
