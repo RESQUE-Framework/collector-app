@@ -15,14 +15,46 @@
             "type": "text",
             "title": "DOI",
             "onchange": "fetch_doi",
-            "no_comment": true
+            "no_comment": true,
+            "condition": "!$DOI_Unavailable_Select"
         },
-        {
+         {
             "id": "Title_Empty",
             "type": "info",
             "text": "💡 Please enter a DOI to fetch the publication metadata",
+            "condition": "!exists($DOI) && !$DOI_Unavailable_Select",
+            "no_comment": true
+        },
+        {
+            "id": "DOI_Unavailable",
+            "type": "checkbox",
+            "title": "DOI unavailable?",
+            "options": [
+                {
+                    "id": "Select",
+                    "text": "Manually enter publication metadata below."
+                }
+            ],
             "condition": "!exists($DOI)",
             "no_comment": true
+        },
+        {
+            "id": "Title",
+            "type": "text",
+            "title": "Paper title",
+            "condition": "$DOI_Unavailable_Select"
+        },
+        {
+            "id": "Year",
+            "type": "number",
+            "title": "Year of publication",
+            "condition": "$DOI_Unavailable_Select"
+        },
+        {
+            "id": "Link",
+            "type": "text",
+            "title": "Link to the publication (e.g., URL to the journal or preprint server)",
+            "condition": "$DOI_Unavailable_Select"
         },
         {
             "id": "Title_Invalid",
@@ -33,28 +65,28 @@
             "no_comment": true
         },
         {
-            "id": "Title",
+            "id": "Title_Auto",
             "type": "info",
             "title": "Paper title <span style='color: grey; font-size:80%; font-weight:normal;'>(automatically added via doi)</span>",
             "text": "<a href='$DOI' target='_blank'>$Title</a>",
-            "condition": "exists($Title)",
+            "condition": "exists($Title) && !$DOI_Unavailable_Select",
             "no_comment": true
         },
         {
-            "id": "Year",
+            "id": "Year_Auto",
             "type": "info",
             "title": "Year of publication <span style='color: grey; font-size:80%; font-weight:normal;'>(automatically added via doi)</span>",
             "text": "$Year",
-            "condition": "exists($Year)",
+            "condition": "exists($Year) && !$DOI_Unavailable_Select",
             "no_comment": true
         },
         {
-            "id": "Abstract",
+            "id": "Abstract_Auto",
             "type": "info",
             "title": "Abstract <span style='color: grey; font-size:80%; font-weight:normal;'>(automatically added via doi)</span>",
             "text": "<details><summary>Abstract</summary>$Abstract</details>",
             "style_classes": "abstract",
-            "condition": "exists($Abstract)",
+            "condition": "exists($Abstract) && !$DOI_Unavailable_Select",
             "no_comment": true
         },
         {

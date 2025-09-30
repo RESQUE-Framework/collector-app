@@ -2,7 +2,7 @@ function scaleValues(value, oldMin, oldMax, newMin, newMax) {
   return (value - oldMin) * (newMax - newMin) / (oldMax - oldMin) + newMin;
 }
 
-export function renderScoreChart(canvasId, categories, animation = true) {
+export function renderScoreChart(canvasId, categories, colors, animation = true) {
   const canvas = document.getElementById(canvasId);
 
   if (!canvas) {
@@ -17,7 +17,7 @@ export function renderScoreChart(canvasId, categories, animation = true) {
     datasets: [{
       data: categories.map(c => scaleValues(c.score, 0, c.max, 0, 100)),
       borderWidth: 1,
-      backgroundColor: categories.map((_, index) => getDefaultColor(index))
+      backgroundColor: colors.length > 0 ? colors : categories.map((_, index) => getDefaultColor(index))
     }]
   };
 
@@ -58,7 +58,7 @@ export function renderScoreChart(canvasId, categories, animation = true) {
   // Generate custom legend
   const legendContainer = document.getElementById('legend-container');
   if (legendContainer) {
-    legendContainer.innerHTML = generateCustomLegend(categories);
+    legendContainer.innerHTML = generateCustomLegend(categories, colors);
   }
 
   return chart;
@@ -71,10 +71,10 @@ function getDefaultColor(index) {
   return defaultColors[index % defaultColors.length];
 }
 
-export function generateCustomLegend(categories) {
+export function generateCustomLegend(categories, colors) {
   return categories.map((c, index) => `
     <div class="legend-item">
-      <span class="legend-color" style="background-color: ${getDefaultColor(index)};"></span>
+      <span class="legend-color" style="background-color: ${colors.length > 0 ? colors[index] : getDefaultColor(index)};"></span>
       <span class="legend-label">${c.title}</span>
     </div>
   `).join('');
