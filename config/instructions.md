@@ -13,14 +13,15 @@ Dieser Preis zeichnet eine publizierte Forschungsarbeit aus, die sich in besonde
 
 Die zentrale Grundlage für die Bewerbung ist die Dokumentation der angewandten Open-Science-Praktiken mithilfe des RESQUE (Research Quality Evaluation) Collector Tools. Dieses webbasierte Formular ermöglicht eine strukturierte und nachvollziehbare Darstellung der Qualität Ihrer Forschungsarbeit mit Hinblick auf Transparenz, Reproduzierbarkeit und Fehlerfreiheit.
 
-Das hier exportierte Ergebnis-Dokument (im PDF-Format) dient als Kernstück Ihrer Bewerbung. Es ersetzt ein formloses Begleitschreiben.
+Das hier exportierte Ergebnis-Dokument (im JSON-Format) dient als Kernstück Ihrer Bewerbung. Es ersetzt ein formloses Begleitschreiben.
 
 ## Einreichungsprozess
-Um sich für den Preis zu bewerben, senden Sie bitte die folgenden Unterlagen gebündelt in einer PDF-Datei an [open.science@uni-wh.de](mailto:open.science@uni-wh.de):
-- Das ausgefüllte RESQUE-Formular.
-- Das zur Veröffentlichung angenommene Paper.
+Um sich für den Preis zu bewerben, senden Sie bitte die folgenden Unterlagen gebündelt an [open.science@uni-wh.de](mailto:open.science@uni-wh.de):
+- Das ausgefüllte RESQUE-Formular (im JSON-Format).
+- Das zur Veröffentlichung angenommene Paper (als PDF).
 - Einen Nachweis über die Annahme des Papers, falls noch nicht veröffentlicht (z.B. Bestätigungs-E-Mail des Verlags oder der Editorin/des Editors).
 - Ihre vollständige Postadresse für den Fall einer Auszeichnung.
+
 
 Für Rückfragen stehen wir Ihnen unter derselben E-Mail-Adresse gerne zur Verfügung.
 Der nächste Stichtag für die Einreichung ist der 01. November 2025.
