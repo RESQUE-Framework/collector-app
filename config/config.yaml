@@ -1,8 +1,8 @@
 # Title of the app (shown on top left)
-main_title: "RESQUE CP-S2"
+main_title: "RESQUE Dev-CP2"
 
 # Background color of the app
-background_color: "#ffeeee"
+background_color: "#ffffff"
 
 # Maximum number of papers that are expected by the committee
 max: 10
@@ -27,13 +27,11 @@ hide_score: false
 
 meta:
   sources: ["packs/core-meta.json"]
-  exclude: ["AcademicAgeBonus", "AcademicAgeBonus_Explanation", "HonestyDisclaimer"]
   config:
     min_indicators_warning_threshold: 0
 
 pubs:
-  sources: ["packs/core-pubs.json", "packs/EP/EP-clinical_psychology.json"]
-  exclude: ["P_TopPaper", "P_Stimuli", "P_Sample_RepresentativenessRelevance", "P_Sample_Representative", "P_Sample_Representative_Details", "P_MultiStudy_Note2", "P_Power_Info", "P_PowerConsiderations", "P_SampleSize", "P_MeritStatement_Info", "P_MeritStatement", "P_ImpactStatement_Info", "P_ImpactStatement", "P_Theorizing"]
+  sources: ["packs/core-pubs.json"]
   config:
     min_indicators_warning_threshold: 0
 
@@ -48,24 +46,26 @@ software:
     min_indicators_warning_threshold: 0
 
 score_categories:
-  - title: "Theorizing & Formal Modeling"
-    cue: "Theorizing"
-    color: '#7fb1d3'
-
   - title: "Open Data"
     cue: "Data"
-    color: '#8ed3c7'
+    color: '#beaed4'
 
   - title: "Open Materials"
     cue: "OpenMaterials"
-    color: '#efd59d'
+    color: '#fdc086'
 
   - title: "Preregistration"
     cue: "Prereg"
-    color: '#bebada'
+    color: '#d95f02'
 
   - title: "Reproducible Code & Verification"
     cue: "ReproducibleScripts|IndependentVerification"
+    color: '#386cb0'
 
   - title: "Methodological Rigor"
     cue: "_Methods_"
+    color: '#f0027f'
+
+  - title: "Theorizing & Formal Modeling"
+    cue: "Theorizing"
+    color: '#7fc97f'
