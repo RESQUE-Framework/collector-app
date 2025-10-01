@@ -15,7 +15,7 @@ max_top_papers: 0
 min_RO_warning_threshold: 0
 
 # Show the welcome message (text is defined in config/instructions.md)
-show_instruction: false
+show_instruction: true
 
 # Show the beta warning message
 show_beta_warning: false
