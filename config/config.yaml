@@ -44,22 +44,26 @@ software:
     min_indicators_warning_threshold: 0
 
 score_categories:
-  - title: "Theorizing & Formal Modeling"
-    cue: "Theorizing"
-    color: '#7fb1d3'
-
   - title: "Open Data"
     cue: "Data"
-    color: '#8ed3c7'
+    color: '#beaed4'
 
   - title: "Open Materials"
     cue: "OpenMaterials"
-    color: '#efd59d'
+    color: '#fdc086'
 
   - title: "Preregistration"
     cue: "Prereg"
-    color: '#bebada'
+    color: '#d95f02'
 
   - title: "Reproducible Code & Verification"
     cue: "ReproducibleScripts|IndependentVerification"
-    color: '#fb8072'
+    color: '#386cb0'
+
+  - title: "Methodological Rigor"
+    cue: "_Methods_"
+    color: '#f0027f'
+
+  - title: "Theorizing & Formal Modeling"
+    cue: "Theorizing"
+    color: '#7fc97f'
