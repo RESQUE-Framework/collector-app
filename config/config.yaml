@@ -27,7 +27,7 @@ hide_score: false
 
 meta:
   sources: ["packs/core-meta.json"]
-  exclude: ["RaterType", "ExternalRaterName", "P_Sample", "P_Sample_Location", "P_Sample_CoG", "P_Sample_CrossCultural", "AcademicAgeBonus", "AcademicAgeBonus_Explanation", "HonestyDisclaimer", "M_MeritStatement_Info", "MeritStatement", "METASEP0"]
+  exclude: ["YearPhD", "RaterType", "ExternalRaterName", "P_Sample", "P_Sample_Location", "P_Sample_CoG", "P_Sample_CrossCultural", "AcademicAgeBonus", "AcademicAgeBonus_Explanation", "HonestyDisclaimer", "M_MeritStatement_Info", "MeritStatement", "METASEP0"]
   config:
     min_indicators_warning_threshold: 0
 
