@@ -104,8 +104,6 @@
 
             const c = insertValuesIntoCondition(preprocessCondition(condition))
 
-            console.log('Evaluating condition:', c);
-
             return eval(c);
         }
 
@@ -1536,8 +1534,6 @@
             const filteredData = Object.fromEntries(
                 Object.entries(result).filter(([key, value]) => filteredIds.includes(key))
             );
-
-            console.log('Filtering result', result, 'to', filteredData);
 
             return filteredData;
         }
