@@ -1529,12 +1529,15 @@
                 ...checkboxIds,
                 ...tabularRadioIds,
                 ...(filteredElements.map(e => e.id + '_Comment')),
+                'Title', 'Year', 'Abstract',
                 'date_added', 'position', 'type', 'version'
             ];
 
             const filteredData = Object.fromEntries(
                 Object.entries(result).filter(([key, value]) => filteredIds.includes(key))
             );
+
+            console.log('Filtering result', result, 'to', filteredData);
 
             return filteredData;
         }
