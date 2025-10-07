@@ -1367,14 +1367,7 @@
         }
 
         function pick(combinedPack, ...ids) {
-            return {
-                title: combinedPack.title,
-                versions: combinedPack.versions,
-                date: combinedPack.date,
-                scoring: combinedPack.scoring,
-                config: combinedPack.config,
-                elements: ids.length <= 0 ? combinedPack.pool : ids.map(id => combinedPack.pool.find(item => item.id === id))
-            };
+            return pickByCondition(combinedPack, item => ids.length === 0 || ids.some(id => item.id.startsWith(id)));
         }
 
         function pickByPrefix(combinedPack, prefix) {
@@ -1400,7 +1393,7 @@
         }
 
         function pickExclude(combinedPack, ...ids) {
-            return pickByCondition(combinedPack, item => !ids.includes(item.id));
+            return pickByCondition(combinedPack, item => !ids.some(id => item.id.startsWith(id)));
         }
     </script>
 
