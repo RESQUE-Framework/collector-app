@@ -1,6 +1,6 @@
 {
-    "version": "0.8.0",
-    "date": "2025-09-24",
+    "version": "0.7.0",
+    "date": "2025-03-28",
     "prefix": "P",
     "title": "Publication",
     "elements": [       
@@ -124,15 +124,11 @@
                 },
                 {
                     "id": "Computational",
-                    "text": "Computational / Methodological (e.g., simulations, statistical test development, tutorial, etc.)"
-                },
-                {
-                    "id": "Measurement",
-                    "text": "Psychometric / Development of new measurement methods"
+                    "text": " Computational (e.g., agent-based modeling, simulations, etc.)"
                 },
                 {
                     "id": "Theoretical",
-                    "text": "Theoretical contribution (Theory development, mathematical methods development, formal modeling, etc.)"
+                    "text": "Theoretical contribution (Theory development, formal modeling, etc.)"
                 },
                 {
                     "id": "Nonempirical",
@@ -142,9 +138,7 @@
                     "id": "OtherMethod",
                     "text": "Other (please specify)"
                 }
-            ],
-            "info": "Generally choose the primary type of the paper. If multiple methods have been used in a substantial way, check all of them. If only a very small add-on was used with a different method (e.g. a very small quantitative analysis within a qualitative paper), only choose the dominant type.",
-            "tip_external": "A <b>computational</b> contribution does not analyze empirical data in themselves, but generates data based on simulations, ABMs or other computational methods (it might use empirical data for calibration of the simulations, but does not analyze them as a primary focus).<br>If you are uncertain whether to check 'computational'. If the central finding of a paper pertains to empirical data ('Group 1 has a higher mean than Group 2') - regardless how fancy the computational method applied to the data - it is primarily an 'Empirical: Quantitative' contribution. If the the central finding is about a method or a simulation itself (“The new method works well; Method 1 has a lower prediction error than Method 2; the simulation found interesting patterns”) - i.e., we learned something about a method, and not about a population - than it is 'Computational'"
+            ]
         },
         {
             "id": "P_TypeMethod_Other",
@@ -336,21 +330,21 @@
             "rows": [
                 {
                     "id": "Conceptualization",
-                    "title": "Conceptualization / Idea",
+                    "title": "Conceptualization",
                     "tooltip": "Ideas; formulation or evolution of overarching research goals and aims.",
                     "info": "Ideas; formulation or evolution of overarching research goals and aims.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'.}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
                 },
                 {
                     "id": "DataCuration",
                     "title": "Data curation",
-                    "tooltip": "Management activities to annotate (produce metadata), scrub data and maintain research data (including software code, where it is necessary for interpreting the data itself) for initial use and later re-use. This applies to both empirical and simulated data.",
+                    "tooltip": "Management activities to annotate (produce metadata), scrub data and maintain research data (including software code, where it is necessary for interpreting the data itself) for initial use and later re-use.",
                     "info": "Management activities to annotate (produce metadata), scrub data and maintain research data (including software code, where it is necessary for interpreting the data itself) for initial use and later re-use.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
                 },
                 {
                     "id": "FormalAnalysis",
                     "title": "Formal analysis (≙ statistical data analysis)",
-                    "tooltip": "Application of statistical, mathematical, computational, or other formal techniques to analyse or synthesize empirical or simulated data.",
-                    "info": "Application of statistical, mathematical, computational, or other formal techniques to analyse or synthesize empirical or simulated data.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
+                    "tooltip": "Application of statistical, mathematical, computational, or other formal techniques to analyse or synthesize study data.",
+                    "info": "Application of statistical, mathematical, computational, or other formal techniques to analyse or synthesize study data.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
                 },
                 {
                     "id": "FundingAcquisition",
@@ -367,8 +361,8 @@
                 {
                     "id": "Methodology",
                     "title": "Methodology",
-                    "tooltip": "Development or design of methodology; creation of formal or statistical models",
-                    "info": "Development or design of methodology; creation of formal or statistical models.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
+                    "tooltip": "Development or design of methodology; creation of models.",
+                    "info": "Development or design of methodology; creation of models.<br><br><ul><li>{:'Lead' | <i>lead</i>: You were the single leader for this specific activity. If you are the only person in a specific role, choose 'lead'}</li><li>{:'Equal' | <i>equal</i>: You contributed equally to this activity, together with one or more other contributors (Choosing this option implies that no other co-author would choose the 'lead' option, and at least one other co-author would choose the 'equal' option).}</li><li>{:'Support' | <i>supporting</i>: You had a supporting role, which was below the contribution of a leading or equal role.}</li><li>{:'NoRole' | <i>no role</i>: You did not contribute substantially to that activity.}</li><li>{:'NA' | <i>n/a</i>: This role was not relevant for the research.}</li></ul>"
                 },
                 {
                     "id": "ProjectAdministration",
@@ -431,9 +425,9 @@
 
 
         {
-            "id": "P_Methods_PRISMA",
+            "id": "P_Data_PRISMA",
             "type": "radio",
-            "title": "Were the PRISMA guidelines followed (i.e. are all items of the 'PRISMA 2020 checklist' reported in the paper)?",
+            "title": "Were the PRISMA guidelines followed (i.e. are all items of the “PRISMA 2020 checklist” reported in the paper)?",
             "score": {
                 "not_applicable": "($P_Suitable === 'No' || !$P_TypeMethod_MetaAnalysis)"
             },
@@ -453,7 +447,7 @@
         },
 
         {
-            "id": "P_Methods_MetaAnalysisRaters",
+            "id": "P_Data_MetaAnalysisRaters",
             "type": "radio",
             "title": "Was study inclusion, information extraction, and quality rating performed by at least two independent raters?",
             "score": {
@@ -509,7 +503,7 @@
                 },
                 {
                     "id": "ReuseOther",
-                    "text": "Reuse of someone else's existing data set (including archival data)"
+                    "text": "Reuse of someone else's existing data set"
                 },
                 {
                     "id": "ReuseCompilation",
@@ -524,9 +518,9 @@
             "default": [
                 "NewOwn"
             ],
-            "info": "Data set acquisition often is a collaborative enterprise with different contributor roles. If the data has been collected with substantive contribution of the current author team and not been used before, select ‘Own new data collection’. If the data has been used in other publications before and is re-used in the current publication (e.g. with keyword “secondary data analysis”), select one of both ‘Reuse’ options. { $P_Data_Source_ReuseOwn | Select 'Reuse of own existing data set' only, if you would qualify as a co-author with substantive contributions in a stand-alone data set publication of that data set. Otherwise, select 'Reuse of someone else's existing data set'.}<br><br>{ $P_TypeMethod_MetaAnalysis | In case of a meta-analysis, the extraction of effect sizes from the primary literature counts as 'Own new data collection' (but <i>not</i> as 'Reuse of someone else's existing data set'.}",
+            "info": "Data set acquisition often is a collaborative enterprise with different contributor roles. { $P_Data_Source_ReuseOwn | Select 'Reuse of own existing data set' only, if you would qualify as a co-author with substantive contributions in a stand-alone data set publication of that data set. Otherwise, select 'Reuse of someone else's existing data set'.}<br><br>{ $P_TypeMethod_MetaAnalysis | In case of a meta-analysis, the extraction of effect sizes from the primary literature counts as 'Own new data collection' (but <i>not</i> as 'Reuse of someone else's existing data set'.}",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes'",
-            "tip_external": "Look in the abstract and/or method section. If no information can be found there, it might also be useful to look at the contributors of the repositories.<br><b>Search words:</b> simul*, data, OSF, availab*<br>If it is unclear whether the applicant (who should be the focus of this analysis) was part of the data collection ('Reuse of own existing data set'), check the authors of the data set citation. If the person is not part of that, select 'Reuse of someone else's existing data set')"
+            "tip_external": "Look in the abstract and/or method section. If no information can be found there, it might also be useful to look at the contributors of the repositories.<br><br><b>Search words:</b> simul*, data, OSF, availab*"
         },
         {
             "id": "P_Sample",
@@ -552,18 +546,14 @@
                 {
                     "id": "Rare",
                     "text": "Specific target population, hard to acquire (e.g., babies, inmates, rare disorders)"
-                },
-                {
-                    "id": "Unknown",
-                    "text": "Unspecified / do not know"
-                },
+                }
+                ,
                 {
                     "id": "Other",
                     "text": "Other"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
-            "info": "If mild and very common selection criteria are applied to the general population (such as: only participants who are in a relationship), this does not qualify yet for a “specific target population”; select “non-specific general population” in these cases."
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
         },
         {
             "id": "P_Sample_Other",
@@ -585,28 +575,27 @@
             "title": "Location of data collection (check all that apply)",
             "options": [
                 {
-                    "id": "Controlled",
-                    "text": "Controlled in-person setting (e.g., lab, standardized conditions), including in-person paper & pencil questionnaires and interviews (both in-person and online)"
+                    "id": "Lab",
+                    "text": "Lab / Controlled in-person setting"
                 },
                 {
-                    "id": "Naturalistic",
-                    "text": "Naturalistic in-person setting (e.g., less standardized field observations)"
+                    "id": "Field",
+                    "text": "Field / Naturalistic in-person setting"
                 },
                 {
                     "id": "OnlineSurvey",
-                    "text": "Online Survey (self-report) or mailed questionnaires"
+                    "text": "Online Survey"
                 },
                 {
                     "id": "OnlineEMA",
-                    "text": "Ecological Momentary Assessment (i.e., repeated assessments in daily life)"
+                    "text": "Mobile / Ecological Momentary Assessment (EMA)"
                 },
                 {
                     "id": "OtherType",
                     "text": "Other"
                 }                  
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
-            "info": "Focus on the variables that were relevant for the research question (and ignore variables that may have been additionally collected in the study).<br><br>Sometimes multiple locations of data collection are used in a single study:<ul><li>Select <i>multiple</i> available locations if they are roughly equally important</li><li>Select only one location if is clearly dominant (e.g., if a small online pretest happened before an elaborate lab study, choose only 'lab').</li></ul>"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
         },
 
         {
@@ -677,10 +666,6 @@
             "title": "Are Constraints on Generality explicitly discussed for the participant sample?",
             "options": [
                 {
-                    "id": "NotApplicable",
-                    "text": "Not applicable [provide explanation]"
-                },
-                {
                     "id": "No",
                     "text": "No"
                 },
@@ -690,12 +675,6 @@
                 }
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_RepresentativenessRelevance != 'NotApplicable'"
-        },
-        {
-            "id": "P_Sample_CoG_NAExplanation",
-            "type": "text",
-            "title": "⤷ Not Applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Sample_RepresentativenessRelevance != 'NotApplicable' && $P_Sample_CoG === 'NotApplicable'"
         },
 
 
@@ -716,10 +695,6 @@
                 {
                     "id": "MultipleCultures",
                     "text": "Multiple cultural or ethnic backgrounds"
-                },
-                {
-                    "id": "Unknown",
-                    "text": "Unspecified / do not know"
                 }
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
@@ -832,7 +807,7 @@
                 },
                 {
                     "id": "QuestionnaireOtherreport",
-                    "text": "Questionnaire (other/informant report; e.g. supervisor or peer ratings)"
+                    "text": "Questionnaire (other/informant report)"
                 },
                 {
                     "id": "Behavioral",
@@ -852,7 +827,7 @@
                 },
                 {
                     "id": "Coding",
-                    "text": "Content or behavioral coding (i.e., converting qualitative data, such as interviews, behavioral observations or videos, into numeric scores)"
+                    "text": "Content or behavioral coding (i.e., converting rich qualitative data into numeric scores)"
                 },
                 {
                     "id": "MetaAnalysis",
@@ -864,7 +839,7 @@
                 }
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
-            "info": "If multiple types of data have been used, check only those which are central to the research questions. If, for example, an additional type of data has been used only for a demographic description, don’t list it here. <ul>{ $P_Data_Type_MetaAnalysis | <li>In case of meta-analysis, only check 'Meta-analysis: Effect sizes from primary studies'. The data type of the primary studies is irrelevant.</li>} <li>If you process data (for example when you derive numeric scores from a content analysis of interviews), check both the original data type (in the example, 'interviews') and the derived data type (in the example, 'Content or behavioral coding').</li><li>Some data types are combinations, e.g. if you do an <b>ESM study with mobile sensing</b>, you would choose 'Questionnaire (self report)' <b>and</b> 'Behavioral data' (--> 'Observed behavior (naturalistic situation)' in the next question) <b>and</b> 'longitudinal design' in the question on the study design.</li></ul>",
+            "info": "{ $P_Data_Type_MetaAnalysis | In case of meta-analysis, only check 'Meta-analysis: Effect sizes from primary studies'. The data type of the primary studies is irrelevant.} <ul><li>If you process data (for example when you derive numeric scores from a content analysis of interviews), check both the original data type (in the example, 'interviews') and the derived data type (in the example, 'Content or behavioral coding').</li><li>Some data types are combinations, e.g. if you do an <b>ESM study with mobile sensing</b>, you would choose 'Questionnaire (self report)' <b>and</b> 'Behavioral data' (--> 'Observed behavior (naturalistic situation)' in the next question) <b>and</b> 'longitudinal design' in the question on the study design.</li></ul>",
             "tip_external":"Look in the method section, more specifically at parts called procedure, data collection or variables."
         },
 
@@ -968,7 +943,7 @@
                 }
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
-            "info": "When you measure multiple conditions within a single session, this still counts as 'cross-sectional'. As soon as participants are measured at more than one day, this counts as 'longitudinal'."
+            "info": "When you measure multiple conditions within a single session, this still counts as 'cross-sectional'."
         }, 
 
         {
@@ -985,8 +960,7 @@
                     "text": "Experimental manipulation"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)",
-            "info": "The crucial point is whether a (randomized) manipulation has been carried out that was relevant for the research question and a control or comparison group (or in the case of within-person designs, a control condition) was present."
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
         }, 
 
         {
@@ -1043,17 +1017,13 @@
                     "text": "A synthesized dataset with statistical properties similar to the original data is available [provide doi or URL]"
                 },
                 {
-                    "id": "YesDataGeneratingScript",
-                    "text": "A computational script is available that reproduces the exact simulated data set (e.g., using seeds) [provide doi or URL]"
-                },
-                {
                     "id": "YesAggregate",
                     "text": "Only aggregated data that could be shared are available, because primary data could not be shared [provide doi or URL]"
                 }
             ],
-            "info": "If the data is only available on a personal website (including personal university websites) or 'upon (reasonable) request', select <i>not available</i>. When only few aggregated data is available, select <i>not available</i> (there might be exceptions with high-volume physiological data, and when primary data justifiably could not be shared).<br><br>If the data is available with restricted access (e.g., as a scientific use file which is only available for research purposes) this still counts as “available”.<br><br>When to choose <b>'Not applicable'</b>?<ul><li>If legal regulations or binding conditions of the data provider prohibit data publication and not even restricted access is possible.</li><li>If the paper explicitly states that participants did not consent in data sharing.</li></ul>",
+            "info": "If the data is only available on a personal website (including personal university websites) or 'upon (reasonable) request', select <i>not available</i>. When only few aggregated data is available, select <i>not available</i> (there might be exceptions with high-volume physiological data, and when primary data justifiably could not be shared).<br><br>When to choose <b>'Not applicable'</b>?<ul><li>If legal regulations or binding conditions of the data provider prohibit data publication and not even restricted access is possible.</li></ul>",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated)",
-            "tip_external": "<b>Practical approach</b>: <ul><li>Is a <b>link</b> to a data set provided?</li><li>Is the data in a <b>repository</b> that also controls data access?</li></ul><br><b>Search words:</b> open, data, availab*<br>A difficult situation is the distinction between “not applicable” and “not available”. Sometimes authors argue that it is “not possible” to share the data, while data sharing on a restrictive level (Zugriffsklasse 2) actually <i>would</i> be possible. In this case, you have to judge whether it actually was impossible to share (→ “not applicable”). Also sensitive data could be shared if you ask for consent and use a restrictive re-use license. Hence, if they <i>could</i> have shared the data (probably with some effort), choose “not available”.<br>If the paper cites a data set without an URL (or an invalid URL), and after a reasonable time of searching you could not find the data set, choose “not available”."
+            "tip_external": "<b>Practical approach</b>: <ul><li>Is a <b>link</b> to a data set provided?</li><li>Is the data in a <b>repository</b> that also controls data access?</li></ul> <br><br><b>Search words:</b> open, data, availab*"
         },
         {
             "id": "P_Data_Open_NAExplanation",
@@ -1065,7 +1035,7 @@
             "id": "P_Data_Open_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts', 'YesSynthetic', 'YesAggregate', 'YesDataGeneratingScript']",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts', 'YesSynthetic', 'YesAggregate']",
             "info": "You can add multiple DOIs or URLs, separated by a semicolon (;)"
         },
         {
@@ -1073,7 +1043,7 @@
             "type": "radio",
             "title": "⤷ Access level",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_Data_Open === 'NotApplicable') && (exists($P_Data_Open_NAExplanation))) || ($P_Data === 'No') || (!($P_Data_Source_NewOwn) && !($P_Data_Source_ReuseOwn) && !($P_Data_Source_ReuseCompilation) && !($P_Data_Source_Simulated)) || ($P_Data_Open == 'YesDataGeneratingScript')",
+                "not_applicable": "($P_Suitable === 'No') || (($P_Data_Open === 'NotApplicable') && (exists($P_Data_Open_NAExplanation))) || ($P_Data === 'No') || (!($P_Data_Source_NewOwn) && !($P_Data_Source_ReuseOwn) && !($P_Data_Source_ReuseCompilation) && !($P_Data_Source_Simulated))",
                 "condition": "($P_Data === 'Yes' && $P_Data_Open != 'NotAvailable' && exists($P_Data_Open_Identifier))",
                 "op": "select" 
             },
@@ -1111,7 +1081,7 @@
             "title": "⤷ FAIR format",
             "score": {
                 "not_applicable": "($P_Suitable === 'No') || (($P_Data_Open === 'NotApplicable') && (exists($P_Data_Open_NAExplanation))) || ($P_Data === 'No')  || (!($P_Data_Source_NewOwn) && !($P_Data_Source_ReuseOwn) && !($P_Data_Source_ReuseCompilation) && !($P_Data_Source_Simulated))",
-                "condition": "($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts', 'YesSynthetic', 'YesAggregate', 'YesDataGeneratingScript']  && !$P_Data_Open =|= ['NotApplicable', 'NotAvailable'] && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || (($P_Data_Open_AccessLevel === 'ZK2') && (exists($P_Data_Open_AccessLevel_ZK2Explanation))) || ($P_Data_Open == 'YesDataGeneratingScript'))"
+                "condition": "($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts', 'YesSynthetic', 'YesAggregate']  && !$P_Data_Open =|= ['NotApplicable', 'NotAvailable'] && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || (($P_Data_Open_AccessLevel === 'ZK2') && (exists($P_Data_Open_AccessLevel_ZK2Explanation))))"
             },
             "options": [
                 {
@@ -1126,12 +1096,12 @@
                 },
                 {
                     "id": "StructuredOpenFormat",
-                    "text": "The data set itself is stored in a structured, open format (see examples in help text)",
+                    "text": "The data set is stored in a structured, open format (e.g., .csv, .tsv, .tab, .txt, .json; not .sav, .xlsx, .pdf)",
                     "value": 0.25
                 }
             ],
-            "condition": "($P_Suitable === 'Yes') && ($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts', 'YesSynthetic', 'YesAggregate', 'YesDataGeneratingScript'] && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || ($P_Data_Open_AccessLevel === 'ZK2' && exists($P_Data_Open_AccessLevel_ZK2Explanation)) || ($P_Data_Open == 'YesDataGeneratingScript'))",
-            "info": "<ul><li>Persistent identifier: Data in an OSF project do count, as we consider OSF URLs to be persistent.</li><li>Valid structured and open file formats for data sets are, for example: .csv, .tsv, .tab, .txt, .json, .xlsx, the BIDS format. <b>Not valid</b> are: .sav, .pdf.</li></ul>",
+            "condition": "($P_Suitable === 'Yes') && ($P_Data === 'Yes') && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts', 'YesSynthetic', 'YesAggregate'] && (($P_Data_Open_AccessLevel =|= ['ZK0', 'ZK1']) || ($P_Data_Open_AccessLevel === 'ZK2' && exists($P_Data_Open_AccessLevel_ZK2Explanation)))",
+            "info": "<ul><li>Persistent identifier: Data in an OSF project do count, as we consider OSF URLs to be persistent.</li></ul>",
             "tip_external":"For <b>Codebook</b>:<ul><li>Check the availability of a codebook. Normally a separate document should be provided.</li><li>Exception: Variable labels, descriptions and scales are provided in a structured (e.g. tabular) format at the beginning of the syntax script.</li><li><b>Variable name, content</b> and <b>scale</b> must be provided in order to receive the point.</li></ul>"
         },
         {
@@ -1171,8 +1141,7 @@
                 }
             ],
             "info":"{'YesEntire', 'YesParts', 'YesSynthetic', 'YesAggregate' | Only choose <b>`Yes`</b> if a doi or URL can be provided.} <br><br><b>When only parts of scripts available:</b><br>Choose `Yes, parts of scripts` if no justification is given.<br>Choose `Yes, entire scripts` if a reasonable justification for all missing scripts are provided.<br><br> When to choose <b>'Not applicable'</b>:<br>If no scripts have been used in the publication.",
-            "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes'",
-            "tip_external":"To judge whether “Parts” or “Entire” scripts have been shared you need to take a quick look into the scripts themselves.<br>A typical situation for “parts of scripts” is when the main analyses are provided (e.g., a set of t-tests or a linear regression), but no data preprocessing is shared. A typical case is when a data file is read that already contains sum or mean scores of questionnaires. If questionnaire scales have been used, but the script does not aggregate the items to a scale, you can expect that data preprocessing has been done but not shared.<br>If you are uncertain, in doubt choose “The entire analysis pipeline is available”, and only choose “Parts of scripts” if <i>obviously</i> something is missing."
+            "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes'"
         },
         {
             "id": "P_ReproducibleScripts_NAExplanation",
@@ -1232,8 +1201,8 @@
                     "value": 0.2
                 }
             ],
-            "info": "<ul><li>{$P_ReproducibleScripts_FAIR_TimestampedRepository | <b>Timestamped repository</b>: Any repository that records and displays the timestamp when a file has been first uploaded and the last time it has been modified (e.g., GitHub, GitLab, OSF, Zenodo)</li> } <li>{$P_ReproducibleScripts_FAIR_VersionControl |<b>Version control</b>: Any repository that allows to go back in the history of a file with an established version control system, such as <code>git</code> (e.g., GitHub, GitLab. <i>Not</i> OSF or Zenodo.)</li> } <li>{$P_ReproducibleScripts_FAIR_Documentation | <b>Proper documentation of code</b>: The source code has sufficiently detailed comments so that a knowledgable re-user can understand what (and why) something has been done.</li> } <li>{$P_ReproducibleScripts_FAIR_ReproducibleSoftwareEnvironments | <b>Reproducible software environment</b>: The software environment is fully reproducible with an established tool such as <code>conda</code>, <code>renv</code> or <code>groundhog</code>. Just recording the <code>sessionInfo()</code> in R is not sufficient, as it places too much burden on reproduction attempts.</li> } <li>{$P_ReproducibleScripts_FAIR_ReproducibleManuscripts | <b>Reproducible manuscripts</b>: The final manuscript combines computations and text (e.g. Rmarkdown, Quarto, Jupyter notebooks). It is OK if the computations are in separate scripts, but are loaded within the manuscript file. <i>The crucial point</i> is: The results must be dynamically inserted or computed in the  manuscript file, and not written as hard-coded/fixed numbers.}</li></ul>",
-            "tip_external":"<ul><li>Search for <b>Open License</b>: This license could be stated in ...<ul><li>A LICENSE file in the top level folder</li><li>Within the README file</li><li>In the header of each source code file</li><li>The OSF project license</li></ul></li><li><b>Reproducible manuscripts</b>: Be careful: A detailed and well commented R script alone is not a reproducible manuscript. Only if an Rmarkdown, Quarto, or Jupyter notebook file (or comparable systems) exists and the results are dynamically inserted or computed in the manuscript file (and not written as hard-coded/fixed numbers), this counts as a reproducible manuscript.</li></ul>",
+            "info": "<ul><li>{$P_ReproducibleScripts_FAIR_TimestampedRepository | <b>Timestamped repository</b>: Any repository that records and displays the timestamp when a file has been first uploaded and the last time it has been modified (e.g., GitHub, GitLab, OSF, Zenodo)</li> } <li>{$P_ReproducibleScripts_FAIR_VersionControl |<b>Version control</b>: Any repository that allows to go back in the history of a file with an established version control system, such as <code>git</code> (e.g., GitHub, GitLab. <i>Not</i> OSF or Zenodo.)</li> } <li>{$P_ReproducibleScripts_FAIR_Documentation | <b>Proper documentation of code</b>: The source code has sufficiently detailed comments so that a knowledgable re-user can understand what (and why) something has been done.</li> } <li>{$P_ReproducibleScripts_FAIR_ReproducibleSoftwareEnvironments | <b>Reproducible software environment</b>: The software environment is fully reproducible with an established tool such as <code>conda</code>, <code>renv</code> or <code>groundhog</code>. Just recording the <code>sessionInfo()</code> in R is not sufficient, as it places too much burden on reproduction attempts.</li> } <li>{$P_ReproducibleScripts_FAIR_ReproducibleManuscripts | <b>Reproducible manuscripts</b>: The final manuscript combines computations and text (e.g. Rmarkdown, Quarto, Jupyter notebooks) }</li></ul>",
+            "tip_external":"<ul><li>Search for <b>Open License</b>: This license could be stated in ...<ul><li>A LICENSE file in the top level folder</li><li>Within the README file</li><li>In the header of each source code file</li><li>The OSF project license</li></ul> </li></ul>",
             "condition": "$P_Suitable === 'Yes' && $P_Data == 'Yes' && $P_ReproducibleScripts =|= ['YesParts', 'YesEntire']"
         },
 
@@ -1325,23 +1294,23 @@
                 },
                 {
                     "id": "NotAvailable",
-                    "text": "Not available at all",
+                    "text": "Not available",
                     "value": 0
                 },
                 {
-                    "id": "Minimal",
-                    "text": "Obviously incomplete material [provide doi or URL]",
+                    "id": "YesParts",
+                    "text": "Yes, parts of material [provide doi or URL]",
                     "value": 0.5
                 },
                 {
-                    "id": "Rich",
-                    "text": "Complete material / Diverse & well-structured open material for multiple aspects of the study [provide doi or URL]",
+                    "id": "YesEntire",
+                    "text": "Yes, all material necessary for a replication [provide doi or URL]",
                     "value": 1
                 }
             ],
-            "info": "Open Material refers to all material that is necessary to replicate a study. It typically includes questionnaire items, stimuli, texts for vignettes, or code for software that controls the experimental flow. {:'YesParts', 'YesEntire' | Only choose 'Yes' if the material substantially exceeds the open reproducible scripts. }<br>The main question for this item is: Was there material that could have been uploaded (i.e., without copyright restrictions)?<br><ul><li>{:'Rich' | Choose 'Complete material ...' if a reasonable justification for only parts of material is given.}</li><li>{:'Minimal' | Choose ‘Obviously 'iIncomplete material' if some material could have been uploaded, but no justification for the ommission is given. }</li><li>{:'NotApplicable' | When to choose <b>'Not applicable'</b>:<ul><li>If no material has been used in the publication, or the entire material is contained in the open reproducible scripts.</li><li>'Not applicable' is the default if you chose 'reuse of existing data set', 'meta-analysis' or 'simulation' above; but if there is additional material that shows an own contribution then assign 'Yes, entire material'.</li><li>If only commercial, copyrighted questionnaires have been used which cannot be published as open material.</li><li>If some material has been uploaded (e.g., some additional supplemental results) but the questionnaires not because they were copyrighted, and no other material was ommitted, choose “not applicable” in favor of the applicant.</li></ul> }</li></ul><br>The pure existence of an Electronic Supplemental Material does not necessarily count as Open Material, for example if it only contains additional analyses or tables.",
+            "info": "Open Material refers to all material that is necessary to replicate a study. It typically includes questionnaire items, stimuli, texts for vignettes, or code for software that controls the experimental flow. {:'YesParts', 'YesEntire' | Only choose 'Yes' if the material substantially exceeds the open reproducible scripts. }<br><br><ul><li>{:'YesEntire' | Choose 'Yes, entire material' if a reasonable justification for only parts of material is given.}</li><li>{:'YesParts' | Choose 'Yes, parts of material' if no justification is given. }</li><li>{:'NotApplicable' | When to choose <b>'Not applicable'</b>: If no material has been used in the publication, or the entire material is contained in the open reproducible scripts. }</li></ul><br>The pure existence of an Electronic Supplemental Material does not necessarily count as Open Material, for example if it only contains additional analyses or tables.",
             "condition": "$P_Suitable === 'Yes'",
-            "tip_external":"<ul><li>Is a <b>link</b> to open materials provided (don't forget to check Appendix and Supplemental Materials)</li><li>Expect <b>'entire material'</b> as default if materials are available (only if the material is obviously <i>not</i> complete and no reasonable explanation is given, assign <b>'parts of materials'</b>)</li><li>We want to reward effort. Hence, if “Diverse & well-structured open material for multiple aspects of the study” is available, we award full points, even if some material might be missing; we do not check all material for 100% completeness.</li><li>If published questionnaires are used, we expect by default that they are copyrighted and cannot be uploaded (and therefore check “not applicable” and give the justification “commercial questionnaire”). We do not manually check the actual licenses - too much work.</li></ul>"
+            "tip_external":"<ul><li>Is a <b>link</b> to open materials provided (don't forget to check Appendix and Supplemental Materials)</li><li>Expect <b>'entire material'</b> as default if materials are available (only if the material is obviously <i>not</i> complete and no reasonable explanation is given, assign <b>'parts of materials'</b>)</li><li><b>'Not applicable'</b> is the default if 'reuse of existing data set', 'meta analysis' or 'simulation', <mark>but</mark> if there is additional material that shows an own contribution then assign <b>'Yes, entire material'</b></li></ul> "
         },
         {
             "id": "P_OpenMaterials_NAExplanation",
@@ -1353,8 +1322,15 @@
             "id": "P_OpenMaterials_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL of the open materials",
-            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials =|= ['Minimal', 'Rich']",
+            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials =|= ['YesParts', 'YesEntire']",
             "info": "You can add multiple DOIs or URLs, separated by a semicolon (;)"
+        },
+        {
+            "id": "P_OpenMaterials_PartsExplanation",
+            "type": "text",
+            "title": "⤷ Partial open materials: What is missing? (optional)",
+            "condition": "$P_Suitable === 'Yes' && $P_OpenMaterials === 'YesParts'",
+            "optional": true
         },
         {
             "id": "P17P18SEP",
@@ -1367,7 +1343,7 @@
             "type": "radio",
             "title": "Preregistration",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($P_TypeMethod_Nonempirical) || ($P_TypeMethod_Measurement) || ($P_TypeMethod_Theoretical) || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation)))",
+                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation)))",
                 "condition": "(exists($P_Preregistration_Identifier))"
             },
             "options": [
@@ -1392,21 +1368,21 @@
                     "value": 2
                 }
             ],
-            "info": "{:'Yes' | Only choose <b>'Yes'</b> if the preregistration is time-stamped/registered before the publication of the study (check date). Typical preregistration platforms include: OSF, aspredicted.org, ZPID Prereg, ClinicalTrials.gov/.org, Euclinicaltrials.eu, Clinicaltrialsregister.eu, DRKS.}<br><br><b>Multi Study Paper Case</b>: Only choose 'Yes' if your nominated study has been preregistered. <br><br> When to choose <b>'No'</b> <ul><li> If the study was not preregistered or if preregistration is not time-stamped/registered </li><li> If a preregistration exists, but does not contain information about the research question/hypothesis of this specific paper.</li></ul><br> When to choose <b>'Not applicable'</b>:<ul><li>If the study type is 'Simulation' (except from benchmarking experiments), 'mainly theoretical Review' or no data has been used in a substantive way.</li>In rare cases: When the theory arguably is so precise that no preregistration is necessary.<li></li><li>There also might be other cases with reasonable justifications for no preregistration.</li></ul>",
-            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_Nonempirical && !$P_TypeMethod_Theoretical && !$P_TypeMethod_Measurement",
+            "info": "{:'Yes' | Only choose <b>'Yes'</b> if the preregistration is time-stamped/registered before the publication of the study (check date).}<br><br><b>Multi Study Paper Case</b>: Only choose 'Yes' if your nominated study has been preregistered. <br><br> When to choose <b>'No'</b> <br> If the study was not preregistered or if preregistration is not time-stamped/registered <br><br> When to choose <b>'Not applicable'</b>:<ul><li>If the study type is 'Simulation' (except from benchmarking experiments), 'mainly theoretical Review' or no data has been used in a substantive way.</li>In rare cases: When the theory arguably is so precise that no preregistration is necessary.<li></li><li>There also might be other cases with reasonable justifications for no preregistration.</li></ul>",
+            "condition": "$P_Suitable === 'Yes'",
             "tip_external":"<ul><li>It only counts if a <b>link</b> to the preregistration is provided.</li><li><b>Search words:</b> <code>preregist*</code>, <code>pre-regist*</code>, <code>regist*</code>, <code>aspredicted</code>, <code>OSF</code>. For clinical trials: <code>Prospero</code>, <code>ClinicalTrials</code>"
         },
         {
             "id": "P_Preregistration_NAExplanation",
             "type": "text",
             "title": "⤷ Not applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_Nonempirical && !$P_TypeMethod_Theoretical && !$P_TypeMethod_Measurement && $P_Preregistration === 'NotApplicable'"
+            "condition": "$P_Suitable === 'Yes' && $P_Preregistration === 'NotApplicable'"
         },
         {
             "id": "P_Preregistration_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL of the preregistration",
-            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_Nonempirical && !$P_TypeMethod_Theoretical && !$P_TypeMethod_Measurement && $P_Preregistration =|= ['Yes', 'RegisteredReport']"
+            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport']"
         },
         {
             "id": "P_Preregistration_Content",
@@ -1419,12 +1395,12 @@
             "options": [
                 {
                     "id": "SampleSizePlanning",
-                    "text": "Sample size planning (typically: an a priori power analysis; or post-hoc power analysis in case of reused data)",
+                    "text": "Sample size planning (typically: an a priori power analysis)",
                     "value": 0.20
                 },
                 {
                     "id": "Hypotheses",
-                    "text": "Hypotheses are clearly and explicitly stated.",
+                    "text": "Hypotheses",
                     "value": 0.20
                 },
                 {
@@ -1443,9 +1419,9 @@
                     "value": 0.20
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_Nonempirical && !$P_TypeMethod_Theoretical && !$P_TypeMethod_Measurement && !$P_TypeMethod_MetaAnalysis && $P_Preregistration =|= ['Yes', 'RegisteredReport']",
-            "info": "<b>Sample size</b>: Typically, an a priori power analysis was conducted and is reported. <b>Not enough</b> to receive points:<ul><li>'We will collect as many participants as possible'</li><li>Only saying which sample size is aimed at <b>without any rationale.</b> Be careful: The AsPredicted template states 'No need to justify decision'. This would <i>not</i> be sufficient in RESQUE.</li></ul>If <b>'reuse of existing data set'</b>: Here we expect a post-hoc power analysis that investigates whether the sample size of the reused data set is large enough to test the hypothesized effects with sufficient power.<br><br><b>Hypothesis</b><br><br> Hypotheses in the preregistration should be the <b>same</b> as reported in the paper. Deviations must be explained.<br>. (External raters: See note below).<br>A generally formulated research question (“Is there a difference between control and experimental group?”) is not sufficient for a hypothesis. Also if a section states “This study aims to… (e.g., identify effect moderators”, these a general explorative goals, but no hypotheses.<br><b>A proper hypothesis should state</b>: (a) the outcome variable (what is the primary outcome?), (b) the predictor variable or intervention, and (c) the direction (or explicitly say “undirected test”).<br><br><b>Operationalizations</b><br><br><ul><li>If you would be able to rebuild the experimental setup based on the preregistered description of the measurement instruments, then assign 'yes'. If it is too vague (e.g. only 'we will use reaction times'), then assign 'no'.</li><li>If it is ambiguous ('I will use either questionnaire A or B') - without a decision rule - it is <b>'no'</b>.</li><li>In a secondary data preregistration ('reuse of existing data set'), the primary outcome should be defined</li></ul><br><br><b>Analysis Plan</b><br><br>Required to receive point: For each confirmatory hypothesis, there must be …<ul><li>… a specification of the dependent and independent variables with their concrete operationalizations (i.e., what’s the primary outcome?)</li><li>… a specification of the statistical test (e.g., 'a t-test')</li></ul><br><br><b>Inferential criteria (e.g., defining your alpha level)</b><br>Specified decision rule: E.g., what's the alpha-level? When does a result speak in favor of the hypothesis, when against? (especially when multiple testing was conducted)",
-            "tip_external":"ClinicalTrials.gov (in contrast to many preregistrations on OSF or AsPredicted) often lack the details for most of these aspects (often only the operationalizations are provided, but no sufficiently precise hypotheses, or sample size planning).<br><br>For <b>hypotheses</b>: For practical reasons, external raters do <i>not</i> need to check whether the hypotheses in the preregistration match to the hypotheses in the paper - just whether hypotheses have been preregistered at all."
+            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis",
+            "info": "<ul><li><b>Sample size</b>: Typically, an a priori power analysis was conducted and is reported. <b>Not enough</b> to receive points:<ul><li>'We will collect as many participants as possible'</li><li>Only saying which sample size is aimed at <b>without any rationale.</b> Be careful: The AsPredicted template states 'No need to justify decision'. This would <i>not</i> be sufficient in RESQUE.</li><li> If <b>'reuse of existing data set'</b>: Only reporting how many participants the original study had.</li></ul></li></ul><br><br><b>Hypothesis</b><br><br> Hypotheses in the preregistration should be the <b>same</b> as reported in the paper. Deviations must be explained.<br><br><b>Operationalizations</b><br><br><ul><li>If it is ambiguous ('I will use either questionnaire A or B') - without a decision rule - it is <b>'no'</b>.</li><li>In a secondary data preregistration ('reuse of existing data set'), the primary outcome should be defined</li></ul><br><br><b>Analysis Plan</b><br><br>Required to receive points:<ul><li>Dependent and independent variables must be <b>specified</b> (what’s the primary outcome?)</li><li><b>Specified decision rule:</b> What’s the alpha-level? When does a result speak in favor of the hypothesis, when against? (especially when multiple testing was conducted)</li></ul>",
+            "tip_external":"For <b>Operationalizations</b>:<br><br>If you would be able to rebuild the experimental setup based on the preregistered description of the measurement instruments, then assign <b>'yes'</b>. If it is too vague (e.g. only 'we will use reaction times'), then assign <b>'no'</b>.<br><br>ClinicalTrials.gov often lack the details for most of these aspects (often only the operationalizations are provided, but no sufficiently precise hypotheses, or sample size planning)."
         },
         {
             "id": "P_Preregistration_Replication",
@@ -1473,14 +1449,14 @@
                 }
             ],
             "info": "As only <i>preregistered</i> replication attempts count, you need to provide the DOI or URL of the preregistration in the previous indicator. If the paper contains a replication which was not preregistered, please select <b>'No'</b>.<br><br>If the paper was preregistered, but does not contain a replication, select <b>'No'</b>. If you chose 'not applicable' at the previous indicator 'Preregistration', choose 'not applicable' here, too.<br><br>This indicator refers both to within-paper replication studies (e.g., Study 2 is a preregistered replication of Study 1) and to replications of other studies that have been published in other papers.",
-            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis && !$P_TypeMethod_Nonempirical && !$P_TypeMethod_Theoretical && !$P_TypeMethod_Measurement",
+            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis",
             "tip_external":"If it is a replication of a previously reported effect, it is <b>'yes'</b>, even if the replication is not the main research question of the preregistration.<br><b>Search word</b> (in preregistration):replica*"
         },
         {
             "id": "P_Preregistration_Replication_NAExplanation",
             "type": "text",
             "title": "⤷ Not applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis && !$P_TypeMethod_Nonempirical && !$P_TypeMethod_Theoretical && !$P_TypeMethod_Measurement && $P_Preregistration_Replication === 'NotApplicable'"
+            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis && $P_Preregistration_Replication === 'NotApplicable'"
         },
         {
             "id": "P19P20SEP",
