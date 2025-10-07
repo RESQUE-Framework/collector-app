@@ -1,5 +1,6 @@
 # Title of the app (shown on top left)
-main_title: "RESQUE"
+
+main_title: "RESQUE Dev-CP2"
 
 # Background color of the app
 background_color: "#ffffff"
