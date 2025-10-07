@@ -1538,6 +1538,7 @@
             return filteredData;
         }
 
+        // The export function "Save to file ..."
         const exp = (excluded) => {
             if (!excluded) {
                 excluded = new Set();
@@ -1550,13 +1551,25 @@
             let millis = Date.now();
             data.date_exported = millis;
 
+            // get an ISO string and sanitize it for use in filenames
+            const now = new Date();
+            const isoNoMs = now.toISOString().split('.')[0];
+            const safeIso = isoNoMs.replace(/:/g, '-');
+
+
             data[0].forms = Alpine.store('forms');
 
             data = data.filter((_, index) => !excluded.has(index));
 
             let json = JSON.stringify(data, null, 2);
             let blob = new Blob([json], { type: "text/json;charset=utf-8" });
-            let filename = `resque_${data[0].LastName ? data[0].LastName.toLowerCase() + "_" : ""}${millis}.json`;
+            // let filename = `resque_${data[0].LastName ? data[0].LastName.toLowerCase() + "_" : ""}${millis}.json`;
+            
+            // build filename using ISO timestamp
+            const namePart = data[0].LastName
+            ? data[0].LastName.toLowerCase() + '_'
+            : '';
+            const filename = `resque_${namePart}${safeIso}.json`;
 
             let a = document.getElementById("download");
             a.innerText = filename;

@@ -1,16 +1,33 @@
-Liebe Bewerberin, lieber Bewerber,
+Zur Würdigung herausragender wissenschaftlicher Beiträge, die durch die vorbildliche Anwendung von Open-Science-Praktiken überzeugen, lobt das Department für Psychologie und Psychotherapie der Universität Witten/Herdecke jährlich den Open Science Preis aus.
 
-für die Bewerbung auf die [Professur XYZ](https:/www.LINK-TO-ANNOUNCEMENT.de) der Universität XYZ fordert die Kommission ein RESQUE Profil an. Mit dieser App können Sie das Profil erstellen.
-Folgende Informationen sind wichtig:
+Dieser Preis zeichnet eine publizierte Forschungsarbeit aus, die sich in besonderem Maße durch ihre Transparenz und Reproduzierbarkeit hervorhebt und somit einen signifikanten Beitrag zur wissenschaftlichen Integrität an der UW/H und darüber hinaus leistet. Es handelt sich hierbei um einen kompetitiven Preis, der nur einmal pro Jahr für eine herausragende wissenschaftliche Publikation vergeben wird. Das Preisgeld beträgt 300 Euro.
 
-- Sie können beliebig viele ihrer Publikationen in das Tool eintragen, aber **maximal 10 Publikationen** bei der Kommission einreichen. Um die Breite Ihres Profils zu zeigen, empfehlen wir, auch alle 10 Slots zu nutzen, aber **mindestens 5 Publikationen** einzureichen.
-  → Wenn Sie die Daten mit "Save to file ..." exportieren, wählen Sie also maximal 10 Publikationen aus.
-- Bitte markieren Sie ihre **3 besten Publikationen** als "Top Papers".
-- Es werden nur Publikationen ausgewertet, bei denen Sie auch die Indikatoren **vollständig ausgefüllt** haben. Ob eine Publikation vollständig eingetragen ist, erkennen Sie an einem grünen Punkt neben der Publikationen in der Übersicht (links), und dass rechts oben keine Probleme angezeigt werden.
-- Wenn Sie alle Publikationen eingeben haben, laden Sie mit "Save to file ..." die Daten als `json`-Datei herunter und reichen Sie diese zusammen mit ihren anderen Unterlagen ein. Die Daten aus dem RESQUE Tool werden *nicht* automatisch an die Kommission übertragen.
+## Kriterien für die Bewerbung
 
-Hinweis zum Datenschutz: Die App läuft ausschließlich lokal im Browser auf Ihrem Rechner. Es werden keine Daten an einen Server übertragen. Die Daten werden nur in Ihrem Browser gespeichert.
+- **Publikationsstatus:** Eingereicht werden können wissenschaftliche Artikel, die zur Veröffentlichung angenommen ("accepted") sind. Die Annahme darf zum Zeitpunkt der Bewerbung nicht länger als zwei Jahre zurückliegen.
+- **Autorenschaft:** Bewerben können sich ausschließlich Erstautor:innen (auch bei geteilter Erstautor:innenschaft).
+- **Affiliation:** Sie müssen zu der Zeit als Sie diese Publikation hauptsächlich erstellt haben mit dem UW/H Department für Psychologie affiliiert (gewesen) sein. Professor:innen sind von der Bewerbung ausgeschlossen. Studierende mit entsprechenden Publikationen sind ausdrücklich zur Bewerbung eingeladen.
+- **Mehrmalige Einreichung:** Eine erneute Bewerbung mit derselben Publikation im Folgejahr ist möglich, solange die Zwei-Jahres-Frist gewahrt bleibt.
 
-Bei Fragen oder Problemen mit der RESQUE App wenden Sie sich bitte an [Ihre Ansprechperson](mailto:name@universitaet.de).
+## Bewerbungsunterlagen
+
+Die zentrale Grundlage für die Bewerbung ist die Dokumentation der angewandten Open-Science-Praktiken mithilfe des RESQUE (Research Quality Evaluation) Collector Tools. Dieses webbasierte Formular ermöglicht eine strukturierte und nachvollziehbare Darstellung der Qualität Ihrer Forschungsarbeit mit Hinblick auf Transparenz, Reproduzierbarkeit und Fehlerfreiheit.
+
+Das hier exportierte Ergebnis-Dokument (im JSON-Format) dient als Kernstück Ihrer Bewerbung. Es ersetzt ein formloses Begleitschreiben.
+
+## Einreichungsprozess
+Um sich für den Preis zu bewerben, senden Sie bitte die folgenden Unterlagen gebündelt an [open.science@uni-wh.de](mailto:open.science@uni-wh.de):
+- Das ausgefüllte RESQUE-Formular (im JSON-Format).
+- Das zur Veröffentlichung angenommene Paper (als PDF).
+- Einen Nachweis über die Annahme des Papers, falls noch nicht veröffentlicht (z.B. Bestätigungs-E-Mail des Verlags oder der Editorin/des Editors).
+- Ihre vollständige Postadresse für den Fall einer Auszeichnung.
+
+
+Für Rückfragen stehen wir Ihnen unter derselben E-Mail-Adresse gerne zur Verfügung.
+Der nächste Stichtag für die Einreichung ist der 01. November 2025.
 
 Auf der nächsten Seite bekommen Sie eine Einführung, wie die App zu benutzen ist.
+
+Bei Fragen oder Problemen mit der RESQUE App wenden Sie sich bitte an [Ihre Ansprechperson](mailto:ruben.lennartz@uni-wh.de).
+
+**Hinweis zum Datenschutz:** Die App läuft ausschließlich lokal im Browser auf Ihrem Rechner. Es werden keine Daten an einen Server übertragen. Die Daten werden nur in Ihrem Browser gespeichert.
