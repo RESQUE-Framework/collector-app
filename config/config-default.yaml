@@ -1,0 +1,69 @@
+# Title of the app (shown on top left)
+main_title: "RESQUE"
+
+# Background color of the app
+background_color: "#ffffff"
+
+# Maximum number of papers that are expected by the committee
+max: 10
+
+# Number of top papers that must be selected
+max_top_papers: 3
+
+# Minimum number of papers that must be entered before 
+# showing a warning is shown at the scoring box
+min_RO_warning_threshold: 0
+
+# Show the welcome message (text is defined in config/instructions.md)
+show_instruction: false
+
+# Show the beta warning message
+show_beta_warning: true
+image_url: https://upload.wikimedia.org/wikipedia/commons/0/06/LMU_Muenchen_Logo.svg
+
+hide_score: false
+
+meta:
+  sources: ["packs/core-meta.json"]
+  config:
+    min_indicators_warning_threshold: 0
+
+pubs:
+  sources: ["packs/core-pubs.json"]
+  config:
+    min_indicators_warning_threshold: 0
+
+data:
+  sources: ["packs/core-data.json"]
+  config:
+    min_indicators_warning_threshold: 0
+
+software:
+  sources: ["packs/core-software.json"]
+  config:
+    min_indicators_warning_threshold: 0
+
+score_categories:
+  - title: "Open Data"
+    cue: "Data"
+    color: '#beaed4'
+
+  - title: "Open Materials"
+    cue: "OpenMaterials"
+    color: '#fdc086'
+
+  - title: "Preregistration"
+    cue: "Prereg"
+    color: '#d95f02'
+
+  - title: "Reproducible Code & Verification"
+    cue: "ReproducibleScripts|IndependentVerification"
+    color: '#386cb0'
+
+  - title: "Methodological Rigor"
+    cue: "_Methods_"
+    color: '#f0027f'
+
+  - title: "Theorizing & Formal Modeling"
+    cue: "Theorizing"
+    color: '#7fc97f'
