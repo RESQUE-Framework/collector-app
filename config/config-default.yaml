@@ -43,6 +43,18 @@ software:
   config:
     min_indicators_warning_threshold: 0
 
+
+# Define the scoring categories
+#--------------------------------
+# For the cue field (which is a RegExp on the indicator IDs), 
+# use | to separate multiple cues.
+# For the report generation in the RESQUER package, use these
+# standardized category titles:
+# "Open Data", "Open Materials", "Preregistration","Reproducible Code"
+# (They are also regExp'ed, so you can add additional text, e.g.,
+# "Reproducible Code & Verification" will also work)
+
+
 score_categories:
   - title: "Open Data"
     cue: "Data"
