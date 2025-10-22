@@ -1448,7 +1448,7 @@
             "id": "P_Preregistration_Replication_NAExplanation",
             "type": "text",
             "title": "⤷ Not applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis && !$P_TypeMethod_Nonempirical && !$P_TypeMethod_Theoretical && !$P_TypeMethod_Measurement && $P_Preregistration_Replication === 'NotApplicable'"
+            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative || $P_TypeMethod_Computational) && $P_Preregistration_Replication === 'NotApplicable'"
         },
         {
             "id": "P19P20SEP",
