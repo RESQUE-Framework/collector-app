@@ -1335,7 +1335,7 @@
             "type": "radio",
             "title": "Preregistration",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($P_TypeMethod_Nonempirical) || ($P_TypeMethod_Measurement) || ($P_TypeMethod_Theoretical) || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation)))",
+                "not_applicable": "($P_Suitable === 'No') || !($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative || $P_TypeMethod_MetaAnalysis || $P_TypeMethod_Computational) || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation)))",
                 "condition": "(exists($P_Preregistration_Identifier))"
             },
             "options": [
@@ -1361,27 +1361,27 @@
                 }
             ],
             "info": "{:'Yes' | Only choose <b>'Yes'</b> if the preregistration is time-stamped/registered before the publication of the study (check date). Typical preregistration platforms include: OSF, aspredicted.org, ZPID Prereg, ClinicalTrials.gov/.org, Euclinicaltrials.eu, Clinicaltrialsregister.eu, DRKS.}<br><br><b>Multi Study Paper Case</b>: Only choose 'Yes' if your nominated study has been preregistered. <br><br> When to choose <b>'No'</b> <ul><li> If the study was not preregistered or if preregistration is not time-stamped/registered </li><li> If a preregistration exists, but does not contain information about the research question/hypothesis of this specific paper.</li></ul><br> When to choose <b>'Not applicable'</b>:<ul><li>If the study type is 'Simulation' (except from benchmarking experiments), 'mainly theoretical Review' or no data has been used in a substantive way.</li>In rare cases: When the theory arguably is so precise that no preregistration is necessary.<li></li><li>There also might be other cases with reasonable justifications for no preregistration.</li></ul>",
-            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_Nonempirical && !$P_TypeMethod_Theoretical && !$P_TypeMethod_Measurement",
+            "condition": "$P_Suitable === 'Yes' && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative || $P_TypeMethod_MetaAnalysis || $P_TypeMethod_Computational)",
             "tip_external":"<ul><li>It only counts if a <b>link</b> to the preregistration is provided.</li><li><b>Search words:</b> <code>preregist*</code>, <code>pre-regist*</code>, <code>regist*</code>, <code>aspredicted</code>, <code>OSF</code>. For clinical trials: <code>Prospero</code>, <code>ClinicalTrials</code>"
         },
         {
             "id": "P_Preregistration_NAExplanation",
             "type": "text",
             "title": "⤷ Not applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_Nonempirical && !$P_TypeMethod_Theoretical && !$P_TypeMethod_Measurement && $P_Preregistration === 'NotApplicable'"
+            "condition": "$P_Suitable === 'Yes' && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative || $P_TypeMethod_MetaAnalysis || $P_TypeMethod_Computational) && $P_Preregistration === 'NotApplicable'"
         },
         {
             "id": "P_Preregistration_Identifier",
             "type": "text",
             "title": "⤷ DOI or URL of the preregistration",
-            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_Nonempirical && !$P_TypeMethod_Theoretical && !$P_TypeMethod_Measurement && $P_Preregistration =|= ['Yes', 'RegisteredReport']"
+            "condition": "$P_Suitable === 'Yes' && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative || $P_TypeMethod_MetaAnalysis || $P_TypeMethod_Computational) && $P_Preregistration =|= ['Yes', 'RegisteredReport']"
         },
         {
             "id": "P_Preregistration_Content",
             "type": "checkbox",
             "title": "⤷ What has been preregistered? (check all that apply)",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation))) || ($P_TypeMethod_MetaAnalysis)",
+                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation))) || !($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative || $P_TypeMethod_Computational)",
                 "condition": ""
             },
             "options": [
@@ -1411,7 +1411,7 @@
                     "value": 0.20
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_Nonempirical && !$P_TypeMethod_Theoretical && !$P_TypeMethod_Measurement && !$P_TypeMethod_MetaAnalysis && $P_Preregistration =|= ['Yes', 'RegisteredReport']",
+            "condition": "$P_Suitable === 'Yes' && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative || $P_TypeMethod_Computational) && $P_Preregistration =|= ['Yes', 'RegisteredReport']",
             "info": "<b>Sample size</b>: Typically, an a priori power analysis was conducted and is reported. <b>Not enough</b> to receive points:<ul><li>'We will collect as many participants as possible'</li><li>Only saying which sample size is aimed at <b>without any rationale.</b> Be careful: The AsPredicted template states 'No need to justify decision'. This would <i>not</i> be sufficient in RESQUE.</li></ul>If <b>'reuse of existing data set'</b>: Here we expect a post-hoc power analysis that investigates whether the sample size of the reused data set is large enough to test the hypothesized effects with sufficient power.<br><br><b>Hypothesis</b><br><br> Hypotheses in the preregistration should be the <b>same</b> as reported in the paper. Deviations must be explained.<br>. (External raters: See note below).<br>A generally formulated research question (“Is there a difference between control and experimental group?”) is not sufficient for a hypothesis. Also if a section states “This study aims to… (e.g., identify effect moderators”, these a general explorative goals, but no hypotheses.<br><b>A proper hypothesis should state</b>: (a) the outcome variable (what is the primary outcome?), (b) the predictor variable or intervention, and (c) the direction (or explicitly say “undirected test”).<br><br><b>Operationalizations</b><br><br><ul><li>If you would be able to rebuild the experimental setup based on the preregistered description of the measurement instruments, then assign 'yes'. If it is too vague (e.g. only 'we will use reaction times'), then assign 'no'.</li><li>If it is ambiguous ('I will use either questionnaire A or B') - without a decision rule - it is <b>'no'</b>.</li><li>In a secondary data preregistration ('reuse of existing data set'), the primary outcome should be defined</li></ul><br><br><b>Analysis Plan</b><br><br>Required to receive point: For each confirmatory hypothesis, there must be …<ul><li>… a specification of the dependent and independent variables with their concrete operationalizations (i.e., what’s the primary outcome?)</li><li>… a specification of the statistical test (e.g., 'a t-test')</li></ul><br><br><b>Inferential criteria (e.g., defining your alpha level)</b><br>Specified decision rule: E.g., what's the alpha-level? When does a result speak in favor of the hypothesis, when against? (especially when multiple testing was conducted)",
             "tip_external":"ClinicalTrials.gov (in contrast to many preregistrations on OSF or AsPredicted) often lack the details for most of these aspects (often only the operationalizations are provided, but no sufficiently precise hypotheses, or sample size planning).<br><br>For <b>hypotheses</b>: For practical reasons, external raters do <i>not</i> need to check whether the hypotheses in the preregistration match to the hypotheses in the paper - just whether hypotheses have been preregistered at all."
         },
@@ -1420,7 +1420,7 @@
             "type": "radio",
             "title": "The paper contains a preregistered replication attempt of a existing study (either a direct/close or conceptual replication of any study in this or another paper).",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration_Replication === 'NotApplicable') && (exists($P_Preregistration_Replication_NAExplanation))) || ($P_TypeMethod_MetaAnalysis)",
+                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration_Replication === 'NotApplicable') && (exists($P_Preregistration_Replication_NAExplanation))) || !($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative || $P_TypeMethod_Computational)",
                 "condition": ""
             },
             "options": [
@@ -1441,7 +1441,7 @@
                 }
             ],
             "info": "As only <i>preregistered</i> replication attempts count, you need to provide the DOI or URL of the preregistration in the previous indicator. If the paper contains a replication which was not preregistered, please select <b>'No'</b>.<br><br>If the paper was preregistered, but does not contain a replication, select <b>'No'</b>. If you chose 'not applicable' at the previous indicator 'Preregistration', choose 'not applicable' here, too.<br><br>This indicator refers both to within-paper replication studies (e.g., Study 2 is a preregistered replication of Study 1) and to replications of other studies that have been published in other papers.",
-            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis && !$P_TypeMethod_Nonempirical && !$P_TypeMethod_Theoretical && !$P_TypeMethod_Measurement",
+            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative || $P_TypeMethod_Computational)",
             "tip_external":"If it is a replication of a previously reported effect, it is <b>'yes'</b>, even if the replication is not the main research question of the preregistration.<br><b>Search word</b> (in preregistration):replica*"
         },
         {
