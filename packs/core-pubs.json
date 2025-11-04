@@ -914,7 +914,7 @@
                     "text": "Endocrinology (hormones, cortisol, ...)"
                 },
                 {
-                    "id": "Other",
+                    "id": "OtherPhysiological",
                     "text": "Other (please specify)"
                 }
             ],
@@ -925,7 +925,7 @@
             "id": "P_Data_TypePhysiological_Other",
             "type": "text",
             "title": "⤷ Type of physiological data: Other",
-            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Data_Type_Physiological && $P_Data_TypePhysiological_Other"
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Data_Type_Physiological && $P_Data_TypePhysiological_OtherPhysiological"
         },
 
         {
