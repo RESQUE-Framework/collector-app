@@ -1178,7 +1178,7 @@
                         <template x-for="pub, index in $store.data.input.slice(1)">
                             <div class="tab" :class="{ 'active': !excludedPublications.has(index + 1) }"
                                 @click="if (excludedPublications.has(index + 1)) { excludedPublications.delete(index + 1); } else { excludedPublications.add(index + 1); }">
-                                <p style="margin: 0;"><span x-show="pub.P_TopPaper_Select">⭐️ </span><span
+                                <p style="margin: 0;"><input type="checkbox" style="margin-right: 16px;" :checked="!excludedPublications.has(index + 1)" readonly /><span x-show="pub.P_TopPaper_Select">⭐️ </span><span
                                         x-text="pub.Title"></span></p>
                             </div>
                         </template>
