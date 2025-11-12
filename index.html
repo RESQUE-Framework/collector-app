@@ -1549,7 +1549,17 @@
 
             let json = JSON.stringify(data, null, 2);
             let blob = new Blob([json], { type: "text/json;charset=utf-8" });
-            let filename = `resque_${data[0].LastName ? data[0].LastName.toLowerCase() + "_" : ""}${millis}.json`;
+            
+            // get an ISO string and sanitize it for use in filenames
+            const now = new Date();
+            const isoNoMs = now.toISOString().split('.')[0];
+            const safeIso = isoNoMs.replace(/:/g, '-'); 
+
+            const namePart = data[0].LastName
+                ? data[0].LastName.toLowerCase() + '_'
+                : '';
+
+            const filename = `resque_${namePart}${safeIso}.json`; 
 
             let a = document.getElementById("download");
             a.innerText = filename;
