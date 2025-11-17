@@ -1131,7 +1131,7 @@
             </div>
 
             <div id="orcid-modal" class="modal">
-                <div x-data="{ orcid: '', authorName: '', publications: [] }" class="modal-content">
+                <div x-data="{ orcid: '', authorName: '', publications: [], sortBy: 'year' }" class="modal-content">
                     <h3>Import publications using ORCID</h3>
                     <input id="orcid-modal-input" x-model="orcid" type="text" placeholder="ORCID" />
                     <button id="orcid-modal-button"
@@ -1145,9 +1145,17 @@
                                 <div
                                     style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
                                     <h3 x-text="`${authorName} (${publications.length} publications)`"></h3>
-                                    <button
-                                        @click="publications.filter(p => p.selected).forEach(p => $store.data.addPublicationWithDetails({DOI: 'https://doi.org/' + p.doi, Title: p.title, Year: p.year})); closeORCIDModal(); orcid = '', authorName ='', publications = []"><span
-                                            x-text="`Add ${publications.filter(p => p.selected).length} Publications`"></span></button>
+
+                                    <select x-model="sortBy" 
+                                        @change="if (sortBy === 'year') {
+                                            publications.sort((a, b) => b.year - a.year);
+                                        } else if (sortBy === 'title') {
+                                            publications.sort((a, b) => a.title.localeCompare(b.title));
+                                        }"
+                                        style="width: auto; margin: 0;">
+                                        <option value="year">Sort by: Year</option>
+                                        <option value="title">Sort by: Title</option>
+                                    </select>
                                 </div>
                             </div>
                             <template x-for="pub in publications">
@@ -1159,6 +1167,11 @@
                                             target="_blank"><span x-text="pub.doi"></span></a></p>
                                 </div>
                             </template>
+                            <div style="position: sticky; bottom: 0; background-color: white; padding: 8px 0; text-align: right;">
+                                <button
+                                        @click="publications.filter(p => p.selected).forEach(p => $store.data.addPublicationWithDetails({DOI: 'https://doi.org/' + p.doi, Title: p.title, Year: p.year})); closeORCIDModal(); orcid = '', authorName ='', publications = []"><span
+                                            x-text="`Add ${publications.filter(p => p.selected).length} Publications`"></span></button>
+                            </div>
                         </div>
                     </template>
                 </div>
@@ -1223,7 +1236,7 @@
 
     <!-- PDF.js https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js-->
     <script src="./js/pdf.min.js"></script>
-    
+
     <!-- object-hash https://cdn.jsdelivr.net/npm/object-hash@3.0.0/dist/object_hash.min.js -->
     <script src="./js/object_hash.min.js"></script>
     
