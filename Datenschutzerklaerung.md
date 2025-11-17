@@ -1,3 +1,4 @@
+<!-- pandoc -s Datenschutzerklaerung.md -o docs/Datenschutzerklaerung.docx -->
 *[DRAFT 2025-11-13]*
 
 # Datenschutzerklärung RESQUE‑Collector-App
