@@ -1411,6 +1411,18 @@
             }
         }
 
+        window.addEventListener('keydown', function (event) {
+            if (event.key === "Escape") {
+                document.querySelectorAll(".modal").forEach(modal => {
+                    modal.style.display = "none";
+                });
+
+                document.querySelectorAll("dialog").forEach(dialog => {
+                    dialog.close();
+                });
+            }
+        });
+
         const showModal = (id) => {
             document.getElementById(id).showModal();
         }
