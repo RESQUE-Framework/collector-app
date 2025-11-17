@@ -25,18 +25,34 @@
     <!-- End Matomo Code -->
 
 
-    <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src=" https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js "></script>
-    <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    <!-- Driver.js https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js-->
+    <script src="./js/driver.js.iife.js"></script>
+
+    <!-- Driver.js CSS https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css-->
+    <link rel="stylesheet" href="./js/driver.css" />
+
+    <!-- Chart.js https://cdn.jsdelivr.net/npm/chart.js-->
+    <script src="./js/chart.js"></script>
+
+    <!-- LZ-String https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js -->
+    <script src="./js/lz-string.min.js"></script>
+
+    <!-- JS-Confetti https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js -->
+    <script src="./js/js-confetti.browser.js"></script>
+
+    <!-- js-yaml https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js -->
+    <script src="./js/js-yaml.min.js"></script>
+
+    <!-- Showdown https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js -->
+    <script src="./js/showdown.min.js"></script>
 </head>
 
 <body>
-    <script src="https://cdn.jsdelivr.net/npm/@alpinejs/sort@3.x.x/dist/cdn.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Alpine.js sort  https://cdn.jsdelivr.net/npm/@alpinejs/sort@3.x.x/dist/cdn.min.js-->
+    <script src="./js/alpinejs-sort.min.js"></script>
+    
+    <!-- Alpine.js https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js -->
+    <script src="./js/alpinejs.min.js"></script>
 
     <script type="module">
         import { getDefaultValues } from "./utils/packutils.js";
@@ -1205,8 +1221,12 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/object-hash@3.0.0/dist/object_hash.min.js"></script>
+    <!-- PDF.js https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js-->
+    <script src="./js/pdf.min.js"></script>
+    
+    <!-- object-hash https://cdn.jsdelivr.net/npm/object-hash@3.0.0/dist/object_hash.min.js -->
+    <script src="./js/object_hash.min.js"></script>
+    
     <script>
         const driver = window.driver.js.driver;
 
@@ -1262,8 +1282,8 @@
         }
     </script>
     <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc =
-            'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+        // Use local PDF.js worker file (place `pdf.worker.min.js` in the `js/` folder)
+        pdfjsLib.GlobalWorkerOptions.workerSrc = './js/pdf.worker.min.js';
 
         function extractText(pdf) {
             var totalPageCount = pdf.numPages;
