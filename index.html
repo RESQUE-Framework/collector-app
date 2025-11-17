@@ -1169,7 +1169,7 @@
                         </div>
 
                         <div class="warning-text" x-show="$store.data.input.filter(ro => ro.P_TopPaper_Select).length < $store.config.config.max_top_papers">
-                            <span>The committee asks you to select <span x-text="$store.config.config.max_top_papers"></span> publications as your best publications - you only select <span x-text="$store.data.input.filter(ro => ro.P_TopPaper_Select).length"></span> entries. Please go back and select exactly <span x-text="$store.config.config.max_top_papers"></span>.</span>
+                            <span>The committee asks you to select <span x-text="$store.config.config.max_top_papers"></span> publications as your <b>best</b> publications - you only selected <span x-text="$store.data.input.filter(ro => ro.P_TopPaper_Select).length"></span> entries. Please go back and select exactly <span x-text="$store.config.config.max_top_papers"></span>.</span>
                         </div>
 
                     </div>
