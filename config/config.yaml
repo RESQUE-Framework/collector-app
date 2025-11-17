@@ -24,6 +24,8 @@ image_url: https://upload.wikimedia.org/wikipedia/commons/0/06/LMU_Muenchen_Logo
 
 hide_score: false
 
+statements_only_for_top_publications: true
+
 meta:
   sources: ["packs/core-meta.json"]
   config:

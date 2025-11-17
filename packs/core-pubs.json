@@ -1781,13 +1781,15 @@
         {
             "id": "P_MeritStatement_Info",
             "type": "info",
-            "text": "<h3>Merit Statement</h3>A merit statement summarizes why this research output made an important substantive contribution to the field. Such statements could reflect upon, for example:<ul><li>an interdisciplinary setting</li><li>a new theory that was developed or tested for the first time</li><li<an experiment that rejected or confirmed a long debated effect</li><li>a methodological set-up that was specifically innovative</li><li>an unusually great effort was needed to collect the sample</li><li>generalizability was particularly high</li></ul><br><i>Do not provide information on societal or scientific impact or information on citation statistics here, but focus on the intrinsic quality of the research output itself - regardless whether it had impact yet or not.</i>"
+            "text": "<h3>Merit Statement</h3>A merit statement summarizes why this research output made an important substantive contribution to the field. Such statements could reflect upon, for example:<ul><li>an interdisciplinary setting</li><li>a new theory that was developed or tested for the first time</li><li<an experiment that rejected or confirmed a long debated effect</li><li>a methodological set-up that was specifically innovative</li><li>an unusually great effort was needed to collect the sample</li><li>generalizability was particularly high</li></ul><br><i>Do not provide information on societal or scientific impact or information on citation statistics here, but focus on the intrinsic quality of the research output itself - regardless whether it had impact yet or not.</i>",
+            "condition": "!config$statements_only_for_top_publications || $P_TopPaper_Select"
         },
         {
             "id": "P_MeritStatement",
             "type": "textbox",
             "maxwords": 150,
-            "title": "Provide your Merit Statement here (narrative, max. 150 words. Box will expand):"
+            "title": "Provide your Merit Statement here (narrative, max. 150 words. Box will expand):",
+            "condition": "!config$statements_only_for_top_publications || $P_TopPaper_Select"
         },
         {
             "id": "P_ImpactStatement_Info",

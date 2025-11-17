@@ -25,18 +25,34 @@
     <!-- End Matomo Code -->
 
 
-    <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src=" https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js "></script>
-    <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    <!-- Driver.js https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js-->
+    <script src="./js/driver.js.iife.js"></script>
+
+    <!-- Driver.js CSS https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css-->
+    <link rel="stylesheet" href="./js/driver.css" />
+
+    <!-- Chart.js https://cdn.jsdelivr.net/npm/chart.js-->
+    <script src="./js/chart.js"></script>
+
+    <!-- LZ-String https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js -->
+    <script src="./js/lz-string.min.js"></script>
+
+    <!-- JS-Confetti https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js -->
+    <script src="./js/js-confetti.browser.js"></script>
+
+    <!-- js-yaml https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js -->
+    <script src="./js/js-yaml.min.js"></script>
+
+    <!-- Showdown https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js -->
+    <script src="./js/showdown.min.js"></script>
 </head>
 
 <body>
-    <script src="https://cdn.jsdelivr.net/npm/@alpinejs/sort@3.x.x/dist/cdn.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Alpine.js sort  https://cdn.jsdelivr.net/npm/@alpinejs/sort@3.x.x/dist/cdn.min.js-->
+    <script src="./js/alpinejs-sort.min.js"></script>
+    
+    <!-- Alpine.js https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js -->
+    <script src="./js/alpinejs.min.js"></script>
 
     <script type="module">
         import { getDefaultValues } from "./utils/packutils.js";
@@ -1115,7 +1131,7 @@
             </div>
 
             <div id="orcid-modal" class="modal">
-                <div x-data="{ orcid: '', authorName: '', publications: [] }" class="modal-content">
+                <div x-data="{ orcid: '', authorName: '', publications: [], sortBy: 'year' }" class="modal-content">
                     <h3>Import publications using ORCID</h3>
                     <input id="orcid-modal-input" x-model="orcid" type="text" placeholder="ORCID" />
                     <button id="orcid-modal-button"
@@ -1129,9 +1145,17 @@
                                 <div
                                     style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
                                     <h3 x-text="`${authorName} (${publications.length} publications)`"></h3>
-                                    <button
-                                        @click="publications.filter(p => p.selected).forEach(p => $store.data.addPublicationWithDetails({DOI: 'https://doi.org/' + p.doi, Title: p.title, Year: p.year})); closeORCIDModal(); orcid = '', authorName ='', publications = []"><span
-                                            x-text="`Add ${publications.filter(p => p.selected).length} Publications`"></span></button>
+
+                                    <select x-model="sortBy" 
+                                        @change="if (sortBy === 'year') {
+                                            publications.sort((a, b) => b.year - a.year);
+                                        } else if (sortBy === 'title') {
+                                            publications.sort((a, b) => a.title.localeCompare(b.title));
+                                        }"
+                                        style="width: auto; margin: 0;">
+                                        <option value="year">Sort by: Year</option>
+                                        <option value="title">Sort by: Title</option>
+                                    </select>
                                 </div>
                             </div>
                             <template x-for="pub in publications">
@@ -1143,6 +1167,11 @@
                                             target="_blank"><span x-text="pub.doi"></span></a></p>
                                 </div>
                             </template>
+                            <div style="position: sticky; bottom: 0; background-color: white; padding: 8px 0; text-align: right;">
+                                <button
+                                        @click="publications.filter(p => p.selected).forEach(p => $store.data.addPublicationWithDetails({DOI: 'https://doi.org/' + p.doi, Title: p.title, Year: p.year})); closeORCIDModal(); orcid = '', authorName ='', publications = []"><span
+                                            x-text="`Add ${publications.filter(p => p.selected).length} Publications`"></span></button>
+                            </div>
                         </div>
                     </template>
                 </div>
@@ -1169,7 +1198,7 @@
                         </div>
 
                         <div class="warning-text" x-show="$store.data.input.filter(ro => ro.P_TopPaper_Select).length < $store.config.config.max_top_papers">
-                            <span>The committee asks you to select <span x-text="$store.config.config.max_top_papers"></span> publications as your best publications - you only select <span x-text="$store.data.input.filter(ro => ro.P_TopPaper_Select).length"></span> entries. Please go back and select exactly <span x-text="$store.config.config.max_top_papers"></span>.</span>
+                            <span>The committee asks you to select <span x-text="$store.config.config.max_top_papers"></span> publications as your <b>best</b> publications - you only selected <span x-text="$store.data.input.filter(ro => ro.P_TopPaper_Select).length"></span> entries. Please go back and select exactly <span x-text="$store.config.config.max_top_papers"></span>.</span>
                         </div>
 
                     </div>
@@ -1205,8 +1234,12 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/object-hash@3.0.0/dist/object_hash.min.js"></script>
+    <!-- PDF.js https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js-->
+    <script src="./js/pdf.min.js"></script>
+
+    <!-- object-hash https://cdn.jsdelivr.net/npm/object-hash@3.0.0/dist/object_hash.min.js -->
+    <script src="./js/object_hash.min.js"></script>
+    
     <script>
         const driver = window.driver.js.driver;
 
@@ -1262,8 +1295,8 @@
         }
     </script>
     <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc =
-            'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+        // Use local PDF.js worker file (place `pdf.worker.min.js` in the `js/` folder)
+        pdfjsLib.GlobalWorkerOptions.workerSrc = './js/pdf.worker.min.js';
 
         function extractText(pdf) {
             var totalPageCount = pdf.numPages;
