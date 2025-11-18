@@ -1,6 +1,6 @@
 {
-    "version": "0.8.0",
-    "date": "2025-09-24",
+    "version": "0.8.1",
+    "date": "2025-11-18",
     "prefix": "P",
     "title": "Publication",
     "elements": [       
@@ -1145,7 +1145,7 @@
             "type": "radio",
             "title": "Open reproducible scripts",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_ReproducibleScripts === 'NotApplicable') && (exists($P_ReproducibleScripts_NAExplanation)))",
+                "not_applicable": "($P_Suitable === 'No') || ($P_Data === 'No') || (($P_ReproducibleScripts === 'NotApplicable') && (exists($P_ReproducibleScripts_NAExplanation)))",
                 "condition": "(exists($P_ReproducibleScripts_Identifier))"
             },
             "options": [
@@ -1192,7 +1192,7 @@
             "type": "checkbox",
             "title": "⤷ FAIR format",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_ReproducibleScripts === 'NotApplicable') && (exists($P_ReproducibleScripts_NAExplanation)))",
+                "not_applicable": "($P_Suitable === 'No') || ($P_Data === 'No') || (($P_ReproducibleScripts === 'NotApplicable') && (exists($P_ReproducibleScripts_NAExplanation)))",
                 "condition": "($P_ReproducibleScripts =|= ['YesParts', 'YesEntire'])"
             },
             "options": [
@@ -1249,7 +1249,7 @@
             "type": "radio",
             "title": "Correctness of computational results has been independently verified",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_IndependentVerification === 'NotApplicable') && (exists($P_IndependentVerification_NAExplanation)))",
+                "not_applicable": "($P_Suitable === 'No') || ($P_Data == 'No') || (($P_IndependentVerification === 'NotApplicable') && (exists($P_IndependentVerification_NAExplanation)))",
                 "condition": "(exists($P_IndependentVerification_Identifier))"
             },
             "options": [
@@ -1750,33 +1750,69 @@
             "condition": "$P_Suitable === 'Yes'"
         },
         {
+            "id": "P_Power_Info",
+            "type": "info",
+            "text": "<h3>Sample size and power considerations</h3>",
+            "condition":  "$P_Suitable === 'Yes' && $P_TypeMethod_EmpiricalQuantitative"
+        },
+        {
             "id": "P_MultiStudy_Note2",
             "type": "info",
             "title": "<span style='background-color: yellow; font-size:100%; font-weight:normal;'>As a reminder: All questions should <i>only</i> be applied to the select study within the multi-study paper!</span>",
-            "condition": "$P_Suitable === 'Yes' && $P_MultiStudy === 'Yes'"
+            "condition": "$P_Suitable === 'Yes' && $P_TypeMethod_EmpiricalQuantitative && $P_MultiStudy === 'Yes'"
+        },
+        
+        {
+            "id": "P_Methods_PowerAnalysis",
+            "type": "radio",
+            "title": "When planning the sample size, did you do an a-priori power analysis?",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || (!$P_TypeMethod_EmpiricalQuantitative) ||(($P_Methods_PowerAnalysis === 'NotPossible') && (exists($P_Methods_PowerAnalysis_NAExplanation)))",
+                "condition": ""
+            },
+            "options": [
+                {
+                    "id": "Yes",
+                    "text": "Yes",
+                    "value": 1
+                },
+                {
+                    "id": "No",
+                    "text": "No",
+                    "value": 0
+                },
+                {
+                    "id": "NotPossible",
+                    "text": "Not possible / not meaningful (provide explanation)",
+                    "value": 0
+                }
+            ],
+            "condition":  "$P_Suitable === 'Yes' && $P_TypeMethod_EmpiricalQuantitative"
         },
         {
-            "id": "P_Power_Info",
-            "type": "info",
-            "text": "<h3>Sample size and power considerations</h3>The boxes will expand when you enter text; you can simply copy and paste the relevant sections from the paper.",
-            "condition":  "$P_Suitable === 'Yes'"
+            "id": "P_Methods_PowerAnalysis_NAExplanation",
+            "type": "text",
+            "title": "⤷ No power analysis possible: Provide explanation",
+            "condition":  "$P_Suitable === 'Yes' && $P_TypeMethod_EmpiricalQuantitative && ($P_Methods_PowerAnalysis === 'NotPossible')"
         },
+        
         {
-            "id": "P_PowerConsiderations",
+            "id": "P_Methods_PowerAnalysis_Considerations",
             "type": "textbox",
-            "title": "Please report all considerations regarding statistical power (assumed effect size, power, N, ...). ",
-            "condition": "$P_Suitable === 'Yes'"
+            "title": "Please report all considerations regarding statistical power (assumed effect size, power, N, ...). Simply copy and paste the relevant sections from the paper; the boxes will expand when you enter text",
+            "condition": "$P_Suitable === 'Yes' && $P_TypeMethod_EmpiricalQuantitative && ($P_Methods_PowerAnalysis === 'Yes')"
         },
         {
-            "id": "P_SampleSize",
+            "id": "P_Methods_PowerAnalysis_SampleSize",
             "type": "textbox",
-            "title": "Sample size (if applicable, differentiate by levels / items / ...)",
-            "condition": "$P_Suitable === 'Yes'"
+            "title": "Report the achieved sample size (if applicable, differentiate by persons / measurement points etc.)",
+            "condition": "$P_Suitable === 'Yes' && $P_TypeMethod_EmpiricalQuantitative && ($P_Methods_PowerAnalysis === 'Yes')"
         },
         {
             "id": "P23P24SEP",
             "type": "separator",
-            "no_comment": true
+            "no_comment": true,
+            "condition":  "$P_Suitable === 'Yes' && $P_TypeMethod_EmpiricalQuantitative"
         },
         {
             "id": "P_MeritStatement_InfoHidden",
