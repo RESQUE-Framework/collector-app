@@ -1145,7 +1145,7 @@
             "type": "radio",
             "title": "Open reproducible scripts",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_ReproducibleScripts === 'NotApplicable') && (exists($P_ReproducibleScripts_NAExplanation)))",
+                "not_applicable": "($P_Suitable === 'No') || ($P_Data === 'No') || (($P_ReproducibleScripts === 'NotApplicable') && (exists($P_ReproducibleScripts_NAExplanation)))",
                 "condition": "(exists($P_ReproducibleScripts_Identifier))"
             },
             "options": [
@@ -1192,7 +1192,7 @@
             "type": "checkbox",
             "title": "⤷ FAIR format",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_ReproducibleScripts === 'NotApplicable') && (exists($P_ReproducibleScripts_NAExplanation)))",
+                "not_applicable": "($P_Suitable === 'No') || ($P_Data === 'No') || (($P_ReproducibleScripts === 'NotApplicable') && (exists($P_ReproducibleScripts_NAExplanation)))",
                 "condition": "($P_ReproducibleScripts =|= ['YesParts', 'YesEntire'])"
             },
             "options": [
@@ -1249,7 +1249,7 @@
             "type": "radio",
             "title": "Correctness of computational results has been independently verified",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_IndependentVerification === 'NotApplicable') && (exists($P_IndependentVerification_NAExplanation)))",
+                "not_applicable": "($P_Suitable === 'No') || ($P_Data == 'No') || (($P_IndependentVerification === 'NotApplicable') && (exists($P_IndependentVerification_NAExplanation)))",
                 "condition": "(exists($P_IndependentVerification_Identifier))"
             },
             "options": [

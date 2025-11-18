@@ -1,3 +1,9 @@
+## core-pubs version 0.8.1 (2025-11-18)
+
+- Updates from the CP2 study + some minor updates from the TU Chemnitz.
+- Updated Power Analysis item
+
+
 ## core-pubs version 0.7 (2025-03-28)
 
 ### New indicators
