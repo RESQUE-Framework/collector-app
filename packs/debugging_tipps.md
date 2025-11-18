@@ -1,1 +1,2 @@
 - "object 'P_Data_Source_ReuseOwn' not found" --> You forgot the "$" in front of the variable.
+- When assigning scores via `"value"`, every option needs a score (even when the selection of that option would lead to "not applicable" --> in this case, assign 0 points.).

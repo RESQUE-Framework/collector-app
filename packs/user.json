@@ -1,13 +1,30 @@
 {
     "version": "0.1.0",
-    "date": "2099-01-01",
+    "date": "2025-11-18",
     "prefix": "U",
     "title": "User",
     "elements": [
         {
-            "id": "U_Test",
-            "type": "info",
-            "title": "USER TEST ITEM"
+            "id": "U_AKZEPTANZ",
+            "type": "checkbox",
+            "title": "We like to evaluate and improve the hiring process. May we contact you after the hiring process has finished for feedback on the application procedure, in particular this RESQUE tool?",
+            "options": [
+                {
+                    "id": "Yes",
+                    "text": "Yes, you may contact me after the process has finished for feedback on the application procedure."
+                }
+            ]
+        },
+        {
+            "id": "U_AKZEPTANZ_Email",
+            "type": "text",
+            "condition": "$U_AKZEPTANZ_Yes",
+            "title": "Please provide an email adress where we can reach you:"
+        },
+        {
+            "id": "AKZEPTANZ_sep",
+            "type": "separator",
+            "no_comment": true
         }
 
     ]
