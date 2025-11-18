@@ -1,0 +1,14 @@
+{
+    "version": "0.1.0",
+    "date": "2099-01-01",
+    "prefix": "U",
+    "title": "User",
+    "elements": [
+        {
+            "id": "U_Test",
+            "type": "info",
+            "title": "USER TEST ITEM"
+        }
+
+    ]
+}
