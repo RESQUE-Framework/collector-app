@@ -1,0 +1,89 @@
+{
+    "version": "0.1.0",
+    "date": "2025-07-15",
+    "prefix": "ST",
+    "title": "Stimuli",
+    "elements": [
+         {
+            "id": "P_Stimuli",
+            "type": "radio",
+            "title": "Does the paper use or vary stimuli in a substantive way?",
+            "options": [
+                {
+                    "id": "NotApplicable",
+                    "text": "Not applicable"
+                },
+                {
+                    "id": "No",
+                    "text": "No"
+                },
+                {
+                    "id": "Yes",
+                    "text": "Yes"
+                }                
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
+        },
+        {
+            "id": "P_Stimuli_NAExplanation",
+            "type": "text",
+            "title": "⤷ Not Applicable: Explanation",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli == 'NotApplicable'"
+        },
+        {
+            "id": "P_Stimuli_Representative",
+            "type": "radio",
+            "title": "Representativeness of stimulus sample (within the relevant stimulus population) ",
+            "options": [
+                {
+                    "id": "NotApplicable",
+                    "text": "Not applicable"
+                },
+                {
+                    "id": "NotConsidered",
+                    "text": "Not explicitly considered"
+                },
+                {
+                    "id": "ConsideredInvestigator",
+                    "text": "Explicitly considered, stimuli chosen by investigators"
+                },
+                {
+                    "id": "ConsideredSampled",
+                    "text": "Explicilty considered, stimuli randomly sampled from population"
+                }                
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli == 'Yes'"
+        },
+        {
+            "id": "P_Stimuli_Representative_NAExplanation",
+            "type": "text",
+            "title": "⤷ Not Applicable: Explanation",
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli == 'Yes' && $P_Stimuli_Representative == 'NotApplicable'"
+        },
+
+        {
+            "id": "P_Stimuli_CoG",
+            "type": "radio",
+            "title": "Are Constraints on Generality explicitly discussed for the stimulus sample?",
+            "options": [
+                {
+                    "id": "No",
+                    "text": "No"
+                },
+                {
+                    "id": "Yes",
+                    "text": "Yes"
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative) && $P_Stimuli == 'Yes' && $P_Stimuli_Representative != 'NotApplicable'"
+        },
+
+        {
+            "id": "stimsep2",
+            "type": "separator",
+            "no_comment": true,
+            "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && !$P_TypeMethod_MetaAnalysis && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"
+        },
+
+    ]
+}
