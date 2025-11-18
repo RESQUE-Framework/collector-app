@@ -94,7 +94,7 @@
             ],
             "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && $P_TypeMethod_EmpiricalQuantitative",
             "info": "A randomized controlled trial (RCT) is a research design that aims to evaluate the causal effects of an intervention by randomly assigning participants to either an intervention group or a control group. Any research design that follows these principles counts as an RCT within RESQUE (even if the study does not call itself like that).<br>While RCTs often include additional safeguards such as allocation concealment, blinding of participants and personnel, and adherence to the intention-to-treat principle, these are not necessary in RESQUE.",
-            "tip_external": "Many RCTs in teh clinical context mention explicitly, often even in the title, that they are RCTs. The challenge is to identify experimental designs that are in fact RCTs without explicitly calling themselves as such. RCTs aim at identifying causal effects. If the main outcome is about a prediction, this is a good indicator that probably no RCT was done."
+            "tip_external": "Many RCTs in the clinical context mention explicitly, often even in the title, that they are RCTs. The challenge is to identify experimental designs that are in fact RCTs without explicitly calling themselves as such. RCTs aim at identifying causal effects. If the main outcome is about a prediction, this is a good indicator that probably no RCT was done."
         },
         {
             "id": "CP_Preregistration_PrimaryMainOutcome",
@@ -102,7 +102,7 @@
             "title": "Was the primary outcome from the preregistration reported as the main finding in the paper?",
             "score": {
                 "not_applicable": "($P_Suitable === 'No') || (!$P_TypeMethod_EmpiricalQuantitative) || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation)))  || (($CP_Preregistration_PrimaryMainOutcome === 'NotApplicable') && (exists($CP_Preregistration_PrimaryMainOutcome_NAExplanation))) || ($CP_RCT != 'Yes')",
-                "condition": ""
+                "condition": "$CP_RCT === 'Yes'"
             },
             "options": [
                 {
