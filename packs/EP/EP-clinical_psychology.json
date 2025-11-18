@@ -92,7 +92,7 @@
                     "text": "Yes"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && $P_TypeMethod_EmpiricalQuantitative && !$P_TypeMethod_Nonempirical && !$P_TypeMethod_Theoretical && !$P_TypeMethod_Measurement",
+            "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && $P_TypeMethod_EmpiricalQuantitative",
             "info": "A randomized controlled trial (RCT) is a research design that aims to evaluate the causal effects of an intervention by randomly assigning participants to either an intervention group or a control group. Any research design that follows these principles counts as an RCT within RESQUE (even if the study does not call itself like that).<br>While RCTs often include additional safeguards such as allocation concealment, blinding of participants and personnel, and adherence to the intention-to-treat principle, these are not necessary in RESQUE.",
             "tip_external": "Many RCTs in teh clinical context mention explicitly, often even in the title, that they are RCTs. The challenge is to identify experimental designs that are in fact RCTs without explicitly calling themselves as such. RCTs aim at identifying causal effects. If the main outcome is about a prediction, this is a good indicator that probably no RCT was done."
         },
@@ -101,7 +101,7 @@
             "type": "radio",
             "title": "Was the primary outcome from the preregistration reported as the main finding in the paper?",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation)))  || (($CP_Preregistration_PrimaryMainOutcome === 'NotApplicable') && (exists($CP_Preregistration_PrimaryMainOutcome_NAExplanation))) || ($P_TypeMethod_MetaAnalysis) || ($P_TypeMethod_EmpiricalQualitative) || ($P_TypeMethod_Nonempirical) || ($P_TypeMethod_Theoretical) || ($P_TypeMethod_Measurement) ||($CP_RCT != ['Yes'])",
+                "not_applicable": "($P_Suitable === 'No') || (!$P_TypeMethod_EmpiricalQuantitative) || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation)))  || (($CP_Preregistration_PrimaryMainOutcome === 'NotApplicable') && (exists($CP_Preregistration_PrimaryMainOutcome_NAExplanation))) || ($CP_RCT != 'Yes')",
                 "condition": ""
             },
             "options": [
@@ -143,7 +143,7 @@
             "type": "checkbox",
             "title": "Which criteria apply to this RCT?",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation))) || ($P_TypeMethod_MetaAnalysis) || ($P_TypeMethod_EmpiricalQualitative) || ($P_TypeMethod_Nonempirical) || ($P_TypeMethod_Theoretical) || ($P_TypeMethod_Measurement)|| ($CP_RCT != ['Yes'])",
+                "not_applicable": "($P_Suitable === 'No') || (!$P_TypeMethod_EmpiricalQuantitative) || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation))) || ($CP_RCT != 'Yes')",
                 "condition": ""
             },
             "options": [
@@ -168,7 +168,7 @@
                     "value": 0.5
                 }
             ],
-            "condition": "$P_Suitable === 'Yes'  && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && $CP_RCT === 'Yes' && $P_TypeMethod_EmpiricalQuantitative && !$P_TypeMethod_Nonempirical && !$P_TypeMethod_Theoretical && !$P_TypeMethod_Measurement",
+            "condition": "$P_Suitable === 'Yes'  && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && $CP_RCT === 'Yes' && $P_TypeMethod_EmpiricalQuantitative",
             "info": "<b>“Truly random”</b>: When evaluating whether the randomization in an RCT was truly random, look for a clear and explicit description of how the random sequence was generated. Acceptable methods include: <ul><li>the use of computer-generated random numbers,</li><li>random number tables,</li><li>or centralized randomization procedures</li></ul>Simply stating that participants were “randomly assigned” is not sufficient unless the method used to generate the sequence is also described. If the randomization is described as “manual,” it is crucial to determine whether this manual method involves a pre-prepared randomization list.<br>If instead participants were allocated by alternation, admission date, judgment of the researcher, or any other predictable or subjective method, the study does <b>not</b> meet the criterion of true randomization. See <a href='https://pmc.ncbi.nlm.nih.gov/articles/PMC4350496/'>https://pmc.ncbi.nlm.nih.gov/articles/PMC4350496/</a>."
         },
         {
@@ -222,7 +222,7 @@
             "type": "radio",
             "title": "Does the study publish results that overall disconfirm or even contradict the original hypotheses?",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($P_TypeMethod_MetaAnalysis) || (($CP_Methods_NullResults === 'NotApplicable') && (exists($CP_Methods_NullResults_NAExplanation)))",
+                "not_applicable": "($P_Suitable === 'No') || (!$P_TypeMethod_EmpiricalQuantitative) || ($P_TypeMethod_MetaAnalysis) || (($CP_Methods_NullResults === 'NotApplicable') && (exists($CP_Methods_NullResults_NAExplanation)))",
                 "condition": ""
             },
             "options": [
