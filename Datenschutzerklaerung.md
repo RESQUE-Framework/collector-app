@@ -20,35 +20,29 @@ Diese App („RESQUE Collector App“) ist eine rein client‑seitige Web‑Anwe
 
 Die App kommt ohne Server‑Backends für Ihre Inhalte aus, und Sie können die App (nachdem die Webseite geladen ist) auch komplett offline benutzen. Es gibt aber Situationen, in denen **technisch notwendige oder von Ihnen ausgelöste** Anfragen an externe Dienste erfolgen. Hierbei werden abgesehen von dois und (wenn Sie das wünschen) Ihrer ORCID **keine Ihrer Formulareingaben** übertragen.
 
-### A) Beim Laden der Seite (technisch erforderlich)
-
-* **CDNs**: Die App lädt Bibliotheken (z. B. Alpine.js, Chart.js, PDF.js) von Content‑Delivery‑Netzwerken wie **cdn.jsdelivr.net** und **cdnjs.cloudflare.com**. Dabei übermittelt Ihr Browser **IP‑Adresse, Datum/Uhrzeit, URL/Referrer** an das jeweilige CDN (wie bei jedem Webseitenabruf).
-
-### B) Nutzungsanalyse
+### A) Nutzungsanalyse
 
 * **Matomo**: Beim Seitenaufruf wird ein Matomo‑Skript eingebunden, das anonym Seitenaufrufe erfasst und auf einem Server der Ludwig-Maximilians-Universität München speichert. Es werden **keine Cookies oder Tracker von Drittanbietern** verwendet, es wird keine identifizierbare IP gespeichert. Wir nutzen diese Funktion um festzustellen, wie oft die App aufgerufen wird.
 
-### C) Von Ihnen ausgelöste Abrufe externer Metadaten (optional)
+### B) Von Ihnen ausgelöste Abrufe externer Metadaten (optional)
 
 * **DOI‑Abfrage (doi.org)**: Wenn Sie bei einer Publikation eine DOI eintragen, ruft die App **Titel, Jahr und ggf. Abstract** zu dieser DOI von **doi.org** ab. Dazu wird an doi.org die von Ihnen angegebene DOI übermittelt. Es werden nur Metadaten zu der jeweiligen Publikation abgefragt, die ohnehin öffentlich vorliegen.
 * **ORCID‑Import (pub.orcid.org)**: Wenn Sie den ORCID‑Import nutzen, werden über Ihre **ORCID‑Kennung** Ihre Publikationsdaten (Titel, Jahr, DOI) abgefragt und zur Auswahl angezeigt. Diese Abrufe erfolgen **nur**, wenn Sie den Import auslösen und frägt ebenfalls nur Informationen ab, die ohnehin öffentlich vorliegen.
 
 ## 4) Zusammenfassung: Welche Daten verarbeitet die App wofür?
 
-| Verarbeitung                   | Datenkategorien                                                      | Zweck                                         | Rechtsgrundlage                                                                          |
-| ------------------------------ | -------------------------------------------------------------------- | --------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| **Lokaler Speicher (Browser)** | Ihre Formulareingaben, Arbeitsstand, aktueller Tab/Status            | Bedienkomfort, Wiederaufnahme der Arbeit      | - keine Datenverarbeitung durch Dritte -                                                 |
-| **CDN‑Abrufe**                 | IP‑Adresse, Datum/Uhrzeit, URL/Referrer, User‑Agent                  | Ausliefern technisch benötigter Skripte       | **Art. 6 Abs. 1 lit. f DSGVO** (berechtigtes Interesse: sichere/effiziente Auslieferung) |
-| **Matomo**                     | Nutzungsdaten (z. B. Seitenaufrufe, Klicks) – **keine Eingabedaten** | Reichweitenmessung                            | **Art. 6 Abs. 1 lit. f DSGVO** (berechtigtes Interesse). Hinweis in‑App: ohne Cookies.   |
-| **DOI‑Abruf**                  | Ihre eingegebene DOI → **Titel, Jahr, ggf. Abstract** werden geladen | Komfortfunktion: Felder automatisch ausfüllen | **Art. 6 Abs. 1 lit. b DSGVO** (auf Ihre Anfrage)                                        |
-| **ORCID‑Import**               | Ihre ORCID‑Kennung → **Publikationsliste (Titel, Jahr, DOI)**        | Komfortfunktion: Mehrere Einträge übernehmen  | **Art. 6 Abs. 1 lit. b DSGVO** (auf Ihre Anfrage)                                        |
+| Verarbeitung                   | Datenkategorien                                                                                        | Zweck                                         | Rechtsgrundlage                                                                        |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------ | --------------------------------------------- | -------------------------------------------------------------------------------------- |
+| **Lokaler Speicher (Browser)** | Ihre Formulareingaben, Arbeitsstand, aktueller Tab/Status                                              | Bedienkomfort, Wiederaufnahme der Arbeit      | - keine Datenverarbeitung durch Dritte -                                               |
+| **Matomo**                     | Nutzungsdaten (z. B. Seitenaufrufe, Klicks) – **keine Eingabedaten; IP wird anonymisiert gespeichert** | Reichweitenmessung                            | **Art. 6 Abs. 1 lit. f DSGVO** (berechtigtes Interesse). Hinweis in‑App: ohne Cookies. |
+| **DOI‑Abruf**                  | Ihre eingegebene DOI → **Titel, Jahr, ggf. Abstract** werden geladen                                   | Komfortfunktion: Felder automatisch ausfüllen | **Art. 6 Abs. 1 lit. b DSGVO** (auf Ihre Anfrage)                                      |
+| **ORCID‑Import**               | Ihre ORCID‑Kennung → **Publikationsliste (Titel, Jahr, DOI)**                                          | Komfortfunktion: Mehrere Einträge übernehmen  | **Art. 6 Abs. 1 lit. b DSGVO** (auf Ihre Anfrage)                                      |
 
 ## 5) Empfänger / Drittanbieter‑Hosts
 
 Diese Hosts können – je nach Nutzung – Anfragen erhalten:
 
 * **tellmi.psy.lmu.de** (Matomo: Webseitenaufrufe zählen). 
-* **cdn.jsdelivr.net** / **cdnjs.cloudflare.com** (Auslieferung externer Bibliotheken wie Alpine.js, Chart.js, PDF.js, Showdown). 
 * **doi.org** (Abruf von öffentlichen Publikationsmetadaten zu einer DOI). 
 * **pub.orcid.org** (Abruf von öffentlichen Publikationslisten zu einer ORCID). 
 * **Externe Links** im Interface (z. B. resque.info, GitHub) werden **nur** bei Klick geöffnet. 
@@ -61,9 +55,8 @@ Diese Hosts können – je nach Nutzung – Anfragen erhalten:
 
 ## 7) Keine Pflicht zur Bereitstellung / Do‑Not‑Track
 
-Die Nutzung der App ist ohne DOI/ORCID möglich. Wenn Sie DOI/ORCID nicht nutzen, finden keine API‑Abrufe statt und Sie können die App auch komplett offline nutzen nachdem die technisch notwendigen CDN‑Abrufe beim Laden der Seite erfolgt sind.
+Die Nutzung der App ist ohne DOI/ORCID möglich. Wenn Sie DOI/ORCID nicht nutzen, finden keine API‑Abrufe statt und Sie können die App auch komplett offline nutzen.
 
-<!-- TODO: Braucht es diesen Absatz? Die DS-GVO ist doch gar nicht anwendbar, da keine personenbezogenen Daten erhoben werden. -->
 ## 8) Ihre Rechte (DSGVO)
 
 Soweit wir personenbezogene Daten verarbeiten, haben Sie – im Rahmen der gesetzlichen Voraussetzungen – die Rechte auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung (Art. 18), Datenübertragbarkeit (Art. 20) sowie Widerspruch gegen Verarbeitungen auf Grundlage berechtigter Interessen (Art. 21).
@@ -85,5 +78,4 @@ Wir können diese Datenschutzerklärung anpassen, wenn sich die App oder die Rec
 
 * **Lokaler Speicher**: Die App liest/schreibt Ihre Eingaben im `localStorage`/`sessionStorage` (u. a. aktueller Tab, vollständige Datensätze).
 * **DOI/ORCID**: Abrufe werden nur ausgelöst, wenn Sie die Felder nutzen/den Import starten (`fetchInformationUsingDOI`, `fetchPapersByORCID`/`fetchAuthorByORCID`).
-* **Externe Skripte**: u. a. Alpine.js, Chart.js, js‑yaml, Showdown, PDF.js von **jsDelivr**/**Cloudflare**; dadurch fallen übliche HTTP‑Zugriffe zu diesen Hosts an. 
 * **Matomo**: Einbindung über den LMU-Server **tellmi.psy.lmu.de** mit `trackPageView`/`enableLinkTracking`. 
