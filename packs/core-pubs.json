@@ -1325,7 +1325,7 @@
             "title": "⤷ What has been preregistered? (check all that apply)",
             "score": {
                 "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation))) || !($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative || $P_TypeMethod_Computational)",
-                "condition": ""
+                "condition": "($P_Preregistration =|= ['Yes', 'RegisteredReport'])"
             },
             "options": [
                 {
@@ -1363,8 +1363,8 @@
             "type": "radio",
             "title": "The paper contains a preregistered replication attempt of a existing study (either a direct/close or conceptual replication of any study in this or another paper).",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration_Replication === 'NotApplicable') && (exists($P_Preregistration_Replication_NAExplanation))) || !($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative || $P_TypeMethod_Computational)",
-                "condition": ""
+                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation))) || (($P_Preregistration_Replication === 'NotApplicable') && (exists($P_Preregistration_Replication_NAExplanation))) || !($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative || $P_TypeMethod_Computational)",
+                "condition": "($P_Preregistration =|= ['Yes', 'RegisteredReport'])"
             },
             "options": [
                 {
