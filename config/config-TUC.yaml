@@ -2,7 +2,7 @@
 main_title: "RESQUE TU Chemnitz - Klinische Psychologie"
 
 # Background color of the app
-background_color: "#ffffff"
+background_color: "#c3e8e2"
 
 # Maximum number of papers that are expected by the committee
 max: 10
@@ -15,11 +15,11 @@ max_top_papers: 3
 min_RO_warning_threshold: 0
 
 # Show the welcome message (text is defined in config/instructions.md)
-show_instruction: false
+show_instruction: true
 
 # Show the beta warning message
-show_beta_warning: true
-image_url: https://upload.wikimedia.org/wikipedia/commons/0/06/LMU_Muenchen_Logo.svg
+show_beta_warning: false
+image_url: https://www.tu-chemnitz.de/phil/iesg/ringvorlesung/RV2021/TUC_Logo.jpg
 
 hide_score: false
 
@@ -29,11 +29,13 @@ statements_only_for_top_publications: true
 
 meta:
   sources: ["packs/core-meta.json"]
+  exclude: ["RaterType "]
   config:
     min_indicators_warning_threshold: 0
 
 pubs:
-  sources: ["packs/core-pubs.json"]
+  sources: ["packs/core-pubs.json", "packs/EP/EP-clinical_psychology.json"]
+  exclude: ["P_IndependentVerification", "P_Stimuli", "P_ImpactStatement_Info", "P_ImpactStatement", "P_Theorizing", "sep_before_correctness", "P17P18SEP", "P19P20SEP", "CP_Methods_NullResults", "P_Sample_CoG", "P_Sample_CrossCultural", "stimsep"]
   config:
     min_indicators_warning_threshold: 0
 
@@ -60,14 +62,10 @@ score_categories:
     cue: "Prereg"
     color: '#d95f02'
 
-  - title: "Reproducible Code & Verification"
-    cue: "ReproducibleScripts|IndependentVerification"
+  - title: "Reproducible Code"
+    cue: "ReproducibleScripts"
     color: '#386cb0'
 
   - title: "Methodological Rigor"
     cue: "_Methods_"
     color: '#f0027f'
-
-  - title: "Theorizing & Formal Modeling"
-    cue: "Theorizing"
-    color: '#7fc97f'
