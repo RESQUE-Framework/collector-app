@@ -646,8 +646,7 @@ hr {
     position: relative;
     background-color: white;
     margin: auto;
-    padding: 16px;
-    padding-top: 0px;
+    padding: 0 16px;
     width: 740px;
     border-radius: 8px;
     box-shadow: 0 0 8px var(--shadow-color);

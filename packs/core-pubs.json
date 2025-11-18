@@ -1815,31 +1815,43 @@
             "condition":  "$P_Suitable === 'Yes' && $P_TypeMethod_EmpiricalQuantitative"
         },
         {
+            "id": "P_MeritStatement_InfoHidden",
+            "type": "info",
+            "text": "<span style='background-color: yellow; font-size:100%; font-weight:normal;'>Note: The merit and the impact statements are <b>only</b> required for publications that are selected as top publications (see checkbox on top of this form).</span>",
+            "condition": "config$statements_only_for_top_publications && !$P_TopPaper_Select"
+        },
+
+        {
             "id": "P_MeritStatement_Info",
             "type": "info",
-            "text": "<h3>Merit Statement</h3>A merit statement summarizes why this research output made an important substantive contribution to the field. Such statements could reflect upon, for example:<ul><li>an interdisciplinary setting</li><li>a new theory that was developed or tested for the first time</li><li<an experiment that rejected or confirmed a long debated effect</li><li>a methodological set-up that was specifically innovative</li><li>an unusually great effort was needed to collect the sample</li><li>generalizability was particularly high</li></ul><br><i>Do not provide information on societal or scientific impact or information on citation statistics here, but focus on the intrinsic quality of the research output itself - regardless whether it had impact yet or not.</i>"
+            "text": "<h3>Merit Statement</h3>A merit statement summarizes why this research output made an important substantive contribution to the field. Such statements could reflect upon, for example:<ul><li>an interdisciplinary setting</li><li>a new theory that was developed or tested for the first time</li><li<an experiment that rejected or confirmed a long debated effect</li><li>a methodological set-up that was specifically innovative</li><li>an unusually great effort was needed to collect the sample</li><li>generalizability was particularly high</li></ul><br><i>Do not provide information on societal or scientific impact or information on citation statistics here, but focus on the intrinsic quality of the research output itself - regardless whether it had impact yet or not.</i>",
+            "condition": "!config$statements_only_for_top_publications || $P_TopPaper_Select"
         },
         {
             "id": "P_MeritStatement",
             "type": "textbox",
             "maxwords": 150,
-            "title": "Provide your Merit Statement here (narrative, max. 150 words. Box will expand):"
+            "title": "Provide your Merit Statement here (narrative, max. 150 words. Box will expand):",
+            "condition": "!config$statements_only_for_top_publications || $P_TopPaper_Select"
         },
         {
             "id": "P_ImpactStatement_Info",
             "type": "info",
-            "text": "<h3>Scientific Impact Statement</h2>Age- and field-normalized citation statistics will be automatically retrieved for each submitted work. Here you can describe the scientific impact that this work made ignoring these bibliometric indicators (e.g., explain how your methodological contribution was recommended as the go-to-approach in a consensus paper on best practice in the field)."
+            "text": "<h3>Scientific Impact Statement</h2>Age- and field-normalized citation statistics will be automatically retrieved for each submitted work. Here you can describe the scientific impact that this work made ignoring these bibliometric indicators (e.g., explain how your methodological contribution was recommended as the go-to-approach in a consensus paper on best practice in the field).",
+            "condition": "!config$statements_only_for_top_publications || $P_TopPaper_Select"
         },
         {
             "id": "P_ImpactStatement",
             "type": "textbox",
             "maxwords": 150,
-            "title": "Provide your Scientific Impact Statement here (narrative, max. 150 words. Box will expand):"
+            "title": "Provide your Scientific Impact Statement here (narrative, max. 150 words. Box will expand):",
+            "condition": "!config$statements_only_for_top_publications || $P_TopPaper_Select"
         },
         {
             "id": "MeritSEP",
             "type": "separator",
-            "no_comment": true
+            "no_comment": true,
+            "condition": "!config$statements_only_for_top_publications || $P_TopPaper_Select"
         },
         {
             "id": "P_GeneralComments_Info",

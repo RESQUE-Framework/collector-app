@@ -24,6 +24,10 @@ image_url: https://www.tu-chemnitz.de/phil/iesg/ringvorlesung/RV2021/TUC_Logo.jp
 
 hide_score: false
 
+# If "true": The merit statement and impact statement are only required 
+# for publications that are selected as "top publications"
+statements_only_for_top_publications: true
+
 meta:
   sources: ["packs/core-meta.json"]
   exclude: ["RaterType "]
