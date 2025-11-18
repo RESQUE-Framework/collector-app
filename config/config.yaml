@@ -1,6 +1,6 @@
 # Title of the app (shown on top left)
 
-main_title: "RESQUE Dev-CP2"
+main_title: "RESQUE Dev"
 
 # Background color of the app
 background_color: "#ffffff"
@@ -24,6 +24,8 @@ image_url: https://upload.wikimedia.org/wikipedia/commons/0/06/LMU_Muenchen_Logo
 
 hide_score: false
 
+# If "true": The merit statement and impact statement are only required 
+# for publications that are selected as "top publications"
 statements_only_for_top_publications: true
 
 meta:
