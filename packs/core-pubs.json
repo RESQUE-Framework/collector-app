@@ -1828,6 +1828,11 @@
             "maxwords": 500,
             "title": "You can (optionally) add general comments here:",
             "optional": true
+        },
+        {
+            "id": "FinalSEP",
+            "type": "separator",
+            "no_comment": true
         }
 
     ]
