@@ -67,7 +67,3 @@ score_categories:
   - title: "Methodological Rigor"
     cue: "_Methods_"
     color: '#f0027f'
-
-  - title: "Theorizing & Formal Modeling"
-    cue: "Theorizing"
-    color: '#7fc97f'
