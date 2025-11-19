@@ -3,6 +3,47 @@
     "date": "2025-11-18",
     "prefix": "CP",
     "title": "Clinical Psychology Expansion Pack",
+    "creators": [
+        {
+        "name": "Hilbert, Kevin",
+        "givenName": "Kevin",
+        "familyName": "Hilbert",
+        "orcid": "https://orcid.org/0000-0002-7986-4113",
+        "affiliations": [
+            {
+            "name": "HMU Health and Medical University Erfurt",
+            "ror": "https://ror.org/04kt7rq05"
+            }
+        ],
+        "corresponding": true,
+        "email": "kevin.hilbert@hmu-erfurt.de"
+        },
+        {
+        "name": "Burghardt, Juliane",
+        "givenName": "Juliane",
+        "familyName": "Burghardt",
+        "orcid": "https://orcid.org/0000-0003-0690-0731",
+        "affiliations": [
+            {
+            "name": "Karl Landsteiner Privatuniversität für Gesundheitswissenschaften",
+            "ror": "https://ror.org/04t79ze18"
+            }
+        ]
+        },
+        {
+        "name": "Schönbrodt, Felix D.",
+        "givenName": "Felix",
+        "familyName": "Schönbrodt",
+        "orcid": "https://orcid.org/0000-0002-8282-3910",
+        "affiliations": [
+            {
+            "name": "Ludwig-Maximilians-Universität München",
+            "ror": "https://ror.org/05591te55"
+            }
+        ]
+        }
+    ],
+    "recommendedCitation": "Burghardt, J., Fink-Lamotte, J., Hilbert, K., Jacobs, N. Kraeplin, A., Möllmann, A. Niemeyer, H. & Schönbrodt, F.D. (2025). RESQUE Expansion Pack for Clinical Psychology. http://www.resque.info",
     "elements": [
         {
             "id": "CP_Intro",
