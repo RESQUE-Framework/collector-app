@@ -1,5 +1,5 @@
 {
-    "version": "0.8.1",
+    "version": "0.8.2",
     "date": "2025-11-18",
     "prefix": "P",
     "title": "Publication",
@@ -1037,7 +1037,7 @@
                 },
                 {
                     "id": "StructuredOpenFormat",
-                    "text": "The data set itself is stored in a structured, open format (see examples in help text)",
+                    "text": "The data set itself is stored in a structured, open format (see examples in help text) or can be generated using open source software (such as R)",
                     "value": 0.25
                 }
             ],
