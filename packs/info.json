@@ -13,6 +13,11 @@
         "type": "core-pubs",
         "version": "0.8.2"
     },
+     {
+        "path": "archive",
+        "type": "EP-clinical_psychology",
+        "version": "0.2.1"
+    },
     {
         "path": "dev",
         "type": "EP-epistemic_goals"
