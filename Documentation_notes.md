@@ -8,6 +8,7 @@ Note: these are initial, quite unstructured notes. They will be structured and e
   - Subcategories are separated by an underscore: `<Prefix>_<IndicatorNamePascalCase>_<SubcategoryNamePascalCase>`
 - Make sure that subcategories do not have the same name like a multiple choice (checkbox) option of a parent indicator - this will break the analysis!
   - For example, you have the indicator `X_GoodPractice`
+- An EP is only shown in  `/preview.html` if you add it to `packs/info.json` (see the self-explanatory syntax there).
 
 ## How scoring works
 

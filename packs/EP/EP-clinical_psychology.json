@@ -1,15 +1,115 @@
 {
-    "version": "0.2.0",
+    "version": "0.2.1",
     "date": "2025-11-18",
     "prefix": "CP",
     "title": "Clinical Psychology Expansion Pack",
+    "creators": [
+        {
+            "name": "Hilbert, Kevin",
+            "givenName": "Kevin",
+            "familyName": "Hilbert",
+            "orcid": "https://orcid.org/0000-0002-7986-4113",
+            "affiliations": [
+                {
+                    "name": "HMU Health and Medical University Erfurt",
+                    "ror": "https://ror.org/04kt7rq05"
+                }
+            ],
+            "corresponding": true,
+            "email": "kevin.hilbert@hmu-erfurt.de"
+        },
+        {
+            "name": "Jacobs, Niklas",
+            "givenName": "Niklas",
+            "familyName": "Jacobs",
+            "orcid": "https://orcid.org/0009-0006-0038-6988",
+            "affiliations": [
+                {
+                    "name": "HMU Health and Medical University Erfurt",
+                    "ror": "https://ror.org/04kt7rq05"
+                }
+            ]
+        },
+        {
+            "name": "Burghardt, Juliane",
+            "givenName": "Juliane",
+            "familyName": "Burghardt",
+            "orcid": "https://orcid.org/0000-0003-0690-0731",
+            "affiliations": [
+                {
+                    "name": "Karl Landsteiner Privatuniversität für Gesundheitswissenschaften",
+                    "ror": "https://ror.org/04t79ze18"
+                }
+            ]
+        },
+        {
+            "name": "Fink-Lamotte, Jakob",
+            "givenName": "Jakob",
+            "familyName": "Fink-Lamotte",
+            "orcid": "https://orcid.org/0000-0002-4384-4903",
+            "affiliations": [
+                {
+                    "name": "Universität Potsdam",
+                    "ror": "https://ror.org/03bnmw459"
+                }
+            ]
+        },
+        {
+            "name": "Kräplin, Anja",
+            "givenName": "Anja",
+            "familyName": "Kräplin",
+            "orcid": "https://orcid.org/0000-0002-1612-3932",
+            "affiliations": [
+                {
+                    "name": "Technische Universität Dresden",
+                    "ror": "https://ror.org/042aqky30"
+                }
+            ]
+        },
+        {
+            "name": "Möllmann, Anne",
+            "givenName": "Anne",
+            "familyName": "Möllmann",
+            "orcid": "https://orcid.org/0000-0003-0439-8258",
+            "affiliations": [
+                {
+                    "name": "Universität Witten/Herdecke",
+                    "ror": "https://ror.org/00yq55g44"
+                }
+            ]
+        },
+        {
+            "name": "Niemeyer, Helen",
+            "givenName": "Helen",
+            "familyName": "Niemeyer",
+            "orcid": "https://orcid.org/0000-0002-7616-1885",
+            "affiliations": [
+                {
+                    "name": "Freie Universität Berlin",
+                    "ror": "https://ror.org/046ak2485"
+                }
+            ]
+        },
+        {
+            "name": "Schönbrodt, Felix D.",
+            "givenName": "Felix",
+            "familyName": "Schönbrodt",
+            "orcid": "https://orcid.org/0000-0002-8282-3910",
+            "affiliations": [
+                {
+                    "name": "Ludwig-Maximilians-Universität München",
+                    "ror": "https://ror.org/05591te55"
+                }
+            ]
+        }
+    ],
+    "recommendedCitation": "Hilbert, K., Jacobs, N., Burghardt, J., Fink-Lamotte, J., Kräplin, A., Möllmann, A. Niemeyer, H. & Schönbrodt, F.D. (2025). RESQUE Expansion Pack for Clinical Psychology. http://www.resque.info",
     "elements": [
         {
             "id": "CP_Intro",
             "type": "info",
             "title": "<h3>Clinical Psychology Expansion Pack</h3>"
         },
-        
         {
             "id": "CP_TherapeuticIntervention",
             "type": "radio",
@@ -35,7 +135,7 @@
             "id": "CP_OpenMaterials_Manual",
             "type": "radio",
             "title": "Is the manual published?",
-             "score": {
+            "score": {
                 "not_applicable": "($P_Suitable === 'No') || (($P_OpenMaterials === 'NotApplicable') && (exists($P_OpenMaterials_NAExplanation))) || (($CP_OpenMaterials_Manual === 'NotApplicable') && (exists($CP_OpenMaterials_Manual_NAExplanation))) || ($CP_TherapeuticIntervention =|= ['No'])",
                 "condition": "(exists($CP_OpenMaterials_Manual_Identifier))"
             },
@@ -76,8 +176,6 @@
             "condition": "$P_Suitable === 'Yes' && $CP_TherapeuticIntervention =|= ['YesIncremental', 'YesSubstantial'] && $CP_OpenMaterials_Manual =|= ['YesClosed', 'YesOpen']",
             "info": "You can add multiple DOIs or URLs, separated by a semicolon (;)"
         },
-
-
         {
             "id": "CP_RCT",
             "type": "radio",
@@ -136,8 +234,6 @@
             "title": "⤷ Provide the name of the primary outcome",
             "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis && $CP_RCT === 'Yes' && $CP_Preregistration_PrimaryMainOutcome === 'Yes'"
         },
-
-
         {
             "id": "CP_Methods_RCTCriteria",
             "type": "checkbox",
@@ -177,9 +273,6 @@
             "title": "⤷ Provide the type of the randomization method",
             "condition": "$P_Suitable === 'Yes' && $P_Preregistration =|= ['Yes', 'RegisteredReport'] && !$P_TypeMethod_MetaAnalysis && $CP_RCT === 'Yes' && $CP_Methods_RCTCriteria_RandomAssignment"
         },
-
-
-
         {
             "id": "CP_Methods_PatientRepresentatives",
             "type": "radio",
@@ -214,9 +307,6 @@
             "title": "⤷ Not applicable: Explanation",
             "condition": "$P_Suitable === 'Yes' && !$P_TypeMethod_MetaAnalysis && $CP_Methods_PatientRepresentatives === 'NotApplicable'"
         },
-
-
-
         {
             "id": "CP_Methods_NullResults",
             "type": "radio",

@@ -1,3 +1,7 @@
+## core-pubs version 0.8.2 (2025-11-19)
+
+Add minor non-breaking changes based on FG Methoden feedback
+
 ## core-pubs version 0.8.1 (2025-11-18)
 
 - Updates from the CP2 study + some minor updates from the TU Chemnitz.

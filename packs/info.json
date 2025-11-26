@@ -1,8 +1,17 @@
 [
     {
+        "path": "EP",
+        "type": "EP-clinical_psychology"
+    },
+    {
         "path": "archive",
         "type": "core-pubs",
         "version": "0.3.1"
+    },
+    {
+        "path": "archive",
+        "type": "core-pubs",
+        "version": "0.8.2"
     },
     {
         "path": "dev",
@@ -16,5 +25,14 @@
     {
         "path": "dev",
         "type": "EP-practical_relevance"
+    },
+    {
+        "path": "dev",
+        "type": "EP-stimuli"
+    }
+    ,
+    {
+        "path": "dev",
+        "type": "EP-theory_development"
     }
 ]
