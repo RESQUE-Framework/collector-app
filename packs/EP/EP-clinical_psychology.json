@@ -3,6 +3,8 @@
     "date": "2025-11-18",
     "prefix": "CP",
     "title": "Clinical Psychology Expansion Pack",
+    "license": "CC-BY-4.0",
+    "description": "This expansion pack extends the RESQUE publication core set (see http://www.resque.info) with items specifically relevant to clinical psychology research. It includes questions about the publication of therapy manuals, characteristics of randomized controlled trials (RCTs), involvement of patient representatives, and the reporting of null results.",
     "creators": [
         {
             "name": "Hilbert, Kevin",
@@ -103,7 +105,7 @@
             ]
         }
     ],
-    "recommendedCitation": "Hilbert, K., Jacobs, N., Burghardt, J., Fink-Lamotte, J., Kräplin, A., Möllmann, A. Niemeyer, H. & Schönbrodt, F.D. (2025). RESQUE Expansion Pack for Clinical Psychology. http://www.resque.info",
+    "recommendedCitation": "Hilbert, K., Jacobs, N., Burghardt, J., Fink-Lamotte, J., Kräplin, A., Möllmann, A., Niemeyer, H., & Schönbrodt, F. (2025). RESQUE Expansion Pack for Clinical Psychology (0.2.1). Zenodo. https://doi.org/10.5281/zenodo.17720140",
     "elements": [
         {
             "id": "CP_Intro",
