@@ -1278,7 +1278,7 @@
             "type": "radio",
             "title": "Preregistration",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || !($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative || $P_TypeMethod_MetaAnalysis || $P_TypeMethod_Computational) || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation)))",
+                "not_applicable": "($P_Suitable === 'No') || (!($P_TypeMethod_EmpiricalQuantitative) && !($P_TypeMethod_EmpiricalQualitative) && !($P_TypeMethod_MetaAnalysis) && !($P_TypeMethod_Computational)) || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation)))",
                 "condition": "(exists($P_Preregistration_Identifier))"
             },
             "options": [
@@ -1324,7 +1324,7 @@
             "type": "checkbox",
             "title": "⤷ What has been preregistered? (check all that apply)",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation))) || !($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative || $P_TypeMethod_Computational)",
+                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation))) || (!($P_TypeMethod_EmpiricalQuantitative) && !($P_TypeMethod_EmpiricalQualitative) && !($P_TypeMethod_Computational))",
                 "condition": "($P_Preregistration =|= ['Yes', 'RegisteredReport'])"
             },
             "options": [
@@ -1363,7 +1363,7 @@
             "type": "radio",
             "title": "The paper contains a preregistered replication attempt of a existing study (either a direct/close or conceptual replication of any study in this or another paper).",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation))) || (($P_Preregistration_Replication === 'NotApplicable') && (exists($P_Preregistration_Replication_NAExplanation))) || !($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative || $P_TypeMethod_Computational)",
+                "not_applicable": "($P_Suitable === 'No') || (($P_Preregistration === 'NotApplicable') && (exists($P_Preregistration_NAExplanation))) || (($P_Preregistration_Replication === 'NotApplicable') && (exists($P_Preregistration_Replication_NAExplanation))) || (!($P_TypeMethod_EmpiricalQuantitative) && !($P_TypeMethod_EmpiricalQualitative) && !($P_TypeMethod_Computational))",
                 "condition": "($P_Preregistration =|= ['Yes', 'RegisteredReport'])"
             },
             "options": [
@@ -1409,7 +1409,7 @@
         {
             "id": "P_MultiStudy_Note2",
             "type": "info",
-            "title": "<span style='background-color: yellow; font-size:100%; font-weight:normal;'>As a reminder: All questions should <i>only</i> be applied to the select study within the multi-study paper!</span>",
+            "title": "<span style='background-color: yellow; font-size:100%; font-weight:normal;'>As a reminder: All questions should <i>only</i> be applied to the selected study within the multi-study paper!</span>",
             "condition": "$P_Suitable === 'Yes' && $P_TypeMethod_EmpiricalQuantitative && $P_MultiStudy === 'Yes'"
         },
         
