@@ -999,7 +999,11 @@
                             onclick="showInfoModal()" class="fakelink">FAQ</span> • <a class="github-link"
                             href="https://github.com/RESQUE-Framework/collector-app">GitHub</a> • <span
                             onclick="driver(tourAnytime()).drive()" class="fakelink">Tour</span> • <span
-                            onclick="showInstructionsModal()" class="fakelink">Instructions</span>
+                            onclick="closeInfoModal(); showPrivacyModal()" class="fakelink">Privacy/Datenschutz</span> 
+
+                            <template x-if="$store.config?.config?.show_instruction">
+                                 • <span onclick="showInstructionsModal()" class="fakelink">Instructions</span>
+                            </template>
                     </div>
                     <div x-show="$store.config.config.show_beta_warning" style="margin-top: 20px;" x-cloak>
                             <span style='background-color: lightyellow; font-size:80%;'>[Note: The RESQUE collector app is in beta stage and might change in the near future. If you want to use it in practice, please <a href="https://www.resque.info/team.html">contact</a> us.]</span>
@@ -1063,24 +1067,16 @@
                         you clear your data after you saved them as a file.
                     </details>
                     <hr>
-                    <h3>🔒 Privacy • <span class="sub">Is my data stored privately in a safe location?</span></h3>
+                    <h3>🔒 Privacy • <span class="sub">Where is my data stored?</span></h3>
                     <p>
-                        <b>No data leaves your device.</b>
+                        <b>No personal data leaves your device.</b>
                         <br>
                         We use the <a href="https://www.wikiwand.com/en/Web_storage">Web Storage API</a> supported by
                         all major
-                        browsers. Although the website itself is hosted on a server, your data is <i>only</i> stored and
-                        processed in the local browser:
+                        browsers. Although the website itself is hosted on a server, the data you enter is <i>only</i> stored and processed in the local browser. The only data leaving your browser are the dois you enter, which are used to fetch public metadata from external services (i.e., doi.org and ORCID). Specifically, we fetch <i>title</i>, <i>year</i>, and <i>abstracts</i> of your publications.
                         <br><br>
-                        The data is processed only locally. Your score is calculated in the browser. The local PDF files
-                        you
-                        open on this website are <i>not</i> uploaded to a server.
-                        <br><br>
-                        To get a sense of how many users we have, we do a very basic access logging with Matomo. You are
-                        not
-                        identifiable by the logged information; none of your entered data is tracked; no cookies or
-                        third party
-                        trackers are used.
+                        To get a sense of how many users we have, we do a very basic anonymous access logging with Matomo. You are not identifiable by the logged information; none of your entered data is tracked; no cookies or third party trackers are used. See details in the <span onclick="closeInfoModal(); showPrivacyModal()" class="fakelink">Privacy/Datenschutz</span> disclaimer.
+                    </p>
                     </p>
                 </div>
             </div>
@@ -1126,6 +1122,19 @@
                         style="text-align: right; position: sticky; bottom: 0;">
                         <button style="background-color: #333; color: #efefef; border-radius: 99px; border: 4px solid #00000055; background-clip: padding-box;"
                             @click="closeInstructionsModal(); driver(tourMain).drive()">Start tour →</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="privacy-modal" class="modal">
+                <div class="modal-content">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h1>Privacy / Datenschutz</h1>
+                    </div>
+                    <div x-html="$store.config.config?.privacyDisclaimer?.html || ''"></div>
+                    <div 
+                        style="text-align: right; position: sticky; bottom: 0;">
+                        <button style="background-color: #333; color: #efefef; border-radius: 99px; border: 4px solid #00000055; background-clip: padding-box;" @click="closePrivacyModal();">Close</button>
                     </div>
                 </div>
             </div>
@@ -1480,6 +1489,14 @@
             document.getElementById("instructions-modal").style.display = "none";
         }
 
+        const showPrivacyModal = () => {
+            document.getElementById("privacy-modal").style.display = "block";
+        }
+
+        const closePrivacyModal = () => {
+            document.getElementById("privacy-modal").style.display = "none";
+        }
+
         const showORCIDModal = () => {
             const orcidInput = document.querySelector("#orcid-modal-input");
             const orcidButton = document.querySelector("#orcid-modal-button");
@@ -1694,6 +1711,19 @@
 
                 // Set background color from config
                 document.documentElement.style.setProperty('--bg-color', Alpine.store('config').config.background_color);
+
+                // Load privacy disclaimer
+                fetch('./Datenschutzerklaerung.md').then(response => response.text()).then(text => {
+                    const converter = new showdown.Converter({
+                        tables: true,           // enable GFM-style tables
+                        strikethrough: true,
+                        tasklists: true,
+                        simpleLineBreaks: true
+                    });
+                    Alpine.store('forms').config.privacyDisclaimer = {};
+                    Alpine.store('forms').config.privacyDisclaimer.md = text;
+                    Alpine.store('forms').config.privacyDisclaimer.html = converter.makeHtml(text);
+                });
 
                 // Load instructions
                 fetch('./config/instructions.md').then(response => response.text()).then(text => {
