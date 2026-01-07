@@ -827,3 +827,14 @@ table {
 .list-item:last-child {
     margin-bottom: 0;
 }
+
+/* Markdown modals (Instructions, Privacy Disclaimer) */
+
+.markdown-content th,
+.markdown-content td {
+  border-bottom: 1px solid #ddd;
+}
+
+.markdown-content th {
+  border-bottom: 2px solid #bbb;
+}

@@ -1013,8 +1013,10 @@
             <div id="info-modal" class="modal">
                 <!-- Modal content -->
                 <div class="modal-content">
-                    <button onclick="closeInfoModal()" id="add-modal-continue">Continue</button>
-
+                    <div 
+                        style="text-align: right; position: sticky; top: 0;">
+                        <button style="background-color: #333; color: #efefef; border-radius: 99px; border: 4px solid #00000055; background-clip: padding-box;" @click="closeInfoModal();">Close</button>
+                    </div>
                     <h2>👋🏻 Welcome to the RESQUE tool!</h2>
                     <p>We need to change the way we assess research - with a focus on quality (over quantity). The <a
                             href="https://github.com/RESQUE-Framework/collector-app">RESearch QUality Evaluation
@@ -1030,18 +1032,18 @@
                     <hr>
                     <h3>👀 How to use the RESQUE tool?</h3>
                     <details>
-                        <summary>How do I add a new publication / software project / data set?</summary>
+                        <summary>How do I add a new publication?</summary>
                         Normally, you would use the buttons in the sidebar on the left.
                         <br>
                         For this time, you can do it here:
                         <br><br>
                         <button onclick="newTab('pub')">New Publication</button>
-                        <button onclick="newTab('software')">New Software Project</button>
-                        <button onclick="newTab('data')">New Data Set</button>
+                        <!-- <button onclick="newTab('software')">New Software Project</button>
+                        <button onclick="newTab('data')">New Data Set</button> -->
                     </details>
                     <details>
                         <summary>How do I save my data?</summary>
-                        Clicking on the <button onclick="exp()">Save as file ...</button> button here or in the top left
+                        Clicking on the <button onclick="exp()">Save to file ...</button> button here or in the top left
                         corner
                         of this website exports a <code>.json</code> file. You can save this on your computer and share
                         it with
@@ -1049,7 +1051,7 @@
                     </details>
                     <details>
                         <summary>How do I load data I previously saved?</summary>
-                        You can use the <button onclick="triggerLoad()">Load</button> button here or in the top left
+                        You can use the <button onclick="triggerLoad()">Import from file ...</button> button here or in the top left
                         corner of
                         this website.
                     </details>
@@ -1076,7 +1078,7 @@
                         browsers. Although the website itself is hosted on a server, the data you enter is <i>only</i> stored and processed in the local browser. The only data leaving your browser are the dois you enter, which are used to fetch public metadata from external services (i.e., doi.org and ORCID). Specifically, we fetch <i>title</i>, <i>year</i>, and <i>abstracts</i> of your publications.
                         <br><br>
                         To get a sense of how many users we have, we do a very basic anonymous access logging with Matomo. You are not identifiable by the logged information; none of your entered data is tracked; no cookies or third party trackers are used. See details in the <span onclick="closeInfoModal(); showPrivacyModal()" class="fakelink">Privacy/Datenschutz</span> disclaimer.
-                    </p>
+                    </p>                    
                     </p>
                 </div>
             </div>
@@ -1128,14 +1130,15 @@
 
             <div id="privacy-modal" class="modal">
                 <div class="modal-content">
+                    <div 
+                        style="text-align: right; position: sticky; top: 0;">
+                        <button style="background-color: #333; color: #efefef; border-radius: 99px; border: 4px solid #00000055; background-clip: padding-box;" @click="closePrivacyModal();">Close</button>
+                    </div>
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <h1>Privacy / Datenschutz</h1>
                     </div>
-                    <div x-html="$store.config.config?.privacyDisclaimer?.html || ''"></div>
-                    <div 
-                        style="text-align: right; position: sticky; bottom: 0;">
-                        <button style="background-color: #333; color: #efefef; border-radius: 99px; border: 4px solid #00000055; background-clip: padding-box;" @click="closePrivacyModal();">Close</button>
-                    </div>
+                    <div class="markdown-content" 
+                         x-html="$store.config.config?.privacyDisclaimer?.html || ''"></div>                    
                 </div>
             </div>
 
