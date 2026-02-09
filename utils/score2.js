@@ -1,8 +1,8 @@
-const scoreAll = (rs, categories) => {
+const scoreAll = (rs) => {
     const meta = rs[0]; // The first object is the meta object
     const researchOutputs = rs.slice(1);
 
-    const scores = researchOutputs.map(r => score(r, categories, meta));
+    const scores = researchOutputs.map(r => score(r, meta));
     const validScores = scores.filter(s => Object.keys(s).length && s.max > 0);
 
     const relative = validScores.length > 0
@@ -33,9 +33,11 @@ const scoreAll = (rs, categories) => {
     };
 };
 
-const score = (r, categories, meta) => {
+const score = (r, meta) => {
     const type = r.type;
     const formDef = meta?.forms?.[type];
+
+    const categories = meta?.forms?.config?.score_categories || [];
 
     if (!formDef) return {};
 
