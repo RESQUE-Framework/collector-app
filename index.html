@@ -54,10 +54,11 @@
     <!-- Alpine.js https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js -->
     <script src="./js/alpinejs.min.js"></script>
 
+    <script src="./utils/score2.js"></script>
+    
     <script type="module">
         import { getDefaultValues } from "./utils/packutils.js";
         import { getDepths } from "./utils/prefixtree.js";
-        import { score, scoreAll, generateScoringRules } from "./utils/score.js";
         import { renderScoreChart } from "./utils/charts.js";
         import { fetchAuthorByORCID, fetchPapersByORCID } from "./utils/orcid.js";
         import { fetchInformationUsingDOI } from "./utils/doi.js";
@@ -67,7 +68,6 @@
         window.getDepths = getDepths;
         window.score = score;
         window.scoreAll = scoreAll;
-        window.generateScoringRules = generateScoringRules;
         window.renderScoreChart = renderScoreChart;
         window.fetchAuthorByORCID = fetchAuthorByORCID;
         window.fetchPapersByORCID = fetchPapersByORCID;
@@ -1694,10 +1694,9 @@
             menu(config).then(m => {
                 for (const key in m) {
                     if (m[key].elements) {
-                        m[key].scoring = window.generateScoringRules(m[key].elements);
                         Alpine.store('indentations')[key] = window.getDepths(m[key].elements);
                     }
-                    Alpine.store('forms')[key] = m[key];
+                    Alpine.store('forms')[key] = m[key];          
                 }
 
                 Alpine.store('data').manualInit();
@@ -1706,6 +1705,10 @@
                 if (!Alpine.store('data').input[0].queryConfig) {
                     // save query config
                     Alpine.store('data').input[0].queryConfig = Alpine.store('config').queryConfig;
+                }
+
+                if (!Alpine.store('data').input[0].forms) {
+                    Alpine.store('data').input[0].forms = Alpine.store('forms');
                 }
 
                 Alpine.store('loaded', true);
