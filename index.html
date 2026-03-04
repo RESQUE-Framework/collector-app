@@ -549,7 +549,7 @@
     <template x-if="$store.loaded">
         <div id="root">
             <div id="main">
-                <div class="tabs-sidebar" id="tabs-sidebar" x-on:scroll="$store.tabsSidebarScrollTop = $el.scrollTop">
+                <div class="tabs-sidebar no-print" id="tabs-sidebar" x-on:scroll="$store.tabsSidebarScrollTop = $el.scrollTop">
                     <div class="sidebar-top">                        
                         <div class="top">
                             <div style="display: flex; align-items: center;">
@@ -651,7 +651,10 @@
                         </div>
                     </div>
                     <div id="formview">
-                        <h3 x-html="$store.forms[$store.data.currentInput.type].title"></h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                             <h3 x-html="$store.forms[$store.data.currentInput.type].title"></h3>
+                             <span class="fakelink no-print" @click="print()">Print</span>
+                        </div>
 
                         <template x-if="$store.data.currentTab >= 0">
                             <template x-for="(elem, index) in $store.forms[$store.data.currentInput.type].elements"
@@ -823,7 +826,7 @@
                         </template>
                     </div>
                 </div>
-                <div id="menu" x-data="{ tab: 'main' }">
+                <div id="menu" class="no-print" x-data="{ tab: 'main' }">
                     <div class="tabs">
                         <span @click="tab = 'main'" :class="{ selected: tab === 'main' }">Score/Info</span> • <span
                             @click="tab = 'problems'" :class="{ selected: tab === 'problems' }">Problems (<span
