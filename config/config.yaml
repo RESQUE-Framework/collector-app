@@ -4,6 +4,9 @@ main_title: "RESQUE"
 # Background color of the app
 background_color: "#ffffff"
 
+# Minimum number of papers that are expected by the committee
+min: 5
+
 # Maximum number of papers that are expected by the committee
 max: 10
 

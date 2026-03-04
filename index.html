@@ -1205,26 +1205,32 @@
 
                             <button
                                     x-show="tab === 'select'"
-                                    :disabled="excludedPublications.size >= $store.data.input.length - 1 || $store.data.input.length - 1 - excludedPublications.size > $store.config.config.max || $store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length < $store.config.config.max_top_papers"
+                                    :disabled="excludedPublications.size >= $store.data.input.length - 1 || $store.data.input.length - 1 - excludedPublications.size > $store.config.config.max || $store.data.input.length - 1 - excludedPublications.size < $store.config.config.min || $store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length < $store.config.config.max_top_papers"
                                     @click="exp(excludedPublications); excludedPublications = new Set(); closeExportModal();">Export
                                     <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> selected outputs for hiring committee</button>
 
+                            <div x-show="tab === 'select'">
+                                <div class="warning-text" x-show="$store.data.input.length - 1 - excludedPublications.size > $store.config.config.max">
+                                    <span>The committee requests a maximum of <span x-text="$store.config.config.max"></span> publications - please select only <span x-text="$store.config.config.max"></span> entries.</span>
+                                </div>
+
+                                <div class="warning-text" x-show="$store.data.input.length - 1 - excludedPublications.size < $store.config.config.min">
+                                    <span>The committee requests a minimum of <span x-text="$store.config.config.min"></span> publications - please select at least <span x-text="$store.config.config.min"></span> entries.</span>
+                                </div>
+
+                                <div class="warning-text"
+                                    x-show="$store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length < $store.config.config.max_top_papers">
+                                    <span>The committee asks you to select <span
+                                            x-text="$store.config.config.max_top_papers"></span>  publications as your best publications - you marked <span
+                                            x-text="$store.data.input.filter(ro => ro.P_TopPaper_Select).length"></span> publication(s) as <b>best</b> publication and selected <span
+                                            x-text="$store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length"></span>
+                                        best publications for export. Please select exactly <span
+                                            x-text="$store.config.config.max_top_papers"></span>.</span>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="export-tab-content" x-show="tab === 'select'">
-                            <div class="warning-text" x-show="$store.data.input.length - 1 - excludedPublications.size > $store.config.config.max">
-                                <span>The committee requests a maximum of <span x-text="$store.config.config.max"></span> publications - please select only <span x-text="$store.config.config.max"></span> entries.</span>
-                            </div>
-
-                            <div class="warning-text"
-                                x-show="$store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length < $store.config.config.max_top_papers">
-                                <span>The committee asks you to select <span
-                                        x-text="$store.config.config.max_top_papers"></span>  publications as your best publications - you marked <span
-                                        x-text="$store.data.input.filter(ro => ro.P_TopPaper_Select).length"></span> publication(s) as <b>best</b> publication and selected <span
-                                        x-text="$store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length"></span>
-                                    best publications for export. Please select exactly <span
-                                        x-text="$store.config.config.max_top_papers"></span>.</span>
-                            </div>
                             <div>
                                 <template x-for="pub, index in $store.data.input.slice(1)">
                                     <div class="tab" :class="{ 'active': !excludedPublications.has(index + 1) }"
