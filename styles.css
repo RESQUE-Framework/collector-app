@@ -494,7 +494,7 @@ summary:hover {
     color: var(--dark-color);
 }
 
-#menu-tabs {
+.tabs {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -503,16 +503,16 @@ summary:hover {
     color: gray;
 }
 
-#menu-tabs span {
+.tabs span {
     margin: 0 4px;
     cursor: pointer;
 }
 
-#menu-tabs span:hover {
+.tabs span:hover {
     text-decoration: underline;
 }
 
-#menu-tabs span.selected {
+.tabs span.selected {
     font-weight: bold;
 }
 

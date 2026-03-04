@@ -824,7 +824,7 @@
                     </div>
                 </div>
                 <div id="menu" x-data="{ tab: 'main' }">
-                    <div id="menu-tabs">
+                    <div class="tabs">
                         <span @click="tab = 'main'" :class="{ selected: tab === 'main' }">Score/Info</span> • <span
                             @click="tab = 'problems'" :class="{ selected: tab === 'problems' }">Problems (<span
                                 x-text="Object.keys($store.data.completion[$store.data.currentTab].warnings).length"></span>)</span>
@@ -1190,45 +1190,51 @@
             </div>
 
             <div id="export-modal" class="modal">
-                <div x-data="{ excludedPublications: new Set() }" class="modal-content">
-
-                    <div style="position: sticky; top: 0; background-color: white; padding: 2px 0;">
-                        <div>
-                            <h3>Save to file...<span style="font-size: 70%; font-weight: normal;">&nbsp;&nbsp;Click
-                                    publications to (de)select</span></h3>
-                            <div style="padding-bottom: 1rem;">                                
-                                <button
-                                    :disabled="excludedPublications.size >= $store.data.input.length - 1 || $store.data.input.length - 1 - excludedPublications.size > $store.config.config.max || $store.data.input.filter(ro => ro.P_TopPaper_Select).length < $store.config.config.max_top_papers"
-                                    @click="exp(excludedPublications); excludedPublications = new Set(); closeExportModal();">Export
-                                    <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> selected outputs for hiring committee</button>
-                                    <button @click="exp(); closeExportModal();">Export all data (for personal archive)</button>
-                            </div>
-                        </div>
-
-                        <div class="warning-text" x-show="$store.data.input.length - 1 - excludedPublications.size > $store.config.config.max">
-                            <span>The committee requests a maximum of <span x-text="$store.config.config.max"></span> publications - please select only <span x-text="$store.config.config.max"></span> entries.</span>
-                        </div>
-
-                        <div class="warning-text"
-                            x-show="$store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length < $store.config.config.max_top_papers">
-                            <span>The committee asks you to select <span
-                                    x-text="$store.config.config.max_top_papers"></span>  publications as your best publications - you marked <span
-                                    x-text="$store.data.input.filter(ro => ro.P_TopPaper_Select).length"></span> publication(s) as <b>best</b> publication and selected <span
-                                    x-text="$store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length"></span>
-                                best publications for export. Please select exactly <span
-                                    x-text="$store.config.config.max_top_papers"></span>.</span>
-                        </div>
-
-                    </div>
+                <div x-data="{ excludedPublications: new Set(), tab: 'select' }" class="modal-content">
 
                     <div>
-                        <template x-for="pub, index in $store.data.input.slice(1)">
-                            <div class="tab" :class="{ 'active': !excludedPublications.has(index + 1) }"
-                                @click="if (excludedPublications.has(index + 1)) { excludedPublications.delete(index + 1); } else { excludedPublications.add(index + 1); }">
-                                <p style="margin: 0;"><input type="checkbox" style="margin-right: 16px;" :checked="!excludedPublications.has(index + 1)" readonly /><span x-show="pub.P_TopPaper_Select">⭐️ </span><span
-                                        x-text="pub.Title"></span></p>
+                        <div style="position: sticky; top: 0; background-color: white; padding: 2px 0; margin-bottom: 1rem; text-align: center;">
+                            <h3>Save to file...<span style="font-size: 70%; font-weight: normal;"></h3>
+                            <div class="tabs">
+                                <span @click="tab = 'select'" :class="{ selected: tab === 'select' }">Export selection for committee</span> • <span
+                                @click="tab = 'all'" :class="{ selected: tab === 'all' }">Export all for personal archive</span>
                             </div>
-                        </template>
+
+                            
+                            <button x-show="tab === 'all'" @click="exp(); closeExportModal();">Export all data (for personal archive)</button>
+
+                            <button
+                                    x-show="tab === 'select'"
+                                    :disabled="excludedPublications.size >= $store.data.input.length - 1 || $store.data.input.length - 1 - excludedPublications.size > $store.config.config.max || $store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length < $store.config.config.max_top_papers"
+                                    @click="exp(excludedPublications); excludedPublications = new Set(); closeExportModal();">Export
+                                    <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> selected outputs for hiring committee</button>
+
+                        </div>
+
+                        <div class="export-tab-content" x-show="tab === 'select'">
+                            <div class="warning-text" x-show="$store.data.input.length - 1 - excludedPublications.size > $store.config.config.max">
+                                <span>The committee requests a maximum of <span x-text="$store.config.config.max"></span> publications - please select only <span x-text="$store.config.config.max"></span> entries.</span>
+                            </div>
+
+                            <div class="warning-text"
+                                x-show="$store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length < $store.config.config.max_top_papers">
+                                <span>The committee asks you to select <span
+                                        x-text="$store.config.config.max_top_papers"></span>  publications as your best publications - you marked <span
+                                        x-text="$store.data.input.filter(ro => ro.P_TopPaper_Select).length"></span> publication(s) as <b>best</b> publication and selected <span
+                                        x-text="$store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length"></span>
+                                    best publications for export. Please select exactly <span
+                                        x-text="$store.config.config.max_top_papers"></span>.</span>
+                            </div>
+                            <div>
+                                <template x-for="pub, index in $store.data.input.slice(1)">
+                                    <div class="tab" :class="{ 'active': !excludedPublications.has(index + 1) }"
+                                        @click="if (excludedPublications.has(index + 1)) { excludedPublications.delete(index + 1); } else { excludedPublications.add(index + 1); }">
+                                        <p style="margin: 0;"><input type="checkbox" style="margin-right: 16px;" :checked="!excludedPublications.has(index + 1)" readonly /><span x-show="pub.P_TopPaper_Select">⭐️ </span><span
+                                                x-text="pub.Title"></span></p>
+                                    </div>
+                                </template>
+                             </div>
+                        </div>
                     </div>
                 </div>
             </div>
