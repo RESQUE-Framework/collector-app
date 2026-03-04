@@ -1212,12 +1212,10 @@
                         <div class="warning-text"
                             x-show="$store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length < $store.config.config.max_top_papers">
                             <span>The committee asks you to select <span
-                                    x-text="$store.config.config.max_top_papers"></span> publications as your
-                                <b>best</b> publications - you only added <span
-                                    x-text="$store.data.input.filter(ro => ro.P_TopPaper_Select).length"></span> entries
-                                as best publications and only selected <span
+                                    x-text="$store.config.config.max_top_papers"></span>  publications as your best publications - you marked <span
+                                    x-text="$store.data.input.filter(ro => ro.P_TopPaper_Select).length"></span> publication(s) as <b>best</b> publication and selected <span
                                     x-text="$store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length"></span>
-                                entries for export. Please go back and select exactly <span
+                                best publications for export. Please select exactly <span
                                     x-text="$store.config.config.max_top_papers"></span>.</span>
                         </div>
 
