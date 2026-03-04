@@ -381,6 +381,42 @@
                                 </template>
                             </div>
                         </template>
+
+                        <template x-if="elem.type === 'tabular_radio'">
+                            <div>
+                                <table>
+                                    <thead style="background-color: var(--bg-color); position: sticky; top: 0; z-index: 1;">
+                                        <tr>
+                                            <th></th>
+                                            <template x-for="option in elem.options"
+                                                :key="option.id">
+                                                <th x-html="option.text"></th>
+                                            </template>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template x-for="row in elem.rows" :key="row.id">
+                                            <!-- Stop event propagation to separate child and parent pointer events -->
+                                            <tr>
+                                                <td x-html="row.title"></td>
+                                                <template x-for="option in elem.options"
+                                                    :key="option.id">
+                                                    <td>
+                                                        <input
+                                                            type="radio"
+                                                            :name="elem.id + '_' + row.id"
+                                                            :id="elem.id + '_' + row.id + '_' + option.id"
+                                                            :value="option.id" />
+                                                        <div class="tabular-option-info"
+                                                            x-text="`${option.text}`"></div>
+                                                    </td>
+                                                </template>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </template>
                     </div>
                 </template>
             </div>
