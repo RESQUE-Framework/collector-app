@@ -1200,7 +1200,7 @@
                             <h3>Save to file...<span style="font-size: 70%; font-weight: normal;"></h3>
                             <div class="tabs">
                                 <span @click="tab = 'select'" :class="{ selected: tab === 'select' }">Export selection for committee</span> • <span
-                                @click="tab = 'all'" :class="{ selected: tab === 'all' }">Export all for personal archive</span>
+                                @click="tab = 'all'" :class="{ selected: tab === 'all' }">Export all data for personal archive</span>
                             </div>
 
                             
@@ -1214,21 +1214,21 @@
 
                             <div x-show="tab === 'select'">
                                 <div class="warning-text" x-show="$store.data.input.length - 1 - excludedPublications.size > $store.config.config.max">
-                                    <span>The committee requests a maximum of <span x-text="$store.config.config.max"></span> publications - please select only <span x-text="$store.config.config.max"></span> entries.</span>
+                                    <span>The committee requests a maximum of <span x-text="$store.config.config.max"></span> publications - you selected <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> entries.</span>
                                 </div>
 
                                 <div class="warning-text" x-show="$store.data.input.length - 1 - excludedPublications.size < $store.config.config.min">
-                                    <span>The committee requests a minimum of <span x-text="$store.config.config.min"></span> publications - please select at least <span x-text="$store.config.config.min"></span> entries.</span>
+                                    <span>The committee requests a minimum of <span x-text="$store.config.config.min"></span> publications - you only selected <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span></span>
                                 </div>
 
                                 <div class="warning-text"
                                     x-show="$store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length < $store.config.config.max_top_papers">
-                                    <span>The committee asks you to select <span
-                                            x-text="$store.config.config.max_top_papers"></span>  publications as your best publications - you marked <span
-                                            x-text="$store.data.input.filter(ro => ro.P_TopPaper_Select).length"></span> publication(s) as <b>best</b> publication and selected <span
+                                    <span>The committee asks you to select exactly <span
+                                            x-text="$store.config.config.max_top_papers"></span> publications as your best publications (⭐️).<br> You marked <span
+                                            x-text="$store.data.input.filter(ro => ro.P_TopPaper_Select).length"></span> publication(s) as best publication and selected <span
                                             x-text="$store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length"></span>
-                                        best publications for export. Please select exactly <span
-                                            x-text="$store.config.config.max_top_papers"></span>.</span>
+                                            for export. Please select exactly <span
+                                            x-text="$store.config.config.max_top_papers"></span> starred (⭐️) publications.</span>
                                 </div>
                             </div>
                         </div>
