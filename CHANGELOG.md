@@ -1,3 +1,7 @@
+## core-pubs version 0.9.0 (2026-03-09)
+
+No real content changes; just bumping the version to indicate the new scoring export (needs the RESQUER package >= 0.10.0)
+
 ## core-pubs version 0.8.2 (2025-11-19)
 
 Add minor non-breaking changes based on FG Methoden feedback
