@@ -494,7 +494,7 @@ summary:hover {
     color: var(--dark-color);
 }
 
-#menu-tabs {
+.tabs {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -503,16 +503,16 @@ summary:hover {
     color: gray;
 }
 
-#menu-tabs span {
+.tabs span {
     margin: 0 4px;
     cursor: pointer;
 }
 
-#menu-tabs span:hover {
+.tabs span:hover {
     text-decoration: underline;
 }
 
-#menu-tabs span.selected {
+.tabs span.selected {
     font-weight: bold;
 }
 
@@ -770,21 +770,23 @@ button.critical:hover {
     display: none;
 }
 
-@media (max-width: 840px) {
-    #main {
-        display: none;
-    }
+@media not print {
+    @media (max-width: 840px) {
+        #main {
+            display: none;
+        }
 
-    #info-modal {
-        width: 0;
-        height: 0;
-        display: none;
-    }
+        #info-modal {
+            width: 0;
+            height: 0;
+            display: none;
+        }
 
-    #mobile {
-        display: block;
-        width: 90%;
-        margin: 1rem auto;
+        #mobile {
+            display: block;
+            width: 90%;
+            margin: 1rem auto;
+        }
     }
 }
 
@@ -837,4 +839,19 @@ table {
 
 .markdown-content th {
   border-bottom: 2px solid #bbb;
+}
+
+@media print {
+    .no-print,
+    .no-print * {
+        display: none !important;
+    }
+
+    #formview {
+        overflow: visible;
+    }
+
+    #formview .indicator-container {
+        break-inside: avoid;
+    }
 }

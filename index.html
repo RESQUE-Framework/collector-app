@@ -54,10 +54,11 @@
     <!-- Alpine.js https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js -->
     <script src="./js/alpinejs.min.js"></script>
 
+    <script src="./utils/score2.js"></script>
+    
     <script type="module">
         import { getDefaultValues } from "./utils/packutils.js";
         import { getDepths } from "./utils/prefixtree.js";
-        import { score, scoreAll, generateScoringRules } from "./utils/score.js";
         import { renderScoreChart } from "./utils/charts.js";
         import { fetchAuthorByORCID, fetchPapersByORCID } from "./utils/orcid.js";
         import { fetchInformationUsingDOI } from "./utils/doi.js";
@@ -67,7 +68,6 @@
         window.getDepths = getDepths;
         window.score = score;
         window.scoreAll = scoreAll;
-        window.generateScoringRules = generateScoringRules;
         window.renderScoreChart = renderScoreChart;
         window.fetchAuthorByORCID = fetchAuthorByORCID;
         window.fetchPapersByORCID = fetchPapersByORCID;
@@ -313,6 +313,8 @@
             queryConfig: {}
         });
 
+        const getCollectorUrl = () => window.location.href;
+
         const getConfig = (type) => ({
             ...Alpine.store('forms')[type].config, // type specific config
             ...Alpine.store('forms').config, // global config
@@ -337,6 +339,10 @@
                     this.newResearchOutput('meta');
                 }
 
+                if (this.input[0]) {
+                    this.input[0].CollectorURL = this.input[0].CollectorURL ?? (Alpine.store('forms').meta.CollectorURL ?? getCollectorUrl());
+                }
+
                 this.currentInput = this.input[this.currentTab];
                 this.score = window.scoreAll(this.input, Alpine.store('config').config.score_categories || []);
                 this.completion = this.input.map(checkCompletion);
@@ -344,12 +350,18 @@
             },
 
             createResearchOutput(type) {
-                return {
+                const baseOutput = {
                     type,
                     version: Alpine.store('forms')[type].versions[prefixes[type]],
                     date_added: Date.now(),
                     ...window.getDefaultValues(Alpine.store('forms')[type].elements)
+                };
+
+                if (type === 'meta') {
+                    baseOutput.CollectorURL = Alpine.store('forms').meta.CollectorURL ?? getCollectorUrl();
                 }
+
+                return baseOutput;
             },
 
             newResearchOutput(type) {
@@ -549,11 +561,11 @@
     <template x-if="$store.loaded">
         <div id="root">
             <div id="main">
-                <div class="tabs-sidebar" id="tabs-sidebar" x-on:scroll="$store.tabsSidebarScrollTop = $el.scrollTop">
+                <div class="tabs-sidebar no-print" id="tabs-sidebar" x-on:scroll="$store.tabsSidebarScrollTop = $el.scrollTop">
                     <div class="sidebar-top">                        
                         <div class="top">
                             <div style="display: flex; align-items: center;">
-                                <h3><a href="https://www.resque.info" x-text="$store.config.config.main_title"></a></h3>
+                                <h3 x-text="$store.config.config.main_title"></h3>
                                 <template x-if="$store.config?.config?.image_url">
                                     <img :src="$store.config?.config?.image_url" 
                                         alt="University Logo" 
@@ -651,7 +663,10 @@
                         </div>
                     </div>
                     <div id="formview">
-                        <h3 x-html="$store.forms[$store.data.currentInput.type].title"></h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                             <h3 x-html="$store.forms[$store.data.currentInput.type].title"></h3>
+                             <span class="fakelink no-print" @click="print()">Print</span>
+                        </div>
 
                         <template x-if="$store.data.currentTab >= 0">
                             <template x-for="(elem, index) in $store.forms[$store.data.currentInput.type].elements"
@@ -823,8 +838,8 @@
                         </template>
                     </div>
                 </div>
-                <div id="menu" x-data="{ tab: 'main' }">
-                    <div id="menu-tabs">
+                <div id="menu" class="no-print" x-data="{ tab: 'main' }">
+                    <div class="tabs">
                         <span @click="tab = 'main'" :class="{ selected: tab === 'main' }">Score/Info</span> • <span
                             @click="tab = 'problems'" :class="{ selected: tab === 'problems' }">Problems (<span
                                 x-text="Object.keys($store.data.completion[$store.data.currentTab].warnings).length"></span>)</span>
@@ -1190,39 +1205,57 @@
             </div>
 
             <div id="export-modal" class="modal">
-                <div x-data="{ excludedPublications: new Set() }" class="modal-content">
-
-                    <div style="position: sticky; top: 0; background-color: white; padding: 2px 0;">
-                        <div>
-                            <h3>Save to file...<span style="font-size: 70%; font-weight: normal;">&nbsp;&nbsp;Click
-                                    publications to (de)select</span></h3>
-                            <div style="padding-bottom: 1rem;">                                
-                                <button
-                                    :disabled="excludedPublications.size >= $store.data.input.length - 1 || $store.data.input.length - 1 - excludedPublications.size > $store.config.config.max || $store.data.input.filter(ro => ro.P_TopPaper_Select).length < $store.config.config.max_top_papers"
-                                    @click="exp(excludedPublications); excludedPublications = new Set(); closeExportModal();">Export
-                                    <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> selected outputs for hiring committee</button>
-                                    <button @click="exp(); closeExportModal();">Export all data (for personal archive)</button>
-                            </div>
-                        </div>
-
-                        <div class="warning-text" x-show="$store.data.input.length - 1 - excludedPublications.size > $store.config.config.max">
-                            <span>The committee requests a maximum of <span x-text="$store.config.config.max"></span> publications - please select only <span x-text="$store.config.config.max"></span> entries.</span>
-                        </div>
-
-                        <div class="warning-text" x-show="$store.data.input.filter(ro => ro.P_TopPaper_Select).length < $store.config.config.max_top_papers">
-                            <span>The committee asks you to select <span x-text="$store.config.config.max_top_papers"></span> publications as your <b>best</b> publications - you only selected <span x-text="$store.data.input.filter(ro => ro.P_TopPaper_Select).length"></span> entries. Please go back and select exactly <span x-text="$store.config.config.max_top_papers"></span>.</span>
-                        </div>
-
-                    </div>
+                <div x-data="{ excludedPublications: new Set(), tab: 'select' }" class="modal-content">
 
                     <div>
-                        <template x-for="pub, index in $store.data.input.slice(1)">
-                            <div class="tab" :class="{ 'active': !excludedPublications.has(index + 1) }"
-                                @click="if (excludedPublications.has(index + 1)) { excludedPublications.delete(index + 1); } else { excludedPublications.add(index + 1); }">
-                                <p style="margin: 0;"><input type="checkbox" style="margin-right: 16px;" :checked="!excludedPublications.has(index + 1)" readonly /><span x-show="pub.P_TopPaper_Select">⭐️ </span><span
-                                        x-text="pub.Title"></span></p>
+                        <div style="position: sticky; top: 0; background-color: white; padding: 2px 0; margin-bottom: 1rem; text-align: center;">
+                            <h3>Save to file...<span style="font-size: 70%; font-weight: normal;"></h3>
+                            <div class="tabs">
+                                <span @click="tab = 'select'" :class="{ selected: tab === 'select' }">Export selection for committee</span> • <span
+                                @click="tab = 'all'" :class="{ selected: tab === 'all' }">Export all data for personal archive</span>
                             </div>
-                        </template>
+
+                            
+                            <button x-show="tab === 'all'" @click="exp(); closeExportModal();">Export all data (for personal archive)</button>
+
+                            <button
+                                    x-show="tab === 'select'"
+                                    :disabled="excludedPublications.size >= $store.data.input.length - 1 || $store.data.input.length - 1 - excludedPublications.size > $store.config.config.max || $store.data.input.length - 1 - excludedPublications.size < $store.config.config.min || $store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length < $store.config.config.max_top_papers"
+                                    @click="exp(excludedPublications); excludedPublications = new Set(); closeExportModal();">Export
+                                    <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> selected outputs for hiring committee</button>
+
+                            <div x-show="tab === 'select'">
+                                <div class="warning-text" x-show="$store.data.input.length - 1 - excludedPublications.size > $store.config.config.max">
+                                    <span>The committee requests a maximum of <span x-text="$store.config.config.max"></span> publications - you selected <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> entries.</span>
+                                </div>
+
+                                <div class="warning-text" x-show="$store.data.input.length - 1 - excludedPublications.size < $store.config.config.min">
+                                    <span>The committee requests a minimum of <span x-text="$store.config.config.min"></span> publications - you only selected <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span></span>
+                                </div>
+
+                                <div class="warning-text"
+                                    x-show="$store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length < $store.config.config.max_top_papers">
+                                    <span>The committee asks you to select exactly <span
+                                            x-text="$store.config.config.max_top_papers"></span> publications as your best publications (⭐️).<br> You marked <span
+                                            x-text="$store.data.input.filter(ro => ro.P_TopPaper_Select).length"></span> publication(s) as best publication and selected <span
+                                            x-text="$store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length"></span>
+                                            for export. Please select exactly <span
+                                            x-text="$store.config.config.max_top_papers"></span> starred (⭐️) publications.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="export-tab-content" x-show="tab === 'select'">
+                            <div>
+                                <template x-for="pub, index in $store.data.input.slice(1)">
+                                    <div class="tab" :class="{ 'active': !excludedPublications.has(index + 1) }"
+                                        @click="if (excludedPublications.has(index + 1)) { excludedPublications.delete(index + 1); } else { excludedPublications.add(index + 1); }">
+                                        <p style="margin: 0;"><input type="checkbox" style="margin-right: 16px;" :checked="!excludedPublications.has(index + 1)" readonly /><span x-show="pub.P_TopPaper_Select">⭐️ </span><span
+                                                x-text="pub.Title"></span></p>
+                                    </div>
+                                </template>
+                             </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1276,7 +1309,7 @@
                 { element: '#score-box', popover: { title: 'Score box', description: 'You see the score for the current research output and the overall score for all research outputs here.' } },
                 { element: '#info-box', popover: { title: 'Info box', description: 'You can click on an indicator in the form to see some help or detailed information here.' } },
                 { element: '.clear-button', popover: { title: 'Starting fresh', description: 'You can use the \'Clear\' button to delete everything you entered and start with a fresh form.' } },
-                { element: '.load-button', popover: { title: 'Loading previously exported data', description: 'The \'Load\' button opens a file picker, the local JSON file you select will be loaded into the tool.' } },
+                { element: '.load-button', popover: { title: 'Loading previously exported data', description: 'The \'Import from file ...\' button opens a file picker, the local JSON file you select will be loaded into the tool.' } },
                 { element: '.save-button', popover: { title: 'Saving to a local file', description: 'If you want to export your data and save it to a local file (for example if you want to send the data to another person), you can use this button. A JSON file will be saved to your computer.' } },
 
                 { element: '.menu-bottom', popover: { description: 'You can click on FAQ to read more. You can also always take this tour by clicking on \'Tour\'' } },
@@ -1293,7 +1326,7 @@
                     // { element: '.pdf-button', popover: { description: 'You can open a PDF file and extract the DOI automatically. Note that this might fail in rare cases.' } },
                     { element: '.add-buttons', popover: { title: 'Add a new research output', description: 'You can use one of these two buttons to add new research outputs. RESQUE currently only considers publications as research outputs (software projects and data sets are in development). Use the ORCID button to bulk import multiple publications.' } },
                     { element: '.clear-button', popover: { title: 'Starting fresh', description: 'You can use the \'Clear\' button to delete everything you entered and start with a fresh form.' } },
-                    { element: '.load-button', popover: { title: 'Loading previously exported data', description: 'The \'Load\' button opens a file picker, the local JSON file you select will be loaded into the tool.' } },
+                    { element: '.load-button', popover: { title: 'Loading previously exported data', description: 'The \'Import from file ...\' button opens a file picker, the local JSON file you select will be loaded into the tool.' } },
                     { element: '.save-button', popover: { title: 'Saving to a local file', description: 'If you want to export your data and save it to a local file (for example if you want to send the data to another person), you can use this button. A JSON file will be saved to your computer.' } },
 
                     Alpine.store('data').currentInput.type === 'pub' ? { popover: { description: "Let's continue with the form and the right menu." } } : { popover: { title: 'Please switch to a publication tab', description: 'In order to continue the tour, you have to be on a publication tab. Add a new publication or switch to an existing one and start the tour again.' } },
@@ -1586,7 +1619,7 @@
                 ...tabularRadioIds,
                 ...(filteredElements.map(e => e.id + '_Comment')),
                 'Title', 'Year', 'Abstract',
-                'date_added', 'position', 'type', 'version'
+                'date_added', 'position', 'type', 'version', 'CollectorURL'
             ];
 
             const filteredData = Object.fromEntries(
@@ -1596,6 +1629,7 @@
             return filteredData;
         }
 
+        // this is the export function that is called when the user clicks on the export button. It creates a JSON file from the current data and triggers a download. The optional `excluded` parameter can be used to exclude certain research outputs from the export (for example if the user only wants to export a selection of their publications for a hiring committee, but not all publications for their personal archive). The `excluded` parameter should be a set of indices of the research outputs to exclude (the indices correspond to the position of the research output in the `Alpine.store('data').input` array).
         const exp = (excluded) => {
             if (!excluded) {
                 excluded = new Set();
@@ -1604,6 +1638,10 @@
             let data = Alpine.store('data').input
                 // only export the data that is currently visible
                 .map(filterExport);
+
+            if (data[0]) {
+                data[0].CollectorURL = Alpine.store('forms').meta.CollectorURL ?? getCollectorUrl();
+            }
 
             let millis = Date.now();
             data.date_exported = millis;
@@ -1675,8 +1713,26 @@
             Alpine.store('data').input[0].queryConfig = Alpine.store('config').queryConfig;
         }
 
-        // Load config
-        fetch('./config/config.yaml').then(response => response.text()).then(text => {
+        // Load config (fall back to config-default.yaml when config.yaml is missing)
+        const loadConfigText = () => {
+            return fetch('./config/config.yaml')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('config.yaml not found');
+                    }
+                    return response.text();
+                })
+                .catch(() => {
+                    return fetch('./config/config-default.yaml').then(response => {
+                        if (!response.ok) {
+                            throw new Error('No valid config file found (config.yaml or config-default.yaml)');
+                        }
+                        return response.text();
+                    });
+                });
+        }
+
+        loadConfigText().then(text => {
             const config = jsyaml.load(text);
 
             Alpine.store('forms').config = config;
@@ -1686,10 +1742,9 @@
             menu(config).then(m => {
                 for (const key in m) {
                     if (m[key].elements) {
-                        m[key].scoring = window.generateScoringRules(m[key].elements);
                         Alpine.store('indentations')[key] = window.getDepths(m[key].elements);
                     }
-                    Alpine.store('forms')[key] = m[key];
+                    Alpine.store('forms')[key] = m[key];          
                 }
 
                 Alpine.store('data').manualInit();
@@ -1698,6 +1753,10 @@
                 if (!Alpine.store('data').input[0].queryConfig) {
                     // save query config
                     Alpine.store('data').input[0].queryConfig = Alpine.store('config').queryConfig;
+                }
+
+                if (!Alpine.store('data').input[0].forms) {
+                    Alpine.store('data').input[0].forms = Alpine.store('forms');
                 }
 
                 Alpine.store('loaded', true);

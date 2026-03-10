@@ -12,6 +12,10 @@ export function renderScoreChart(canvasId, categories, colors, animation = true)
 
   const ctx = canvas.getContext('2d');
 
+  const categoriesPre = categories;
+
+  categories = categories.filter(c => c.max > 0);
+
   const data = {
     labels: categories.map(c => c.title),
     datasets: [{
@@ -58,7 +62,7 @@ export function renderScoreChart(canvasId, categories, colors, animation = true)
   // Generate custom legend
   const legendContainer = document.getElementById('legend-container');
   if (legendContainer) {
-    legendContainer.innerHTML = generateCustomLegend(categories, colors);
+    legendContainer.innerHTML = generateCustomLegend(categoriesPre, colors);
   }
 
   return chart;
