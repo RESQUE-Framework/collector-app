@@ -1,5 +1,7 @@
 # ================================================================= #
 # This is the default configuration file for the RESQUE Collector App.
+# Copy this file to config/config.yaml and edit the settings there.
+# If no config.yaml file is found, the app will use this default configuration.
 # ================================================================= #
 
 

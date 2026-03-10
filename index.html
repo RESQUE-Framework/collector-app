@@ -1696,8 +1696,26 @@
             Alpine.store('data').input[0].queryConfig = Alpine.store('config').queryConfig;
         }
 
-        // Load config
-        fetch('./config/config.yaml').then(response => response.text()).then(text => {
+        // Load config (fall back to config-default.yaml when config.yaml is missing)
+        const loadConfigText = () => {
+            return fetch('./config/config.yaml')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('config.yaml not found');
+                    }
+                    return response.text();
+                })
+                .catch(() => {
+                    return fetch('./config/config-default.yaml').then(response => {
+                        if (!response.ok) {
+                            throw new Error('No valid config file found (config.yaml or config-default.yaml)');
+                        }
+                        return response.text();
+                    });
+                });
+        }
+
+        loadConfigText().then(text => {
             const config = jsyaml.load(text);
 
             Alpine.store('forms').config = config;
