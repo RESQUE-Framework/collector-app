@@ -313,6 +313,8 @@
             queryConfig: {}
         });
 
+        const getCollectorUrl = () => window.location.href;
+
         const getConfig = (type) => ({
             ...Alpine.store('forms')[type].config, // type specific config
             ...Alpine.store('forms').config, // global config
@@ -337,6 +339,10 @@
                     this.newResearchOutput('meta');
                 }
 
+                if (this.input[0]) {
+                    this.input[0].CollectorURL = this.input[0].CollectorURL ?? (Alpine.store('forms').meta.CollectorURL ?? getCollectorUrl());
+                }
+
                 this.currentInput = this.input[this.currentTab];
                 this.score = window.scoreAll(this.input, Alpine.store('config').config.score_categories || []);
                 this.completion = this.input.map(checkCompletion);
@@ -344,12 +350,18 @@
             },
 
             createResearchOutput(type) {
-                return {
+                const baseOutput = {
                     type,
                     version: Alpine.store('forms')[type].versions[prefixes[type]],
                     date_added: Date.now(),
                     ...window.getDefaultValues(Alpine.store('forms')[type].elements)
+                };
+
+                if (type === 'meta') {
+                    baseOutput.CollectorURL = Alpine.store('forms').meta.CollectorURL ?? getCollectorUrl();
                 }
+
+                return baseOutput;
             },
 
             newResearchOutput(type) {
@@ -1607,7 +1619,7 @@
                 ...tabularRadioIds,
                 ...(filteredElements.map(e => e.id + '_Comment')),
                 'Title', 'Year', 'Abstract',
-                'date_added', 'position', 'type', 'version'
+                'date_added', 'position', 'type', 'version', 'CollectorURL'
             ];
 
             const filteredData = Object.fromEntries(
@@ -1617,6 +1629,7 @@
             return filteredData;
         }
 
+        // this is the export function that is called when the user clicks on the export button. It creates a JSON file from the current data and triggers a download. The optional `excluded` parameter can be used to exclude certain research outputs from the export (for example if the user only wants to export a selection of their publications for a hiring committee, but not all publications for their personal archive). The `excluded` parameter should be a set of indices of the research outputs to exclude (the indices correspond to the position of the research output in the `Alpine.store('data').input` array).
         const exp = (excluded) => {
             if (!excluded) {
                 excluded = new Set();
@@ -1625,6 +1638,10 @@
             let data = Alpine.store('data').input
                 // only export the data that is currently visible
                 .map(filterExport);
+
+            if (data[0]) {
+                data[0].CollectorURL = Alpine.store('forms').meta.CollectorURL ?? getCollectorUrl();
+            }
 
             let millis = Date.now();
             data.date_exported = millis;
