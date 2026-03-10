@@ -565,7 +565,7 @@
                     <div class="sidebar-top">                        
                         <div class="top">
                             <div style="display: flex; align-items: center;">
-                                <h3><a href="https://www.resque.info" x-text="$store.config.config.main_title"></a></h3>
+                                <h3 x-text="$store.config.config.main_title"></h3>
                                 <template x-if="$store.config?.config?.image_url">
                                     <img :src="$store.config?.config?.image_url" 
                                         alt="University Logo" 
@@ -1309,7 +1309,7 @@
                 { element: '#score-box', popover: { title: 'Score box', description: 'You see the score for the current research output and the overall score for all research outputs here.' } },
                 { element: '#info-box', popover: { title: 'Info box', description: 'You can click on an indicator in the form to see some help or detailed information here.' } },
                 { element: '.clear-button', popover: { title: 'Starting fresh', description: 'You can use the \'Clear\' button to delete everything you entered and start with a fresh form.' } },
-                { element: '.load-button', popover: { title: 'Loading previously exported data', description: 'The \'Load\' button opens a file picker, the local JSON file you select will be loaded into the tool.' } },
+                { element: '.load-button', popover: { title: 'Loading previously exported data', description: 'The \'Import from file ...\' button opens a file picker, the local JSON file you select will be loaded into the tool.' } },
                 { element: '.save-button', popover: { title: 'Saving to a local file', description: 'If you want to export your data and save it to a local file (for example if you want to send the data to another person), you can use this button. A JSON file will be saved to your computer.' } },
 
                 { element: '.menu-bottom', popover: { description: 'You can click on FAQ to read more. You can also always take this tour by clicking on \'Tour\'' } },
@@ -1326,7 +1326,7 @@
                     // { element: '.pdf-button', popover: { description: 'You can open a PDF file and extract the DOI automatically. Note that this might fail in rare cases.' } },
                     { element: '.add-buttons', popover: { title: 'Add a new research output', description: 'You can use one of these two buttons to add new research outputs. RESQUE currently only considers publications as research outputs (software projects and data sets are in development). Use the ORCID button to bulk import multiple publications.' } },
                     { element: '.clear-button', popover: { title: 'Starting fresh', description: 'You can use the \'Clear\' button to delete everything you entered and start with a fresh form.' } },
-                    { element: '.load-button', popover: { title: 'Loading previously exported data', description: 'The \'Load\' button opens a file picker, the local JSON file you select will be loaded into the tool.' } },
+                    { element: '.load-button', popover: { title: 'Loading previously exported data', description: 'The \'Import from file ...\' button opens a file picker, the local JSON file you select will be loaded into the tool.' } },
                     { element: '.save-button', popover: { title: 'Saving to a local file', description: 'If you want to export your data and save it to a local file (for example if you want to send the data to another person), you can use this button. A JSON file will be saved to your computer.' } },
 
                     Alpine.store('data').currentInput.type === 'pub' ? { popover: { description: "Let's continue with the form and the right menu." } } : { popover: { title: 'Please switch to a publication tab', description: 'In order to continue the tour, you have to be on a publication tab. Add a new publication or switch to an existing one and start the tour again.' } },
