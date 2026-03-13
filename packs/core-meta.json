@@ -27,12 +27,20 @@
         {
             "id": "AcademicAgeBonus",
             "type": "number",
-            "title": "Years that are subtracted from active academic life (e.g., due to parental leave, care for family members, long-term illness). Please enter only the number; you can enter fractional years, e.g. 0.5."
+            "title": "Years that are subtracted from active academic life (e.g., due to parental leave, care for family members, long-term illness). Please enter only the number; you can enter fractional years, e.g. 0.5.",
+            "optional": true,
+            "default": "0",
+            "validation": {
+                "pattern": "\\d\\.?\\d*$",
+                "condition": "0.1 <= $AcademicAgeBonus && $AcademicAgeBonus <= 10",
+                "message": "Please enter a valid number of years between 0.1 and 10."
+            }
         },
         {
             "id": "AcademicAgeBonus_Explanation",
             "type": "text",
-            "title": "Please describe the circumstances that led to this reduction."
+            "title": "Please describe the circumstances that led to this reduction.",
+            "condition": "exists($AcademicAgeBonus)"
         },
         {
             "id": "ORCID",
@@ -59,6 +67,7 @@
             "id": "ExternalRaterName",
             "type": "text",
             "title": "Name of external rater (optional)",
+            "optional": true,
             "condition": "$RaterType === 'External'"
         },
         {

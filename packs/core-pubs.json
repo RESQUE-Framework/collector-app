@@ -968,7 +968,7 @@
         },
         {
             "id": "P_Data_Open_NAExplanation",
-            "type": "text",
+            "type": "textbox",
             "title": "⤷ Not Applicable: Explanation",
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open === 'NotApplicable'"
         },
@@ -1109,7 +1109,7 @@
             "options": [
                 {
                     "id": "OpenLicense",
-                    "text": "The code has an explicitly stated open license (e.g., BSD, CC-BY, (L)GPL, MIT)",
+                    "text": "The code has an explicitly stated open license (e.g., Apache2.0, BSD, CC-BY, (L)GPL, MIT)",
                     "value": 0.2
                 },
                 {
