@@ -389,7 +389,7 @@
                     type: 'pub',
                     version: Alpine.store('forms')['pub'].versions[prefixes['pub']],
                     date_added: Date.now(),
-                    ...window.getDefaultValues(Alpine.store('forms').pub.elements),
+                    ...Alpine.store('forms').pub.defaultValues,
                     ...details
                 });
             },
