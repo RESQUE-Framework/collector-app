@@ -1,80 +1,237 @@
-<!-- pandoc -s Datenschutzerklaerung.md -o docs/Datenschutzerklaerung.docx -->
+# Datenschutzerklärung RESQUE-Collector-App
 
-## Datenschutzerklärung RESQUE‑Collector-App
+**Stand:** 2026-03-16
 
-*Stand: 2025-11-13* <br>
-*Kontakt: Prof. Dr. Felix Schönbrodt (felix.schoenbrodt@psy.lmu.de).*
-
-### 1) Wer wir sind
-
-Diese App („RESQUE Collector App“) ist eine rein client‑seitige Web‑Anwendung, die im Rahmen einer Arbeitsgruppe der Deutschen Gesellschaft für Psychologie erstellt wurde. Sie wurde programmiert am Lehrstuhl Methodenlehre und Diagnostik der Ludwig‑Maximilians‑Universität München (LMU). 
-
-### 2) "Privacy by design": Ihre Formulareingaben bleiben lokal und werden nie an Dritte weitergeleitet
-
-* **Formulareingaben und Arbeitsstand** werden **ausschließlich im Browser** auf Ihrem Gerät gespeichert. Es findet hierfür **keine Übertragung an einen Server** statt - weder an uns noch an Github oder sonstige Dritte.
-* **Export/Import**: Sie können Ihre Daten als **lokale JSON‑Datei** speichern und wieder laden; auch dabei werden die Daten **nicht an Server gesendet**, sondern als Datei auf Ihrem Gerät erstellt/eingelesen.
-
-
-### 3) Wann verlassen welche Daten Ihr Gerät?
-
-Die App kommt ohne Server‑Backends für Ihre Inhalte aus, und Sie können die App (nachdem die Webseite geladen ist) auch komplett offline benutzen. Es gibt aber Situationen, in denen **technisch notwendige oder von Ihnen ausgelöste** Anfragen an externe Dienste erfolgen. Hierbei werden abgesehen von dois und (wenn Sie das wünschen) Ihrer ORCID **keine Ihrer Formulareingaben** übertragen.
-
-#### A) Nutzungsanalyse
-
-* **Matomo**: Beim Seitenaufruf wird ein Matomo‑Skript eingebunden, das anonym Seitenaufrufe erfasst und auf einem Server der Ludwig-Maximilians-Universität München speichert. Es werden **keine Cookies oder Tracker von Drittanbietern** verwendet, es wird keine identifizierbare IP gespeichert. Wir nutzen diese Funktion um festzustellen, wie oft die App aufgerufen wird.
-
-#### B) Von Ihnen ausgelöste Abrufe externer Metadaten (optional)
-
-* **DOI‑Abfrage (doi.org)**: Wenn Sie bei einer Publikation eine DOI eintragen, ruft die App **Titel, Jahr und ggf. Abstract** zu dieser DOI von **doi.org** ab. Dazu wird an doi.org die von Ihnen angegebene DOI übermittelt. Es werden nur Metadaten zu der jeweiligen Publikation abgefragt, die ohnehin öffentlich vorliegen.
-* **ORCID‑Import (pub.orcid.org)**: Wenn Sie den ORCID‑Import nutzen, werden über Ihre **ORCID‑Kennung** Ihre Publikationsdaten (Titel, Jahr, DOI) abgefragt und zur Auswahl angezeigt. Diese Abrufe erfolgen **nur**, wenn Sie den Import auslösen und frägt ebenfalls nur Informationen ab, die ohnehin öffentlich vorliegen.
-
-### 4) Zusammenfassung: Welche Daten verarbeitet die App wofür?
-
-| Verarbeitung                   | Datenkategorien                                                                                        | Zweck                                         | Rechtsgrundlage                                                                        |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------ | --------------------------------------------- | -------------------------------------------------------------------------------------- |
-| **Lokaler Speicher (Browser)** | Ihre Formulareingaben, Arbeitsstand, aktueller Tab/Status                                              | Bedienkomfort, Wiederaufnahme der Arbeit      | - keine Datenverarbeitung durch Dritte -                                               |
-| **Matomo**                     | Nutzungsdaten (z. B. Seitenaufrufe, Klicks) – **keine Eingabedaten; IP wird anonymisiert gespeichert** | Reichweitenmessung                            | **Art. 6 Abs. 1 lit. f DSGVO** (berechtigtes Interesse). Hinweis in‑App: ohne Cookies. |
-| **DOI‑Abruf**                  | Ihre eingegebene DOI → **Titel, Jahr, ggf. Abstract** werden geladen                                   | Komfortfunktion: Felder automatisch ausfüllen | **Art. 6 Abs. 1 lit. b DSGVO** (auf Ihre Anfrage)                                      |
-| **ORCID‑Import**               | Ihre ORCID‑Kennung → **Publikationsliste (Titel, Jahr, DOI)**                                          | Komfortfunktion: Mehrere Einträge übernehmen  | **Art. 6 Abs. 1 lit. b DSGVO** (auf Ihre Anfrage)                                      |
-
-### 5) Empfänger / Drittanbieter‑Hosts
-
-Diese Hosts können – je nach Nutzung – Anfragen erhalten:
-
-* **tellmi.psy.lmu.de** (Matomo: Webseitenaufrufe zählen). 
-* **doi.org** (Abruf von öffentlichen Publikationsmetadaten zu einer DOI). 
-* **pub.orcid.org** (Abruf von öffentlichen Publikationslisten zu einer ORCID). 
-* **Externe Links** im Interface (z. B. resque.info, GitHub) werden **nur** bei Klick geöffnet. 
-
-### 6) Speicherdauer und Löschung
-
-* **Lokal im Browser**: Ihre Inhalte bleiben gespeichert, bis Sie sie löschen (z. B. über „Clear“ in der Web-App) oder den Browser‑Speicher zurücksetzen. 
-* **Exportdateien** (JSON) speichern Sie selbst; deren Verwaltung liegt in Ihrer Hand. 
-* **Nutzungsanalyse** (Matomo): Die anonyme Zählung der Webseitenaufrufe hat keine festgelegte Löschungfrist.
-
-### 7) Keine Pflicht zur Bereitstellung / Do‑Not‑Track
-
-Die Nutzung der App ist ohne DOI/ORCID möglich. Wenn Sie DOI/ORCID nicht nutzen, finden keine API‑Abrufe statt und Sie können die App auch komplett offline nutzen.
-
-### 8) Ihre Rechte (DSGVO)
-
-Soweit wir personenbezogene Daten verarbeiten, haben Sie – im Rahmen der gesetzlichen Voraussetzungen – die Rechte auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung (Art. 18), Datenübertragbarkeit (Art. 20) sowie Widerspruch gegen Verarbeitungen auf Grundlage berechtigter Interessen (Art. 21).
-Bitte wenden Sie sich hierzu an Prof. Dr. Felix Schönbrodt (felix.schoenbrodt@psy.lmu.de).
-
-*Hinweis*: Die Formulareingaben bleiben ausschließlich lokal in Ihrem Browser gespeichert. Unabhängig davon fallen bei der technischen Bereitstellung der Website und ggf. der Reichweitenmessung (Matomo) Verarbeitungen von Zugriffsdaten (z. B. IP‑Adresse, Zeitpunkt, aufgerufene URL) an; Details siehe Abschnitte „Wann verlassen Daten Ihr Gerät?“ und „Rechtsgrundlagen“.
-
-### 9) Sicherheit
-
-Wir empfehlen, diese App **auf einem vertrauenswürdigen Gerät** zu verwenden und bei gemeinsam genutzten Rechnern nach der Nutzung die Daten lokal zu **löschen** ("Clear" links oben) oder als Datei zu **sichern** ("Save to file ..." links oben). Personen die Zugriff auf Ihr Gerät und ihren Nutzeraccount haben, können Ihre lokal gespeicherten Daten einsehen.
-
-### 10) Änderungen
-
-Wir können diese Datenschutzerklärung anpassen, wenn sich die App oder die Rechtslage ändert.
+Im Folgenden informieren wir Sie nach Art. 13 DSGVO über die Erhebung und Verarbeitung personenbezogener Daten im Zusammenhang mit der Nutzung der RESQUE Collector App.
 
 ---
 
-#### Transparenz-Anhang (technische Details)
+## 1. Name und Kontaktdaten des Verantwortlichen
 
-* **Lokaler Speicher**: Die App liest/schreibt Ihre Eingaben im `localStorage`/`sessionStorage` (u. a. aktueller Tab, vollständige Datensätze).
-* **DOI/ORCID**: Abrufe werden nur ausgelöst, wenn Sie die Felder nutzen/den Import starten (`fetchInformationUsingDOI`, `fetchPapersByORCID`/`fetchAuthorByORCID`).
-* **Matomo**: Einbindung über den LMU-Server **tellmi.psy.lmu.de** mit `trackPageView`/`enableLinkTracking`. 
+**Datenschutzrechtlich Verantwortlicher im Sinne von Art. 4 Nr. 7 DSGVO**
+
+Ludwig-Maximilians-Universität München (LMU)  
+Geschwister-Scholl-Platz 1  
+80539 München  
+
+Telefon: +49 89 2180-0  
+E-Mail: poststelle@verwaltung.uni-muenchen.de  
+
+**Verantwortliche Organisationseinheit**
+
+LMU-intern ist für die Datenverarbeitung folgende Stelle verantwortlich:  
+Department Psychologie
+
+---
+
+## 2. Kontaktdaten des behördlichen Datenschutzbeauftragten
+
+Ludwig-Maximilians-Universität München  
+Behördlicher Datenschutzbeauftragter  
+
+Geschwister-Scholl-Platz 1  
+80539 München  
+
+Tel.: +49 89 2180-2414  
+https://www.lmu.de/datenschutz
+
+---
+
+## 3. Art und Umfang der Datenverarbeitung
+
+Diese App („RESQUE Collector App“) ist eine rein client-seitige Web-Anwendung, die im Rahmen einer Arbeitsgruppe der Deutschen Gesellschaft für Psychologie erstellt wurde. Sie wurde am Lehrstuhl Methodenlehre und Diagnostik der Ludwig-Maximilians-Universität München (LMU) programmiert.
+
+Mit der App können Qualitätsindikatoren wissenschaftlicher Publikationen gesammelt und ausgewertet werden. Daraus wird ein Profil mit einem **„Relative Rigor Score“** erstellt, der die Erfüllung der Qualitätsindikatoren in verschiedenen Kategorien quantifiziert.
+
+Mögliche Einsatzzwecke:
+
+- Bewerbungsverfahren  
+- Erstellung eines Forschungsprofils für den Lebenslauf  
+- Transparente Qualitätscheckliste für einzelne Publikationen  
+
+Die Nutzung der App ist freiwillig.
+
+Die App läuft vollständig im Browser. Eine Installation ist nicht notwendig. Nachdem die Webseite geladen wurde, kann die App auch offline verwendet werden.
+
+Die eingegebenen Informationen zu Qualitätsindikatoren oder Freitextantworten verlassen **nicht Ihr lokales Gerät**. Es findet bezüglich dieser Daten kein Datenaustausch mit externen Servern oder Dritten statt.
+
+Technisch notwendige oder von Ihnen ausgelöste Anfragen an externe Dienste können jedoch auftreten, zum Beispiel:
+
+- Abruf von DOI-Metadaten (Titel und Abstract)
+- Abruf öffentlicher Publikationslisten von ORCID
+
+Wir empfehlen, die App nur auf einem vertrauenswürdigen Gerät zu nutzen. Bei gemeinsam genutzten Rechnern sollten Sie nach der Nutzung:
+
+- Daten lokal löschen („Clear“ links oben) oder
+- Daten lokal exportieren („Save to file …“)
+
+Personen mit Zugriff auf Ihr Gerät oder Ihren Nutzeraccount können lokal gespeicherte Daten einsehen.
+
+---
+
+## 4. Zwecke und Rechtsgrundlagen der Verarbeitung
+
+### A) Beim Laden der Seite (technisch erforderlich)
+
+Um die Anwendung technisch bereitstellen zu können.
+
+#### 1. Formulareingaben / Arbeitsstand
+
+Zur Nutzung können Sie Daten wie Name oder Nachname in Formulare eingeben sowie den Arbeitsstand zwischenspeichern. Diese Daten werden **ausschließlich im Browser auf Ihrem Gerät gespeichert**.  
+Es erfolgt **keine Übertragung an einen Server**.
+
+#### 2. Export / Import des generierten Profils
+
+Sie können Ihre Ergebnisse als lokale JSON-Datei exportieren und später wieder importieren. Dabei gilt ebenfalls, dass diese Daten ausschließlich auf Ihrem Gerät gespeichert werden und an keine Server übertragen werden, weder an die LMU noch an Dritte.
+
+---
+
+### B) Nutzungsanalyse
+
+**Matomo**
+
+Beim Seitenaufruf wird ein Matomo-Skript eingebunden, das anonym Seitenaufrufe erfasst und auf einem Server der LMU speichert.
+
+Eigenschaften:
+
+- keine Cookies  
+- keine Drittanbieter-Tracker  
+- keine Speicherung identifizierbarer IP-Adressen  
+
+Zweck: Feststellen, wie häufig die App aufgerufen wird.
+
+---
+
+### C) Optionale Einbindung von Metadaten über Publikationen (DOI / ORCID)
+
+Diese Funktionen werden nur aktiviert, wenn Sie sie selbst nutzen.
+
+#### DOI-Abfrage (doi.org)
+
+Wenn Sie eine DOI eingeben, ruft die App folgende Informationen ab:
+
+- Titel  
+- Jahr  
+- Abstract  
+
+Dabei wird die von Ihnen eingegebene DOI an **doi.org** übertragen.  
+Es werden ausschließlich öffentlich verfügbare Metadaten abgefragt.
+
+#### ORCID-Import (pub.orcid.org)
+
+Wenn Sie den ORCID-Import nutzen, werden über Ihre ORCID-Kennung folgende Daten abgefragt:
+
+- Titel
+- Jahr
+- DOI
+
+Diese Publikationsdaten werden zur Auswahl angezeigt und können übernommen werden.  
+Auch hier werden ausschließlich öffentlich verfügbare Informationen abgefragt.
+
+---
+
+## 5. Rechtsgrundlagen der Verarbeitung
+
+| Verarbeitung               | Datenkategorien                                                                  | Zweck                                        | Rechtsgrundlage                                     |
+| -------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------- | --------------------------------------------------- |
+| Lokaler Speicher (Browser) | Formulareingaben, Arbeitsstand, aktueller Tab/Status                             | Bedienkomfort, Wiederaufnahme der Arbeit     | keine Datenverarbeitung durch Verantwortlichen      |
+| Matomo                     | Nutzungsdaten (z. B. Seitenaufrufe, Klicks) – keine von Ihnen eingegebenen Daten | Reichweitenmessung                           | Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse) |
+| DOI-Abruf                  | eingegebene DOI → Titel, Jahr, Abstract                                          | Komfortfunktion: automatische Befüllung      | keine personenbezogenen Daten                       |
+| ORCID-Import               | ORCID-Kennung → Publikationsliste                                                | Komfortfunktion: mehrere Einträge übernehmen | keine personenbezogenen Daten                       |
+
+
+---
+
+## 6. Empfänger oder Kategorien von Empfängern der personenbezogenen Daten
+
+Die App übermittelt **keine personenbezogenen Daten an Dritte**.
+
+---
+
+## 7. Übermittlung personenbezogener Daten an ein Drittland
+
+Es erfolgt **keine Übermittlung personenbezogener Daten in Drittländer**.
+
+---
+
+## 8. Speicherdauer und Löschung
+
+**Lokaler Browser-Speicher**
+
+Ihre Inhalte bleiben gespeichert, bis Sie diese selbst löschen, zum Beispiel:
+
+- über „Clear“ in der Web-App  
+- durch Zurücksetzen des Browser-Speichers  
+
+**Exportdateien**
+
+Exportierte JSON-Dateien speichern Sie lokal. Die Verwaltung dieser Dateien liegt bei Ihnen.
+
+**Nutzungsanalyse (Matomo)**
+
+Die anonyme Zählung von Webseitenaufrufen hat keine festgelegte Löschfrist.
+
+---
+
+## 9. Ihre Rechte (DSGVO)
+
+Wenn personenbezogene Daten verarbeitet werden, stehen Ihnen im Rahmen der gesetzlichen Voraussetzungen folgende Rechte zu.
+
+### Auskunft (Art. 15 DSGVO)
+
+Sie können Auskunft darüber verlangen,
+
+- ob personenbezogene Daten von Ihnen verarbeitet werden
+- welche Daten verarbeitet werden
+- weitere Informationen zur Verarbeitung
+
+Das Auskunftsrecht kann in bestimmten Fällen eingeschränkt sein (z. B. Art. 10 BayDSG).
+
+### Berichtigung (Art. 16 DSGVO)
+
+Sie können die Berichtigung unrichtiger personenbezogener Daten verlangen.
+
+### Löschung oder Einschränkung der Verarbeitung (Art. 17 und 18 DSGVO)
+
+Sie können die Löschung oder Einschränkung der Verarbeitung verlangen, sofern die gesetzlichen Voraussetzungen vorliegen.
+
+Das Recht auf Löschung kann eingeschränkt sein, wenn die Verarbeitung zur Wahrnehmung einer Aufgabe im öffentlichen Interesse erforderlich ist (Art. 17 Abs. 3 lit. b DSGVO).
+
+### Datenübertragbarkeit (Art. 20 DSGVO)
+
+Sie können verlangen, dass von Ihnen bereitgestellte Daten
+
+- in einem standardisierten elektronischen Format bereitgestellt werden oder
+- an eine von Ihnen benannte Stelle übermittelt werden.
+
+Voraussetzung ist eine Verarbeitung auf Grundlage einer Einwilligung oder eines Vertrags sowie automatisierte Verarbeitung.
+
+### Widerspruch (Art. 21 DSGVO)
+
+Wenn die Verarbeitung zur Wahrnehmung einer öffentlichen Aufgabe erfolgt (Art. 6 Abs. 1 lit. e DSGVO), können Sie aus Gründen Ihrer besonderen Situation jederzeit Widerspruch einlegen.
+
+### Widerruf einer Einwilligung
+
+Eine erteilte Einwilligung kann jederzeit mit Wirkung für die Zukunft widerrufen werden.
+
+Die Rechtmäßigkeit der Verarbeitung bis zum Widerruf bleibt unberührt.
+
+### Beschwerderecht
+
+Sie können sich bei einer Aufsichtsbehörde nach Art. 51 DSGVO beschweren.
+
+Zuständige Aufsichtsbehörde für die LMU:
+
+Bayerischer Landesbeauftragter für den Datenschutz  
+Postfach 22 12 19  
+80502 München  
+
+https://www.datenschutz-bayern.de/service/complaint.html
+
+Vor einer Beschwerde wird empfohlen, zunächst die verantwortliche Organisationseinheit zu kontaktieren.
+
+---
+
+## 10. Keine Pflicht zur Bereitstellung der Daten
+
+Die Nutzung der App erfolgt vollständig freiwillig.
