@@ -1600,6 +1600,10 @@
 
             const allIds = elements.map(e => e.id);
 
+            const defaults = Alpine.store('forms')[result.type].defaultValues;
+
+            const unreachableDefaultIds = Object.keys(defaults).filter(id => !allIds.includes(id));
+
             const filteredElements = elements
                 .filter(e => evaluateConditionInContext(e.condition, result));
 
@@ -1614,6 +1618,7 @@
                 .flat();
 
             const filteredIds = [
+                ...unreachableDefaultIds,
                 ...filteredElements.map(e => e.id),
                 ...checkboxIds,
                 ...tabularRadioIds,
