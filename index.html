@@ -50,12 +50,12 @@
 <body>
     <!-- Alpine.js sort  https://cdn.jsdelivr.net/npm/@alpinejs/sort@3.x.x/dist/cdn.min.js-->
     <script src="./js/alpinejs-sort.min.js"></script>
-    
+
     <!-- Alpine.js https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js -->
     <script src="./js/alpinejs.min.js"></script>
 
     <script src="./utils/score2.js"></script>
-    
+
     <script type="module">
         import { getDefaultValues } from "./utils/packutils.js";
         import { getDepths } from "./utils/prefixtree.js";
@@ -561,16 +561,15 @@
     <template x-if="$store.loaded">
         <div id="root">
             <div id="main">
-                <div class="tabs-sidebar no-print" id="tabs-sidebar" x-on:scroll="$store.tabsSidebarScrollTop = $el.scrollTop">
-                    <div class="sidebar-top">                        
+                <div class="tabs-sidebar no-print" id="tabs-sidebar"
+                    x-on:scroll="$store.tabsSidebarScrollTop = $el.scrollTop">
+                    <div class="sidebar-top">
                         <div class="top">
                             <div style="display: flex; align-items: center;">
                                 <h3 x-text="$store.config.config.main_title"></h3>
                                 <template x-if="$store.config?.config?.image_url">
-                                    <img :src="$store.config?.config?.image_url" 
-                                        alt="University Logo" 
-                                        style="height: 70px; max-width: 350px; object-fit: contain; margin: 10px; margin-left: 20px;"
-                                    >
+                                    <img :src="$store.config?.config?.image_url" alt="University Logo"
+                                        style="height: 70px; max-width: 350px; object-fit: contain; margin: 10px; margin-left: 20px;">
                                 </template>
                             </div>
                             <div id="actions" style="margin-top: 10px; display: flex; flex-direction: row; gap: 10px;">
@@ -609,7 +608,8 @@
                                                         x-html="`${$store.data.input[index + 1].P_TopPaper_Select ? '⭐️ ' : ''}<b>${types[tab.type]}</b><br>${$store.data.input[index + 1].Title ?? ''}`"
                                                         :class="{tab: true, active: $store.data.currentTab === index + 1}">
                                                     </div>
-                                                    <span @mouseover="hoverStart" class="tab-delete-button tab-delete-menu"
+                                                    <span @mouseover="hoverStart"
+                                                        class="tab-delete-button tab-delete-menu"
                                                         @click="showRemoveButton" x-show="hovering && !showRemove">
                                                         X
                                                     </span>
@@ -664,8 +664,8 @@
                     </div>
                     <div id="formview">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                             <h3 x-html="$store.forms[$store.data.currentInput.type].title"></h3>
-                             <span class="fakelink no-print" @click="print()">Print</span>
+                            <h3 x-html="$store.forms[$store.data.currentInput.type].title"></h3>
+                            <span class="fakelink no-print" @click="print()">Print</span>
                         </div>
 
                         <template x-if="$store.data.currentTab >= 0">
@@ -674,20 +674,30 @@
                                 <template x-if="$store.showIndicators">
                                     <div @click="$store.selectedIndicator = elem"
                                         x-show="evaluateCondition(elem.condition)" onblur="actions[elem.onchange]()"
-                                        class="indicator-container" :class="{ selected: $store.selectedIndicator.id === elem.id }" :class="elem.style_classes" :id="elem.id">
-                 
-                                        <template x-for="_ in [...Array($store.indentations[$store.data.currentInput.type][elem.id])]">
+                                        class="indicator-container"
+                                        :class="{ selected: $store.selectedIndicator.id === elem.id }"
+                                        :class="elem.style_classes" :id="elem.id">
+
+                                        <template
+                                            x-for="_ in [...Array($store.indentations[$store.data.currentInput.type][elem.id])]">
                                             <div class="indent"></div>
                                         </template>
 
-                                        <div class="indicator-subcontainer" x-data="{ comment: false, hovering: false }" @mouseover="hovering = true" @mouseout="hovering = false">
+                                        <div class="indicator-subcontainer" x-data="{ comment: false, hovering: false }"
+                                            @mouseover="hovering = true" @mouseout="hovering = false">
                                             <div x-data="{ showWarningText: false }">
                                                 <p>
                                                 <div x-show="elem.id in $store.data.completion[$store.data.currentTab].warnings"
                                                     class="warning-indicator"
                                                     @click="showWarningText = !showWarningText">
                                                 </div>
-                                                <span class="title" x-html="preprocessText(elem.title)"></span> <span x-show="(hovering || comment) && !['separator', 'info'].includes(elem.type)" class="fakelink" @click="comment = !comment;" style="display: inline-block; white-space: nowrap;"><span x-show="!comment && !$store.data.currentInput[elem.id + '_Comment']">Add</span><span x-show="!comment && $store.data.currentInput[elem.id + '_Comment']">Edit</span><span x-show="comment">Save</span> comment</span>
+                                                <span class="title" x-html="preprocessText(elem.title)"></span> <span
+                                                    x-show="(hovering || comment) && !['separator', 'info'].includes(elem.type)"
+                                                    class="fakelink" @click="comment = !comment;"
+                                                    style="display: inline-block; white-space: nowrap;"><span
+                                                        x-show="!comment && !$store.data.currentInput[elem.id + '_Comment']">Add</span><span
+                                                        x-show="!comment && $store.data.currentInput[elem.id + '_Comment']">Edit</span><span
+                                                        x-show="comment">Save</span> comment</span>
                                                 </p>
                                                 <p x-text="$store.data.completion[$store.data.currentTab].warnings[elem.id]?.text"
                                                     x-show="showWarningText && elem.id in $store.data.completion[$store.data.currentTab].warnings"
@@ -695,10 +705,13 @@
                                                 </p>
                                             </div>
 
-                                            <div :id="`comment_${elem.id}`" tabindex="0" @blur="comment = false" @focus="comment = true" x-show="comment && !elem.no_comment" class="card comment-box" style="position: absolute; z-index: 2;">
+                                            <div :id="`comment_${elem.id}`" tabindex="0" @blur="comment = false"
+                                                @focus="comment = true" x-show="comment && !elem.no_comment"
+                                                class="card comment-box" style="position: absolute; z-index: 2;">
                                                 <p><b>Add a comment for '<span x-text="elem.id"></span>'</b></p>
                                                 <form @submit.prevent="comment = false;" style="margin-bottom: 0;">
-                                                    <input @focus="comment = true" @blur="comment = false" x-model="$store.data.currentInput[elem.id + '_Comment']"
+                                                    <input @focus="comment = true" @blur="comment = false"
+                                                        x-model="$store.data.currentInput[elem.id + '_Comment']"
                                                         type="text" :placeholder="`Comment on '${elem.id}'`" />
                                                 </form>
                                             </div>
@@ -782,7 +795,8 @@
                                                 <template x-if="elem.type === 'tabular_radio'">
                                                     <div>
                                                         <table>
-                                                            <thead style="background-color: var(--bg-color); position: sticky; top: 0; z-index: 1;">
+                                                            <thead
+                                                                style="background-color: var(--bg-color); position: sticky; top: 0; z-index: 1;">
                                                                 <tr>
                                                                     <th></th>
                                                                     <template x-for="option in elem.options"
@@ -824,12 +838,15 @@
                                                 </template>
                                             </div>
 
-                                            <div class="warning-text" x-show="elem.validation && (!RegExp(elem.validation.pattern).test($store.data.currentInput[elem.id]) || !evaluateCondition(elem.validation.condition))">
+                                            <div class="warning-text"
+                                                x-show="elem.validation && (!RegExp(elem.validation.pattern).test($store.data.currentInput[elem.id]) || !evaluateCondition(elem.validation.condition))">
                                                 <span x-text="elem.validation?.message"></span>
                                             </div>
 
-                                            <div x-show="$store.data.currentInput[elem.id + '_Comment'] && !elem.no_comment">
-                                                <i style="color: gray;" ><span><b>Comment:</b> </span><span x-text="$store.data.currentInput[elem.id + '_Comment']"></span></i>
+                                            <div
+                                                x-show="$store.data.currentInput[elem.id + '_Comment'] && !elem.no_comment">
+                                                <i style="color: gray;"><span><b>Comment:</b> </span><span
+                                                        x-text="$store.data.currentInput[elem.id + '_Comment']"></span></i>
                                             </div>
                                         </div>
                                     </div>
@@ -1014,23 +1031,26 @@
                             onclick="showInfoModal()" class="fakelink">FAQ</span> • <a class="github-link"
                             href="https://github.com/RESQUE-Framework/collector-app">GitHub</a> • <span
                             onclick="driver(tourAnytime()).drive()" class="fakelink">Tour</span> • <span
-                            onclick="closeInfoModal(); showPrivacyModal()" class="fakelink">Privacy/Datenschutz</span> 
+                            onclick="closeInfoModal(); showPrivacyModal()" class="fakelink">Privacy/Datenschutz</span>
 
-                            <template x-if="$store.config?.config?.show_instruction">
-                                 • <span onclick="showInstructionsModal()" class="fakelink">Instructions</span>
-                            </template>
+                        <template x-if="$store.config?.config?.show_instruction">
+                            • <span onclick="showInstructionsModal()" class="fakelink">Instructions</span>
+                        </template>
                     </div>
                     <div x-show="$store.config.config.show_beta_warning" style="margin-top: 20px;" x-cloak>
-                            <span style='background-color: lightyellow; font-size:80%;'>[Note: The RESQUE collector app is in beta stage and might change in the near future. If you want to use it in practice, please <a href="https://www.resque.info/team.html">contact</a> us.]</span>
+                        <span style='background-color: lightyellow; font-size:80%;'>[Note: The RESQUE collector app is
+                            in beta stage and might change in the near future. If you want to use it in practice, please
+                            <a href="https://www.resque.info/team.html">contact</a> us.]</span>
                     </div>
                 </div>
             </div>
             <div id="info-modal" class="modal">
                 <!-- Modal content -->
                 <div class="modal-content">
-                    <div 
-                        style="text-align: right; position: sticky; top: 0;">
-                        <button style="background-color: #333; color: #efefef; border-radius: 99px; border: 4px solid #00000055; background-clip: padding-box;" @click="closeInfoModal();">Close</button>
+                    <div style="text-align: right; position: sticky; top: 0;">
+                        <button
+                            style="background-color: #333; color: #efefef; border-radius: 99px; border: 4px solid #00000055; background-clip: padding-box;"
+                            @click="closeInfoModal();">Close</button>
                     </div>
                     <h2>👋🏻 Welcome to the RESQUE tool!</h2>
                     <p>We need to change the way we assess research - with a focus on quality (over quantity). The <a
@@ -1066,7 +1086,8 @@
                     </details>
                     <details>
                         <summary>How do I load data I previously saved?</summary>
-                        You can use the <button onclick="triggerLoad()">Import from file ...</button> button here or in the top left
+                        You can use the <button onclick="triggerLoad()">Import from file ...</button> button here or in
+                        the top left
                         corner of
                         this website.
                     </details>
@@ -1090,10 +1111,17 @@
                         <br>
                         We use the <a href="https://www.wikiwand.com/en/Web_storage">Web Storage API</a> supported by
                         all major
-                        browsers. Although the website itself is hosted on a server, the data you enter is <i>only</i> stored and processed in the local browser. The only data leaving your browser are the dois you enter, which are used to fetch public metadata from external services (i.e., doi.org and ORCID). Specifically, we fetch <i>title</i>, <i>year</i>, and <i>abstracts</i> of your publications.
+                        browsers. Although the website itself is hosted on a server, the data you enter is <i>only</i>
+                        stored and processed in the local browser. The only data leaving your browser are the dois you
+                        enter, which are used to fetch public metadata from external services (i.e., doi.org and ORCID).
+                        Specifically, we fetch <i>title</i>, <i>year</i>, and <i>abstracts</i> of your publications.
                         <br><br>
-                        To get a sense of how many users we have, we do a very basic anonymous access logging with Matomo. You are not identifiable by the logged information; none of your entered data is tracked; no cookies or third party trackers are used. See details in the <span onclick="closeInfoModal(); showPrivacyModal()" class="fakelink">Privacy/Datenschutz</span> disclaimer.
-                    </p>                    
+                        To get a sense of how many users we have, we do a very basic anonymous access logging with
+                        Matomo. You are not identifiable by the logged information; none of your entered data is
+                        tracked; no cookies or third party trackers are used. See details in the <span
+                            onclick="closeInfoModal(); showPrivacyModal()" class="fakelink">Privacy/Datenschutz</span>
+                        disclaimer.
+                    </p>
                     </p>
                 </div>
             </div>
@@ -1134,10 +1162,9 @@
                     <template x-if="$store.config.config?.instructions?.html">
                         <div x-html="$store.config.config?.instructions?.html || ''"></div>
                     </template>
-                    <div 
-                        x-show="$store.data.input.length <= 1"
-                        style="text-align: right; position: sticky; bottom: 0;">
-                        <button style="background-color: #333; color: #efefef; border-radius: 99px; border: 4px solid #00000055; background-clip: padding-box;"
+                    <div x-show="$store.data.input.length <= 1" style="text-align: right; position: sticky; bottom: 0;">
+                        <button
+                            style="background-color: #333; color: #efefef; border-radius: 99px; border: 4px solid #00000055; background-clip: padding-box;"
                             @click="closeInstructionsModal(); driver(tourMain).drive()">Start tour →</button>
                     </div>
                 </div>
@@ -1145,15 +1172,15 @@
 
             <div id="privacy-modal" class="modal">
                 <div class="modal-content">
-                    <div 
-                        style="text-align: right; position: sticky; top: 0;">
-                        <button style="background-color: #333; color: #efefef; border-radius: 99px; border: 4px solid #00000055; background-clip: padding-box;" @click="closePrivacyModal();">Close</button>
+                    <div style="text-align: right; position: sticky; top: 0;">
+                        <button
+                            style="background-color: #333; color: #efefef; border-radius: 99px; border: 4px solid #00000055; background-clip: padding-box;"
+                            @click="closePrivacyModal();">Close</button>
                     </div>
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <h1>Privacy / Datenschutz</h1>
                     </div>
-                    <div class="markdown-content" 
-                         x-html="$store.config.config?.privacyDisclaimer?.html || ''"></div>                    
+                    <div class="markdown-content" x-html="$store.config.config?.privacyDisclaimer?.html || ''"></div>
                 </div>
             </div>
 
@@ -1173,13 +1200,11 @@
                                     style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
                                     <h3 x-text="`${authorName} (${publications.length} publications)`"></h3>
 
-                                    <select x-model="sortBy" 
-                                        @change="if (sortBy === 'year') {
+                                    <select x-model="sortBy" @change="if (sortBy === 'year') {
                                             publications.sort((a, b) => b.year - a.year);
                                         } else if (sortBy === 'title') {
                                             publications.sort((a, b) => a.title.localeCompare(b.title));
-                                        }"
-                                        style="width: auto; margin: 0;">
+                                        }" style="width: auto; margin: 0;">
                                         <option value="year">Sort by: Year</option>
                                         <option value="title">Sort by: Title</option>
                                     </select>
@@ -1194,10 +1219,11 @@
                                             target="_blank"><span x-text="pub.doi"></span></a></p>
                                 </div>
                             </template>
-                            <div style="position: sticky; bottom: 0; background-color: white; padding: 8px 0; text-align: right;">
+                            <div
+                                style="position: sticky; bottom: 0; background-color: white; padding: 8px 0; text-align: right;">
                                 <button
-                                        @click="publications.filter(p => p.selected).forEach(p => $store.data.addPublicationWithDetails({DOI: 'https://doi.org/' + p.doi, Title: p.title, Year: p.year})); closeORCIDModal(); orcid = '', authorName ='', publications = []"><span
-                                            x-text="`Add ${publications.filter(p => p.selected).length} Publications`"></span></button>
+                                    @click="publications.filter(p => p.selected).forEach(p => $store.data.addPublicationWithDetails({DOI: 'https://doi.org/' + p.doi, Title: p.title, Year: p.year})); closeORCIDModal(); orcid = '', authorName ='', publications = []"><span
+                                        x-text="`Add ${publications.filter(p => p.selected).length} Publications`"></span></button>
                             </div>
                         </div>
                     </template>
@@ -1208,39 +1234,53 @@
                 <div x-data="{ excludedPublications: new Set(), tab: 'select' }" class="modal-content">
 
                     <div>
-                        <div style="position: sticky; top: 0; background-color: white; padding: 2px 0; margin-bottom: 1rem; text-align: center;">
+                        <div
+                            style="position: sticky; top: 0; background-color: white; padding: 2px 0; margin-bottom: 1rem; text-align: center;">
                             <h3>Save to file...<span style="font-size: 70%; font-weight: normal;"></h3>
                             <div class="tabs">
-                                <span @click="tab = 'select'" :class="{ selected: tab === 'select' }">Export selection for committee</span> • <span
-                                @click="tab = 'all'" :class="{ selected: tab === 'all' }">Export all data for personal archive</span>
+                                <span @click="tab = 'select'" :class="{ selected: tab === 'select' }">Export selection
+                                    for committee</span> • <span @click="tab = 'all'"
+                                    :class="{ selected: tab === 'all' }">Export all data for personal archive</span>
                             </div>
 
-                            
-                            <button x-show="tab === 'all'" @click="exp(); closeExportModal();">Export all data (for personal archive)</button>
 
-                            <button
-                                    x-show="tab === 'select'"
-                                    :disabled="excludedPublications.size >= $store.data.input.length - 1 || $store.data.input.length - 1 - excludedPublications.size > $store.config.config.max || $store.data.input.length - 1 - excludedPublications.size < $store.config.config.min || $store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length < $store.config.config.max_top_papers"
-                                    @click="exp(excludedPublications); excludedPublications = new Set(); closeExportModal();">Export
-                                    <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> selected outputs for hiring committee</button>
+                            <button x-show="tab === 'all'" @click="exp(); closeExportModal();">Export all data (for
+                                personal archive)</button>
+
+                            <button x-show="tab === 'select'"
+                                :disabled="excludedPublications.size >= $store.data.input.length - 1 || $store.data.input.length - 1 - excludedPublications.size > $store.config.config.max || $store.data.input.length - 1 - excludedPublications.size < $store.config.config.min || $store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length < $store.config.config.max_top_papers"
+                                @click="exp(excludedPublications); excludedPublications = new Set(); closeExportModal();">Export
+                                <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> selected
+                                outputs for hiring committee</button>
 
                             <div x-show="tab === 'select'">
-                                <div class="warning-text" x-show="$store.data.input.length - 1 - excludedPublications.size > $store.config.config.max">
-                                    <span>The committee requests a maximum of <span x-text="$store.config.config.max"></span> publications - you selected <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> entries.</span>
+                                <div class="warning-text"
+                                    x-show="$store.data.input.length - 1 - excludedPublications.size > $store.config.config.max">
+                                    <span>The committee requests a maximum of <span
+                                            x-text="$store.config.config.max"></span> publications - you selected <span
+                                            x-text="$store.data.input.length - 1 - excludedPublications.size"></span>
+                                        entries.</span>
                                 </div>
 
-                                <div class="warning-text" x-show="$store.data.input.length - 1 - excludedPublications.size < $store.config.config.min">
-                                    <span>The committee requests a minimum of <span x-text="$store.config.config.min"></span> publications - you only selected <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span></span>
+                                <div class="warning-text"
+                                    x-show="$store.data.input.length - 1 - excludedPublications.size < $store.config.config.min">
+                                    <span>The committee requests a minimum of <span
+                                            x-text="$store.config.config.min"></span> publications - you only selected
+                                        <span
+                                            x-text="$store.data.input.length - 1 - excludedPublications.size"></span></span>
                                 </div>
 
                                 <div class="warning-text"
                                     x-show="$store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length < $store.config.config.max_top_papers">
                                     <span>The committee asks you to select exactly <span
-                                            x-text="$store.config.config.max_top_papers"></span> publications as your best publications (⭐️).<br> You marked <span
-                                            x-text="$store.data.input.filter(ro => ro.P_TopPaper_Select).length"></span> publication(s) as best publication and selected <span
+                                            x-text="$store.config.config.max_top_papers"></span> publications as your
+                                        best publications (⭐️).<br> You marked <span
+                                            x-text="$store.data.input.filter(ro => ro.P_TopPaper_Select).length"></span>
+                                        publication(s) as best publication and selected <span
                                             x-text="$store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length"></span>
-                                            for export. Please select exactly <span
-                                            x-text="$store.config.config.max_top_papers"></span> starred (⭐️) publications.</span>
+                                        for export. Please select exactly <span
+                                            x-text="$store.config.config.max_top_papers"></span> starred (⭐️)
+                                        publications.</span>
                                 </div>
                             </div>
                         </div>
@@ -1250,11 +1290,13 @@
                                 <template x-for="pub, index in $store.data.input.slice(1)">
                                     <div class="tab" :class="{ 'active': !excludedPublications.has(index + 1) }"
                                         @click="if (excludedPublications.has(index + 1)) { excludedPublications.delete(index + 1); } else { excludedPublications.add(index + 1); }">
-                                        <p style="margin: 0;"><input type="checkbox" style="margin-right: 16px;" :checked="!excludedPublications.has(index + 1)" readonly /><span x-show="pub.P_TopPaper_Select">⭐️ </span><span
+                                        <p style="margin: 0;"><input type="checkbox" style="margin-right: 16px;"
+                                                :checked="!excludedPublications.has(index + 1)" readonly /><span
+                                                x-show="pub.P_TopPaper_Select">⭐️ </span><span
                                                 x-text="pub.Title"></span></p>
                                     </div>
                                 </template>
-                             </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1284,7 +1326,7 @@
 
     <!-- object-hash https://cdn.jsdelivr.net/npm/object-hash@3.0.0/dist/object_hash.min.js -->
     <script src="./js/object_hash.min.js"></script>
-    
+
     <script>
         const driver = window.driver.js.driver;
 
@@ -1657,17 +1699,17 @@
 
             let json = JSON.stringify(data, null, 2);
             let blob = new Blob([json], { type: "text/json;charset=utf-8" });
-            
+
             // get an ISO string and sanitize it for use in filenames
             const now = new Date();
             const isoNoMs = now.toISOString().split('.')[0];
-            const safeIso = isoNoMs.replace(/:/g, '-'); 
+            const safeIso = isoNoMs.replace(/:/g, '-');
 
             const namePart = data[0].LastName
                 ? data[0].LastName.toLowerCase() + '_'
                 : '';
 
-            const filename = `resque_${namePart}${safeIso}.json`; 
+            const filename = `resque_${namePart}${safeIso}.json`;
 
             let a = document.getElementById("download");
             a.innerText = filename;
@@ -1749,7 +1791,7 @@
                     if (m[key].elements) {
                         Alpine.store('indentations')[key] = window.getDepths(m[key].elements);
                     }
-                    Alpine.store('forms')[key] = m[key];          
+                    Alpine.store('forms')[key] = m[key];
                 }
 
                 Alpine.store('data').manualInit();
