@@ -354,7 +354,7 @@
                     type,
                     version: Alpine.store('forms')[type].versions[prefixes[type]],
                     date_added: Date.now(),
-                    ...window.getDefaultValues(Alpine.store('forms')[type].elements)
+                    ...Alpine.store('forms')[type].defaultValues
                 };
 
                 if (type === 'meta') {
@@ -1430,15 +1430,15 @@
 
             ps.forEach(pack => date[pack.prefix] = pack.date);
 
-            let scoringInfos = {}
+            let defaultValues = {}
 
-            ps.forEach(pack => scoringInfos = { ...scoringInfos, ...pack.scoring })
+            ps.forEach(pack => Object.assign(defaultValues, getDefaultValues(pack.elements)));
 
             return {
                 title: ps[0].title,
                 versions,
                 date,
-                scoring: scoringInfos,
+                defaultValues,
                 pool,
                 config
             };
@@ -1453,7 +1453,7 @@
                 title: combinedPack.title,
                 versions: combinedPack.versions,
                 date: combinedPack.date,
-                scoring: combinedPack.scoring,
+                defaultValues: combinedPack.defaultValues,
                 config: combinedPack.config,
                 elements: combinedPack.pool.filter(item => item.id.startsWith(prefix))
             };
@@ -1464,7 +1464,7 @@
                 title: combinedPack.title,
                 versions: combinedPack.versions,
                 date: combinedPack.date,
-                scoring: combinedPack.scoring,
+                defaultValues: combinedPack.defaultValues,
                 config: combinedPack.config,
                 elements: combinedPack.pool.filter(item => condition(item))
             };
