@@ -66,3 +66,15 @@ pubs:
 ## `<template>` in index.html
 
 Under `<template>`, only **one** root element is allowed. If you want to return multiple elements, you can wrap them in a `<div>` or `<span>`.
+
+## Preview options
+
+The preview.html shows the packs in one long list. It has the following URL parameters as options:
+
+- `type=pubs` (or `software`, `meta`, `data`)
+- `showPoints=true/false` (default: `false`)
+- `version`: Retrieve an old version from the `archive` subdir
+- `path`: Navigate to a subdirectory of the `packs` dir (e.g. `EP`)
+- `showLabels`: `true/false` (default: `false`): Show the IDs of the indicators?
+- `showPoints`: `true/false` (default: `false`): Show the points of the indicators?
+
