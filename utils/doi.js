@@ -6,7 +6,9 @@ export const fetchInformationUsingDOI = async (doi) => {
     })
         .then(response => response.json())
         .then(response => {
-            const authors = response.author;
+            const authors = response.author ?? response.editor ?? [];
+
+            console.log(authors)
 
             let authorString;
 
@@ -25,7 +27,7 @@ export const fetchInformationUsingDOI = async (doi) => {
                     break;
             }
 
-            const year = response.published?.["date-parts"][0][0] || response.issued?.["date-parts"][0][0] || null;
+            const year = response.published?.["date-parts"][0][0] ?? response.issued?.["date-parts"][0][0] ?? null;
 
             return {
                 title: `${authorString} (${year}): ${response.title}`,
