@@ -1623,7 +1623,9 @@
             let loadedData = JSON.parse(await files[0].text());
 
             // Apply the aliases to all research outputs
-            loadedData = loadedData.map(window.renameOldKeys);
+            loadedData = loadedData
+                .map(window.renameOldKeys)
+                .map(r => ({ ...window.getDefaultValues(r.type), ...r }));
 
             if (loadedData.every(r => Alpine.store('forms')[r.type].versions[prefixes[r.type]] === r.version)) {
                 Alpine.store('data').input = loadedData;
