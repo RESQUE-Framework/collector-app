@@ -238,7 +238,7 @@ label {
     display: none;
 }
 
-#formview table tr td input[type=radio]:hover + .tabular-option-info {
+#formview table tr td input[type=radio]:hover+.tabular-option-info {
     display: block;
 }
 
@@ -272,7 +272,7 @@ label {
     margin-left: 10px;
 }
 
-.indent + .indicator-subcontainer {
+.indent+.indicator-subcontainer {
     margin-left: 10px;
 }
 
@@ -293,7 +293,8 @@ label {
     background-color: var(--dark-color);
 }
 
-.comment-box p, .comment-box input {
+.comment-box p,
+.comment-box input {
     margin: 0;
 }
 
@@ -339,7 +340,7 @@ form {
 .top {
     display: flex;
     justify-content: column;
-    flex-direction: column; 
+    flex-direction: column;
     align-items: center;
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 16px;
@@ -813,18 +814,18 @@ table {
     align-items: center;
     margin-bottom: 5px;
     margin-right: 18px;
-  }
-  
-  .legend-color {
+}
+
+.legend-color {
     width: 8px;
     height: 8px;
     display: inline-block;
     margin-right: 5px;
-  }
-  
-  .legend-label {
+}
+
+.legend-label {
     font-size: 12px;
-  }
+}
 
 .list-item:last-child {
     margin-bottom: 0;
@@ -834,17 +835,40 @@ table {
 
 .markdown-content th,
 .markdown-content td {
-  border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
 }
 
 .markdown-content th {
-  border-bottom: 2px solid #bbb;
+    border-bottom: 2px solid #bbb;
+}
+
+.only-print {
+    display: none !important;
 }
 
 @media print {
+
+    body {
+        print-color-adjust: exact !important;
+        -webkit-print-color-adjust: exact !important;
+    }
+
+    #currentScoreChart {
+        print-color-adjust: exact !important;
+        -webkit-print-color-adjust: exact !important;
+    }
+
     .no-print,
     .no-print * {
         display: none !important;
+    }
+
+    .only-print {
+        display: block !important;
+    }
+
+    #print-current-score {
+        display: flex !important;
     }
 
     #formview {

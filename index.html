@@ -481,6 +481,7 @@
 
             if (currentScore && currentScore.categories) {
                 window.renderScoreChart('currentScoreChart', currentScore.categories, Alpine.store('config').config?.score_categories?.map(c => c.color) ?? [], animation = false);
+                window.renderScoreChart('printCurrentScoreChart', currentScore.categories, Alpine.store('config').config?.score_categories?.map(c => c.color) ?? [], animation = false);
             }
         });
 
@@ -665,7 +666,58 @@
                     <div id="formview">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <h3 x-html="$store.forms[$store.data.currentInput.type].title"></h3>
-                            <span class="fakelink no-print" @click="print()">Print</span>
+                            <span class="fakelink no-print" @click="print()">Print this publication</span>
+                        </div>
+
+                        <div id="print-score-box" x-show="$store.data.currentInput.type !== 'meta'">
+                            <div id="print-current-score" class="only-print"
+                                style="display: flex; justify-content: center; align-items: center; column-gap: 16px;">
+                                <div x-show="$store.data.score.scores[$store.data.currentTab].max <= 0">
+                                    <span id="no-score">Applicant requests<br>manual processing</span>
+                                </div>
+
+                                <div style="width: 150px; height: 150px;"
+                                    x-show="$store.data.score.scores[$store.data.currentTab].max > 0">
+                                    <canvas id="printCurrentScoreChart" width="150" height="150"
+                                        style="margin-top: 10px;"></canvas>
+                                </div>
+
+                                <div class="legend-container"></div>
+                            </div>
+
+                            <div class="only-print">
+                                <div x-show="$store.data.score.scores[$store.data.currentTab].max > 0"
+                                    id="current-score-container">
+                                    <p id="score-percentage"><span
+                                            x-text="$store.data.score.scores[$store.data.currentTab].percentage"></span>%
+                                    </p>
+                                    <p id="score-dot">•</p>
+                                    <p id="score-minmax"><span
+                                            x-text="$store.data.score.scores[$store.data.currentTab].score?.toFixed(2)"></span>/<span
+                                            x-text="$store.data.score.scores[$store.data.currentTab].max?.toFixed(2)"></span>
+                                    </p>
+                                </div>
+                                <hr>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Category</th>
+                                            <th>Score</th>
+                                            <th>Max</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template
+                                            x-for="category in $store.data.score.scores[$store.data.currentTab].categories"
+                                            :key="category.title">
+                                            <tr>
+                                                <td x-text="category.title"></td>
+                                                <td x-text="category.score.toFixed(2)"></td>
+                                                <td x-text="category.max.toFixed(2)"></td>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
 
                         <template x-if="$store.data.currentTab >= 0">
@@ -906,7 +958,7 @@
                             </div>
                         </div>
 
-                        <div id="legend-container"></div>
+                        <div class="legend-container"></div>
 
                         <p id="ro-count-container"><span class="tag"><span
                                     x-text="$store.data.score.scores.filter(s => s.max && s.max > 0).length"></span>
