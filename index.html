@@ -471,6 +471,11 @@
 
             Alpine.store('data').input[0].date_modified = Date.now();
 
+            // Also track modification date on individual research outputs
+            if (currentTab > 0) {
+                Alpine.store('data').input[currentTab].date_modified = Date.now();
+            }
+
             showSaving();
 
             localStorage.setItem('data ' + Alpine.store('forms').config.main_title, JSON.stringify(data));
@@ -657,18 +662,24 @@
                     </div>
                 </div>
                 <div id="formview-container">
-                    <div id="saving" class="animate pop" style="display: none;"></div>
-                    <div class="progressbar-frame">
+                    <div id="saving" class="animate pop no-print" style="display: none;"></div>
+                    <div class="progressbar-frame no-print">
                         <div class="progressbar-content"
                             :style="`width: ${$store.data.completion[$store.data.currentTab].progress.percent}%;`">
                         </div>
                     </div>
                     <div id="formview">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;" class="no-print">
                             <h3 x-html="$store.forms[$store.data.currentInput.type].title"></h3>
                             <span class="fakelink no-print" @click="print()">Print this publication</span>
                         </div>
 
+                        <!-- Only for printing the RESQUE score of a single publication: Make a nice heading  -->
+                        <div style="display: flex; justify-content: space-between; align-items: center;" class="only-print">
+                            <h2>RESQUE profile for: <span x-html="$store.data.currentInput.Title"></span></h2>
+                        </div>
+
+                        <!-- Here the radar chart of the current publication is duplicated in a hidden way; it will be used for printing; see CSS @media print -->
                         <div id="print-score-box" x-show="$store.data.currentInput.type !== 'meta'">
                             <div id="print-current-score" class="only-print"
                                 style="display: flex; justify-content: center; align-items: center; column-gap: 16px;">
@@ -685,7 +696,7 @@
                                 <div class="legend-container"></div>
                             </div>
 
-                            <div class="only-print">
+                            <div class="only-print" style="margin-top: 16px;">
                                 <div x-show="$store.data.score.scores[$store.data.currentTab].max > 0"
                                     id="current-score-container">
                                     <p id="score-percentage"><span

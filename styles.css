@@ -842,8 +842,21 @@ table {
     border-bottom: 2px solid #bbb;
 }
 
+
+/* -------------------------------------------------------------------- */
+/* Styles for printing */
+
 .only-print {
     display: none !important;
+}
+
+/* Canvas elements need real layout dimensions to render their bitmap,
+   so outside the printing context, we hide with clip instead of display:none */
+#print-current-score.only-print {
+    display: flex !important;
+    position: fixed;
+    left: -9999px;
+    pointer-events: none;
 }
 
 @media print {
@@ -867,8 +880,16 @@ table {
         display: block !important;
     }
 
-    #print-current-score {
-        display: flex !important;
+    .only-print canvas {
+        display: block !important;
+        print-color-adjust: exact !important;
+        -webkit-print-color-adjust: exact !important;
+    }
+
+    #print-current-score.only-print {
+        position: static;
+        left: auto;
+        pointer-events: auto;
     }
 
     #formview {

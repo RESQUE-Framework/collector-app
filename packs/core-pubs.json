@@ -7,7 +7,7 @@
         {
             "id": "P_Info",
             "type": "info",
-            "text": "Date added: $date_added@datetime",
+            "text": "Date added: $date_added@datetime; last change: $date_modified@datetime",
             "no_comment": true
         },
         {

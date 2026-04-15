@@ -78,3 +78,16 @@ The preview.html shows the packs in one long list. It has the following URL para
 - `showLabels`: `true/false` (default: `false`): Show the IDs of the indicators?
 - `showPoints`: `true/false` (default: `false`): Show the points of the indicators?
 
+
+## How printing works
+
+On the top right of the middle pane, there is a "Print this publication" button.
+This prints a profile of the current publication.
+
+In styles.css (see section `@media print`) it defined what/how things are printed:
+
+- `class = "no-print"`: Elements with this class will not be printed.
+- `class = "only-print"`: Elements with this class will only be printed, but not displayed on the website
+- Anything else is both displayed on the website *and* printed.
+
+*Developer note*: The <canvas> works differently, as its content is a bitmap drawn by JavaScript. Therefore it needs a specific way of handling the (non)printing, see `#print-current-score.only-print` and 
