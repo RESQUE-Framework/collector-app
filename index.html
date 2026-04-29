@@ -1709,10 +1709,13 @@
 
             const allIds = elements.map(e => e.id);
 
+            // These are all indicators which have a default value. These must be exported, regardless if they are visible
             const defaults = Alpine.store('forms')[result.type].defaultValues;
 
+            // These are invisible/unreachable indicators which have a default value            
             const unreachableDefaultIds = Object.keys(defaults).filter(id => !allIds.includes(id));
 
+            // These are all visible indicators
             const filteredElements = elements
                 .filter(e => evaluateConditionInContext(e.condition, result));
 
@@ -1726,6 +1729,7 @@
                 .map(e => e.rows.map(r => e.id + '_' + r.id))
                 .flat();
 
+            // This is the final list of indicators/variables that get exported.
             const filteredIds = [
                 ...unreachableDefaultIds,
                 ...filteredElements.map(e => e.id),

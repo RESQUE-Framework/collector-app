@@ -91,3 +91,10 @@ In styles.css (see section `@media print`) it defined what/how things are printe
 - Anything else is both displayed on the website *and* printed.
 
 *Developer note*: The <canvas> works differently, as its content is a bitmap drawn by JavaScript. Therefore it needs a specific way of handling the (non)printing, see `#print-current-score.only-print` and 
+
+
+## Export
+
+Not all indicators get exported in the json file: e.g., anything that is invisible (because the condition evaluated to false) should not get exported, unless it has a default value.
+The `filterExport` function defines what should be included.
+
