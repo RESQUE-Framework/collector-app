@@ -669,13 +669,15 @@
                         </div>
                     </div>
                     <div id="formview">
-                        <div style="display: flex; justify-content: space-between; align-items: center;" class="no-print">
+                        <div style="display: flex; justify-content: space-between; align-items: center;"
+                            class="no-print">
                             <h3 x-html="$store.forms[$store.data.currentInput.type].title"></h3>
                             <span class="fakelink no-print" @click="print()">Print this publication</span>
                         </div>
 
                         <!-- Only for printing the RESQUE score of a single publication: Make a nice heading  -->
-                        <div style="display: flex; justify-content: space-between; align-items: center;" class="only-print">
+                        <div style="display: flex; justify-content: space-between; align-items: center;"
+                            class="only-print">
                             <h2>RESQUE profile for: <span x-html="$store.data.currentInput.Title"></span></h2>
                         </div>
 
@@ -1688,7 +1690,7 @@
             // Apply the aliases to all research outputs
             loadedData = loadedData
                 .map(window.renameOldKeys)
-                .map(r => ({ ...window.getDefaultValues(r.type), ...r }));
+                .map(r => ({ ...window.getDefaultValues(Alpine.store('data').input[0].forms[r.type].elements), ...r }));
 
             if (loadedData.every(r => Alpine.store('forms')[r.type].versions[prefixes[r.type]] === r.version)) {
                 Alpine.store('data').input = loadedData;
