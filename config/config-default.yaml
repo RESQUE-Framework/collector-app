@@ -32,7 +32,7 @@ image_url: https://upload.wikimedia.org/wikipedia/commons/0/06/LMU_Muenchen_Logo
 # Committee settings
 
 # Should these committee limits even be used? (Relevant for data export)
-committee_limits: true
+committee_limits: false
 
 # Minimum number of papers that are expected by the committee
 min: 5

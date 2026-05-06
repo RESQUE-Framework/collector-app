@@ -32,8 +32,8 @@
             "default": "0",
             "validation": {
                 "pattern": "\\d\\.?\\d*$",
-                "condition": "0.1 <= $AcademicAgeBonus && $AcademicAgeBonus <= 10",
-                "message": "Please enter a valid number of years between 0.1 and 10."
+                "condition": "0 <= $AcademicAgeBonus && $AcademicAgeBonus <= 10",
+                "message": "Please enter a valid number of years between 0 and 10."
             }
         },
         {
