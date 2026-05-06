@@ -904,7 +904,7 @@
                                             </div>
 
                                             <div class="warning-text"
-                                                x-show="elem.validation && (!RegExp(elem.validation.pattern).test($store.data.currentInput[elem.id]) || !evaluateCondition(elem.validation.condition))">
+                                                x-show="$store.data.currentInput[elem.id] && elem.validation && (!RegExp(elem.validation.pattern).test($store.data.currentInput[elem.id]) || !evaluateCondition(elem.validation.condition))">
                                                 <span x-text="elem.validation?.message"></span>
                                             </div>
 
