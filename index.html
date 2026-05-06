@@ -432,7 +432,7 @@
 
             const newTopPapers = data.filter(r => r.type === 'pub' && r.P_TopPaper_Select === true);
 
-            if (newTopPapers.length > Alpine.store('config').config.max_top_papers) {
+            if (Alpine.store('config').config.committee_limits && newTopPapers.length > Alpine.store('config').config.max_top_papers) {
                 // set difference
                 const diff = newTopPapers.filter(paper => !Alpine.store('data').topPapers.includes(paper));
 
@@ -646,17 +646,19 @@
                             <input id="add-doi" type="text" placeholder="DOI (optional)" />
                         </div>
 
-                        <div class="add-buttons" x-show="($store.data.input.length - 1) < $store.config.config.max">
+                        <div class="add-buttons"
+                            x-show="($store.data.input.length - 1) < $store.config.config.max || !$store.config.config.committee_limits">
                             <button class="add-pub" @click="$store.data.newResearchOutput('pub')">Add
                                 Publication</button>
                             <br />
-                            <!-- REMOVED TEMPORARILY
+
                             <button class="add-software" @click="$store.data.newResearchOutput('software')">Add
                                 Software</button>
                             <br />
-                            <button class="add-data" @click="$store.data.newResearchOutput('data')">Add Data Set</button>
+                            <button class="add-data" @click="$store.data.newResearchOutput('data')">Add Data
+                                Set</button>
                             <hr />
-                            -->
+
                             <button class="add-orcid" @click="showORCIDModal()">Import using ORCID</button>
                         </div>
                     </div>
