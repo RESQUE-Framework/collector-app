@@ -1295,29 +1295,32 @@
             </div>
 
             <div id="export-modal" class="modal">
-                <div x-data="{ excludedPublications: new Set(), tab: 'select' }" class="modal-content">
+                <div x-data="{ excludedPublications: new Set(), tab: $store.config.config.committee_limits ? 'select' : 'all' }"
+                    class="modal-content">
 
                     <div>
                         <div
                             style="position: sticky; top: 0; background-color: white; padding: 2px 0; margin-bottom: 1rem; text-align: center;">
                             <h3>Save to file...<span style="font-size: 70%; font-weight: normal;"></h3>
                             <div class="tabs">
-                                <span @click="tab = 'select'" :class="{ selected: tab === 'select' }">Export selection
-                                    for committee</span> • <span @click="tab = 'all'"
-                                    :class="{ selected: tab === 'all' }">Export all data for personal archive</span>
+                                <span x-show="$store.config.config.committee_limits" @click="tab = 'select'"
+                                    :class="{ selected: tab === 'select' }">Export selection
+                                    for committee</span> <span x-show="$store.config.config.committee_limits">•</span>
+                                <span @click="tab = 'all'" :class="{ selected: tab === 'all' }">Export all data for
+                                    personal archive</span>
                             </div>
 
 
                             <button x-show="tab === 'all'" @click="exp(); closeExportModal();">Export all data (for
                                 personal archive)</button>
 
-                            <button x-show="tab === 'select'"
+                            <button x-show="$store.config.config.committee_limits && tab === 'select'"
                                 :disabled="excludedPublications.size >= $store.data.input.length - 1 || $store.data.input.length - 1 - excludedPublications.size > $store.config.config.max || $store.data.input.length - 1 - excludedPublications.size < $store.config.config.min || $store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length < $store.config.config.max_top_papers"
                                 @click="exp(excludedPublications); excludedPublications = new Set(); closeExportModal();">Export
                                 <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> selected
                                 outputs for hiring committee</button>
 
-                            <div x-show="tab === 'select'">
+                            <div x-show="$store.config.config.committee_limits && tab === 'select'">
                                 <div class="warning-text"
                                     x-show="$store.data.input.length - 1 - excludedPublications.size > $store.config.config.max">
                                     <span>The committee requests a maximum of <span
