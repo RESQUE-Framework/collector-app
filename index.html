@@ -825,7 +825,6 @@
                                                 <template x-if="elem.type === 'dropdown'">
                                                     <select x-model="$store.data.currentInput[elem.id]">
                                                         <template x-for="option in elem.options" :key="option.id">
-                                                            <p x-text="option.text"></p>
                                                             <option x-html="option.text" :value="option.id"></option>
                                                         </template>
                                                     </select>
