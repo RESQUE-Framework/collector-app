@@ -60,10 +60,10 @@ export function renderScoreChart(canvasId, categories, colors, animation = true)
   const chart = new Chart(ctx, config);
 
   // Generate custom legend
-  const legendContainer = document.getElementById('legend-container');
-  if (legendContainer) {
+  const legendContainers = document.querySelectorAll('.legend-container');
+  legendContainers.forEach(legendContainer => {
     legendContainer.innerHTML = generateCustomLegend(categoriesPre, colors);
-  }
+  });
 
   return chart;
 }

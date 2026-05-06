@@ -103,7 +103,7 @@ score_categories:
     cue: "OpenMaterials"
     color: '#fdc086'
 
-  - title: "Preregistration"
+  - title: "Preregistration & Replication"
     cue: "Prereg"
     color: '#d95f02'
 

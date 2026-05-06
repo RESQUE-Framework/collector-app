@@ -432,7 +432,7 @@
 
             const newTopPapers = data.filter(r => r.type === 'pub' && r.P_TopPaper_Select === true);
 
-            if (newTopPapers.length > Alpine.store('config').config.max_top_papers) {
+            if (Alpine.store('config').config.committee_limits && newTopPapers.length > Alpine.store('config').config.max_top_papers) {
                 // set difference
                 const diff = newTopPapers.filter(paper => !Alpine.store('data').topPapers.includes(paper));
 
@@ -471,6 +471,11 @@
 
             Alpine.store('data').input[0].date_modified = Date.now();
 
+            // Also track modification date on individual research outputs
+            if (currentTab > 0) {
+                Alpine.store('data').input[currentTab].date_modified = Date.now();
+            }
+
             showSaving();
 
             localStorage.setItem('data ' + Alpine.store('forms').config.main_title, JSON.stringify(data));
@@ -481,6 +486,7 @@
 
             if (currentScore && currentScore.categories) {
                 window.renderScoreChart('currentScoreChart', currentScore.categories, Alpine.store('config').config?.score_categories?.map(c => c.color) ?? [], animation = false);
+                window.renderScoreChart('printCurrentScoreChart', currentScore.categories, Alpine.store('config').config?.score_categories?.map(c => c.color) ?? [], animation = false);
             }
         });
 
@@ -640,32 +646,93 @@
                             <input id="add-doi" type="text" placeholder="DOI (optional)" />
                         </div>
 
-                        <div class="add-buttons" x-show="($store.data.input.length - 1) < $store.config.config.max">
+                        <div class="add-buttons"
+                            x-show="($store.data.input.length - 1) < $store.config.config.max || !$store.config.config.committee_limits">
                             <button class="add-pub" @click="$store.data.newResearchOutput('pub')">Add
                                 Publication</button>
                             <br />
-                            <!-- REMOVED TEMPORARILY
+
                             <button class="add-software" @click="$store.data.newResearchOutput('software')">Add
                                 Software</button>
                             <br />
-                            <button class="add-data" @click="$store.data.newResearchOutput('data')">Add Data Set</button>
+                            <button class="add-data" @click="$store.data.newResearchOutput('data')">Add Data
+                                Set</button>
                             <hr />
-                            -->
+
                             <button class="add-orcid" @click="showORCIDModal()">Import using ORCID</button>
                         </div>
                     </div>
                 </div>
                 <div id="formview-container">
-                    <div id="saving" class="animate pop" style="display: none;"></div>
-                    <div class="progressbar-frame">
+                    <div id="saving" class="animate pop no-print" style="display: none;"></div>
+                    <div class="progressbar-frame no-print">
                         <div class="progressbar-content"
                             :style="`width: ${$store.data.completion[$store.data.currentTab].progress.percent}%;`">
                         </div>
                     </div>
                     <div id="formview">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;"
+                            class="no-print">
                             <h3 x-html="$store.forms[$store.data.currentInput.type].title"></h3>
-                            <span class="fakelink no-print" @click="print()">Print</span>
+                            <span class="fakelink no-print" @click="print()">Print this publication</span>
+                        </div>
+
+                        <!-- Only for printing the RESQUE score of a single publication: Make a nice heading  -->
+                        <div style="display: flex; justify-content: space-between; align-items: center;"
+                            class="only-print">
+                            <h2>RESQUE profile for: <span x-html="$store.data.currentInput.Title"></span></h2>
+                        </div>
+
+                        <!-- Here the radar chart of the current publication is duplicated in a hidden way; it will be used for printing; see CSS @media print -->
+                        <div id="print-score-box" x-show="$store.data.currentInput.type !== 'meta'">
+                            <div id="print-current-score" class="only-print"
+                                style="display: flex; justify-content: center; align-items: center; column-gap: 16px;">
+                                <div x-show="$store.data.score.scores[$store.data.currentTab].max <= 0">
+                                    <span id="no-score">Applicant requests<br>manual processing</span>
+                                </div>
+
+                                <div style="width: 150px; height: 150px;"
+                                    x-show="$store.data.score.scores[$store.data.currentTab].max > 0">
+                                    <canvas id="printCurrentScoreChart" width="150" height="150"
+                                        style="margin-top: 10px;"></canvas>
+                                </div>
+
+                                <div class="legend-container"></div>
+                            </div>
+
+                            <div class="only-print" style="margin-top: 16px;">
+                                <div x-show="$store.data.score.scores[$store.data.currentTab].max > 0"
+                                    id="current-score-container">
+                                    <p id="score-percentage"><span
+                                            x-text="$store.data.score.scores[$store.data.currentTab].percentage"></span>%
+                                    </p>
+                                    <p id="score-dot">•</p>
+                                    <p id="score-minmax"><span
+                                            x-text="$store.data.score.scores[$store.data.currentTab].score?.toFixed(2)"></span>/<span
+                                            x-text="$store.data.score.scores[$store.data.currentTab].max?.toFixed(2)"></span>
+                                    </p>
+                                </div>
+                                <hr>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Category</th>
+                                            <th>Score</th>
+                                            <th>Max</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template
+                                            x-for="category in $store.data.score.scores[$store.data.currentTab].categories"
+                                            :key="category.title">
+                                            <tr>
+                                                <td x-text="category.title"></td>
+                                                <td x-text="category.score.toFixed(2)"></td>
+                                                <td x-text="category.max.toFixed(2)"></td>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
 
                         <template x-if="$store.data.currentTab >= 0">
@@ -760,7 +827,6 @@
                                                 <template x-if="elem.type === 'dropdown'">
                                                     <select x-model="$store.data.currentInput[elem.id]">
                                                         <template x-for="option in elem.options" :key="option.id">
-                                                            <p x-text="option.text"></p>
                                                             <option x-html="option.text" :value="option.id"></option>
                                                         </template>
                                                     </select>
@@ -839,7 +905,7 @@
                                             </div>
 
                                             <div class="warning-text"
-                                                x-show="elem.validation && (!RegExp(elem.validation.pattern).test($store.data.currentInput[elem.id]) || !evaluateCondition(elem.validation.condition))">
+                                                x-show="$store.data.currentInput[elem.id] && elem.validation && (!RegExp(elem.validation.pattern).test($store.data.currentInput[elem.id]) || !evaluateCondition(elem.validation.condition))">
                                                 <span x-text="elem.validation?.message"></span>
                                             </div>
 
@@ -906,7 +972,7 @@
                             </div>
                         </div>
 
-                        <div id="legend-container"></div>
+                        <div class="legend-container"></div>
 
                         <p id="ro-count-container"><span class="tag"><span
                                     x-text="$store.data.score.scores.filter(s => s.max && s.max > 0).length"></span>
@@ -1231,29 +1297,32 @@
             </div>
 
             <div id="export-modal" class="modal">
-                <div x-data="{ excludedPublications: new Set(), tab: 'select' }" class="modal-content">
+                <div x-data="{ excludedPublications: new Set(), tab: $store.config.config.committee_limits ? 'select' : 'all' }"
+                    class="modal-content">
 
                     <div>
                         <div
                             style="position: sticky; top: 0; background-color: white; padding: 2px 0; margin-bottom: 1rem; text-align: center;">
                             <h3>Save to file...<span style="font-size: 70%; font-weight: normal;"></h3>
                             <div class="tabs">
-                                <span @click="tab = 'select'" :class="{ selected: tab === 'select' }">Export selection
-                                    for committee</span> • <span @click="tab = 'all'"
-                                    :class="{ selected: tab === 'all' }">Export all data for personal archive</span>
+                                <span x-show="$store.config.config.committee_limits" @click="tab = 'select'"
+                                    :class="{ selected: tab === 'select' }">Export selection
+                                    for committee</span> <span x-show="$store.config.config.committee_limits">•</span>
+                                <span @click="tab = 'all'" :class="{ selected: tab === 'all' }">Export all data for
+                                    personal archive</span>
                             </div>
 
 
                             <button x-show="tab === 'all'" @click="exp(); closeExportModal();">Export all data (for
                                 personal archive)</button>
 
-                            <button x-show="tab === 'select'"
+                            <button x-show="$store.config.config.committee_limits && tab === 'select'"
                                 :disabled="excludedPublications.size >= $store.data.input.length - 1 || $store.data.input.length - 1 - excludedPublications.size > $store.config.config.max || $store.data.input.length - 1 - excludedPublications.size < $store.config.config.min || $store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length < $store.config.config.max_top_papers"
                                 @click="exp(excludedPublications); excludedPublications = new Set(); closeExportModal();">Export
                                 <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> selected
                                 outputs for hiring committee</button>
 
-                            <div x-show="tab === 'select'">
+                            <div x-show="$store.config.config.committee_limits && tab === 'select'">
                                 <div class="warning-text"
                                     x-show="$store.data.input.length - 1 - excludedPublications.size > $store.config.config.max">
                                     <span>The committee requests a maximum of <span
@@ -1623,7 +1692,9 @@
             let loadedData = JSON.parse(await files[0].text());
 
             // Apply the aliases to all research outputs
-            loadedData = loadedData.map(window.renameOldKeys);
+            loadedData = loadedData
+                .map(window.renameOldKeys)
+                .map(r => ({ ...window.getDefaultValues(Alpine.store('data').input[0].forms[r.type].elements), ...r }));
 
             if (loadedData.every(r => Alpine.store('forms')[r.type].versions[prefixes[r.type]] === r.version)) {
                 Alpine.store('data').input = loadedData;
@@ -1642,10 +1713,13 @@
 
             const allIds = elements.map(e => e.id);
 
+            // These are all indicators which have a default value. These must be exported, regardless if they are visible
             const defaults = Alpine.store('forms')[result.type].defaultValues;
 
+            // These are invisible/unreachable indicators which have a default value            
             const unreachableDefaultIds = Object.keys(defaults).filter(id => !allIds.includes(id));
 
+            // These are all visible indicators
             const filteredElements = elements
                 .filter(e => evaluateConditionInContext(e.condition, result));
 
@@ -1659,6 +1733,7 @@
                 .map(e => e.rows.map(r => e.id + '_' + r.id))
                 .flat();
 
+            // This is the final list of indicators/variables that get exported.
             const filteredIds = [
                 ...unreachableDefaultIds,
                 ...filteredElements.map(e => e.id),

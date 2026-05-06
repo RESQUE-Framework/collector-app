@@ -1,126 +1,8 @@
 {
     "prefix": "S",
-    "version": "0.1",
-    "date": "2024-02-05",
+    "version": "0.2",
+    "date": "2026-05-06",
     "title": "Software Project",
-    "scoring": {
-        "post": [
-            {
-                "factor": 0.5,
-                "condition": "$S_License =|= ['ClosedSource', 'NoLicense'] || !($S_URL)" 
-            }
-        ],
-        "S_Tests_Quality": {
-            "max": 1,
-            "op": "sum",
-            "points": [
-                {
-                    "value": 0.20,
-                    "condition": "$S_Tests_Quality_OpenSource && $S_Tests_URL"
-                },
-                {
-                    "value": 0.20,
-                    "condition": "$S_Tests_Quality_Automated"
-                },
-                {
-                    "value": 0.20,
-                    "condition": "$S_Tests_Quality_DifferentTestClasses"
-                },
-                {
-                    "value": 0.20,
-                    "condition": "$S_Tests_Quality_ResultsPublic"
-                },
-                {
-                    "value": 0.20,
-                    "condition": "$S_Tests_Quality_AllTested"
-                }
-            ]
-        },
-        "S_CodebaseActivelyMaintained": {
-            "max": 1,
-            "op": "select",
-            "points": [
-                {
-                    "value": 1,
-                    "condition": "$S_CodebaseActivelyMaintained === 'Yes'"
-                }
-            ]
-        },
-        "S_CommunityActivelyMaintained": {
-            "max": 2,
-            "op": "select",
-            "points": [
-                {
-                    "value": 1,
-                    "condition": "$S_CommunityActivelyMaintained === 'LowVolume'"
-                },
-                {
-                    "value": 1.5,
-                    "condition": "$S_CommunityActivelyMaintained === 'MediumVolume'"
-                },
-                {
-                    "value": 2,
-                    "condition": "$S_CommunityActivelyMaintained === 'HighVolume'"
-                }
-            ]
-        },
-        "S_Documentation": {
-            "op": "sum",
-            "max": 1,
-            "points": [
-                {
-                    "value": 0.5,
-                    "condition": "$S_Documentation_Questions"
-                },
-                {
-                    "value": 0.5,
-                    "condition": "$S_Documentation_Installation"
-                }
-            ]
-        },
-        "S_Documentation_UserFacing": {
-            "op": "select",
-            "max": 2,
-            "points": [
-                {
-                    "value": 1,
-                    "condition": "$S_Documentation_UserFacingDocumentation && $S_Documentation_UserFacing === 'MainFunctions'"
-                },
-                {
-                    "value": 2,
-                    "condition": "$S_Documentation_UserFacingDocumentation && $S_Documentation_UserFacing === 'AllFunctions'"
-                }
-            ]
-        },
-        "S_Documentation_Longform": {
-            "op": "select",
-            "max": 2,
-            "points": [
-                {
-                    "value": 1,
-                    "condition": "$S_Documentation_LongformDocumentation && $S_Documentation_Longform === 'ShortTutorial'"
-                },
-                {
-                    "value": 2,
-                    "condition": "$S_Documentation_LongformDocumentation && $S_Documentation_Longform === 'LongOrMultipleTutorials'"
-                }
-            ]
-        },
-        "S_Documentation_Developer": {
-            "op": "select",
-            "max": 2,
-            "points": [
-                {
-                    "value": 1,
-                    "condition": "$S_Documentation_DeveloperDocumentation && $S_Documentation_Developer === 'Commentary'"
-                },
-                {
-                    "value": 2,
-                    "condition": "$S_Documentation_DeveloperDocumentation && $S_Documentation_Developer === 'Examples'"
-                }
-            ]
-        }
-    },
     "elements": [
         {
             "id": "S_Title",
@@ -142,6 +24,10 @@
             "type": "dropdown",
             "title": "License",
             "eval_dimension": "rigor",
+            "score": {
+                "factor": 0.5,
+                "condition": "$S_License =|= ['ClosedSource', 'NoLicense'] || !($S_URL)"
+            },
             "options": [
                 {
                     "id": "NoLicense",
@@ -185,20 +71,13 @@
                 },
                 {
                     "id": "OtherOpenSource",
-                    "text": "Other open source (listed in OSI; please specify)"
+                    "text": "Other open source"
                 },
                 {
                     "id": "ClosedSource",
                     "text": "Closed source"
                 }
-            ],
-            "info": "Is the software open source? Open-source software makes broader impact more likely and is a prerequisite for full transparency and reproducibility (Peikert, Van Lissa, & Brandmaier, 2021). In addition, many aspects of rigor are impossible to evaluate for closed-source software — for example, whether it is well-tested or bugs have been fixed.<br><br>Approved open licenses are listed at <a href='https://opensource.org/licenses'>opensource.org/licenses</a>. The Creative Commons licenses are not listed there, because they were not designed to operate on software code. Because of their wide application, however, we accept CC0, CC-BY and CC-BY-SA as open licenses as well."
-        },
-        {
-            "id": "S_License_Other",
-            "type": "text",
-            "title": "⤷ Other open source license",
-            "condition": "$S_License === 'OtherOpenSource'"
+            ]
         },
         {
             "id": "S_URL",
@@ -207,84 +86,53 @@
             "condition": "$S_License !== 'ClosedSource'"
         },
         {
-            "id": "S_Roles_Info",
-            "type": "info",
-            "text": "<h3>Contributor roles</h3>",
-            "info": "Please specify your own contribution to the project."
-        },
-        {
-            "id": "S_Roles_Design",
-            "type": "radio",
-            "title": "Design and architecture",
-            "options": [
-                {
-                    "id": "NotInvolved",
-                    "text": "Not involved"
-                },
-                {
-                    "id": "OccasionalContributor",
-                    "text": "An occasional contributor"
-                },
-                {
-                    "id": "RegularContributor",
-                    "text": "A regular contributor"
-                },
-                {
-                    "id": "MainContributor",
-                    "text": "A main contributor"
-                }
-            ]
-        },
-        {
-            "id": "S_Roles_Implementation",
-            "type": "radio",
-            "title": "Implementation and software development",
-            "options": [
-                {
-                    "id": "NotInvolved",
-                    "text": "Not involved"
-                },
-                {
-                    "id": "OccasionalContributor",
-                    "text": "An occasional contributor"
-                },
-                {
-                    "id": "RegularContributor",
-                    "text": "A regular contributor"
-                },
-                {
-                    "id": "MainContributor",
-                    "text": "A main contributor"
-                }
-            ]
-        },
-        {
-            "id": "S_Roles_Maintenance",
-            "type": "radio",
-            "title": "Maintenance and support",
-            "options": [
-                {
-                    "id": "NotInvolved",
-                    "text": "Not involved"
-                },
-                {
-                    "id": "OccasionalContributor",
-                    "text": "An occasional contributor"
-                },
-                {
-                    "id": "RegularContributor",
-                    "text": "A regular contributor"
-                },
-                {
-                    "id": "MainContributor",
-                    "text": "A main contributor"
-                }
-            ]
-        },
-        {
             "id": "S_CodebaseActivelyMaintained",
             "type": "radio",
             "title": "Is the codebase actively maintained?",
+            "options": [
+                {
+                    "id": "Yes",
+                    "text": "Yes",
+                    "value": 1
+                },
+                {
+                    "id": "No",
+                    "text": "No",
+                    "value": 0
+                }
+            ]
+        },
+        {
+            "id": "S_CommunityActivelyMaintained",
+            "type": "radio",
+            "title": "Is a community actively maintained?",
+            "options": [
+                {
+                    "id": "HighVolume",
+                    "text": "Yes, high volume",
+                    "value": 2
+                },
+                {
+                    "id": "MediumVolume",
+                    "text": "Yes, medium volume",
+                    "value": 1.5
+                },
+                {
+                    "id": "LowVolume",
+                    "text": "Yes, low volume",
+                    "value": 1
+                },
+                {
+                    "id": "NoInteraction",
+                    "text": "No",
+                    "value": 0
+                }
+            ]
+        },
+        {
+            "id": "S_Tests",
+            "type": "radio",
+            "title": "Do tests for main functionality exist?",
             "options": [
                 {
                     "id": "Yes",
@@ -294,88 +142,41 @@
                     "id": "No",
                     "text": "No"
                 }
-            ],
-            "info": "Is the codebase actively maintained?<br><br>i.e., reported bugs are quickly fixed (in less than 2 weeks) and it is ensured that it stays functional in an evolving environment. This does not require new features.<br><br><b>Please answer this question for the software, independent of your own contribution.</b>"
-        },
-        {
-            "id": "S_CommunityActivelyMaintained",
-            "type": "radio",
-            "title": "Is a community actively mainteined?",
-            "options": [
-                {
-                    "id": "HighVolume",
-                    "text": "Yes, high volume (some interaction per week)"
-                },
-                {
-                    "id": "MediumVolume",
-                    "text": "Yes, medium volume (some interactions per month)"
-                },
-                {
-                    "id": "LowVolume",
-                    "text": "Yes, low volume (some interaction per year)"
-                },
-                {
-                    "id": "NoInteraction",
-                    "text": "No"
-                }
-            ],
-            "info": "Is a community actively maintained?<br><br>(e.g., users can ask questions and report bugs, and maintainers typically react in less than 2 weeks; e.g., workshops are given)<br><br><b>Please answer this question for the software, independent of your own contribution.</b>"
-        },
-        {
-            "id": "S_Tests",
-            "type": "radio",
-            "title": "Do tests for main functionality exist?",
-            "options": [
-                {
-                    "id": "Yes",
-                    "text": "Yes (please provide URL to code)"
-                },
-                {
-                    "id": "No",
-                    "text": "No"
-                }
-            ],
-            "info": "Do tests for main functionality exist?<br><br>e.g., unit testing, functional testing, integration testing. Having trivial unit tests for few functions does not count)"
-        },
-        {
-            "id": "S_Tests_URL",
-            "type": "text",
-            "title": "⤷ URL to the test code",
-            "condition": "$S_Tests === 'Yes' && $S_Tests_Quality_OpenSource"
+            ]
         },
         {
             "id": "S_Tests_Quality",
             "type": "checkbox",
             "title": "⤷ Quality indicators for tests",
+            "condition": "$S_Tests === 'Yes'",
             "options": [
                 {
                     "id": "OpenSource",
-                    "text": "The code for the tests is open source"
+                    "text": "Code is open source",
+                    "value": 0.2,
+                    "condition": "$S_Tests_URL"
                 },
                 {
                     "id": "Automated",
-                    "text": "The tests are automated (CI/CD)"
+                    "text": "Tests are automated (CI/CD)",
+                    "value": 0.2
                 },
                 {
                     "id": "DifferentTestClasses",
-                    "text": "Different test classes are employed (unit / functional / integration)"
+                    "text": "Unit / functional / integration",
+                    "value": 0.2
                 },
                 {
                     "id": "ResultsPublic",
-                    "text": "Test results are public and reproducible by users (please provide URL)"
+                    "text": "Test results are public",
+                    "value": 0.2
                 },
                 {
                     "id": "AllTested",
-                    "text": "All user-facing functionality is meaningfully tested"
+                    "text": "Meaningfully tested",
+                    "value": 0.2
                 }
-            ],
-            "condition": "$S_Tests === 'Yes'"
-        },        
-        {
-            "id": "S_Tests_Results_URL",
-            "type": "text",
-            "title": "⤷ URL to the test code results",            
-            "condition": "$S_Tests === 'Yes' && $S_Tests_Quality_OpenSource && $S_Tests_Quality_ResultsPublic"
+            ]
         },
         {
             "id": "S_Documentation",
@@ -385,84 +186,87 @@
             "options": [
                 {
                     "id": "Questions",
-                    "text": "It is documented how to ask questions about usage and possible bugs"
+                    "text": "How to ask questions",
+                    "value": 0.5
                 },
                 {
                     "id": "Installation",
-                    "text": "Installation instructions exist"
+                    "text": "Installation instructions",
+                    "value": 0.5
                 },
                 {
                     "id": "UserFacingDocumentation",
-                    "text": "User facing functionality is documented (e.g., <code>?help</code> in R)"
+                    "text": "User facing documentation exists"
                 },
                 {
                     "id": "LongformDocumentation",
-                    "text": "Longform documentations exist (e.g., vignettes, tutorials, annotated workflow examples)"
+                    "text": "Longform documentation exists"
                 },
                 {
                     "id": "DeveloperDocumentation",
-                    "text": "Developer documentation exists (e.g., how to extend the software, extensive inline code commentaries)"
+                    "text": "Developer documentation exists"
                 }
-            ],
-            "info": "Just like for tests, there are different types of documentation. For example, tutorials showcase software usage with examples, and there is application programming interface (API) documentation for individual functions and classes to enable reusing functions in other software packages. We propose to identify relevant categories of documentation for research software, e.g., installation instructions, tutorials, API, and community guidelines (also see <a href='https://joss.readthedocs.io'>joss.readthedocs.io</a>)."
+            ]
         },
         {
             "id": "S_Documentation_UserFacing",
             "type": "radio",
-            "title": "⤷ Documentation of user facing functionality",
-            "eval_dimension": "rigor",
+            "title": "⤷ User facing functionality",
+            "condition": "$S_Documentation_UserFacingDocumentation",
             "options": [
                 {
                     "id": "MainFunctions",
-                    "text": "Main functions are documented"
+                    "text": "Main functions documented",
+                    "value": 1
                 },
                 {
                     "id": "AllFunctions",
-                    "text": "All user-facing functions are documented"
+                    "text": "All functions documented",
+                    "value": 2
                 }
-            ],
-            "condition": "$S_Documentation_UserFacingDocumentation"
+            ]
         },
         {
             "id": "S_Documentation_Longform",
             "type": "radio",
-            "title": "⤷ Longform documentation, Tutorials",
-            "eval_dimension": "rigor",
+            "title": "⤷ Longform documentation",
+            "condition": "$S_Documentation_LongformDocumentation",
             "options": [
                 {
                     "id": "ShortTutorial",
-                    "text": "A simple, short tutorial for getting started"
+                    "text": "Short tutorial",
+                    "value": 1
                 },
                 {
                     "id": "LongOrMultipleTutorials",
-                    "text": "A long tutorial or multiple tutorials which cover >= 80% of all use cases in detail"
+                    "text": "Detailed tutorials (>= 80% use cases)",
+                    "value": 2
                 }
-            ],
-            "condition": "$S_Documentation_LongformDocumentation"
+            ]
         },
         {
             "id": "S_Documentation_Developer",
             "type": "radio",
             "title": "⤷ Developer Documentation",
-            "eval_dimension": "rigor",
+            "condition": "$S_Documentation_DeveloperDocumentation",
             "options": [
                 {
                     "id": "Commentary",
-                    "text": "Some commentary on the internal structure and design"
+                    "text": "Internal structure commentary",
+                    "value": 1
                 },
                 {
                     "id": "Examples",
-                    "text": "Gives an example ('this is how you implement a new interface')"
+                    "text": "Implementation examples",
+                    "value": 2
                 }
-            ],
-            "condition": "$S_Documentation_DeveloperDocumentation"
+            ]
         },
         {
             "id": "S_Merit",
             "type": "textbox",
             "maxwords": 150,
-            "title": "Merit / impact statement (narrative, max. 150 words)",
-            "info": "In what way does the research software product make a significant contribution to the scientific field? Merits and aspects of the contribution that are not covered by the above indicators should also be mentioned here. Indicate at least one (and up to three) research projects that directly benefited from your software contribution. You may report citation/download statistics/Github stars, but be aware that these are hard to compare between different software types and are easily gameable."
+            "title": "Merit / impact statement"
         }
     ]
 }
