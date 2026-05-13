@@ -674,7 +674,8 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;"
                             class="no-print">
                             <h3 x-html="$store.forms[$store.data.currentInput.type].title"></h3>
-                            <span class="fakelink no-print" @click="print()">Print this publication</span>
+                            <span class="fakelink no-print" x-show="$store.data.currentTab !== 0"
+                                @click="print()">Print this publication</span>
                         </div>
 
                         <!-- Only for printing the RESQUE score of a single publication: Make a nice heading  -->
