@@ -432,7 +432,7 @@
 
             const newTopPapers = data.filter(r => r.type === 'pub' && r.P_TopPaper_Select === true);
 
-            if (newTopPapers.length > Alpine.store('config').config.max_top_papers) {
+            if (Alpine.store('config').config.committee_limits && newTopPapers.length > Alpine.store('config').config.max_top_papers) {
                 // set difference
                 const diff = newTopPapers.filter(paper => !Alpine.store('data').topPapers.includes(paper));
 
@@ -646,17 +646,19 @@
                             <input id="add-doi" type="text" placeholder="DOI (optional)" />
                         </div>
 
-                        <div class="add-buttons" x-show="($store.data.input.length - 1) < $store.config.config.max">
+                        <div class="add-buttons"
+                            x-show="($store.data.input.length - 1) < $store.config.config.max || !$store.config.config.committee_limits">
                             <button class="add-pub" @click="$store.data.newResearchOutput('pub')">Add
                                 Publication</button>
                             <br />
-                            <!-- REMOVED TEMPORARILY
+
                             <button class="add-software" @click="$store.data.newResearchOutput('software')">Add
                                 Software</button>
                             <br />
-                            <button class="add-data" @click="$store.data.newResearchOutput('data')">Add Data Set</button>
+                            <button class="add-data" @click="$store.data.newResearchOutput('data')">Add Data
+                                Set</button>
                             <hr />
-                            -->
+
                             <button class="add-orcid" @click="showORCIDModal()">Import using ORCID</button>
                         </div>
                     </div>
@@ -672,7 +674,8 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;"
                             class="no-print">
                             <h3 x-html="$store.forms[$store.data.currentInput.type].title"></h3>
-                            <span class="fakelink no-print" @click="print()">Print this publication</span>
+                            <span class="fakelink no-print" x-show="$store.data.currentTab !== 0"
+                                @click="print()">Print this publication</span>
                         </div>
 
                         <!-- Only for printing the RESQUE score of a single publication: Make a nice heading  -->
@@ -825,7 +828,6 @@
                                                 <template x-if="elem.type === 'dropdown'">
                                                     <select x-model="$store.data.currentInput[elem.id]">
                                                         <template x-for="option in elem.options" :key="option.id">
-                                                            <p x-text="option.text"></p>
                                                             <option x-html="option.text" :value="option.id"></option>
                                                         </template>
                                                     </select>
@@ -904,7 +906,7 @@
                                             </div>
 
                                             <div class="warning-text"
-                                                x-show="elem.validation && (!RegExp(elem.validation.pattern).test($store.data.currentInput[elem.id]) || !evaluateCondition(elem.validation.condition))">
+                                                x-show="$store.data.currentInput[elem.id] && elem.validation && (!RegExp(elem.validation.pattern).test($store.data.currentInput[elem.id]) || !evaluateCondition(elem.validation.condition))">
                                                 <span x-text="elem.validation?.message"></span>
                                             </div>
 
@@ -1296,29 +1298,32 @@
             </div>
 
             <div id="export-modal" class="modal">
-                <div x-data="{ excludedPublications: new Set(), tab: 'select' }" class="modal-content">
+                <div x-data="{ excludedPublications: new Set(), tab: $store.config.config.committee_limits ? 'select' : 'all' }"
+                    class="modal-content">
 
                     <div>
                         <div
                             style="position: sticky; top: 0; background-color: white; padding: 2px 0; margin-bottom: 1rem; text-align: center;">
                             <h3>Save to file...<span style="font-size: 70%; font-weight: normal;"></h3>
                             <div class="tabs">
-                                <span @click="tab = 'select'" :class="{ selected: tab === 'select' }">Export selection
-                                    for committee</span> • <span @click="tab = 'all'"
-                                    :class="{ selected: tab === 'all' }">Export all data for personal archive</span>
+                                <span x-show="$store.config.config.committee_limits" @click="tab = 'select'"
+                                    :class="{ selected: tab === 'select' }">Export selection
+                                    for committee</span> <span x-show="$store.config.config.committee_limits">•</span>
+                                <span @click="tab = 'all'" :class="{ selected: tab === 'all' }">Export all data for
+                                    personal archive</span>
                             </div>
 
 
                             <button x-show="tab === 'all'" @click="exp(); closeExportModal();">Export all data (for
                                 personal archive)</button>
 
-                            <button x-show="tab === 'select'"
+                            <button x-show="$store.config.config.committee_limits && tab === 'select'"
                                 :disabled="excludedPublications.size >= $store.data.input.length - 1 || $store.data.input.length - 1 - excludedPublications.size > $store.config.config.max || $store.data.input.length - 1 - excludedPublications.size < $store.config.config.min || $store.data.input.filter((ro, index) => ro.P_TopPaper_Select && !excludedPublications.has(index)).length < $store.config.config.max_top_papers"
                                 @click="exp(excludedPublications); excludedPublications = new Set(); closeExportModal();">Export
                                 <span x-text="$store.data.input.length - 1 - excludedPublications.size"></span> selected
                                 outputs for hiring committee</button>
 
-                            <div x-show="tab === 'select'">
+                            <div x-show="$store.config.config.committee_limits && tab === 'select'">
                                 <div class="warning-text"
                                     x-show="$store.data.input.length - 1 - excludedPublications.size > $store.config.config.max">
                                     <span>The committee requests a maximum of <span
