@@ -1,0 +1,272 @@
+{
+    "prefix": "S",
+    "version": "0.2",
+    "date": "2026-05-06",
+    "title": "Software Project",
+    "elements": [
+        {
+            "id": "S_Title",
+            "type": "textbox",
+            "title": "Short title of the research software"
+        },
+        {
+            "id": "S_Citation",
+            "type": "text",
+            "title": "Full citation for the software"
+        },
+        {
+            "id": "S_Description",
+            "type": "textbox",
+            "title": "Short description of the research software"
+        },
+        {
+            "id": "S_License",
+            "type": "dropdown",
+            "title": "License",
+            "eval_dimension": "rigor",
+            "score": {
+                "factor": 0.5,
+                "condition": "$S_License =|= ['ClosedSource', 'NoLicense'] || !($S_URL)"
+            },
+            "options": [
+                {
+                    "id": "NoLicense",
+                    "text": "No license"
+                },
+                {
+                    "id": "CC0",
+                    "text": "CC0"
+                },
+                {
+                    "id": "Apache2",
+                    "text": "Apache-2.0"
+                },
+                {
+                    "id": "LGPL2",
+                    "text": "(L)GPL-2.0"
+                },
+                {
+                    "id": "LGPL3Only",
+                    "text": "(L)GPL-3.0-only"
+                },
+                {
+                    "id": "MPL2",
+                    "text": "MPL-2.0"
+                },
+                {
+                    "id": "BSD2Clause",
+                    "text": "BSD-2-Clause"
+                },
+                {
+                    "id": "BSD3Clause",
+                    "text": "BSD-3-Clause"
+                },
+                {
+                    "id": "MIT",
+                    "text": "MIT"
+                },
+                {
+                    "id": "CCBY",
+                    "text": "CC-BY / CC-BY-SA"
+                },
+                {
+                    "id": "OtherOpenSource",
+                    "text": "Other open source"
+                },
+                {
+                    "id": "ClosedSource",
+                    "text": "Closed source"
+                }
+            ]
+        },
+        {
+            "id": "S_URL",
+            "type": "text",
+            "title": "URL to source code",
+            "condition": "$S_License !== 'ClosedSource'"
+        },
+        {
+            "id": "S_CodebaseActivelyMaintained",
+            "type": "radio",
+            "title": "Is the codebase actively maintained?",
+            "options": [
+                {
+                    "id": "Yes",
+                    "text": "Yes",
+                    "value": 1
+                },
+                {
+                    "id": "No",
+                    "text": "No",
+                    "value": 0
+                }
+            ]
+        },
+        {
+            "id": "S_CommunityActivelyMaintained",
+            "type": "radio",
+            "title": "Is a community actively maintained?",
+            "options": [
+                {
+                    "id": "HighVolume",
+                    "text": "Yes, high volume",
+                    "value": 2
+                },
+                {
+                    "id": "MediumVolume",
+                    "text": "Yes, medium volume",
+                    "value": 1.5
+                },
+                {
+                    "id": "LowVolume",
+                    "text": "Yes, low volume",
+                    "value": 1
+                },
+                {
+                    "id": "NoInteraction",
+                    "text": "No",
+                    "value": 0
+                }
+            ]
+        },
+        {
+            "id": "S_Tests",
+            "type": "radio",
+            "title": "Do tests for main functionality exist?",
+            "options": [
+                {
+                    "id": "Yes",
+                    "text": "Yes"
+                },
+                {
+                    "id": "No",
+                    "text": "No"
+                }
+            ]
+        },
+        {
+            "id": "S_Tests_Quality",
+            "type": "checkbox",
+            "title": "⤷ Quality indicators for tests",
+            "condition": "$S_Tests === 'Yes'",
+            "options": [
+                {
+                    "id": "OpenSource",
+                    "text": "Code is open source",
+                    "value": 0.2,
+                    "condition": "$S_Tests_URL"
+                },
+                {
+                    "id": "Automated",
+                    "text": "Tests are automated (CI/CD)",
+                    "value": 0.2
+                },
+                {
+                    "id": "DifferentTestClasses",
+                    "text": "Unit / functional / integration",
+                    "value": 0.2
+                },
+                {
+                    "id": "ResultsPublic",
+                    "text": "Test results are public",
+                    "value": 0.2
+                },
+                {
+                    "id": "AllTested",
+                    "text": "Meaningfully tested",
+                    "value": 0.2
+                }
+            ]
+        },
+        {
+            "id": "S_Documentation",
+            "type": "checkbox",
+            "title": "Documentation",
+            "eval_dimension": "rigor",
+            "options": [
+                {
+                    "id": "Questions",
+                    "text": "How to ask questions",
+                    "value": 0.5
+                },
+                {
+                    "id": "Installation",
+                    "text": "Installation instructions",
+                    "value": 0.5
+                },
+                {
+                    "id": "UserFacingDocumentation",
+                    "text": "User facing documentation exists"
+                },
+                {
+                    "id": "LongformDocumentation",
+                    "text": "Longform documentation exists"
+                },
+                {
+                    "id": "DeveloperDocumentation",
+                    "text": "Developer documentation exists"
+                }
+            ]
+        },
+        {
+            "id": "S_Documentation_UserFacing",
+            "type": "radio",
+            "title": "⤷ User facing functionality",
+            "condition": "$S_Documentation_UserFacingDocumentation",
+            "options": [
+                {
+                    "id": "MainFunctions",
+                    "text": "Main functions documented",
+                    "value": 1
+                },
+                {
+                    "id": "AllFunctions",
+                    "text": "All functions documented",
+                    "value": 2
+                }
+            ]
+        },
+        {
+            "id": "S_Documentation_Longform",
+            "type": "radio",
+            "title": "⤷ Longform documentation",
+            "condition": "$S_Documentation_LongformDocumentation",
+            "options": [
+                {
+                    "id": "ShortTutorial",
+                    "text": "Short tutorial",
+                    "value": 1
+                },
+                {
+                    "id": "LongOrMultipleTutorials",
+                    "text": "Detailed tutorials (>= 80% use cases)",
+                    "value": 2
+                }
+            ]
+        },
+        {
+            "id": "S_Documentation_Developer",
+            "type": "radio",
+            "title": "⤷ Developer Documentation",
+            "condition": "$S_Documentation_DeveloperDocumentation",
+            "options": [
+                {
+                    "id": "Commentary",
+                    "text": "Internal structure commentary",
+                    "value": 1
+                },
+                {
+                    "id": "Examples",
+                    "text": "Implementation examples",
+                    "value": 2
+                }
+            ]
+        },
+        {
+            "id": "S_Merit",
+            "type": "textbox",
+            "maxwords": 150,
+            "title": "Merit / impact statement"
+        }
+    ]
+}
