@@ -44,7 +44,6 @@ max: 10
 max_top_papers: 3
 
 
-
 #----------------------------------------------------------------
 # Indicator settings
 # (While nearly all indicator settings are defined in the respective packs, some settings are defined here)
@@ -68,53 +67,53 @@ meta:
     min_indicators_warning_threshold: 0
 
 pubs:
+  active: true
   sources: ["packs/core-pubs.json"]
   config:
     min_indicators_warning_threshold: 0
+    # Define the scoring categories
+    #--------------------------------
+    # For the cue field (which is a RegExp on the indicator IDs), 
+    # use | to separate multiple cues.
+    # For the report generation in the RESQUER package, use these
+    # standardized category titles:
+    # "Open Data", "Open Materials", "Preregistration","Reproducible Code"
+    # (They are also regExp'ed, so you can add additional text, e.g.,
+    # "Reproducible Code & Verification" will also work)
+    score_categories:
+      - title: "Open Data"
+        cue: "Data"
+        color: '#beaed4'
+
+      - title: "Open Materials"
+        cue: "OpenMaterials"
+        color: '#fdc086'
+
+      - title: "Preregistration & Replication"
+        cue: "Prereg"
+        color: '#d95f02'
+
+      - title: "Reproducible Code & Verification"
+        cue: "ReproducibleScripts|IndependentVerification"
+        color: '#386cb0'
+
+      - title: "Methodological Rigor"
+        cue: "_Methods_"
+        color: '#f0027f'
+
+      # - title: "Theorizing & Formal Modeling"
+      #   cue: "Theorizing"
+      #   color: '#7fc97f'
 
 data:
+  active: false
   sources: ["packs/core-data.json"]
   config:
     min_indicators_warning_threshold: 0
 
 software:
+  active: false
   sources: ["packs/core-software.json"]
   config:
     min_indicators_warning_threshold: 0
 
-
-# Define the scoring categories
-#--------------------------------
-# For the cue field (which is a RegExp on the indicator IDs), 
-# use | to separate multiple cues.
-# For the report generation in the RESQUER package, use these
-# standardized category titles:
-# "Open Data", "Open Materials", "Preregistration","Reproducible Code"
-# (They are also regExp'ed, so you can add additional text, e.g.,
-# "Reproducible Code & Verification" will also work)
-
-
-score_categories:
-  - title: "Open Data"
-    cue: "Data"
-    color: '#beaed4'
-
-  - title: "Open Materials"
-    cue: "OpenMaterials"
-    color: '#fdc086'
-
-  - title: "Preregistration & Replication"
-    cue: "Prereg"
-    color: '#d95f02'
-
-  - title: "Reproducible Code & Verification"
-    cue: "ReproducibleScripts|IndependentVerification"
-    color: '#386cb0'
-
-  - title: "Methodological Rigor"
-    cue: "_Methods_"
-    color: '#f0027f'
-
-  # - title: "Theorizing & Formal Modeling"
-  #   cue: "Theorizing"
-  #   color: '#7fc97f'
