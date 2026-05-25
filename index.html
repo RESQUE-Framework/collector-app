@@ -1255,7 +1255,7 @@
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <h1>Privacy / Datenschutz</h1>
                     </div>
-                    <div class="markdown-content" x-html="$store.config.config?.privacyDisclaimer?.html || ''"></div>
+                    <div class="markdown-content" x-html="$store.forms.config?.privacyDisclaimer?.html || $store.config.config?.privacyDisclaimer?.html || ''"></div>
                 </div>
             </div>
 
@@ -1645,8 +1645,35 @@
             document.getElementById("instructions-modal").style.display = "none";
         }
 
+        const MATOMO_OPT_OUT_SCRIPT_SRC = 'https://tellmi.psy.lmu.de/matomo/index.php?module=CoreAdminHome&action=optOutJS&divId=matomo-opt-out&language=auto&showIntro=1';
+
+        const renderMatomoOptOut = () => {
+            window.requestAnimationFrame(() => {
+                window.requestAnimationFrame(() => {
+                    const container = document.querySelector('#privacy-modal #matomo-opt-out');
+
+                    if (!container || container.dataset.matomoLoaded === 'true') {
+                        return;
+                    }
+
+                    container.dataset.matomoLoaded = 'true';
+
+                    document
+                        .querySelectorAll('script[data-matomo-opt-out="true"]')
+                        .forEach(script => script.remove());
+
+                    const script = document.createElement('script');
+                    script.src = MATOMO_OPT_OUT_SCRIPT_SRC;
+                    script.async = true;
+                    script.dataset.matomoOptOut = 'true';
+                    container.insertAdjacentElement('afterend', script);
+                });
+            });
+        }
+
         const showPrivacyModal = () => {
             document.getElementById("privacy-modal").style.display = "block";
+            renderMatomoOptOut();
         }
 
         const closePrivacyModal = () => {
@@ -1916,6 +1943,8 @@
                     Alpine.store('forms').config.privacyDisclaimer = {};
                     Alpine.store('forms').config.privacyDisclaimer.md = text;
                     Alpine.store('forms').config.privacyDisclaimer.html = converter.makeHtml(text);
+                    Alpine.store('config').config.privacyDisclaimer = Alpine.store('forms').config.privacyDisclaimer;
+                    renderMatomoOptOut();
                 });
 
                 // Load instructions
