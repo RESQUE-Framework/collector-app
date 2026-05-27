@@ -14,14 +14,19 @@ export function renderScoreChart(canvasId, categories, colors, animation = true)
 
   const categoriesPre = categories;
 
-  categories = categories.filter(c => c.max > 0);
+  const categoryColorZip = categories.map((c, index) => ({
+    ...c,
+    color: colors[index]
+  }));
+
+  categories = categoryColorZip.filter(c => c.max > 0);
 
   const data = {
     labels: categories.map(c => c.title),
     datasets: [{
       data: categories.map(c => scaleValues(c.score, 0, c.max, 0, 100)),
       borderWidth: 1,
-      backgroundColor: colors.length > 0 ? colors : categories.map((_, index) => getDefaultColor(index))
+      backgroundColor: categories.map(c => c.color)
     }]
   };
 
