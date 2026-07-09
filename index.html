@@ -585,10 +585,15 @@
                             </div>
                         </div>
 
-                        <p><span
-                                x-text="`${$store.data.input.length - 1} of ${Alpine.store('config').config.max} slots used`"></span><!--| <span class="fakelink"
+                        <p><span x-show="$store.config.config.committee_limits" x-text="`${$store.data.input.length - 1} of ${Alpine.store('config').config.max} slots
+                                used`"></span>
+                            <span x-show="!$store.config.config.committee_limits"
+                                x-text="`${$store.data.input.length - 1} works are entered`"></span>
+                            <!--| <span class="fakelink"
+                                <!--| <span class="fakelink"
                             @click="window.open(`https://shiny.psy.lmu.de/felix/RESQUE_profile?data=${LZString.compress(JSON.stringify($store.data.input))}`, '_blank')"
-                        >View Profile ↗</span> --></p>
+                        >View Profile ↗</span> -->
+                        </p>
                     </div>
                     <div x-data="{ show: true }"
                         x-effect="if (show) document.querySelector('#tabs-sidebar').scrollTop = $store.tabsSidebarScrollTop;"
@@ -648,14 +653,17 @@
 
                         <div class="add-buttons"
                             x-show="($store.data.input.length - 1) < $store.config.config.max || !$store.config.config.committee_limits">
-                            <button class="add-pub" @click="$store.data.newResearchOutput('pub')">Add
+                            <button x-show="$store.config.config.pubs.active" class="add-pub"
+                                @click="$store.data.newResearchOutput('pub')">Add
                                 Publication</button>
                             <br />
 
-                            <button class="add-software" @click="$store.data.newResearchOutput('software')">Add
+                            <button x-show="$store.config.config.software.active" class="add-software"
+                                @click="$store.data.newResearchOutput('software')">Add
                                 Software</button>
                             <br />
-                            <button class="add-data" @click="$store.data.newResearchOutput('data')">Add Data
+                            <button x-show="$store.config.config.data.active" class="add-data"
+                                @click="$store.data.newResearchOutput('data')">Add Data
                                 Set</button>
                             <hr />
 
@@ -674,7 +682,8 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;"
                             class="no-print">
                             <h3 x-html="$store.forms[$store.data.currentInput.type].title"></h3>
-                            <span class="fakelink no-print" @click="print()">Print this publication</span>
+                            <span class="fakelink no-print" x-show="$store.data.currentTab !== 0" @click="print()">Print
+                                this publication</span>
                         </div>
 
                         <!-- Only for printing the RESQUE score of a single publication: Make a nice heading  -->
@@ -1097,7 +1106,7 @@
                             onclick="showInfoModal()" class="fakelink">FAQ</span> • <a class="github-link"
                             href="https://github.com/RESQUE-Framework/collector-app">GitHub</a> • <span
                             onclick="driver(tourAnytime()).drive()" class="fakelink">Tour</span> • <span
-                            onclick="closeInfoModal(); showPrivacyModal()" class="fakelink">Privacy/Datenschutz</span>
+                            onclick="closeInfoModal(); showPrivacyModal()" class="fakelink">Privacy/Terms of Use</span>
 
                         <template x-if="$store.config?.config?.show_instruction">
                             • <span onclick="showInstructionsModal()" class="fakelink">Instructions</span>
@@ -1185,7 +1194,7 @@
                         To get a sense of how many users we have, we do a very basic anonymous access logging with
                         Matomo. You are not identifiable by the logged information; none of your entered data is
                         tracked; no cookies or third party trackers are used. See details in the <span
-                            onclick="closeInfoModal(); showPrivacyModal()" class="fakelink">Privacy/Datenschutz</span>
+                            onclick="closeInfoModal(); showPrivacyModal()" class="fakelink">Privacy/Terms of Use</span>
                         disclaimer.
                     </p>
                     </p>
@@ -1246,7 +1255,7 @@
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <h1>Privacy / Datenschutz</h1>
                     </div>
-                    <div class="markdown-content" x-html="$store.config.config?.privacyDisclaimer?.html || ''"></div>
+                    <div class="markdown-content" x-html="$store.forms.config?.privacyDisclaimer?.html || $store.config.config?.privacyDisclaimer?.html || ''"></div>
                 </div>
             </div>
 
@@ -1636,8 +1645,35 @@
             document.getElementById("instructions-modal").style.display = "none";
         }
 
+        const MATOMO_OPT_OUT_SCRIPT_SRC = 'https://tellmi.psy.lmu.de/matomo/index.php?module=CoreAdminHome&action=optOutJS&divId=matomo-opt-out&language=auto&showIntro=1';
+
+        const renderMatomoOptOut = () => {
+            window.requestAnimationFrame(() => {
+                window.requestAnimationFrame(() => {
+                    const container = document.querySelector('#privacy-modal #matomo-opt-out');
+
+                    if (!container || container.dataset.matomoLoaded === 'true') {
+                        return;
+                    }
+
+                    container.dataset.matomoLoaded = 'true';
+
+                    document
+                        .querySelectorAll('script[data-matomo-opt-out="true"]')
+                        .forEach(script => script.remove());
+
+                    const script = document.createElement('script');
+                    script.src = MATOMO_OPT_OUT_SCRIPT_SRC;
+                    script.async = true;
+                    script.dataset.matomoOptOut = 'true';
+                    container.insertAdjacentElement('afterend', script);
+                });
+            });
+        }
+
         const showPrivacyModal = () => {
             document.getElementById("privacy-modal").style.display = "block";
+            renderMatomoOptOut();
         }
 
         const closePrivacyModal = () => {
@@ -1907,6 +1943,8 @@
                     Alpine.store('forms').config.privacyDisclaimer = {};
                     Alpine.store('forms').config.privacyDisclaimer.md = text;
                     Alpine.store('forms').config.privacyDisclaimer.html = converter.makeHtml(text);
+                    Alpine.store('config').config.privacyDisclaimer = Alpine.store('forms').config.privacyDisclaimer;
+                    renderMatomoOptOut();
                 });
 
                 // Load instructions
