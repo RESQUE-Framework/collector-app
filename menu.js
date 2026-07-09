@@ -9,27 +9,19 @@ function pickAccordingToConfig(packPre, config) {
 }
 
 async function menu(config) {
-    const metaConfig = {
-        min_indicators_warning_threshold: config.meta.config.min_indicators_warning_threshold
-    }
+    const metaConfig = { ...config.meta.config };
 
     const metaPre = await use(metaConfig, ...config.meta.sources);
 
-    const pubConfig = {
-        min_indicators_warning_threshold: config.pubs.config.min_indicators_warning_threshold
-    }
+    const pubConfig = { ...config.pubs.config };
 
     const pubPre = await use(pubConfig, ...config.pubs.sources);
 
-    const softwareConfig = {
-        min_indicators_warning_threshold: config.software.config.min_indicators_warning_threshold
-    }
+    const softwareConfig = { ...config.software.config };
 
     const softwarePre = await use(softwareConfig, ...config.software.sources);
 
-    const dataConfig = {
-        min_indicators_warning_threshold: config.data.config.min_indicators_warning_threshold
-    }
+    const dataConfig = { ...config.data.config };
 
     const dataPre = await use(dataConfig, ...config.data.sources);
 
