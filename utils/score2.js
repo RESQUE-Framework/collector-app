@@ -24,7 +24,7 @@ const scoreAll = (rs, categories = []) => {
     }, []);
 
     return {
-        scores: [{}, ...scores],
+        scores: [{} /* meta */, ...scores],
         overall: {
             relative,
             percentage: (relative * 100).toFixed(1),
@@ -39,7 +39,9 @@ const score = (r, meta, categoriesOverride = []) => {
 
     const categories = categoriesOverride.length > 0
         ? categoriesOverride
-        : (meta?.forms?.config?.score_categories || []);
+        // Older JSON files store score_categories at meta.forms.config
+        // instead of meta.forms[type].config
+        : (formDef?.config?.score_categories || meta?.forms?.config?.score_categories || []);
 
     if (!formDef) return {};
 
@@ -129,6 +131,8 @@ const score = (r, meta, categoriesOverride = []) => {
     });
 
     return {
+        doi: r.DOI,
+        P_MultiStudy_Selected: r.P_MultiStudy_Selected ?? null,
         max: maxScore,
         score: reachedScore,
         relative: maxScore > 0 ? reachedScore / maxScore : 0,
