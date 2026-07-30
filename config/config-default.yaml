@@ -63,12 +63,14 @@ min_RO_warning_threshold: 0
 # which packs should be included?
 meta:
   sources: ["packs/core-meta.json"]
+  exclude: []
   config:
     min_indicators_warning_threshold: 0
 
 pubs:
   active: true
   sources: ["packs/core-pubs.json"]
+  exclude: []
   config:
     min_indicators_warning_threshold: 0
     # Define the scoring categories
@@ -108,12 +110,14 @@ pubs:
 data:
   active: false
   sources: ["packs/core-data.json"]
+  exclude: []
   config:
     min_indicators_warning_threshold: 0
 
 software:
   active: false
   sources: ["packs/core-software.json"]
+  exclude: []
   config:
     min_indicators_warning_threshold: 0
 

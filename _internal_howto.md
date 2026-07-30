@@ -1,6 +1,7 @@
 ## Batch process screenshot images
 
 ```bash
+cd img/original
 for img in *.png; do
   filename=$(basename "$img")
   magick "$img" \
