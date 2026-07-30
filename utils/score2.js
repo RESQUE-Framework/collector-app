@@ -1,8 +1,8 @@
-const scoreAll = (rs) => {
+const scoreAll = (rs, categories = []) => {
     const meta = rs[0]; // The first object is the meta object
     const researchOutputs = rs.slice(1);
 
-    const scores = researchOutputs.map(r => score(r, meta));
+    const scores = researchOutputs.map(r => score(r, meta, categories));
     const validScores = scores.filter(s => Object.keys(s).length && s.max > 0);
 
     const relative = validScores.length > 0
@@ -24,7 +24,7 @@ const scoreAll = (rs) => {
     }, []);
 
     return {
-        scores: [{}, ...scores],
+        scores: [{} /* meta */, ...scores],
         overall: {
             relative,
             percentage: (relative * 100).toFixed(1),
@@ -33,11 +33,15 @@ const scoreAll = (rs) => {
     };
 };
 
-const score = (r, meta) => {
+const score = (r, meta, categoriesOverride = []) => {
     const type = r.type;
     const formDef = meta?.forms?.[type];
 
-    const categories = meta?.forms?.config?.score_categories || [];
+    const categories = categoriesOverride.length > 0
+        ? categoriesOverride
+        // Older JSON files store score_categories at meta.forms.config
+        // instead of meta.forms[type].config
+        : (formDef?.config?.score_categories || meta?.forms?.config?.score_categories || []);
 
     if (!formDef) return {};
 
@@ -127,6 +131,8 @@ const score = (r, meta) => {
     });
 
     return {
+        doi: r.DOI,
+        P_MultiStudy_Selected: r.P_MultiStudy_Selected ?? null,
         max: maxScore,
         score: reachedScore,
         relative: maxScore > 0 ? reachedScore / maxScore : 0,

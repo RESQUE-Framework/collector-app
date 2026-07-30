@@ -322,6 +322,8 @@
             ...Alpine.store('config').queryConfig[type] // type specific query config
         })
 
+        const getScoreCategories = () => Alpine.store('forms')?.pub?.config?.score_categories || [];
+
         Alpine.store('selectedIndicator', {});
 
         Alpine.store('data', {
@@ -344,7 +346,7 @@
                 }
 
                 this.currentInput = this.input[this.currentTab];
-                this.score = window.scoreAll(this.input, Alpine.store('config').config.score_categories || []);
+                this.score = window.scoreAll(this.input, getScoreCategories());
                 this.completion = this.input.map(checkCompletion);
                 this.topPapers = this.input.filter(r => r.type === 'pub' && r.P_TopPaper_Select === true);
             },
@@ -449,7 +451,8 @@
 
             Alpine.store('data').topPapers = newTopPapers;
 
-            const scores = window.scoreAll(data, Alpine.store('config').config.score_categories || []);
+            const scoreCategories = getScoreCategories();
+            const scores = window.scoreAll(data, scoreCategories);
 
             Alpine.store('data').score = scores;
 
@@ -480,13 +483,13 @@
 
             localStorage.setItem('data ' + Alpine.store('forms').config.main_title, JSON.stringify(data));
 
-            window.renderScoreChart('overallScoreChart', scores.overall.categories, Alpine.store('config').config?.score_categories?.map(c => c.color) ?? [], animation = false);
+            window.renderScoreChart('overallScoreChart', scores.overall.categories, scoreCategories.map(c => c.color), animation = false);
 
             const currentScore = scores.scores[Alpine.store('data').currentTab];
 
             if (currentScore && currentScore.categories) {
-                window.renderScoreChart('currentScoreChart', currentScore.categories, Alpine.store('config').config?.score_categories?.map(c => c.color) ?? [], animation = false);
-                window.renderScoreChart('printCurrentScoreChart', currentScore.categories, Alpine.store('config').config?.score_categories?.map(c => c.color) ?? [], animation = false);
+                window.renderScoreChart('currentScoreChart', currentScore.categories, scoreCategories.map(c => c.color), animation = false);
+                window.renderScoreChart('printCurrentScoreChart', currentScore.categories, scoreCategories.map(c => c.color), animation = false);
             }
         });
 
