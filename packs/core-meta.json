@@ -40,7 +40,7 @@
             "id": "AcademicAgeBonus_Explanation",
             "type": "text",
             "title": "Please describe the circumstances that led to this reduction.",
-            "condition": "exists($AcademicAgeBonus)"
+            "condition": "exists($AcademicAgeBonus) && $AcademicAgeBonus > 0"
         },
         {
             "id": "ORCID",
