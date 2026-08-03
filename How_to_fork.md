@@ -114,7 +114,7 @@ By default all indicators defined in the packs are shown. You can exclude specif
 exclude: ["P_IndependentVerification", "P_ImpactStatement_Info", "P_ImpactStatement"]
 ```
 
-You can find the ID of each indicator in the packs themselves (e.g., see file `packs/core-pubs.json`), or when you go to the wensite of your app, click on any indicator in the middle pane, and inspect the help section in the right pane:
+You can find the ID of each indicator in the packs themselves (e.g., see file `packs/core-pubs.json`), or when you go to the website of your app, click on any indicator in the middle pane, and inspect the help section in the right pane:
 
 ![](img/fork7.png)
 
@@ -124,9 +124,9 @@ You can find the ID of each indicator in the packs themselves (e.g., see file `p
 
 ## Step 4: Test your customized app
 
-Now the app is ready for testing. You can use the link to your GitHub Pages website to test the app.
+After you commited all changes, the app is ready for testing. You can use the link to your GitHub Pages website to test the app (see "Step 2" above).
 
-Before you distribute the link to your applicants, you should test the app yourself. Enter some test data and export it. Check if the exported data is in the format you expect. Check if you can [generate the profile](https://shiny.psy.lmu.de/felix/RESQUE_profile/).
+Before you distribute the link to your applicants, you should test the app yourself. Enter some test data and export it. Check if you can [generate the profile](https://shiny.psy.lmu.de/felix/RESQUE_profile/) (see also next step).
 
 
 ## Step 5: Generate the applicants' profiles
