@@ -293,7 +293,7 @@
             "info": "An auxiliary assumption is any assumption or decision not directly implied by the theory but introduced for purposes such as formalization, simulation, prediction, or empirical testing.<br><br><b>Orienting Question:</b><br>Are modelling decisions that are not directly implied by the theory made explicit?",
             "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Formalization === 'Yes'",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation)) || ($TH_Formalization === 'No')"
             }
         },
         {
@@ -310,7 +310,7 @@
             "info": "Elements of the formal model subsume all the variables, parameters, constants, functions, operators, and auxiliary assumptions that were used to arrive at a specific formalization of a theory.<br><br>Specifying all the elements of a formal model can also be achieved using a Table or an Appendix. Common mathematical operators can be exempt from this requirement.<br><br><b>Orienting Question:</b><br>Is it clear what each element in the formal model is supposed to represent?",
             "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Formalization === 'Yes'",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation)) || ($TH_Formalization === 'No')"
             }
         },
         {
@@ -327,7 +327,7 @@
             "info": "Even if all elements of the formal model have a narrative definition, their mathematical properties might be unclear (e.g., is parameter B a constant, a vector, or a two-dimensional matrix?).<br><br>This can also be ensured by referring to an established standard notation.<br><br><b>Orienting Question:</b><br>Are the (mathematical) properties for each element of the model clear?",
             "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Formalization === 'Yes'",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation)) || ($TH_Formalization === 'No')"
             }
         },
         {
@@ -344,7 +344,7 @@
             "info": "These constraints may be directly implied by the theory, introduced through auxiliary assumptions, or based on empirical observations.<br><br><b>Orienting Question:</b><br>Is it clear which values each element in the model can possibly take?",
             "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Formalization === 'Yes'",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation)) || ($TH_Formalization === 'No')"
             }
         },
         {
@@ -361,7 +361,7 @@
             "info": "Structural identifiability is a property of the model, not of any single element. It concerns whether the model’s parameters can, in principle, be distinguished from the full pattern of predictions the model generates. A model is structurally identifiable when no two distinct parameter configurations produce the same predicted pattern across all of the model’s outputs.<br><br><b>Orienting Question:</b><br>Is there a discussion of the model’s structural identifiability?",
             "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Formalization === 'Yes'",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation)) || ($TH_Formalization === 'No')"
             }
         },
 
@@ -411,7 +411,7 @@
             "info": "An auxiliary assumption is any assumption or decision not directly implied by the theory but introduced for purposes such as formalization, simulation, prediction, or empirical testing.<br><br><b>Orienting Question:</b><br>Are decisions that are not implied by the theory / model made explicit?",
             "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && ($TH_Evaluation === 'Simulation' || $TH_Evaluation === 'Both')",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation)) || ($TH_Evaluation !== 'Simulation' && $TH_Evaluation !== 'Both')"
             }
         },
         {
@@ -428,7 +428,7 @@
             "info": "Such an assessment should always cover whether the model reproduces the data pattern qualitatively but may also cover aspects of quantitative fit, depending on how narrowly the phenomena are defined.<br><br><b>Orienting Question:</b><br>Did the work attempt to reproduce the data pattern indicative of the phenomenon that is to be explained?",
             "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && ($TH_Evaluation === 'Simulation' || $TH_Evaluation === 'Both')",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation)) || ($TH_Evaluation !== 'Simulation' && $TH_Evaluation !== 'Both')"
             }
         },
         {
@@ -445,7 +445,7 @@
             "info": "In the best case, the model’s success in reproducing the data pattern indicative of the relevant phenomena should not depend on the auxiliary assumptions but only on the core assumptions.<br><br><b>Orienting Question:</b><br>Does the paper implement one of these (or similar) practices to test the robustness of the simulation results?",
             "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && ($TH_Evaluation === 'Simulation' || $TH_Evaluation === 'Both')",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation)) || ($TH_Evaluation !== 'Simulation' && $TH_Evaluation !== 'Both')"
             }
         },
         {
@@ -462,7 +462,7 @@
             "info": "This concerns the empirical relevance of the theory’s mechanism: do the relevant phenomena emerge as a consequence of the core theoretical assumptions, or is it a byproduct of auxiliary assumptions? Altering or removing the mechanism(s) should ideally lead to a failure in reproducing the relevant phenomena.<br><br><b>Orienting Question:</b><br>Does the paper assess whether relevant phenomena emerge from the mechanism(s) postulated by the theory/model?",
             "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && ($TH_Evaluation === 'Simulation' || $TH_Evaluation === 'Both')",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation)) || ($TH_Evaluation !== 'Simulation' && $TH_Evaluation !== 'Both')"
             }
         },
         {
@@ -479,7 +479,7 @@
             "info": "A single test often cannot definitively refute a theory because auxiliary assumptions are always involved; the plausibility of these assumptions should therefore be discussed alongside the simulation outcome.<br><br><b>Orienting Question:</b><br>Is there a discussion of what the simulation results imply for the theory that was tested?",
             "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && ($TH_Evaluation === 'Simulation' || $TH_Evaluation === 'Both')",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation)) || ($TH_Evaluation !== 'Simulation' && $TH_Evaluation !== 'Both')"
             }
         },
         {
@@ -496,7 +496,7 @@
             "info": "Operationalization is the process of specifying how (some of) the elements of a theory/formal model are measured, manipulated, or estimated to make the theory testable.<br><br><b>Orienting Question:</b><br>Is it clear how each element of the theory was operationalized?",
             "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && ($TH_Evaluation === 'Empirical' || $TH_Evaluation === 'Both')",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation)) || ($TH_Evaluation !== 'Empirical' && $TH_Evaluation !== 'Both')"
             }
         },
         {
@@ -513,7 +513,7 @@
             "info": "<b>Orienting Question:</b><br>Is it clear how the tested predictions follow from the theory?",
             "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && ($TH_Evaluation === 'Empirical' || $TH_Evaluation === 'Both')",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation)) || ($TH_Evaluation !== 'Empirical' && $TH_Evaluation !== 'Both')"
             }
         },
         {
@@ -530,7 +530,7 @@
             "info": "<b>Orienting Question:</b><br>Is there an evaluation of how consistent the empirical observations are with the theoretical predictions?",
             "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && ($TH_Evaluation === 'Empirical' || $TH_Evaluation === 'Both')",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation)) || ($TH_Evaluation !== 'Empirical' && $TH_Evaluation !== 'Both')"
             }
         },
         {
@@ -547,7 +547,7 @@
             "info": "A close fit between theory and data provides strong support only if the theory could have failed, i.e. if it forbids a substantial range of otherwise plausible observations. A theory compatible with almost any result gains little support from a confirming observation. Thus, the more observations the theory rules out, the more informative the test.<br><br><b>Orienting Question:</b><br>Is there a discussion of whether the theory forbids a substantial range of otherwise plausible observations?",
             "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && ($TH_Evaluation === 'Empirical' || $TH_Evaluation === 'Both')",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation)) || ($TH_Evaluation !== 'Empirical' && $TH_Evaluation !== 'Both')"
             }
         },
         {
@@ -564,7 +564,7 @@
             "info": "<b>Orienting Question:</b><br>Is there a discussion of what the empirical results imply for the theory that was tested?",
             "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && ($TH_Evaluation === 'Empirical' || $TH_Evaluation === 'Both')",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation)) || ($TH_Evaluation !== 'Empirical' && $TH_Evaluation !== 'Both')"
             }
         },
 
@@ -606,7 +606,7 @@
             "info": "Ideally, predictive accuracy should be assessed out-of-sample, that is, on a data set that was not used to construct and/or fit the theory/model.<br><br><b>Orienting Question:</b><br>Is there a comparison of the predictive accuracy of all of the compared theories’ / models’ predictions?",
             "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Evaluation !== 'No' && $TH_Comparison === 'Yes'",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation)) || ($TH_Evaluation === 'No') || ($TH_Comparison === 'No')"
             }
         },
         {
@@ -623,7 +623,7 @@
             "info": "Two theories / models may reproduce the target phenomenon equally well but differ in how much else they permit. A theory that predicts the data pattern indicative of the relevant phenomena while ruling out more alternative observations is better supported when its prediction holds compared to a theory that is also consistent with other alternative observations.<br><br><b>Orienting Question:</b><br>Is there a discussion of how narrowly each theory / model constrains the predictive space?",
             "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Evaluation !== 'No' && $TH_Comparison === 'Yes'",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation)) || ($TH_Evaluation === 'No') || ($TH_Comparison === 'No')"
             }
         },
         {
@@ -640,7 +640,7 @@
             "info": "Two theories / models can account for a different number of phenomena. A theory / model that accounts for more phenomena than another theory / model, has higher explanatory breadth and should be preferred. Note that this point is different from C2, which is about how precisely each of these phenomena is predicted.<br><br><b>Orienting Question:</b><br>Is there a discussion of the explanatory breadth of the theories / models?",
             "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Evaluation !== 'No' && $TH_Comparison === 'Yes'",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation)) || ($TH_Evaluation === 'No') || ($TH_Comparison === 'No')"
             }
         },
         {
@@ -657,7 +657,7 @@
             "info": "Theories / models with fewer parameters that nevertheless explain all the phenomena of interest should be preferred over theories / models with more parameters that explain the same number of phenomena.<br><br><b>Orienting Question:</b><br>Is there a discussion of the parsimony of the theories / models?",
             "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Evaluation !== 'No' && $TH_Comparison === 'Yes'",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation)) || ($TH_Evaluation === 'No') || ($TH_Comparison === 'No')"
             }
         },
         {
@@ -674,7 +674,7 @@
             "info": "Being inferior to another theory / model in one regard may be offset by being superior in another. For instance, if a theory / model has one parameter more than another but explains many more phenomena, it may be plausible to prefer the less parsimonious over the more parsimonious theory / model.<br><br><b>Orienting Question:</b><br>Is there a discussion of the trade-off between each theory’s / model’s characteristics?",
             "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Evaluation !== 'No' && $TH_Comparison === 'Yes'",
             "score": {
-                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation)) || ($TH_Evaluation === 'No') || ($TH_Comparison === 'No')"
             }
         }
     ]
