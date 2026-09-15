@@ -259,7 +259,7 @@
             "id": "TH_pre_formalization_separator",
             "type": "separator",
             "no_comment": true,
-            "condition": "$P_Suitable === 'Yes'"
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided'"
         },
 
         {
@@ -369,7 +369,7 @@
             "id": "TH_pre_evaluation_separator",
             "type": "separator",
             "no_comment": true,
-            "condition": "$P_Suitable === 'Yes'"
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided'"
         },
 
         {
@@ -572,7 +572,7 @@
             "id": "TH_precomparison_separator",
             "type": "separator",
             "no_comment": true,
-            "condition": "$P_Suitable === 'Yes'"
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided'"
         },
 
         {

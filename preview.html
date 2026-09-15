@@ -153,7 +153,7 @@
             return '';
             }
 
-            let html = `<h2>RESQUE: ${pack.title} (v${pack.version})</h2>`;
+            let html = `<h2>RESQUE: ${pack.title} (v${pack.version})${pack.license ? ` · ${pack.license}` : ""}</h2>`;
 
             const elementsHTML = pack.elements
             .filter(el => el.type !== 'separator')
@@ -306,7 +306,7 @@
                     <p style="margin-bottom: 0; color: gray; font-style: italic; font-size: small;"
                         x-show="$store.filter"><b>Selected indicators: </b><span x-text="$store.filter"></span></p>
 
-                    <h2 style="margin-top: 0.5rem;" x-text="`RESQUE: ${$store.pack.title} (v${$store.pack.version})`">
+                    <h2 style="margin-top: 0.5rem;" x-text="`RESQUE: ${$store.pack.title} (v${$store.pack.version})${$store.pack.license ? ` · ${$store.pack.license}` : ''}`">
                     </h2>
 
                     <p x-show="$store.pack.description"
