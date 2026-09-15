@@ -309,6 +309,9 @@
                     <h2 style="margin-top: 0.5rem;" x-text="`RESQUE: ${$store.pack.title} (v${$store.pack.version})`">
                     </h2>
 
+                    <p x-show="$store.pack.description"
+                        x-html="preprocessText($store.pack.description)"></p>
+
                     <!-- show recommended citation when available -->
                     <p x-show="$store.pack.recommendedCitation"
                        style="margin: 0 0 2.5rem 0; color: #333; font-style: italic; font-size: 0.9em;"
