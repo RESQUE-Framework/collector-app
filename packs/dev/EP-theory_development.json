@@ -1,163 +1,271 @@
 {
-    "version": "0.2.0",
-    "date": "2025-07-15",
+    "version": "5.0.0",
+    "date": "2026-09-14",
     "prefix": "TH",
-    "title": "Theory-guided research and theory development",
+    "title": "A Transparency Checklist for Theory-Driven Work in Psychology",
+    "license": "CC-BY-4.0",
+    "description": "This expansion pack extends the RESQUE publication core set (see http://www.resque.info) with a structured transparency checklist for theory-driven psychological research. It covers the description and formalization of theories, evaluation through simulations, mathematical derivations, and empirical tests, and comparisons among competing theories or models. Filter questions present only the checklist items relevant to the work being reported.",
+    "creators": [
+        {
+            "name": "Musfeld, Philipp",
+            "givenName": "Philipp",
+            "familyName": "Musfeld",
+            "orcid": "https://orcid.org/0000-0002-6539-0105",
+            "affiliations": [
+                {
+                    "name": "Psychological Methods, Department of Psychology, University of Amsterdam",
+                    "ror": "https://ror.org/04dkp9463"
+                }
+            ],
+            "corresponding": true,
+            "email": "p.musfeld@gmail.com"
+        },
+        {
+            "name": "Freyer, Nele",
+            "givenName": "Nele",
+            "familyName": "Freyer",
+            "orcid": "https://orcid.org/0009-0009-0415-9696",
+            "affiliations": [
+                {
+                    "name": "Faculty of Psychology, Technische Universität Dresden",
+                    "ror": "https://ror.org/042aqky30"
+                }
+            ]
+        },
+        {
+            "name": "Lange, Jens",
+            "givenName": "Jens",
+            "familyName": "Lange",
+            "orcid": "https://orcid.org/0000-0002-5375-3247",
+            "affiliations": [
+                {
+                    "name": "Faculty of Health, HMU Health and Medical University Erfurt",
+                    "ror": "https://ror.org/04kt7rq05"
+                }
+            ]
+        },
+        {
+            "name": "Schönbrodt, Felix",
+            "givenName": "Felix",
+            "familyName": "Schönbrodt",
+            "orcid": "https://orcid.org/0000-0002-8282-3910",
+            "affiliations": [
+                {
+                    "name": "Department of Psychology, Ludwig-Maximilians-Universität München",
+                    "ror": "https://ror.org/05591te55"
+                }
+            ]
+        },
+        {
+            "name": "Van Dongen, Noah",
+            "givenName": "Noah",
+            "familyName": "Van Dongen",
+            "orcid": "https://orcid.org/0000-0003-0387-7388",
+            "affiliations": [
+                {
+                    "name": "Department of Psychology, Education and Child Studies, Erasmus University Rotterdam",
+                    "ror": "https://ror.org/057w15z03"
+                }
+            ]
+        },
+        {
+            "name": "Peikert, Aaron",
+            "givenName": "Aaron",
+            "familyName": "Peikert",
+            "orcid": "https://orcid.org/0000-0001-7813-818X",
+            "affiliations": [
+                {
+                    "name": "Center for Lifespan Psychology, Max Planck Institute for Human Development",
+                    "ror": "https://ror.org/02pp7px91"
+                },
+                {
+                    "name": "Max Planck UCL Centre for Computational Psychiatry and Ageing Research, University College London",
+                    "ror": "https://ror.org/02jx3x895"
+                }
+            ]
+        },
+        {
+            "name": "Schubert, Anna-Lena",
+            "givenName": "Anna-Lena",
+            "familyName": "Schubert",
+            "orcid": "https://orcid.org/0000-0001-7248-0662",
+            "affiliations": [
+                {
+                    "name": "Department of Psychology, Johannes Gutenberg University Mainz",
+                    "ror": "https://ror.org/023b0x485"
+                }
+            ]
+        },
+        {
+            "name": "Geppert, Rahel",
+            "givenName": "Rahel",
+            "familyName": "Geppert",
+            "orcid": "https://orcid.org/0009-0003-1407-828X",
+            "affiliations": [
+                {
+                    "name": "Faculty of Health, HMU Health and Medical University Erfurt",
+                    "ror": "https://ror.org/04kt7rq05"
+                }
+            ]
+        },
+        {
+            "name": "Borgstede, Matthias",
+            "givenName": "Matthias",
+            "familyName": "Borgstede",
+            "orcid": "https://orcid.org/0000-0003-1071-9038",
+            "affiliations": [
+                {
+                    "name": "Foundations of Education, University of Bamberg",
+                    "ror": "https://ror.org/01c1w6d29"
+                }
+            ]
+        },
+        {
+            "name": "Leising, Daniel",
+            "givenName": "Daniel",
+            "familyName": "Leising",
+            "orcid": "https://orcid.org/0000-0001-8503-5840",
+            "affiliations": [
+                {
+                    "name": "Faculty of Psychology, Technische Universität Dresden",
+                    "ror": "https://ror.org/042aqky30"
+                }
+            ]
+        }
+    ],
+    "recommendedCitation": "Musfeld, P., Freyer, N., Lange, J., Schönbrodt, F. D., van Dongen, N. N., Peikert, A., Schubert, A.-L., Geppert, R., Borgstede, M., & Leising, D. (2026). A transparency checklist for theory-driven work in psychology (Version 5.0.0). PsyArXiv. https://doi.org/10.31234/osf.io/e7tdc_v4",
     "elements": [
-         {
+        {
             "id": "TH_Theorizing",
             "type": "radio",
             "title": "Theory-guided research and theory development",
             "options": [
                 {
                     "id": "DescriptiveExploratory",
-                    "text": "This research was purely descriptive, without clear reference to a theory"
+                    "text": "This research was mainly descriptive / exploratory, without a clear theoretical rationale"
                 },
                 {
                     "id": "TheoryGuided",
-                    "text": "In this research, at least one theory was (further) developed and/or evaluated"
+                    "text": "This research was theoretically motivated and (further) developed and/or evaluated at least one (part of a) theory"
                 },
                 {
                     "id": "NotApplicable",
-                    "text": "Not applicable / cannot answer the question"
+                    "text": "Cannot answer the question"
                 }
             ],
-            "info": "If the paper states any theoretically derived hypotheses or the and alike, you should choose the second option here, even if large parts of the study had an exploratory motivation.",
+            "info": "These criteria apply not only to purely theoretical work but also to original empirical work that incorporates theoretical reasoning in generating its hypotheses. Thus, if the paper states any theoretically derived hypotheses or the like, you should choose the second option here.<br><br><b>Orienting Question:</b><br>Was there a theoretical motivation for conducting this research?",
+            "condition": "$P_Suitable === 'Yes'"
+        },
+        {
+            "id": "TH_Theorizing_NAExplanation",
+            "type": "text",
+            "title": "⤷ Cannot answer: Explanation",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'NotApplicable'"
+        },
+        {
+            "id": "TH_Theorizing_Definition",
+            "type": "info",
+            "text": "<h4>Theory usage and development</h4>",
+            "info": "The following items assess how transparently a theory is described, formalized, evaluated, and compared.",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided'"
+        },
+        {
+            "id": "TH_Theorizing_T1",
+            "type": "checkbox",
+            "title": "The paper …",
+            "options": [
+                {
+                    "id": "Present",
+                    "text": "…contains an explicit verbal description of at least one phenomenon to be explained by the developed / tested theory.",
+                    "value": 1
+                }
+            ],
+            "info": "Phenomena are stable features of the world that may constitute the targets of scientific explanation. In psychology, such features are typically inferred from robust patterns of observations (i.e., observations that are made repeatedly and through the use of different procedures).<br><br><b>Orienting Question:</b><br>Does it become clear what the theory aims to explain?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided'",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
+        },
+        {
+            "id": "TH_Theorizing_T2",
+            "type": "checkbox",
+            "title": "The paper …",
+            "options": [
+                {
+                    "id": "Present",
+                    "text": "…provides a working definition for all central concepts used in the theory or provides a clear reference to a previous definition of the concept.",
+                    "value": 1
+                }
+            ],
+            "info": "A concept is an abstract idea used to describe, differentiate, or reason about certain aspects of the world. Concepts might not always have an accepted definition. Yet, it is important to provide a working definition and to clearly communicate how the concept is used / understood in the context of the theory.<br><br><b>Orienting Question:</b><br>Is it clear what the concepts mentioned in the theory are about?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided'",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
+        },
+        {
+            "id": "TH_Theorizing_T3",
+            "type": "checkbox",
+            "title": "The paper …",
+            "options": [
+                {
+                    "id": "Present",
+                    "text": "…defines (in verbal form) the central relationships among the concepts used in the theory or provides a clear reference to a previous definition of this relationship.",
+                    "value": 1
+                }
+            ],
+            "info": "Verbal definitions are still required even if concepts and their relations are expressed in a formalized way (e.g., in a formula). While formalizations are inherently more precise, verbal expressions are still necessary for others to properly understand the content of the formalization.<br><br><b>Orienting Question:</b><br>Is it clear how the concepts mentioned in the theory are related to each other?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided'",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
+        },
+        {
+            "id": "TH_Theorizing_T4",
+            "type": "checkbox",
+            "title": "The paper …",
+            "options": [
+                {
+                    "id": "Present",
+                    "text": "…describes a mechanism explaining how the relevant phenomena arise.",
+                    "value": 1
+                }
+            ],
+            "info": "A mechanism is the causal or functional pathway through which entities, processes, and their organization give rise to a phenomenon.<br><br><b>Orienting Question:</b><br>Is it clear how the theory explains the phenomenon?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided'",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
+        },
+        {
+            "id": "TH_Theorizing_T5",
+            "type": "checkbox",
+            "title": "The paper …",
+            "options": [
+                {
+                    "id": "Present",
+                    "text": "…discusses the intended scope of the theory and, where possible, specifies known boundary conditions or limitations of its applicability.",
+                    "value": 1
+                }
+            ],
+            "info": "This concerns assumptions about generality (e.g., subject and stimulus population characteristics) as well as simplifying assumptions. When building on an existing theory, a clear reference to a prior scope statement can be sufficient if the scope is unchanged.<br><br><b>Orienting Question:</b><br>Is it clear under which conditions / in which situations the theory is applicable?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided'",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
+        },
+
+        {
+            "id": "TH_pre_formalization_separator",
+            "type": "separator",
+            "no_comment": true,
             "condition": "$P_Suitable === 'Yes'"
         },
 
         {
-            "id": "TH_Theorizing_NAExplanation",
-            "type": "text",
-            "title": "⤷ Not Applicable: Explanation",
-            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'NotApplicable'"
-        },
-
-        {
-            "id": "TH_Theorizing_Definition",
-            "type": "info",
-            "text": "<h4>Theory usage and development</h4>The following section aims to assess the <b>theoretical rigor</b> of your work, with a formalized version of a theory in a computational model being considered the highest standard.<br><ul><li>A <b>theory</b> is a set of assumptions about mechanisms that explain empirical phenomena.</li><li><b>Phenomena</b> are expressed in robust patterns in the world that have been confirmed in methodologically diverse empirical studies. They are usually not directly observable but implied by observed or measured data patterns. Notably, the assumption of the existence of the phenomenon may be false (e.g., due to errors in the measurement).</li><li><b>Mechanisms</b> that explain phenomena are typically described using concepts (e.g., person, situation, attitude, motive, etc.) and relations among these concepts. We call these the 'elements of a theory'. Eventually, the elements specified within the theory should be able to reproduce the data pattern that resembles the data pattern reflective of the assumed phenomenon.</li></ul>Whether or not the pattern exists in reality is relevant regarding the theory’s ultimate utility, but it is irrelevant in terms of how precisely, transparently and comprehensively the theory itself is presented. A theory may be well-specified and still wrong.<br><br>A <b>model</b> is a formalization of a (part of a) theory in accordance with some set of standard notation rules (e.g., algebra). A model always consists of mathematical or formal-logic elements such as variables, scalars and constants, as well as exact specifications of the ways in which these are related to one another. The formulation of a model should always enable to run concrete simulations, thereby increasing the precision, objectivity, and falsifiability of a theory. Please note that there is a difference between 1) a computational model of your theory, which aims to explain your data by formalizing a data-generating process, and 2) a statistical model of your data, which aims to describe patterns within the data but without offering an explanation of how that data was generated. In the following, the term “model” is used in the former way.",
-            "info": "The following section aims to assess the theoretical rigor of your work, with a formalized version of a theory in a computational model being considered the highest standard.<br><br>It is important to distinguish between 1) a computational model of your theory, which aims to <i>explain</i> your data by formalizing a data-generating process, and 2) a statistical model of your data, which aims to <i>describe</i> patterns in your data.",
-            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided'"
-        },
-
-
-
-        {
-            "id": "TH_Theorizing_Quality",
-            "type": "checkbox",
-            "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && (exists($TH_Theorizing_NAExplanation))))"
-            },
-            "title": "Hygiene standards for papers developing and/or evaluating at least one theory. The paper …",
-            "options": [
-                {
-                    "id": "NarrativeAccount",
-                    "text": "contains an explicit narrative account of the phenomena that are to be explained, and of one or more hypothetical mechanisms accounting for them. ",
-                    "value": 0.4
-                },
-                {
-                    "id":"NarrativeDefinitions",
-                    "text": "contains explicit narrative definitions of each element (e.g., concepts, relationships between concepts) in the theory.",
-                    "value": 0.3
-                },
-                {
-                    "id":"BoundaryConditions",
-                    "text": "specifies the conditions that must be met for the theory to apply to the phenomena.",
-                    "value": 0.3
-                },
-                {
-                    "id": "FormalizedAccount",
-                    "text": "contains a formalized account of the theory (i.e., a model). That is, all properties and connections among the elements of the theory are expressed in a formalized way (see explanations for examples), and the model attempts to reproduce the to-be-explained phenomenon.",
-                    "value": 1
-                }
-            ],
-            "info": "The following criteria also apply when reusing or testing a previously developed model. In this case, they refer to the previous work that is referenced in the paper and any deviations, additions and adaptations reported in the current work.<br><br><ul><li><i>Phenomena</i> are robust patterns in the world that have been confirmed in methodologically diverse empirical studies. While they are not always directly observable, they are implied by observation or measurement.</li><li>'<i>conditions that must be met</i>': For example, for which population, under which situational characteristics.</li><li>A <i>formalized account of the theory</i> can be achieved in various ways, typically by specifying the theory with (1) formal-logic (e.g., if-then propositions, rules of logic), (2) mathematical equations, or (3) in an agent-based (i.e., specification of individual entities and their interactions to simulate their effect on the system), or (4) algorithmic model. Oftentimes, a model will mix multiple approaches (e.g., an agent-based model can include equations and / or computer code).</li></ul>",
-            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided'"
-        },
-
-
-        {
-            "id": "TH_Theorizing_ModelLanguage",
-            "type": "checkbox",
-            "title": "In what language or system is the model formulated?",
-            "options": [
-                {
-                    "id": "FormalLogic",
-                    "text": "Formal-Logic"
-                },
-                {
-                    "id": "Mathematical",
-                    "text": "Mathematical"
-                },
-                {
-                    "id": "ABM",
-                    "text": "Agent-based model"
-                },
-                {
-                    "id": "Algo",
-                    "text": "Algorithmic model"
-                },                
-                {
-                    "id": "OtherLanguage",
-                    "text": "Other (please specify)"
-                }
-            ],
-            "info": "More than one possible. Please tick all that apply.",
-            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Theorizing_Quality_FormalizedAccount"
-        },
-        {
-            "id": "TH_Theorizing_ModelLanguage_Other",
-            "type": "text",
-            "title": "⤷ Theory type/ Language: Other",
-            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Theorizing_Quality_FormalizedAccount && $TH_Theorizing_ModelLanguage_OtherLanguage"
-        },
-
-
-
-        {
-            "id": "TH_Theorizing_QualityFormalization",
-            "type": "checkbox",
-            "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && (exists($TH_Theorizing_NAExplanation))))"
-            },
-            "title": "The paper …",
-            "options": [
-                {
-                    "id": "AllElements",
-                    "text": "lists all elements of the model alongside their definitions in a clearly arranged form (e.g., in a table).",
-                    "value": 0.4
-                },
-                {
-                    "id": "MathProps",
-                    "text": "explicates the basic mathematical properties of all elements of the model (e.g., scalar vs. matrix; dimensionality; units carrying the information).",
-                    "value": 0.3
-                },
-                {
-                    "id": "PossibleValues",
-                    "text": "explicates the possible values for all elements of the model (i.e., upper and lower bounds, scale level).",
-                    "value": 0.3
-                },
-                {
-                    "id": "PhenomenaReproduction",
-                    "text": "contains one or more simulation(s) to explore the ability of the model to reproduce the to-be-explained phenomenon.",
-                    "value": 0.7
-                },
-                {
-                    "id": "Implications",
-                    "text": "contains one or more simulation(s) to explore additional implications of the theory.",
-                    "value": 0.3
-                }
-            ],
-            "info": "Please apply these questions to the theory in your paper - regardless whether you (further) developed the theory or used someone else’s theory.<br><br><ul><li>Under <i>elements</i> of a model we subsume fixed and free parameters, scaling constants, measurable variables, and outcomes.</li><li>Basic mathematical properties: For example, if a formalization only contains <code>Y = a*B + c</code>, even if all elements have a narrative definition, the mathematical properties might be unclear: For instance, is <code>B</code> a constant, a vector, or a two-dimensional matrix?</li><li>The simulations do not necessarily involve empirical data.</li></ul>",
-            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Theorizing_Quality_FormalizedAccount"
-        },
-
-
-        {
-            "id": "TH_Theorizing_Test",
+            "id": "TH_Formalization",
             "type": "radio",
-            "title": "Did you test (a part of) this theory with empirical data?",
+            "title": "Does the paper formalize (parts of) the theory in a formal model?",
             "options": [
                 {
                     "id": "No",
@@ -166,94 +274,408 @@
                 {
                     "id": "Yes",
                     "text": "Yes"
-                }                
+                }
             ],
-            "info": "Testing the empirical consistency of a theory usually involves the comparison of a concrete prediction from the theory against empirical data. This can involve simulations but does necessarily require them.",
+            "info": "That is, the properties of and the connections among the elements of (a part of) the theory are expressed through formal means, such as mathematical equations, algorithms, or logical propositions.<br><br>It should be noted that a formal model specifies a data generating process that enables the running of simulations. This is different from a statistical model, which mainly aims to describe data instead of explaining its generating process.",
             "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided'"
         },
-
         {
-            "id": "TH_Theorizing_Test_Definition",
-            "type": "info",
-            "text": "<h4>Theory Evaluation</h4>Theories may be evaluated in terms of how well they predict or reproduce data patterns that are indicative of the to-be-explained phenomenon. To do so, the elements of the theory that are to be included in the evaluation need to be “operationalized”. Evaluating a theory does not require its formalization but doing so will usually result in a more precise and objective test. Evaluating only parts of a theory is possible and legitimate.<br><br>An optimal theory evaluation contains an explicit account of which of the theory’s elements are (not) evaluated, how each of these elements are represented in the design of the respective empirical study, and how the assumed  phenomenon is represented in the observable data. An optimal theory evaluation also contains precise predictions, criteria for how they may be falsified, an assessment of how well the theory’s predictions fit the observable data, and a discussion of what the findings mean for the theory.",
-            "info": "The following section aims to assess the theoretical rigor of your work, with a formalized version of a theory in a computational model being considered the highest standard.<br><br>It is important to distinguish between 1) a computational model of your theory, which aims to <i>explain</i> your data by formalizing a data-generating process, and 2) a statistical model of your data, which aims to <i>describe</i> patterns in your data.",
-            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Theorizing_Test == 'Yes'"
+            "id": "TH_Formalization_F1",
+            "type": "checkbox",
+            "title": "The paper …",
+            "options": [
+                {
+                    "id": "Present",
+                    "text": "…specifies any auxiliary assumption that had to be added to enable the translation of the verbal theory into a formal model.",
+                    "value": 1
+                }
+            ],
+            "info": "An auxiliary assumption is any assumption or decision not directly implied by the theory but introduced for purposes such as formalization, simulation, prediction, or empirical testing.<br><br><b>Orienting Question:</b><br>Are modelling decisions that are not directly implied by the theory made explicit?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Formalization === 'Yes'",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
+        },
+        {
+            "id": "TH_Formalization_F2",
+            "type": "checkbox",
+            "title": "The paper …",
+            "options": [
+                {
+                    "id": "Present",
+                    "text": "…lists all elements of the formal model and defines them by connecting them to their corresponding elements of the verbal theory (if available). If an element of the model represents an auxiliary assumption, this is made explicit.",
+                    "value": 1
+                }
+            ],
+            "info": "Elements of the formal model subsume all the variables, parameters, constants, functions, operators, and auxiliary assumptions that were used to arrive at a specific formalization of a theory.<br><br>Specifying all the elements of a formal model can also be achieved using a Table or an Appendix. Common mathematical operators can be exempt from this requirement.<br><br><b>Orienting Question:</b><br>Is it clear what each element in the formal model is supposed to represent?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Formalization === 'Yes'",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
+        },
+        {
+            "id": "TH_Formalization_F3",
+            "type": "checkbox",
+            "title": "The paper …",
+            "options": [
+                {
+                    "id": "Present",
+                    "text": "…specifies the basic mathematical properties of all elements of the formal model (e.g., scalar vs. matrix, dimensionality, etc.).",
+                    "value": 1
+                }
+            ],
+            "info": "Even if all elements of the formal model have a narrative definition, their mathematical properties might be unclear (e.g., is parameter B a constant, a vector, or a two-dimensional matrix?).<br><br>This can also be ensured by referring to an established standard notation.<br><br><b>Orienting Question:</b><br>Are the (mathematical) properties for each element of the model clear?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Formalization === 'Yes'",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
+        },
+        {
+            "id": "TH_Formalization_F4",
+            "type": "checkbox",
+            "title": "The paper …",
+            "options": [
+                {
+                    "id": "Present",
+                    "text": "…specifies constraints on the possible values for all elements of the formal model (e.g., upper and lower bounds, scale level, prior distributions). If a parameter has no assumed constraints/scale, this is made explicit.",
+                    "value": 1
+                }
+            ],
+            "info": "These constraints may be directly implied by the theory, introduced through auxiliary assumptions, or based on empirical observations.<br><br><b>Orienting Question:</b><br>Is it clear which values each element in the model can possibly take?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Formalization === 'Yes'",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
+        },
+        {
+            "id": "TH_Formalization_F5",
+            "type": "checkbox",
+            "title": "The paper …",
+            "options": [
+                {
+                    "id": "Present",
+                    "text": "…states whether the model is structurally identifiable — that is, whether distinct parameter values produce distinct patterns of predictions — or defines constraints under which identifiability can be achieved. If identifiability does not apply to the model or was not assessed, this is stated explicitly.",
+                    "value": 1
+                }
+            ],
+            "info": "Structural identifiability is a property of the model, not of any single element. It concerns whether the model’s parameters can, in principle, be distinguished from the full pattern of predictions the model generates. A model is structurally identifiable when no two distinct parameter configurations produce the same predicted pattern across all of the model’s outputs.<br><br><b>Orienting Question:</b><br>Is there a discussion of the model’s structural identifiability?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Formalization === 'Yes'",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
         },
 
         {
-            "id": "TH_Theorizing_Test_QualityAssumptions",
-            "type": "checkbox",
-            "title": "The paper describes all additional assumptions that were necessary to make the theory testable, by stating which, why, and how elements of the theory were ...",
-            "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && (exists($TH_Theorizing_NAExplanation)))) || ($TH_Theorizing_Test === 'No')"
-            },
+            "id": "TH_pre_evaluation_separator",
+            "type": "separator",
+            "no_comment": true,
+            "condition": "$P_Suitable === 'Yes'"
+        },
+
+        {
+            "id": "TH_Evaluation",
+            "type": "radio",
+            "title": "Did you evaluate (a part of) this theory / model?",
             "options": [
                 {
-                    "id": "Measured",
-                    "text": "measured (i.e. operationalized)",
-                    "value": 0.1
+                    "id": "No",
+                    "text": "No"
                 },
                 {
-                    "id": "Manipulated",
-                    "text": "manipulated within an experimental design",
-                    "value": 0.1
+                    "id": "Simulation",
+                    "text": "Yes, by using simulations and / or mathematical derivations"
                 },
                 {
-                    "id": "Estimated",
-                    "text": "estimated (i.e. reflected in a (statistical) model)",
-                    "value": 0.1
+                    "id": "Empirical",
+                    "text": "Yes, by comparing its predictions against empirical observations"
                 },
                 {
-                    "id": "Fixed",
-                    "text": "fixed to specific values",
-                    "value": 0.1
+                    "id": "Both",
+                    "text": "Yes, by both simulations / mathematical derivations AND empirical observations"
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Theorizing_Test === 'Yes'",
-            "info": "This also includes ad-hoc assumptions."
+            "info": "Tests by simulation always require the evaluated theory to be formalized. Empirical tests can also be applied to purely narrative theories. Both may apply to the same paper.<br><br><b>Orienting Question:</b><br>Was the theory evaluated not at all, via simulations / mathematical derivations, via empirical data, or both?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided'"
         },
         {
-            "id": "TH_Theorizing_Test_QualityDerivation",
+            "id": "TH_Simulation_S1",
             "type": "checkbox",
-            "title": "The paper makes clear how the tested predictions logically and stringently follow from the theory by ...",
-            "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && (exists($TH_Theorizing_NAExplanation)))) || ($TH_Theorizing_Test === 'No')"
-            },
+            "title": "The simulation part of the paper …",
             "options": [
                 {
-                    "id": "NarrativeWalkthrough",
-                    "text": "a narrative walk-through",
-                    "value": 0.3
-                },
-                {
-                    "id": "Derivation",
-                    "text": "explicitly deriving the tested predictions from a formalized version of the theory.",
-                    "value": 0.3
+                    "id": "Present",
+                    "text": "…specifies any additional *auxiliary assumption* that had to be added for the purpose of running the simulation (e.g., restriction of parameter ranges, fixed parameters, number of iterations, etc.).",
+                    "value": 1
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Theorizing_Test === 'Yes'",
-            "info": "More than one possible. Please tick all that apply. To gain all points, a formalized derivation of predictions should be accompanied by a narrative walkthrough.<ul><li>A narrative derivation explains the reasoning in a comprehensible manner using natural language terms, such that a competent person can follow the argumentation</li><li>A formalized derivation is objective, in the sense that any competent person would come to the same prediction.</li></ul>"
+            "info": "An auxiliary assumption is any assumption or decision not directly implied by the theory but introduced for purposes such as formalization, simulation, prediction, or empirical testing.<br><br><b>Orienting Question:</b><br>Are decisions that are not implied by the theory / model made explicit?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && ($TH_Evaluation === 'Simulation' || $TH_Evaluation === 'Both')",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
         },
         {
-            "id": "TH_Theorizing_Test_QualityOther",
+            "id": "TH_Simulation_S2",
             "type": "checkbox",
-            "title": "The paper ...",
-            "score": {
-                "not_applicable": "($P_Suitable === 'No') || (($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && (exists($TH_Theorizing_NAExplanation)))) || ($TH_Theorizing_Test === 'No')"
-            },
+            "title": "The simulation part of the paper …",
             "options": [
                 {
-                    "id": "ModelFit",
-                    "text": "evaluates the relative and/or absolute fit of the theory to the empirical data with appropriate procedures (e.g., qualitative reproduction of empirical patterns, cross-validation, AIC, Bayes Factors).",
-                    "value": 0.7
-                },
-                {
-                    "id": "Discussion",
-                    "text": "contains an explicit discussion as to what the results mean for the theory that was tested (e.g., refutation, limitation of scope, adding or subtracting theory elements).",
-                    "value": 0.3
+                    "id": "Present",
+                    "text": "…provides an assessment of how well the model *reproduces the data patterns* indicative of the phenomena to be explained.",
+                    "value": 1
                 }
             ],
-            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Theorizing_Test === 'Yes'"
+            "info": "Such an assessment should always cover whether the model reproduces the data pattern qualitatively but may also cover aspects of quantitative fit, depending on how narrowly the phenomena are defined.<br><br><b>Orienting Question:</b><br>Did the work attempt to reproduce the data pattern indicative of the phenomenon that is to be explained?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && ($TH_Evaluation === 'Simulation' || $TH_Evaluation === 'Both')",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
+        },
+        {
+            "id": "TH_Simulation_S3",
+            "type": "checkbox",
+            "title": "The simulation part of the paper …",
+            "options": [
+                {
+                    "id": "Present",
+                    "text": "…provides an assessment of the *robustness* of the simulation results by, for example, using any of the following or similarly appropriate methods: <br><ul><li>Varying auxiliary assumptions that could meaningfully affect the results and testing whether the model's success in reproducing the data pattern indicative of the relevant phenomena is dependent on these assumptions.</li><li>Exploring the simulation results across a range of justifiable parameter values to characterize the plausible parameter space.</li></ul>",
+                    "value": 1
+                }
+            ],
+            "info": "In the best case, the model’s success in reproducing the data pattern indicative of the relevant phenomena should not depend on the auxiliary assumptions but only on the core assumptions.<br><br><b>Orienting Question:</b><br>Does the paper implement one of these (or similar) practices to test the robustness of the simulation results?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && ($TH_Evaluation === 'Simulation' || $TH_Evaluation === 'Both')",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
+        },
+        {
+            "id": "TH_Simulation_S4",
+            "type": "checkbox",
+            "title": "The simulation part of the paper …",
+            "options": [
+                {
+                    "id": "Present",
+                    "text": "…provides an assessment of whether the *relevant phenomena arise from the theory’s mechanism(s)* by, for example, changing (i.e., deleting or replacing) the mechanism(s) to test whether the relevant phenomena fail to emerge.",
+                    "value": 1
+                }
+            ],
+            "info": "This concerns the empirical relevance of the theory’s mechanism: do the relevant phenomena emerge as a consequence of the core theoretical assumptions, or is it a byproduct of auxiliary assumptions? Altering or removing the mechanism(s) should ideally lead to a failure in reproducing the relevant phenomena.<br><br><b>Orienting Question:</b><br>Does the paper assess whether relevant phenomena emerge from the mechanism(s) postulated by the theory/model?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && ($TH_Evaluation === 'Simulation' || $TH_Evaluation === 'Both')",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
+        },
+        {
+            "id": "TH_Simulation_S5",
+            "type": "checkbox",
+            "title": "The simulation part of the paper …",
+            "options": [
+                {
+                    "id": "Present",
+                    "text": "…contains an explicit *discussion* as to what the results of the simulation mean for the theory that was tested (e.g., support, refutation, limitation of scope, adding or subtracting theory elements), also considering the plausibility of auxiliary assumptions that had been added in the process.",
+                    "value": 1
+                }
+            ],
+            "info": "A single test often cannot definitively refute a theory because auxiliary assumptions are always involved; the plausibility of these assumptions should therefore be discussed alongside the simulation outcome.<br><br><b>Orienting Question:</b><br>Is there a discussion of what the simulation results imply for the theory that was tested?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && ($TH_Evaluation === 'Simulation' || $TH_Evaluation === 'Both')",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
+        },
+        {
+            "id": "TH_Empirical_E1",
+            "type": "checkbox",
+            "title": "The empirical part of the paper …",
+            "options": [
+                {
+                    "id": "Present",
+                    "text": "…describes how each element in the theory that is relevant to the current test was *operationalized* (i.e., measured, estimated, fixed, or manipulated) in an experimental design.",
+                    "value": 1
+                }
+            ],
+            "info": "Operationalization is the process of specifying how (some of) the elements of a theory/formal model are measured, manipulated, or estimated to make the theory testable.<br><br><b>Orienting Question:</b><br>Is it clear how each element of the theory was operationalized?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && ($TH_Evaluation === 'Empirical' || $TH_Evaluation === 'Both')",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
+        },
+        {
+            "id": "TH_Empirical_E2",
+            "type": "checkbox",
+            "title": "The empirical part of the paper …",
+            "options": [
+                {
+                    "id": "Present",
+                    "text": "…makes transparent how *predictions were derived from the theory*, either by providing a rationale of how the predictions logically follow from the verbal theory, or by formally deriving the predictions from a formal model.",
+                    "value": 1
+                }
+            ],
+            "info": "<b>Orienting Question:</b><br>Is it clear how the tested predictions follow from the theory?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && ($TH_Evaluation === 'Empirical' || $TH_Evaluation === 'Both')",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
+        },
+        {
+            "id": "TH_Empirical_E3",
+            "type": "checkbox",
+            "title": "The empirical part of the paper …",
+            "options": [
+                {
+                    "id": "Present",
+                    "text": "…provides an assessment of how *consistent* the theory’s / model’s predictions are with the observed empirical data.",
+                    "value": 1
+                }
+            ],
+            "info": "<b>Orienting Question:</b><br>Is there an evaluation of how consistent the empirical observations are with the theoretical predictions?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && ($TH_Evaluation === 'Empirical' || $TH_Evaluation === 'Both')",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
+        },
+        {
+            "id": "TH_Empirical_E4",
+            "type": "checkbox",
+            "title": "The empirical part of the paper …",
+            "options": [
+                {
+                    "id": "Present",
+                    "text": "…provides a discussion of how *informative* the empirical test was for evaluating the theory. That is, how narrowly the theory constrained the space of plausible observations as opposed to being compatible with a wide range of other plausible observations.",
+                    "value": 1
+                }
+            ],
+            "info": "A close fit between theory and data provides strong support only if the theory could have failed, i.e. if it forbids a substantial range of otherwise plausible observations. A theory compatible with almost any result gains little support from a confirming observation. Thus, the more observations the theory rules out, the more informative the test.<br><br><b>Orienting Question:</b><br>Is there a discussion of whether the theory forbids a substantial range of otherwise plausible observations?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && ($TH_Evaluation === 'Empirical' || $TH_Evaluation === 'Both')",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
+        },
+        {
+            "id": "TH_Empirical_E5",
+            "type": "checkbox",
+            "title": "The empirical part of the paper …",
+            "options": [
+                {
+                    "id": "Present",
+                    "text": "…contains an explicit discussion as to *what the empirical results mean for the theory* that was tested (e.g., support, refutation, limitation of scope, adding or subtracting theory elements), considering the plausibility of auxiliary assumptions that had been added in the process.",
+                    "value": 1
+                }
+            ],
+            "info": "<b>Orienting Question:</b><br>Is there a discussion of what the empirical results imply for the theory that was tested?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && ($TH_Evaluation === 'Empirical' || $TH_Evaluation === 'Both')",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
+        },
+
+        {
+            "id": "TH_precomparison_separator",
+            "type": "separator",
+            "no_comment": true,
+            "condition": "$P_Suitable === 'Yes'"
+        },
+
+        {
+            "id": "TH_Comparison",
+            "type": "radio",
+            "title": "Did you compare the tested theory/model to other theories/models?",
+            "options": [
+                {
+                    "id": "No",
+                    "text": "No"
+                },
+                {
+                    "id": "Yes",
+                    "text": "Yes"
+                }
+            ],
+            "info": "These items only apply when the paper explicitly compares two or more theories / models.",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Evaluation !== 'No'"
+        },
+        {
+            "id": "TH_Comparison_C1",
+            "type": "checkbox",
+            "title": "The paper …",
+            "options": [
+                {
+                    "id": "Present",
+                    "text": "…provides a comparison of each theory’s / model’s predictive accuracy, i.e., how well they reproduce the data pattern indicative of the phenomena of interest.",
+                    "value": 1
+                }
+            ],
+            "info": "Ideally, predictive accuracy should be assessed out-of-sample, that is, on a data set that was not used to construct and/or fit the theory/model.<br><br><b>Orienting Question:</b><br>Is there a comparison of the predictive accuracy of all of the compared theories’ / models’ predictions?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Evaluation !== 'No' && $TH_Comparison === 'Yes'",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
+        },
+        {
+            "id": "TH_Comparison_C2",
+            "type": "checkbox",
+            "title": "The paper …",
+            "options": [
+                {
+                    "id": "Present",
+                    "text": "…provides a comparison of how narrowly each theory / model constrains the space of plausible observations as opposed to being consistent with a wide range of other plausible observations.",
+                    "value": 1
+                }
+            ],
+            "info": "Two theories / models may reproduce the target phenomenon equally well but differ in how much else they permit. A theory that predicts the data pattern indicative of the relevant phenomena while ruling out more alternative observations is better supported when its prediction holds compared to a theory that is also consistent with other alternative observations.<br><br><b>Orienting Question:</b><br>Is there a discussion of how narrowly each theory / model constrains the predictive space?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Evaluation !== 'No' && $TH_Comparison === 'Yes'",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
+        },
+        {
+            "id": "TH_Comparison_C3",
+            "type": "checkbox",
+            "title": "The paper …",
+            "options": [
+                {
+                    "id": "Present",
+                    "text": "…provides a comparison of each theory’s / model’s explanatory breadth, i.e., the range of other relevant phenomena each theory / model can account for.",
+                    "value": 1
+                }
+            ],
+            "info": "Two theories / models can account for a different number of phenomena. A theory / model that accounts for more phenomena than another theory / model, has higher explanatory breadth and should be preferred. Note that this point is different from C2, which is about how precisely each of these phenomena is predicted.<br><br><b>Orienting Question:</b><br>Is there a discussion of the explanatory breadth of the theories / models?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Evaluation !== 'No' && $TH_Comparison === 'Yes'",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
+        },
+        {
+            "id": "TH_Comparison_C4",
+            "type": "checkbox",
+            "title": "The paper …",
+            "options": [
+                {
+                    "id": "Present",
+                    "text": "…provides a comparison of each theory’s / model’s *parsimony*, i.e., its simplicity in explaining the relevant phenomena.",
+                    "value": 1
+                }
+            ],
+            "info": "Theories / models with fewer parameters that nevertheless explain all the phenomena of interest should be preferred over theories / models with more parameters that explain the same number of phenomena.<br><br><b>Orienting Question:</b><br>Is there a discussion of the parsimony of the theories / models?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Evaluation !== 'No' && $TH_Comparison === 'Yes'",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
+        },
+        {
+            "id": "TH_Comparison_C5",
+            "type": "checkbox",
+            "title": "The paper …",
+            "options": [
+                {
+                    "id": "Present",
+                    "text": "…explicitly discusses the trade-off between each theory’s / model’s predictive accuracy, precision, explanatory breadth, and parsimony.",
+                    "value": 1
+                }
+            ],
+            "info": "Being inferior to another theory / model in one regard may be offset by being superior in another. For instance, if a theory / model has one parameter more than another but explains many more phenomena, it may be plausible to prefer the less parsimonious over the more parsimonious theory / model.<br><br><b>Orienting Question:</b><br>Is there a discussion of the trade-off between each theory’s / model’s characteristics?",
+            "condition": "$P_Suitable === 'Yes' && $TH_Theorizing === 'TheoryGuided' && $TH_Evaluation !== 'No' && $TH_Comparison === 'Yes'",
+            "score": {
+                "not_applicable": "($P_Suitable === 'No') || ($TH_Theorizing === 'DescriptiveExploratory') || (($TH_Theorizing === 'NotApplicable') && exists($TH_Theorizing_NAExplanation))"
+            }
         }
     ]
 }

@@ -14,6 +14,7 @@
     <script src="//unpkg.com/alpinejs" defer></script>
 
     <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.min.js"></script>
+    <script src="./js/showdown.min.js"></script>
 
     <script>
         const getPacks = async () => {
@@ -93,6 +94,21 @@
             return text
                 .replaceAll(/\{.+?\|(.*?)\}/g, '$1')
         }
+
+        const markdownConverter = new showdown.Converter();
+
+        const renderOptionText = text => {
+            if (!text) {
+                return '';
+            }
+
+            const html = markdownConverter.makeHtml(String(text)).trim();
+            const paragraphs = html.match(/<p>/g) ?? [];
+
+            return paragraphs.length === 1 && html.startsWith('<p>') && html.endsWith('</p>')
+                ? html.slice(3, -4)
+                : html;
+        };
 
         // get params from query params from URL
         const resolvePackInQuery = () => {
@@ -187,7 +203,7 @@
                         return `
                         <ul>
                           ${el.options
-                        .map(opt => `<li>${opt.text}</li>`)
+                        .map(opt => `<li>${renderOptionText(opt.text)}</li>`)
                         .join('')}
                         </ul>
                         `;
@@ -195,14 +211,14 @@
                     case 'radio':
                         return `
                         ${el.options
-                        .map(opt => `<p>◯ ${opt.value ? ('(' + opt.value + 'P) ') : ''}${opt.text}</p>`)
+                        .map(opt => `<p>◯ ${opt.value ? ('(' + opt.value + 'P) ') : ''}${renderOptionText(opt.text)}</p>`)
                         .join('')}
                         `;
 
                     case 'checkbox':
                         return `
                         ${el.options
-                        .map(opt => `<p>☐ ${opt.value ? ('(' + opt.value + 'P) ') : ''}${opt.text}</p>`)
+                        .map(opt => `<p>☐ ${opt.value ? ('(' + opt.value + 'P) ') : ''}${renderOptionText(opt.text)}</p>`)
                         .join('')}
                         `;
 
@@ -348,8 +364,7 @@
                         <template x-if="elem.type === 'dropdown'">
                             <select>
                                 <template x-for="option in elem.options" :key="option.id">
-                                    <p x-text="option.text"></p>
-                                    <option x-html="option.text" :value="option.id"></option>
+                                    <option x-html="renderOptionText(option.text)" :value="option.id"></option>
                                 </template>
                             </select>
                         </template>
@@ -362,7 +377,7 @@
                                         <i><span class="hl"
                                                 x-show="option.value !== undefined  && $store.showPoints"
                                                 x-text="`(${option.value}P) `"></span></i>
-                                        <span x-html="option.text"></span>
+                                        <span x-html="renderOptionText(option.text)"></span>
                                     </label>
                                 </template>
                             </div>
@@ -376,7 +391,7 @@
                                         <i><span class="hl"
                                                 x-show="option.value !== undefined  && $store.showPoints"
                                                 x-text="`(${option.value}P) `"></span></i>
-                                        <span x-html="option.text"></span>
+                                        <span x-html="renderOptionText(option.text)"></span>
                                     </label>
                                 </template>
                             </div>
@@ -390,7 +405,7 @@
                                             <th></th>
                                             <template x-for="option in elem.options"
                                                 :key="option.id">
-                                                <th x-html="option.text"></th>
+                                                <th x-html="renderOptionText(option.text)"></th>
                                             </template>
                                         </tr>
                                     </thead>
@@ -408,7 +423,7 @@
                                                             :id="elem.id + '_' + row.id + '_' + option.id"
                                                             :value="option.id" />
                                                         <div class="tabular-option-info"
-                                                            x-text="`${option.text}`"></div>
+                                                            x-html="renderOptionText(option.text)"></div>
                                                     </td>
                                                 </template>
                                             </tr>
