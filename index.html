@@ -1910,6 +1910,26 @@
 
         loadConfigText().then(text => {
             const config = jsyaml.load(text);
+            // Resolve an optional pack override using preview.html query syntax.
+            let type = params.get('type');
+            const path = params.get('path') ?? '';
+            const version = params.get('version');
+
+            // Built-in packs use the core- prefix in their filenames.
+            if (['meta', 'pubs', 'data', 'software'].includes(type)) {
+                type = `core-${type}`;
+            }
+
+            if (type) {
+                // Versions are represented with underscores in pack filenames.
+                const filename = version
+                    ? `${type}-${version.replace(/\./g, '_')}.json`
+                    : `${type}.json`;
+
+                // Load only the selected pack instead of the publication sources
+                // configured in config.yaml (or config-default.yaml) (override).
+                config.pubs.sources = [`packs/${path}/${filename}`];
+            }
 
             Alpine.store('forms').config = config;
 
