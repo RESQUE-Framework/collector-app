@@ -180,6 +180,21 @@
 
         const preprocessText = text => text ? insertValuesIntoText(partialHighlight(null, text)) : '';
 
+        const markdownConverter = new showdown.Converter();
+
+        const renderOptionText = text => {
+            if (!text) {
+                return '';
+            }
+
+            const html = markdownConverter.makeHtml(String(text)).trim();
+            const paragraphs = html.match(/<p>/g) ?? [];
+
+            return paragraphs.length === 1 && html.startsWith('<p>') && html.endsWith('</p>')
+                ? html.slice(3, -4)
+                : html;
+        };
+
         const preprocessTextWithIndicatorContext = (indicatorID, text) => text ? insertValuesIntoText(partialHighlight(indicatorID, text)) : '';
 
         const showSaving = () => {
@@ -839,7 +854,7 @@
                                                 <template x-if="elem.type === 'dropdown'">
                                                     <select x-model="$store.data.currentInput[elem.id]">
                                                         <template x-for="option in elem.options" :key="option.id">
-                                                            <option x-html="option.text" :value="option.id"></option>
+                                                            <option x-html="renderOptionText(option.text)" :value="option.id"></option>
                                                         </template>
                                                     </select>
                                                 </template>
@@ -853,7 +868,7 @@
                                                                     type="radio" :name="elem.id"
                                                                     :id="elem.id + '_' + option.id"
                                                                     :value="option.id" />
-                                                                <span x-html="option.text"></span>
+                                                                <span x-html="renderOptionText(option.text)"></span>
                                                             </label>
                                                         </template>
                                                     </div>
@@ -865,7 +880,7 @@
                                                             <input
                                                                 x-model="$store.data.currentInput[elem.id + '_' + option.id]"
                                                                 type="checkbox" :id="elem.id + '_' + option.id" />
-                                                            <span x-html="option.text"></span>
+                                                            <span x-html="renderOptionText(option.text)"></span>
                                                         </label>
                                                     </template>
                                                 </template>
@@ -879,7 +894,7 @@
                                                                     <th></th>
                                                                     <template x-for="option in elem.options"
                                                                         :key="option.id">
-                                                                        <th x-html="option.text"></th>
+                                                                        <th x-html="renderOptionText(option.text)"></th>
                                                                     </template>
                                                                 </tr>
                                                             </thead>
@@ -905,7 +920,7 @@
                                                                                     :id="elem.id + '_' + row.id + '_' + option.id"
                                                                                     :value="option.id" />
                                                                                 <div class="tabular-option-info"
-                                                                                    x-text="`${option.text}`"></div>
+                                                                                    x-html="renderOptionText(option.text)"></div>
                                                                             </td>
                                                                         </template>
                                                                     </tr>
@@ -1895,6 +1910,26 @@
 
         loadConfigText().then(text => {
             const config = jsyaml.load(text);
+            // Resolve an optional pack override using preview.html query syntax.
+            let type = params.get('type');
+            const path = params.get('path') ?? '';
+            const version = params.get('version');
+
+            // Built-in packs use the core- prefix in their filenames.
+            if (['meta', 'pubs', 'data', 'software'].includes(type)) {
+                type = `core-${type}`;
+            }
+
+            if (type) {
+                // Versions are represented with underscores in pack filenames.
+                const filename = version
+                    ? `${type}-${version.replace(/\./g, '_')}.json`
+                    : `${type}.json`;
+
+                // Load only the selected pack instead of the publication sources
+                // configured in config.yaml (or config-default.yaml) (override).
+                config.pubs.sources = [`packs/${path}/${filename}`];
+            }
 
             Alpine.store('forms').config = config;
 

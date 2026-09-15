@@ -16,3 +16,22 @@ pubs:
 ```
 
 Then all user items will be presented at the bottom, after the core publication items.
+
+
+
+## How to display a full list of indicators
+
+An interactive preview of all indicator packs can be found here: [https://resque-framework.github.io/collector-app/preview.html](https://resque-framework.github.io/collector-app/preview.html)
+
+Use the following URL parameters to customize the preview:
+
+- `type`: The type of indicators to display. Possible values are `pubs` (Publications), `data` (Data Sets), `software` (Research Software), and `meta` (Author Metadata).
+- `showPoints`: Whether to display the points for each indicator. Possible values are `true` and `false`.
+- `showLabels`: Whether to display the labels for each indicator. Possible values are `true` and `false`.
+- `version`: The version suffix in the pack filename, without a leading `v` (for example, `0.3.1` for the archived publication pack). If no version is specified, the unversioned pack is displayed.
+- `path`: A specific path to the indicator pack. This should be relative to the `/packs` directory. For example, to display the archived indicators in `/packs/archive`, use `path=archive`. Defaults to the main `/packs` directory.
+  
+E.g.:
+- https://resque-framework.github.io/collector-app/preview.html?type=pubs&showPoints=true&showLabels=true
+- https://resque-framework.github.io/collector-app/preview.html?type=software&showPoints=false
+- https://resque-framework.github.io/collector-app/preview.html?path=archive&type=pubs&showPoints=true&version=0.3.1

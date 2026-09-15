@@ -4,6 +4,10 @@
         "type": "EP-clinical_psychology"
     },
     {
+        "path": "EP",
+        "type": "EP-theory_development"
+    },
+    {
         "path": "archive",
         "type": "core-pubs",
         "version": "0.3.1"
@@ -34,10 +38,5 @@
     {
         "path": "dev",
         "type": "EP-stimuli"
-    }
-    ,
-    {
-        "path": "dev",
-        "type": "EP-theory_development"
-    }
+    }    
 ]
