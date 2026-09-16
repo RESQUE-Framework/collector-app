@@ -1,5 +1,7 @@
 # RESQUE Collector App — agent guidance
 
+Reviewed against the uploaded repository on 2026-09-16. Current findings and their verification cases are tracked in [documentation/RESQUE-Pack-Findings.md](documentation/RESQUE-Pack-Findings.md).
+
 ## Scope and source of truth
 
 - The central pack is `packs/core-pub.json`; the active scorer is **`utils/score2.js`**. `utils/archive/score.js` is deprecated. Do not use it to infer current semantics or implement new scoring.
@@ -26,7 +28,7 @@ Static browser application: Alpine.js, ordinary JavaScript, JSON packs, YAML con
 | `config/config-default.yaml` | Default configuration; `config/config.yaml` overrides it when available |
 | `styles.css`, `indicator-styles.css` | Application and indicator presentation |
 
-- Bundled dependencies in `js/` include Alpine.js, Chart.js, Showdown 2.1.0, js-yaml, LZ-String, Driver.js, and JS-Confetti. Avoid editing bundled libraries for pack changes. Do not suggest remote CDNs, keep everything local so that the website also runs in an offline environment (except the doi and ORCID requests).
+- Bundled dependencies in `js/` include Alpine.js, Chart.js, Showdown 2.1.0, js-yaml, LZ-String, Driver.js, and JS-Confetti. Avoid editing bundled libraries for pack changes and prefer local dependencies. Do not claim the whole repository is offline-ready: `preview.html` still loads Alpine and its manual-export library from CDNs, `packs.html` fetches a remote legacy catalog, and the collector attempts analytics and a configured remote logo in addition to DOI/ORCID requests. See UI-03 and TOOL-01 in the findings report.
 - `score2.js` is a **classic script**, not an ES module. Helpers such as `packutils.js` use ES exports; `index.html` imports them and exposes functions through `window`. Preserve this distinction when testing/refactoring.
 - Serve over HTTP for `fetch()` and browser modules. With Python 3 available, run from the repository root:
 
@@ -36,11 +38,12 @@ Static browser application: Alpine.js, ordinary JavaScript, JSON packs, YAML con
 
   Open `http://127.0.0.1:8000/index.html`. Preview the core with `preview.html?type=pub&showPoints=true&showLabels=true`; an extension with `preview.html?path=EP&type=EP-clinical_psychology&showPoints=true&showLabels=true`.
   
-- Preview checks content/layout; test actual conditional behavior and scores in the collector with required packs loaded. The collector's type/path/version query selection appends expansion/custom packs to config.pub.sources, preserving configured source order and avoiding duplicate paths. Thus ?path=EP&type=EP-theory_development retains the default publication core and adds the theory pack. Explicit core-* selections (including built-in aliases and archived versions) still replace the publication sources. Custom configurations must retain the core when their extensions depend on it.
+- Preview is for content/layout; test conditional behavior and scores in the collector with the required packs loaded. Collector `type`/`path`/`version` selection appends expansion/custom packs to `config.pub.sources`. For example, `?path=EP&type=EP-theory_development` retains the configured core and appends the theory pack; repeating that exact extension path does not append it again. This is not general source or ID deduplication (PUB-02).
+- Explicit `core-*` selections replace publication sources. The selector operates on the publication form even for `meta`, `data`, or `software` aliases; configure those output types through their own sections instead. For historical publication packs, use the actual historical name, e.g. `?path=archive&type=core-pubs&version=0.8.2`. The canonical `type=pub` archive alias currently requests a nonexistent renamed file; old unversioned `type=core-pubs` links work in the collector but not preview (PUB-01). Custom configurations must retain the core when extensions depend on it.
 - Alpine `<template>` output needs one root element; wrap siblings. Keep collector and preview option renderers consistent.
 - `renderOptionText()` converts Markdown in `options[].text` and removes one outer paragraph wrapper. Dropdown, radio, checkbox, and tabular-radio options use it. Other text follows separate HTML/interpolation helpers.
 - Pack content is trusted: it reaches `x-html`, and conditions reach `eval()`. Do not apply Markdown/HTML interpretation or expression evaluation to user-entered responses.
-- `scripts/reexport.js` still imports deprecated scoring utilities and uses the old scoring structure. It is not a current migration or validation command.
+- `scripts/reexport.js` imports the nonexistent `utils/score` path, uses an old scoring API, mixes module conventions, and does not await its metadata updates before writing. It is not a current migration or validation command (TOOL-01).
 
 ## Packs and configuration
 
@@ -49,7 +52,7 @@ Static browser application: Alpine.js, ordinary JavaScript, JSON packs, YAML con
 | `packs/core-pub.json` | `P`, `0.9.0`; 99 elements, 12 scored elements |
 | `packs/core-meta.json` | `M`, `0.3.0`; shared applicant/rater metadata |
 | `packs/core-software.json` | `S`, `0.2`; research software, with scoring limitations below |
-| `packs/core-data.json` | `D`, `0.1`; one unscored text field |
+| `packs/core-data.json` | `D`, `0.0.1`; one unscored text field |
 | `packs/user.json` | `U`; example custom questions |
 | `packs/EP/EP-clinical_psychology.json` | `CP`, `0.2.1`; 16 elements, 5 scored elements; depends on publication-core answers |
 | `packs/EP/EP-theory_development.json` | `TH`, `5.0.0`; 34 total elements: 25 scored checkboxes, 4 filter radios, 1 explanation, 1 info element, 3 separators |
@@ -60,9 +63,11 @@ Static browser application: Alpine.js, ordinary JavaScript, JSON packs, YAML con
 The theory checklist has five groups: theorizing (`T1`–`T5`), formalization (`F1`–`F5`), simulation (`S1`–`S5`), empirical evaluation (`E1`–`E5`), comparison (`C1`–`C5`). Preserve its filter dependencies.
 
 - Packs normally define `prefix`, `version`, `date`, `title`, and ordered `elements`. License/creator/citation fields describe provenance, not scoring.
-- Activate packs through configuration `sources`. For publication extensions, normally retain `packs/core-pubs.json` first and append the extension. Adding to `info.json` alone does not load a pack in the collector.
+- Activate packs through configuration `sources`. For publication extensions, normally retain `packs/core-pub.json` first and append the extension. Adding to `info.json` alone does not load a pack in the collector.
 - `use()` concatenates elements in source order, keeps the first title, records versions/dates by prefix, and merges defaults. It does not deduplicate IDs; later defaults overwrite earlier values with the same key.
-- Configuration, stored publication records, and assembled forms use **`pub`**. Legacy configuration files using `pubs` are normalized to `pub` on load. Other types: `meta`, `software`, `data`.
+- Configuration, stored publication records (`type: "pub"`), and assembled forms (`forms.pub`) use **`pub`**. The current file is **`packs/core-pub.json`**. Other types are `meta`, `software`, and `data`; pack prefix `P` and answer IDs have not been renamed.
+- `normalizePublicationConfig()` uses legacy `pubs` only when `pub === undefined`; an existing `pub` section wins. It retains the legacy property rather than deleting it and maps the exact source `packs/core-pubs.json` to `packs/core-pub.json`. The config loader, `menu()`, and imported `forms.config` use this helper; `use()` also applies the exact source alias. This is not arbitrary path normalization, query-namespace migration, or migration of invented `type: "pubs"` records.
+- Preserve `packs/archive/core-pubs-0_3_1.json`, `packs/archive/core-pubs-0_8_2.json`, their catalog entries, and historical changelog labels. Do not perform a global `pubs` replacement. Write new conditions as `config$pub.active` and per-type URL overrides as `pub:<setting>`. Avoid combining old and new spellings of the same source; normalized duplicates are currently loaded twice (PUB-02).
 - Defaults enable publications and disable software/data. `menu()` still assembles inactive types' configured sources; `active: false` does not mean “skip loading.”
 - `include`/`exclude` use `startsWith()`, not exact equality. Excluding `P_Data` also excludes descendants and any other IDs with that prefix.
 - `exclude` wins over `include`, even when `exclude: []`. Remove it when using `include`. An empty `include: []` selects everything.
@@ -97,7 +102,7 @@ Conditions are **expression strings**. `index.html` and `score2.js` independentl
 | --- | --- | --- |
 | `$Field` | Answer in the evaluated output | UI and scoring |
 | `meta$Field` | Answer in the first metadata record | UI and scoring |
-| `config$setting`, `config$pubs.active` | Configuration, including nested paths | UI only |
+| `config$setting`, `config$pub.active` | Configuration, including nested paths | UI only |
 
 ```js
 // Equals ANY listed scalar value:
@@ -157,32 +162,48 @@ Nominal sum: 14.4; actual denominator depends on applicability. `P_Suitable = 'N
 ## Defaults and saved data
 
 - Data is an array: metadata at index 0, then typed outputs. Metadata embeds assembled `forms` and query configuration.
-- `getDefaultValues()` initializes new outputs and missing imported keys. Scalars normally start `""`; checkbox options `false`; table rows `""`. Table defaults apply to all rows; explicit row defaults should override them.
-- **F6 is unresolved in the inspected snapshot.** Explicit checkbox defaults initialize only selected keys; falsy defaults are mishandled. A replacement was proposed in review but was not applied to this snapshot. Inspect the checkout before claiming it is fixed.
-- For F6, detect own-property presence, initialize every checkbox key, apply selections, validate default arrays/IDs, and preserve falsy row overrides. Check `0`, `false`, `""`, `[]`, absent defaults, partial selections, invalid IDs. Recheck export after changing default keys because of F7.
+- **The defaults defect formerly called F6 in this file is fixed.** `getDefaultValues()` detects own-property presence, preserves explicit scalar defaults including `0`, `false`, `""`, and `null`, and ignores inherited defaults. Missing scalar values start as `""`.
+- Every checkbox option gets a boolean, including unselected options when an explicit selection is provided. Checkbox defaults must be arrays of valid option IDs; invalid shapes or unknown IDs throw. Missing/empty selections initialize all options to `false`.
+- Table rows use their own default when present, including falsy values; otherwise they inherit the element default or `""`. Information elements and separators never initialize an answer, even with explicit defaults. Protect these fixes with the `DEFAULT-*` regression checks. Generated-key export handling is a separate, still-open problem (DATA-01).
 - Visibility changes do not reset answers/defaults. Completion, validation, and scoring are independent.
 - localStorage holds records under `'data ' + main_title`; sessionStorage holds current-tab state. Use an isolated browser profile/test data for fresh initialization checks and preserve real saved records.
 - Existing records can retain old embedded form definitions while the UI uses newly loaded forms. Changing a pack does not guarantee old records use new scoring. Inspect embedded definitions and plan migrations deliberately.
-- Import applies aliases/defaults; export filters keys and embeds forms. Do not assume only visible answers are exported. Verify export/import score consistency after changes to conditions, defaults, or IDs.
+- Import applies aliases/defaults, but currently obtains defaults from the previously open dataset's embedded form, not the incoming form. UI/completion/export use the current form store while scoring can use old embedded forms. Choose a deliberate form/version migration policy before changing this behavior (DATA-02).
+- Export filters keys and embeds current forms. Hidden checkbox/table answers can survive filtering while hidden scalar defaults are omitted (DATA-01). Completion incorrectly counts missing scalar/table-parent keys as filled and divides by zero when there are no required fields (UI-01). Verify answer and score consistency across save/load/export/import, not just successful parsing.
 
 ## Verification workflow
 
 Use checks proportional to the edit; wording-only changes do not need a new test suite. For behavior changes:
 
-1. Parse changed JSON, e.g. `python3 -m json.tool packs/core-pubs.json > /dev/null`. 
+1. Parse changed JSON, e.g. `python3 -m json.tool packs/core-pub.json > /dev/null`. 
 2. Check unique IDs, generated-key collisions, condition references, valid options/defaults, and core/extension dependencies. Update version/date for releases and catalog entries when appropriate.
 3. Exercise unanswered, negative, positive-without-evidence, positive-with-evidence, and justified/unjustified N/A states. Assert **earned and possible points separately**.
 4. Populate children, then change parent answers so children disappear. Check retained answers, points, denominator, completion, and export.
 5. For defaults/import changes, cover falsy/empty defaults, table rows, older records, embedded form versions, and export/import score consistency.
 6. For rendering changes, check collector and preview, including Markdown options and CRediT row help/highlighting. Use local fixtures for external metadata where possible.
 
-The external review bundle supplied `verify-packs.cjs` and `verification-results.json` with 19 focused characterization checks. Run `node /tests/verify-packs.cjs .`. Passing assertions reproduce known defects as well as valid behavior: revise expectations after fixes instead of using them as acceptance criteria. The review was not a full browser or external-report audit.
+The repository includes a dependency-free Node verifier:
+
+```bash
+# From the repository root; the default root is relative to the script itself.
+node tests/verify-packs.cjs
+node tests/verify-packs.cjs . > tests/verification-results.json
+
+# Also fail when known defects are reproduced, not only on regressions/invalid JSON.
+node tests/verify-packs.cjs --strict
+```
+
+From another directory, invoke the script by its path; an optional repository-root argument selects another checkout. Do not use `/tests/verify-packs.cjs` as a filesystem-root path.
+
+The JSON report separates **regressions**, **known issues**, and **characterizations** (limitations/policy choices), parses all pack JSON including archives/catalog, and records runtime source hashes. Assertions continue after individual failures. Normal mode exits nonzero for failed checks or invalid JSON; `--strict` also exits nonzero for reproduced known issues. Setup/argument errors exit 2. A normal-mode exit 0 does **not** mean the application has no defects. After a runtime fix, update its expectation and promote the relevant check to a regression rather than restoring the defect.
+
+The verifier executes actual helper/query-loader excerpts in isolated Node VM contexts with file-backed fetch and mock stores/storage. It is not a full browser test, DOM/layout audit, security sandbox, or external-report validation. The 2026-09-16 review attempted browser smoke tests but environment policy blocked navigation; do not describe them as passed. Use the fresh findings report for the measured results and remaining manual checks.
 
 
 
 # Project Memory: RESQUE Collector App
 
 - The web application entry point is `index.html`; it renders expansion-pack JSON forms with Alpine.js.
-- `packs/EP/EP-theory_development.json` is the current theory-development expansion pack (version `5.0.0`, prefix `TH`). It implements the Theory Transparency Checklist v5.0 as 31 elements: four filter radio controls, one not-applicable explanation text field, one info field, and 25 checklist checkboxes (`T1`–`T5`, `F1`–`F5`, `S1`–`S5`, `E1`–`E5`, `C1`–`C5`).
+- `packs/EP/EP-theory_development.json` is the current theory-development expansion pack (version `5.0.0`, prefix `TH`). It implements the Theory Transparency Checklist v5.0 as 34 total elements: four filter radio controls, one not-applicable explanation text field, one info field, three separators, and 25 checklist checkboxes (`T1`–`T5`, `F1`–`F5`, `S1`–`S5`, `E1`–`E5`, `C1`–`C5`).
 - `index.html` bundles Showdown 2.1.0 from `js/showdown.min.js`. The `renderOptionText()` helper converts Markdown in JSON `options[].text` fields, removing a single outer paragraph wrapper. Dropdown, radio, checkbox, and tabular-radio option renderers call this helper, so inline Markdown such as `*parsimony*` renders in the collector UI.
 - Pack content is rendered through Alpine `x-html`; pack authors are therefore trusted. Do not apply Markdown conversion to user-entered responses.
