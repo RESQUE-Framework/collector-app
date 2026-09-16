@@ -35,3 +35,9 @@ E.g.:
 - https://resque-framework.github.io/collector-app/preview.html?type=pubs&showPoints=true&showLabels=true
 - https://resque-framework.github.io/collector-app/preview.html?type=software&showPoints=false
 - https://resque-framework.github.io/collector-app/preview.html?path=archive&type=pubs&showPoints=true&version=0.3.1
+
+## Demoing/Testing a specific pack
+
+With the same query strings as above, you can extend the settings in `config.yaml` and tell the regular app to append a specific pack to the core-pubs set, e.g.:
+
+<https://resque-framework.github.io/collector-app/index.html?path=EP&type=EP-theory_development>

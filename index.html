@@ -1910,7 +1910,7 @@
 
         loadConfigText().then(text => {
             const config = jsyaml.load(text);
-            // Resolve an optional pack override using preview.html query syntax.
+            // Resolve an optional pack selection using preview.html query syntax.
             let type = params.get('type');
             const path = params.get('path') ?? '';
             const version = params.get('version');
@@ -1926,9 +1926,13 @@
                     ? `${type}-${version.replace(/\./g, '_')}.json`
                     : `${type}.json`;
 
-                // Load only the selected pack instead of the publication sources
-                // configured in config.yaml (or config-default.yaml) (override).
-                config.pubs.sources = [`packs/${path}/${filename}`];
+                const selectedPack = ['packs', path, filename].filter(Boolean).join('/');
+
+                // Expansion/custom packs extend the configured publication form.
+                // Explicit core-pack selections still replace it (e.g. archives).
+                config.pubs.sources = type.startsWith('core-')
+                    ? [selectedPack]
+                    : [...new Set([...config.pubs.sources, selectedPack])];
             }
 
             Alpine.store('forms').config = config;
