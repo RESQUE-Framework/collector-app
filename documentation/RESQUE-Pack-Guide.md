@@ -2,6 +2,8 @@
 
 An author’s guide to pack structure, conditions, defaults, and scoring.
 
+Reviewed against the uploaded repository on **2026-09-16**. Source links below refer to this checkout, not an older pinned GitHub commit. See the [current findings overview](RESQUE-Pack-Findings.md) for confirmed fixes, open defects, and policy decisions.
+
 
 ## 1. The essential distinction
 
@@ -25,7 +27,7 @@ Consequently, **hidden**, **unanswered**, **zero points**, and **not applicable*
 
 | File or directory | Role |
 | --- | --- |
-| `core-.json` | Main publication questionnaire: 99 elements, including 12 scored elements. Prefix `P`, version `0.9.0`. |
+| `core-pub.json` | Main publication questionnaire: 99 elements, including 12 scored elements. Prefix `P`, version `0.9.0`. |
 | `core-meta.json` | Applicant/rater information shared by the research outputs. Prefix `M`, version `0.3.0`. |
 | `core-software.json` | Research software questionnaire. Prefix `S`, version `0.2`; some scoring fields are not implemented by `score2.js`. |
 | `core-data.json` | A minimal data-set pack with one text field. Prefix `D`, version `0.0.1`; no points. |
@@ -38,7 +40,7 @@ Consequently, **hidden**, **unanswered**, **zero points**, and **not applicable*
 
 The default configuration enables publications. Data and software are configured but have `active: false`. Expansion packs are not automatically loaded because they exist in `EP/` or appear in `info.json`: add them to a configuration section’s `sources` list.
 
-Sources: [default configuration](https://github.com/RESQUE-Framework/collector-app/blob/9b43ab3390c0aad84408e5d61b09c111670a10fa/config/config-default.yaml), [pack catalog](https://github.com/RESQUE-Framework/collector-app/blob/9b43ab3390c0aad84408e5d61b09c111670a10fa/packs/info.json).
+Sources: [default configuration](../config/config-default.yaml), [pack catalog](../packs/info.json).
 
 ## 3. Pack and element structure
 
@@ -118,7 +120,23 @@ The collected data is an array. The first entry is metadata; later entries are i
 ]
 ```
 
-The publication configuration section, stored `type`, and assembled form key are all **`pub`**. The other form keys are `meta`, `data`, and `software`. Legacy configurations using `pubs` are normalized to `pub` when loaded.
+The publication configuration section, stored `type`, and assembled form key are all **`pub`**. The current publication filename is **`packs/core-pub.json`**. The other form keys are `meta`, `data`, and `software`. The prefix `P` and existing publication answer IDs are unchanged; the configuration rename is not an answer-key migration.
+
+### Publication naming and legacy compatibility
+
+| Surface | Use for new configurations/data | Compatibility in this checkout |
+| --- | --- | --- |
+| YAML publication section | `pub:` | `pubs:` is used only when `pub` is undefined; an existing `pub` section wins. |
+| Current publication source | `packs/core-pub.json` | The exact legacy string `packs/core-pubs.json` is mapped to the current filename by the collector. |
+| Output and assembled form | `type: "pub"`, `forms.pub` | These already used `pub`; no stored-record type rename is required. |
+| UI expression / per-type query override | `config$pub.active`, `pub:min_indicators_warning_threshold=4` | The normalizer does not rewrite legacy expression strings or `pubs:` query namespaces. |
+| Archived publication sources | `packs/archive/core-pubs-0_3_1.json`, `packs/archive/core-pubs-0_8_2.json` | These historical filenames and their `info.json` entries intentionally retain `pubs`. |
+
+`normalizePublicationConfig()` is called by the configuration loader, `menu()`, and the file-import handler for embedded `forms.config`. `use()` also aliases the exact old unversioned source. The normalizer mutates the supplied configuration, retains any legacy `pubs` property, and does not merge conflicting `pub`/`pubs` sections. It is not a general migration of localStorage records or arbitrary path spellings.
+
+Do not globally replace `pubs` in archives or catalogs. Avoid supplying both old and new paths for the current core: normalization does not deduplicate sources, so this loads the core twice. Relative legacy variants such as `./packs/core-pubs.json` are not currently aliased. Query-link compatibility differs between collector and preview; see Section 8 and findings **PUB-01/PUB-02**.
+
+Sources: [normalization and menu](../menu.js), [collector loading/import](../index.html), [historical catalog](../packs/info.json).
 
 | Element type | Answer representation | Directly scored by `score2.js`? |
 | --- | --- | --- |
@@ -290,7 +308,7 @@ The sugar uses regular-expression replacement and `split(",")`, not a full parse
 
 For example, `$Answer =|= []` expands to invalid `()`, not to false. A malformed expression can interrupt evaluation because these helpers do not catch evaluation errors locally.
 
-Sources: [UI expression helpers](https://github.com/RESQUE-Framework/collector-app/blob/9b43ab3390c0aad84408e5d61b09c111670a10fa/index.html#L86), [scoring expression helpers](https://github.com/RESQUE-Framework/collector-app/blob/9b43ab3390c0aad84408e5d61b09c111670a10fa/utils/score2.js#L52).
+Sources: [UI expression helpers](../index.html), [scoring expression helpers](../utils/score2.js).
 
 ## 6. How scoring works
 
@@ -325,7 +343,7 @@ For each element in `meta.forms[output.type].elements`, `score2.js`:
 
 It does not consult the element’s visibility `condition`, inherit a parent’s scoring rule, check completion, or validate a URL.
 
-There is an extra early-return branch guarded by `el.score?.score`. None of the shipped pack definitions supplies that property, so it has no effect on them. It appears to be a typo or leftover logic; do not add `score.score` as a pack-author workaround. See finding F5.
+There is an extra early-return branch guarded by `el.score?.score`. None of the shipped pack definitions supplies that property, so it has no effect on them. It appears to be a typo or leftover logic; do not add `score.score` as a pack-author workaround. See **LIMIT-01** in the [findings overview](RESQUE-Pack-Findings.md).
 
 For a one-point item:
 
@@ -377,8 +395,8 @@ These maxima apply when each item is included. Each row has its own `not_applica
 | --- | --- | ---: | --- |
 | `P_Methods_PRISMA` | Radio | 1 | None beyond its answer and applicability |
 | `P_Methods_MetaAnalysisRaters` | Radio | 1 | None beyond its answer and applicability |
-| `P_Data_Open_AccessLevel` | Radio | 1 | Data = Yes, sharing answer differs from `NotAvailable`, identifier exists; see F1 |
-| `P_Data_Open_FAIR` | Checkbox | 1 | Eligible sharing/access answers and `NewOwn` or `Simulated` source; see F2 |
+| `P_Data_Open_AccessLevel` | Radio | 1 | Data = Yes, sharing answer differs from `NotAvailable`, identifier exists; see **SCORE-01** |
+| `P_Data_Open_FAIR` | Checkbox | 1 | Eligible sharing/access answers and `NewOwn` or `Simulated` source; see **SCORE-02** |
 | `P_ReproducibleScripts` | Radio | 1 | Scripts identifier exists |
 | `P_ReproducibleScripts_FAIR` | Checkbox | 1.4 | Scripts = `YesParts` or `YesEntire` |
 | `P_IndependentVerification` | Radio | 2 | Verification identifier exists |
@@ -413,7 +431,7 @@ Overall category results pool category points and maxima across outputs. This di
 
 An explicit, nonempty category list overrides the form’s category configuration. Otherwise, `score()` reads `meta.forms[type].config.score_categories`, falling back to the older `meta.forms.config.score_categories` location. The current collector passes its publication category list to `scoreAll()` for all output types.
 
-Source: [current scoring implementation](https://github.com/RESQUE-Framework/collector-app/blob/9b43ab3390c0aad84408e5d61b09c111670a10fa/utils/score2.js).
+Source: [current scoring implementation](../utils/score2.js).
 
 ## 7. Defaults: the role of `packutils.js`
 
@@ -423,17 +441,21 @@ Source: [current scoring implementation](https://github.com/RESQUE-Framework/col
 | --- | --- |
 | Scalar input without an explicit default | Empty string `""` |
 | Checkbox without an explicit default | Every option key is `false` |
-| Checkbox with `"default": ["A"]` | The `..._A` key is `true`; other option keys are currently omitted |
+| Checkbox with `"default": ["A"]` | The `..._A` key is `true`; every other option key is `false` |
 | Tabular radio without a default | Each row key is `""` |
 | Tabular radio with an element default | That option ID is assigned to every row |
 | Tabular radio with a row default | The row default overrides the element default for that row |
-| Ordinary `info` or `separator` | No answer value |
+| `info` or `separator`, even with an explicit default | No answer value |
 
 Core examples are `P_Suitable: "Yes"`, `P_Data_Source_NewOwn: true`, and `P_CRediT_<row>: "NoRole"`.
 
-Defaults are applied when creating an output and when filling missing keys during import. They are not recalculated when a visibility condition changes. Explicit defaults are detected using truthiness, so a numeric `0` default is currently lost; string `"0"` is retained. See F6.
+**The previously documented defaults defect is fixed.** Explicit defaults are detected by own-property presence, not truthiness. Scalar `0`, `false`, `""`, and `null` are retained; an inherited `default` property is ignored. Explicit row defaults, including falsy values, override the table's fallback. Preserving a value does not imply that the renderer or completion logic accepts it as a meaningful response.
 
-Source: [default-value helper](https://github.com/RESQUE-Framework/collector-app/blob/9b43ab3390c0aad84408e5d61b09c111670a10fa/utils/packutils.js).
+Checkbox defaults must be arrays containing valid option IDs. For example, `"default": []` is a valid all-unselected state; `"default": "A"`, `"default": false`, and an array naming an unknown option throw clear errors. Every checkbox key is initialized, whether or not it is selected. These behaviors are covered by the verifier's `DEFAULT-*` regression checks.
+
+Defaults are applied when creating outputs and filling missing keys during import; they are not recalculated when a visibility condition changes. The import handler still takes its default definitions from the previously open dataset, which can disagree with the incoming file (**DATA-02**). Generated checkbox/table keys still have a separate export-ownership problem (**DATA-01**); fixing initialization did not resolve that filtering behavior.
+
+Source: [default-value helper](../utils/packutils.js).
 
 ## 8. Loading and combining packs
 
@@ -452,7 +474,7 @@ pub:
 
 The example shows the relevant subsection; retain the rest of the configuration, including any desired `score_categories`.
 
-`use()` fetches the listed sources and concatenates their elements in source order. The assembled form uses the first pack’s title, keeps version/date maps keyed by pack prefix, and merges default values. It does not validate or resolve duplicate IDs; later defaults overwrite earlier ones with the same key.
+`use()` fetches the listed sources and concatenates their elements in source order. The assembled form uses the first pack’s title, keeps version/date maps keyed by pack prefix, and merges default values. It does not validate or resolve duplicate IDs; later defaults overwrite earlier ones with the same key. It aliases the exact old unversioned publication path before fetching but does not deduplicate equivalent sources. `menu()` currently fetches configured sources even for output types with `active: false`; all configured paths must be loadable.
 
 `menu.js` then applies `include` or `exclude`. Both match **ID prefixes**, using `startsWith()`, rather than exact IDs. For example, excluding `P_Data` excludes `P_Data`, `P_Data_Source`, `P_Data_Open`, and their other elements.
 
@@ -465,7 +487,26 @@ Filtering occurs after defaults are built, so defaults for excluded elements rem
 
 The assembled form definitions are embedded in the metadata record as `forms`. `score2.js` reads those embedded definitions. When testing a changed pack with previously saved data, check which form definitions are embedded in that data; changing the source JSON does not by itself guarantee that an existing record is scored with the new definitions.
 
-Sources: [assembly helpers](https://github.com/RESQUE-Framework/collector-app/blob/9b43ab3390c0aad84408e5d61b09c111670a10fa/index.html#L1552), [configuration selection](https://github.com/RESQUE-Framework/collector-app/blob/9b43ab3390c0aad84408e5d61b09c111670a10fa/menu.js).
+### Query-based pack selection
+
+For the current core, use `preview.html?type=pub&showPoints=true&showLabels=true`; `type=core-pub` also works. To preview an extension, use `preview.html?path=EP&type=EP-theory_development&showPoints=true`. Preview loads the selected pack by itself; it does not assemble dependent core answers or simulate conditional scoring.
+
+The collector uses the same query parameters to select a publication source. For example, `index.html?path=EP&type=EP-theory_development` appends the extension to `config.pub.sources`, retains source order, and avoids appending the same exact selected path twice. Explicit `core-*` selections replace the publication sources. This selector is publication-specific even when another built-in alias is provided; use the `meta`, `data`, and `software` configuration sections to configure those forms.
+
+Historical filenames have not been renamed. A working archived selection is:
+
+```text
+preview.html?path=archive&type=core-pubs&version=0.8.2&showLabels=true
+index.html?path=archive&type=core-pubs&version=0.8.2
+```
+
+Do not currently use `type=pub` or `type=core-pub` with those archived versions: both construct nonexistent `core-pub-<version>.json` files. Also, the old unversioned `type=core-pubs` alias works in the collector but fails in preview, which lacks the source normalizer (**PUB-01**). Keep explicit historical catalog names until a shared, archive-aware resolver is implemented.
+
+In versioned previews, `showPoints=true` is currently lost in the query resolver's return object (**UI-02**). Loading an archive successfully also does not guarantee scoring compatibility: the `0.3.1` publication archive uses the old top-level `scoring` structure, which `score2.js` does not implement.
+
+The preview still depends on remote Alpine and manual-export scripts; it is not currently an offline-only tool (**UI-03**).
+
+Sources: [assembly helpers](../index.html), [configuration selection](../menu.js).
 
 ## 9. Text shorthand, completion, and export
 
@@ -491,15 +532,15 @@ The colon shorthand means “the current indicator equals one of these values.�
 
 The completion check examines visible, nonoptional inputs, excluding checkboxes, information elements, and separators. It does not gate score calculation. Validation warnings and word limits also do not automatically block scoring or export.
 
-There is a defect in table completion: the code checks the table’s parent key instead of its row keys, allowing an unanswered table to appear complete. See F8.
+There are still completion defects: the code checks a table’s parent key instead of its row keys, and `undefined !== ""` causes absent scalar keys to count as filled. With no required elements, the ratio and displayed percentage become `NaN`. See **UI-01**; preserving defaults is not a substitute for checking actual answer keys.
 
 ### Export is condition-sensitive, but not uniform
 
 `filterExport()` builds an allowlist from visible elements, their checkbox/row keys, comments, selected metadata fields, and “unreachable” default keys. It does not simply serialize only what is on screen.
 
-In the current implementation, generated checkbox and table keys are often classified as unreachable because they are compared with parent element IDs. Hidden checkbox values can therefore survive export, while hidden scalar fields may be omitted even if they have an explicit default. See F7 before relying on export to remove hidden answers.
+In the current implementation, generated checkbox and table keys are often classified as unreachable because they are compared with parent element IDs. Hidden checkbox values can therefore survive export, while hidden scalar fields may be omitted even if they have an explicit default. See **DATA-01** before relying on export to remove hidden answers. Since checkbox initialization is now complete, all generated checkbox default keys take part in this ownership problem, not just explicitly selected defaults.
 
-Source: [completion logic](https://github.com/RESQUE-Framework/collector-app/blob/9b43ab3390c0aad84408e5d61b09c111670a10fa/index.html#L228), [text helpers](https://github.com/RESQUE-Framework/collector-app/blob/9b43ab3390c0aad84408e5d61b09c111670a10fa/index.html#L126), [export filtering](https://github.com/RESQUE-Framework/collector-app/blob/9b43ab3390c0aad84408e5d61b09c111670a10fa/index.html#L1765).
+Source: [completion logic](../index.html), [text helpers](../index.html), [export filtering](../index.html).
 
 ## 10. A practical authoring workflow
 
@@ -512,4 +553,28 @@ Source: [completion logic](https://github.com/RESQUE-Framework/collector-app/blo
 7. Add the pack to `sources`, and to `info.json` if it should be discoverable in the preview. Add category cues if its points should appear in a chart.
 8. Check a fresh record and an export/import round trip. Verify both item scores and the denominator; a plausible percentage alone can conceal a mistake.
 
-The supplied [findings report](RESQUE-Pack-Findings.md) identifies issues in the current packs and helpers. The accompanying `verify-packs.cjs` reproduces 19 focused behaviors against the original source without modifying the application.
+## 11. Running the verifier and interpreting results
+
+From the repository root:
+
+```bash
+node tests/verify-packs.cjs
+node tests/verify-packs.cjs . > tests/verification-results.json
+node tests/verify-packs.cjs --strict
+```
+
+No npm installation/build is required. The script defaults to the checkout containing it, independent of the current working directory. An optional repository-root argument selects another checkout. Do not use `node /tests/verify-packs.cjs .`, which points to an unrelated filesystem-root directory.
+
+The JSON report separates three kinds of checks:
+
+| Kind | What success means |
+| --- | --- |
+| `regression` | A supported behavior or confirmed fix still works, including canonical/legacy publication configuration, source assembly, current/default preview resolution, import normalization, and corrected defaults. |
+| `known-issue` | A documented defect was reproduced; this is not an acceptance pass. |
+| `characterization` | A limitation or assessment-policy choice still behaves as documented, such as early theory denominators. |
+
+Every pack JSON file is parsed, including archives and the catalog. Invalid JSON and failed checks cause a nonzero exit, without preventing later checks from being reported. `--strict` additionally exits nonzero while known issues remain reproduced. Invocation/setup errors exit 2. When fixing application behavior, update the associated expectation and promote it to a regression; do not restore an old defect merely to make characterization checks pass.
+
+The verifier executes actual source excerpts with mocked stores/storage and file-backed fetches in Node. It does not prove browser rendering, external service integration, or downstream RESQUER compatibility. Browser smoke testing was attempted for this review but navigation was blocked by environment policy, so no browser pass is claimed.
+
+See the [findings report](RESQUE-Pack-Findings.md) and [recorded verification results](../tests/verification-results.json) for the reviewed snapshot. The report distinguishes fixed issues from remaining defects and decisions, rather than carrying the earlier list forward unchanged.

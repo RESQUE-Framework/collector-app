@@ -1,0 +1,2261 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light"><meta name="referrer" content="no-referrer"><title>RESQUE | Pack verification report</title><style>
+:root{color-scheme:light;--ink:#162a3a;--muted:#526575;--line:#d9e3ea;--paper:#fff;--bg:#f2f5f7;--green:#1d654d;--amber:#7d4804;--red:#aa2436;--blue:#245a81}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:#155982;text-underline-offset:3px}a:hover{text-decoration-thickness:2px}header{background:#142c3c;color:white;border-top:6px solid #48b7af}header .wrap{padding-top:32px;padding-bottom:32px}.wrap{max-width:1200px;margin:0 auto;padding:28px 32px}.eyebrow{text-transform:uppercase;letter-spacing:.13em;font-size:12px;font-weight:750;color:#bbd7e5}h1{font-size:clamp(28px,5vw,42px);line-height:1.13;margin:10px 0 16px;letter-spacing:-.035em}header p{max-width:780px;margin:0;color:#d4e4ed}header nav{display:flex;flex-wrap:wrap;gap:20px;margin-top:22px}header a{color:#e8f4fa;font-size:14px}h2{font-size:24px;line-height:1.3;margin:0 0 14px;letter-spacing:-.02em}h3{font-size:17px;line-height:1.45;margin:12px 0 8px}p{margin:8px 0 14px}.muted{color:var(--muted)}.small{font-size:13px}.banner{padding:22px 24px;border:1px solid var(--line);border-left:5px solid var(--amber);border-radius:10px;background:#fff6e8;margin-bottom:24px}.banner h2{font-size:22px}.banner p:last-child{margin-bottom:0}.banner.bad{border-left-color:var(--red);background:#fff0f2}.banner.good{border-left-color:var(--green);background:#eef8f2}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:20px 0 28px}.metric{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px}.metric strong{font-size:34px;line-height:1.2;display:block;margin:5px 0}.metric .label{display:block;font-size:13px;font-weight:700;letter-spacing:.02em}.metric p{font-size:13px;color:var(--muted);margin:5px 0 0}.metric.good strong{color:var(--green)}.metric.warn strong{color:var(--amber)}.metric.bad strong{color:var(--red)}.meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 26px;padding:20px 24px;background:white;border:1px solid var(--line);border-radius:10px;margin:0 0 24px}.meta dt{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}.meta dd{margin:3px 0 5px;overflow-wrap:anywhere;font-size:14px}.section{margin-top:36px}.note{border:1px solid var(--line);border-radius:8px;padding:15px 18px;background:#eaf2f7}.legend{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:18px 0}.legend p{font-size:14px;margin:5px 0 0}.legend strong{font-size:14px}.toolbar{display:flex;align-items:end;flex-wrap:wrap;gap:12px;background:white;border:1px solid var(--line);padding:18px;border-radius:10px;margin:20px 0 12px}.field{display:flex;flex-direction:column;gap:5px;flex:1 1 220px}.field label{font-size:13px;font-weight:700}input,select,button{font:inherit;border:1px solid #aebecb;border-radius:6px;padding:9px 11px;background:white;color:var(--ink)}button{cursor:pointer;font-size:14px}button:hover{background:#edf3f7}input:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid #3b8eba;outline-offset:3px}.finding-index{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.finding-index a{border:1px solid #d8c19e;background:#fff8ed;border-radius:6px;padding:6px 10px;font-size:13px}.check{background:white;border:1px solid var(--line);border-radius:10px;padding:18px 22px;margin:12px 0;border-left:4px solid #a7bbc9;break-inside:avoid;scroll-margin-top:15px}.check.good{border-left-color:var(--green)}.check.warn{border-left-color:#b5761d}.check.bad{border-left-color:var(--red)}.topline{display:flex;align-items:center;flex-wrap:wrap;gap:8px}.check-id{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13px;font-weight:700}.kind{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-left:auto}.badge{display:inline-block;font-size:12px;font-weight:700;padding:3px 8px;border-radius:5px;background:#e9f1f7;color:#244f71}.badge.good{background:#e7f5ed;color:var(--green)}.badge.warn{background:#fff1d8;color:var(--amber)}.badge.bad{background:#fde8ec;color:var(--red)}.finding{font-size:13px;color:var(--muted)}.check p.small{margin:8px 0}details{margin-top:12px}summary{cursor:pointer;font-size:14px;font-weight:650;padding:4px 0}pre{margin:10px 0 0;padding:16px;background:#f0f4f7;border:1px solid var(--line);border-radius:7px;font:12px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;tab-size:2}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em;overflow-wrap:anywhere}.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:white}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:10px 14px;vertical-align:top;border-bottom:1px solid var(--line);overflow-wrap:anywhere}th{background:#e8eff4;font-size:12px;text-transform:uppercase;letter-spacing:.04em}tr:last-child td{border-bottom:none}footer{padding:28px 0 12px;color:var(--muted);font-size:13px}.empty{padding:24px;background:white;border:1px dashed #aabac8;border-radius:8px}#shown{margin:8px 0 14px}[hidden]{display:none!important}.provenance td:last-child{word-break:break-all}
+@media(max-width:760px){.wrap{padding:22px 16px}.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.metric{padding:16px}.meta,.legend{grid-template-columns:1fr}.check{padding:16px}.kind{margin-left:0;width:100%;order:3}.banner{padding:18px}.toolbar{align-items:stretch}.toolbar button{flex:1 1 auto}}
+@media print{body{background:white;font-size:11px}.wrap{max-width:none;padding:16px 0}header{background:white;color:var(--ink);border-top:2px solid var(--ink)}header .wrap{padding:12px 0}header p,.eyebrow{color:var(--muted)}h1{font-size:28px}header nav,.toolbar,.finding-index,.screen-only,#shown,#empty{display:none!important}.cards{gap:8px}.metric{padding:10px}.metric strong{font-size:24px}.banner{margin-bottom:16px}.section{margin-top:22px}.check{margin:8px 0;padding:12px;break-inside:auto}.check[hidden]{display:block!important}.check h3,.topline{break-after:avoid}.meta{padding:12px}.table-wrap{overflow:visible}pre{font-size:9px;max-height:none}.no-print{display:none!important}a{color:inherit}footer{padding:16px 0}}
+</style></head>
+<body><header><div class="wrap"><div class="eyebrow">RESQUE / Repository verification</div><h1>Pack verification report</h1><p>A readable view of verify-packs.cjs results, separating regression checks, reproduced defects, and documented limitations.</p><nav aria-label="Report sections"><a href="#checks">Checks</a><a href="#packs">Pack validation</a><a href="#provenance">Provenance</a></nav></div></header><main class="wrap"><section class="banner bad" aria-labelledby="outcome"><h2 id="outcome">Check failures need investigation</h2><p>2 check expectation(s) did not match; 0 pack JSON file(s) are invalid. A known issue that did not reproduce may have been fixed or may require investigation.</p><p class="small"><strong>Recorded verifier exit code: 1</strong> &middot; Mode: normal</p></section><dl class="meta"><div><dt>Repository in recorded run</dt><dd>/Users/felix/Documents/Github/RESQUE-Framework/collector-app</dd></div><div><dt>Source results</dt><dd>verification-results.json</dd></div><div><dt>Node version in recorded run</dt><dd>v26.7.0</dd></div><div><dt>HTML rendered at</dt><dd>2026-09-16T09:22:59.680Z</dd></div><div><dt>Verification run time</dt><dd>Not recorded in this report format</dd></div><div><dt>Report provenance</dt><dd>Rendered from supplied JSON; no checks were rerun by the renderer.</dd></div></dl><div class="cards">
+<div class="metric good"><span class="label">REGRESSIONS PASSED</span><strong>31</strong><p>0 failed &middot; expectations for corrected behavior</p></div>
+<div class="metric warn"><span class="label">DEFECT CASES REPRODUCED</span><strong>15</strong><p>10 finding references &middot; 2 cases did not reproduce</p></div>
+<div class="metric "><span class="label">CHARACTERIZATIONS MATCHED</span><strong>6</strong><p>0 changed &middot; not correctness verdicts</p></div>
+<div class="metric good"><span class="label">PACK JSON FILES VALID</span><strong>16</strong><p>0 invalid &middot; syntax validation only</p></div>
+</div>
+<section aria-labelledby="reading"><h2 id="reading">How to read these results</h2><div class="legend"><div><strong>Regression checks</strong><p>Protect intended or corrected behavior. Failures require investigation.</p></div><div><strong>Known-issue checks</strong><p>Reproduce existing defects. After a fix, update or promote the test; do not restore the defect.</p></div><div><strong>Characterization checks</strong><p>Record current limitations or policy choices. A match is not an approval of that behavior.</p></div></div>
+<p class="note small">Reproduced known issues are defects, not acceptance passes. Characterizations document limitations or policy choices. After a runtime fix, update/promote its checks; do not restore the defect. This VM harness is not a browser or external-report test.</p>
+<p class="small muted">Counts represent test cases, not necessarily distinct findings. The separate findings document also includes observations that are not automated here.</p></section><section class="section" id="checks"><h2>Checks <span class="muted">/ 54</span></h2><p class="muted">Failures and known defects appear first. Each entry includes the original check name and recorded evidence.</p>
+<div class="toolbar screen-only" id="toolbar" hidden><div class="field"><label for="search">Search IDs, names, findings, or evidence</label><input type="search" id="search" placeholder="For example: PUB-01 or core-pub" autocomplete="off"></div><div class="field"><label for="filter">Show checks</label><select id="filter"><option value="all">All checks</option><option value="attention">Needs attention</option><option value="publication">Publication migration</option><option value="known-issue">Known issues</option><option value="regression">Regressions</option><option value="characterization">Characterizations</option></select></div><button type="button" id="reset">Reset</button><button type="button" id="expand">Expand evidence</button><button type="button" id="collapse">Collapse evidence</button></div>
+<noscript><p class="note">JavaScript is disabled. All results remain readable; search and filtering are unavailable.</p></noscript>
+<p id="shown" class="small muted" aria-live="polite">54 of 54 checks shown</p>
+<div class="finding-index" aria-label="Jump to known-issue findings"><a href="#check-33">PUB-01</a><a href="#check-48">UI-02</a><a href="#check-31">CONFIG-01</a><a href="#check-36">PUB-02</a><a href="#check-37">SCORE-01</a><a href="#check-39">SCORE-02</a><a href="#check-41">SCORE-04</a><a href="#check-42">SCORE-05</a><a href="#check-43">DATA-01</a><a href="#check-44">UI-01</a><a href="#check-46">DATA-02</a></div>
+<div id="empty" class="empty" hidden>No checks match the current filters.</div>
+<article class="check bad" id="check-33" data-check data-kind="known-issue" data-attention="true" data-publication="true">
+<div class="topline"><a class="check-id" href="#check-33">PUB-ARCHIVE-ALIAS</a><span class="badge bad">Not reproduced - investigate</span><span class="kind">Known issue</span></div>
+<h3>Canonical pub/core-pub aliases construct nonexistent archived filenames</h3>
+<div class="finding">Finding reference: <strong>PUB-01</strong></div>
+<p class="small muted">The known-defect expectation did not match. This may indicate a fix, a behavior change, or a test/harness problem; it does not automatically prove that the defect is fixed.</p>
+<details class="print-expand" open><summary>Error details</summary><pre>{
+  &quot;name&quot;: &quot;AssertionError&quot;,
+  &quot;message&quot;: &quot;Expected values to be strictly equal:\n\u001b[32mactual\u001b[39m \u001b[31mexpected\u001b[39m\n\n\u001b[39m&#39;\u001b[39m\u001b[39mp\u001b[39m\u001b[39ma\u001b[39m\u001b[39mc\u001b[39m\u001b[39mk\u001b[39m\u001b[39ms\u001b[39m\u001b[39m/\u001b[39m\u001b[39ma\u001b[39m\u001b[39mr\u001b[39m\u001b[39mc\u001b[39m\u001b[39mh\u001b[39m\u001b[39mi\u001b[39m\u001b[39mv\u001b[39m\u001b[39me\u001b[39m\u001b[39m/\u001b[39m\u001b[39mc\u001b[39m\u001b[39mo\u001b[39m\u001b[39mr\u001b[39m\u001b[39me\u001b[39m\u001b[39m-\u001b[39m\u001b[39mp\u001b[39m\u001b[39mu\u001b[39m\u001b[39mb\u001b[39m\u001b[32ms\u001b[39m\u001b[39m-\u001b[39m\u001b[39m0\u001b[39m\u001b[39m_\u001b[39m\u001b[39m8\u001b[39m\u001b[39m_\u001b[39m\u001b[39m2\u001b[39m\u001b[39m.\u001b[39m\u001b[39mj\u001b[39m\u001b[39ms\u001b[39m\u001b[39mo\u001b[39m\u001b[39mn\u001b[39m\u001b[39m&#39;\u001b[39m\n&quot;
+}</pre></details>
+
+</article>
+<article class="check bad" id="check-48" data-check data-kind="known-issue" data-attention="true" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-48">PREVIEW-VERSION-POINTS</a><span class="badge bad">Not reproduced - investigate</span><span class="kind">Known issue</span></div>
+<h3>Versioned preview query loses showPoints=true</h3>
+<div class="finding">Finding reference: <strong>UI-02</strong></div>
+<p class="small muted">The known-defect expectation did not match. This may indicate a fix, a behavior change, or a test/harness problem; it does not automatically prove that the defect is fixed.</p>
+<details class="print-expand" open><summary>Error details</summary><pre>{
+  &quot;name&quot;: &quot;AssertionError&quot;,
+  &quot;message&quot;: &quot;Expected values to be strictly equal:\n\u001b[32m+ actual\u001b[39m \u001b[31m- expected\u001b[39m\n\n\u001b[32m+\u001b[39m true\n\u001b[31m- \u001b[39mundefined\n&quot;
+}</pre></details>
+
+</article>
+<article class="check warn" id="check-31" data-check data-kind="known-issue" data-attention="true" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-31">CONFIG-WARNING-KEY</a><span class="badge warn">Known defect reproduced</span><span class="kind">Known issue</span></div>
+<h3>The default YAML warning threshold has different casing from the runtime lookup</h3>
+<div class="finding">Finding reference: <strong>CONFIG-01</strong></div>
+<p class="small muted">The test confirmed an existing defect. This is not an acceptance pass.</p>
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;configuredThreshold&quot;: 5,
+  &quot;researchOutputs&quot;: 1,
+  &quot;warningShown&quot;: false,
+  &quot;configuredKey&quot;: &quot;min_RO_warning_threshold&quot;,
+  &quot;runtimeKey&quot;: &quot;min_ro_warning_threshold&quot;
+}</pre></details>
+</article>
+<article class="check warn" id="check-32" data-check data-kind="known-issue" data-attention="true" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-32">CONFIG-BUILDER-KEYS</a><span class="badge warn">Known defect reproduced</span><span class="kind">Known issue</span></div>
+<h3>Builder camelCase parameters do not override snake_case collector settings</h3>
+<div class="finding">Finding reference: <strong>CONFIG-01</strong></div>
+<p class="small muted">The test confirmed an existing defect. This is not an acceptance pass.</p>
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;requested&quot;: {
+    &quot;topPapers&quot;: 1,
+    &quot;indicatorsThreshold&quot;: 7
+  },
+  &quot;effective&quot;: {
+    &quot;topPapers&quot;: 3,
+    &quot;indicatorsThreshold&quot;: 0
+  }
+}</pre></details>
+</article>
+<article class="check warn" id="check-34" data-check data-kind="known-issue" data-attention="true" data-publication="true">
+<div class="topline"><a class="check-id" href="#check-34">PUB-LEGACY-PREVIEW</a><span class="badge warn">Known defect reproduced</span><span class="kind">Known issue</span></div>
+<h3>Unversioned core-pubs preview links do not use the collector compatibility alias</h3>
+<div class="finding">Finding reference: <strong>PUB-01</strong></div>
+<p class="small muted">The test confirmed an existing defect. This is not an acceptance pass.</p>
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;requested&quot;: &quot;packs/core-pubs.json&quot;,
+  &quot;replacement&quot;: &quot;packs/core-pub.json&quot;
+}</pre></details>
+</article>
+<article class="check warn" id="check-35" data-check data-kind="known-issue" data-attention="true" data-publication="true">
+<div class="topline"><a class="check-id" href="#check-35">PUB-RELATIVE-SOURCE</a><span class="badge warn">Known defect reproduced</span><span class="kind">Known issue</span></div>
+<h3>The legacy source alias does not cover a ./-prefixed configuration path</h3>
+<div class="finding">Finding reference: <strong>PUB-01</strong></div>
+<p class="small muted">The test confirmed an existing defect. This is not an acceptance pass.</p>
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;unresolved&quot;: &quot;./packs/core-pubs.json&quot;
+}</pre></details>
+</article>
+<article class="check warn" id="check-36" data-check data-kind="known-issue" data-attention="true" data-publication="true">
+<div class="topline"><a class="check-id" href="#check-36">PUB-DUPLICATE-ALIASES</a><span class="badge warn">Known defect reproduced</span><span class="kind">Known issue</span></div>
+<h3>Both old and new source spellings load the publication core twice</h3>
+<div class="finding">Finding reference: <strong>PUB-02</strong></div>
+<p class="small muted">The test confirmed an existing defect. This is not an acceptance pass.</p>
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;normalizedSources&quot;: [
+    &quot;packs/core-pub.json&quot;,
+    &quot;packs/core-pub.json&quot;
+  ],
+  &quot;elements&quot;: 198,
+  &quot;distinctIds&quot;: 99,
+  &quot;single&quot;: {
+    &quot;score&quot;: 1,
+    &quot;max&quot;: 7.4
+  },
+  &quot;duplicated&quot;: {
+    &quot;score&quot;: 2,
+    &quot;max&quot;: 14.8
+  },
+  &quot;duplicatedItemMaxSum&quot;: 7.4
+}</pre></details>
+</article>
+<article class="check warn" id="check-37" data-check data-kind="known-issue" data-attention="true" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-37">ACCESS-JUSTIFICATION</a><span class="badge warn">Known defect reproduced</span><span class="kind">Known issue</span></div>
+<h3>Restricted-access ZK2 earns a point without its requested justification</h3>
+<div class="finding">Finding reference: <strong>SCORE-01</strong></div>
+<p class="small muted">The test confirmed an existing defect. This is not an acceptance pass.</p>
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;max&quot;: 1,
+  &quot;score&quot;: 1
+}</pre></details>
+</article>
+<article class="check warn" id="check-38" data-check data-kind="known-issue" data-attention="true" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-38">ACCESS-HIDDEN</a><span class="badge warn">Known defect reproduced</span><span class="kind">Known issue</span></div>
+<h3>A retained access answer earns points after Open Data becomes unjustified NotApplicable</h3>
+<div class="finding">Finding reference: <strong>SCORE-01</strong></div>
+<p class="small muted">The test confirmed an existing defect. This is not an acceptance pass.</p>
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;visible&quot;: false,
+  &quot;item&quot;: {
+    &quot;max&quot;: 1,
+    &quot;score&quot;: 1
+  }
+}</pre></details>
+</article>
+<article class="check warn" id="check-39" data-check data-kind="known-issue" data-attention="true" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-39">FAIR-REUSED</a><span class="badge warn">Known defect reproduced</span><span class="kind">Known issue</span></div>
+<h3>Reused-data FAIR questions are visible and applicable but cannot earn points</h3>
+<div class="finding">Finding reference: <strong>SCORE-02</strong></div>
+<p class="small muted">The test confirmed an existing defect. This is not an acceptance pass.</p>
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>[
+  {
+    &quot;source&quot;: &quot;P_Data_Source_ReuseOwn&quot;,
+    &quot;visible&quot;: true,
+    &quot;item&quot;: {
+      &quot;max&quot;: 1,
+      &quot;score&quot;: 0
+    }
+  },
+  {
+    &quot;source&quot;: &quot;P_Data_Source_ReuseCompilation&quot;,
+    &quot;visible&quot;: true,
+    &quot;item&quot;: {
+      &quot;max&quot;: 1,
+      &quot;score&quot;: 0
+    }
+  }
+]</pre></details>
+</article>
+<article class="check warn" id="check-41" data-check data-kind="known-issue" data-attention="true" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-41">CLINICAL-HIDDEN</a><span class="badge warn">Known defect reproduced</span><span class="kind">Known issue</span></div>
+<h3>Hidden clinical RCT answers retain points after preregistration changes to No</h3>
+<div class="finding">Finding reference: <strong>SCORE-04</strong></div>
+<p class="small muted">The test confirmed an existing defect. This is not an acceptance pass.</p>
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;visible&quot;: false,
+  &quot;primary&quot;: {
+    &quot;max&quot;: 1,
+    &quot;score&quot;: 1
+  },
+  &quot;criteria&quot;: {
+    &quot;max&quot;: 2,
+    &quot;score&quot;: 0.5
+  }
+}</pre></details>
+</article>
+<article class="check warn" id="check-42" data-check data-kind="known-issue" data-attention="true" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-42">SOFTWARE-GATES</a><span class="badge warn">Known defect reproduced</span><span class="kind">Known issue</span></div>
+<h3>Software ignores factor, option condition and parent visibility</h3>
+<div class="finding">Finding reference: <strong>SCORE-05</strong></div>
+<p class="small muted">The test confirmed an existing defect. This is not an acceptance pass.</p>
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;score&quot;: 5.2,
+  &quot;max&quot;: 11,
+  &quot;tests&quot;: {
+    &quot;max&quot;: 1,
+    &quot;score&quot;: 0.2
+  },
+  &quot;documentation&quot;: {
+    &quot;max&quot;: 2,
+    &quot;score&quot;: 2
+  }
+}</pre></details>
+</article>
+<article class="check warn" id="check-43" data-check data-kind="known-issue" data-attention="true" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-43">EXPORT-OWNERSHIP</a><span class="badge warn">Known defect reproduced</span><span class="kind">Known issue</span></div>
+<h3>Hidden generated checkbox/table answers survive export, but hidden scalar defaults do not</h3>
+<div class="finding">Finding reference: <strong>DATA-01</strong></div>
+<p class="small muted">The test confirmed an existing defect. This is not an acceptance pass.</p>
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;type&quot;: &quot;pub&quot;,
+  &quot;X_A&quot;: true,
+  &quot;T_A&quot;: &quot;Yes&quot;
+}</pre></details>
+</article>
+<article class="check warn" id="check-44" data-check data-kind="known-issue" data-attention="true" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-44">COMPLETION-TABLE</a><span class="badge warn">Known defect reproduced</span><span class="kind">Known issue</span></div>
+<h3>An unanswered table is marked complete because its parent key is missing</h3>
+<div class="finding">Finding reference: <strong>UI-01</strong></div>
+<p class="small muted">The test confirmed an existing defect. This is not an acceptance pass.</p>
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;current&quot;: 1,
+  &quot;total&quot;: 1,
+  &quot;ratio&quot;: 1,
+  &quot;percent&quot;: &quot;100&quot;
+}</pre></details>
+</article>
+<article class="check warn" id="check-45" data-check data-kind="known-issue" data-attention="true" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-45">COMPLETION-MISSING-EMPTY</a><span class="badge warn">Known defect reproduced</span><span class="kind">Known issue</span></div>
+<h3>Missing scalars count as filled and no required fields produces NaN</h3>
+<div class="finding">Finding reference: <strong>UI-01</strong></div>
+<p class="small muted">The test confirmed an existing defect. This is not an acceptance pass.</p>
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;missingScalarRatio&quot;: 1,
+  &quot;emptyFormRatio&quot;: &quot;NaN&quot;,
+  &quot;emptyFormPercent&quot;: &quot;NaN&quot;
+}</pre></details>
+</article>
+<article class="check warn" id="check-46" data-check data-kind="known-issue" data-attention="true" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-46">IMPORT-FORM-DEFAULTS</a><span class="badge warn">Known defect reproduced</span><span class="kind">Known issue</span></div>
+<h3>Import fills defaults using the previously open dataset, not the incoming form</h3>
+<div class="finding">Finding reference: <strong>DATA-02</strong></div>
+<p class="small muted">The test confirmed an existing defect. This is not an acceptance pass.</p>
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;embeddedField&quot;: &quot;EX_Imported&quot;,
+  &quot;initialized&quot;: false
+}</pre></details>
+</article>
+<article class="check warn" id="check-47" data-check data-kind="known-issue" data-attention="true" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-47">PERSISTED-FORMS</a><span class="badge warn">Known defect reproduced</span><span class="kind">Known issue</span></div>
+<h3>Saved embedded forms can disagree with current UI/export forms</h3>
+<div class="finding">Finding reference: <strong>DATA-02</strong></div>
+<p class="small muted">The test confirmed an existing defect. This is not an acceptance pass.</p>
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;scoredWithEmbeddedForm&quot;: 9,
+  &quot;visibleInCurrentForm&quot;: false,
+  &quot;retainedByExport&quot;: false
+}</pre></details>
+</article>
+<article class="check " id="check-40" data-check data-kind="characterization" data-attention="false" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-40">CHILD-EVIDENCE</a><span class="badge ">Documented behavior matched</span><span class="kind">Characterization</span></div>
+<h3>Child FAIR/preregistration points do not require their parent evidence URL</h3>
+<div class="finding">Finding reference: <strong>SCORE-03</strong></div>
+<p class="small muted">This records a limitation or policy-dependent behavior; matching it is not a correctness verdict.</p>
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;P_Data_Open_AccessLevel&quot;: {
+    &quot;max&quot;: 1,
+    &quot;score&quot;: 0
+  },
+  &quot;P_Data_Open_FAIR&quot;: {
+    &quot;max&quot;: 1,
+    &quot;score&quot;: 0.5
+  },
+  &quot;P_ReproducibleScripts&quot;: {
+    &quot;max&quot;: 1,
+    &quot;score&quot;: 0
+  },
+  &quot;P_ReproducibleScripts_FAIR&quot;: {
+    &quot;max&quot;: 1.4,
+    &quot;score&quot;: 0.2
+  },
+  &quot;P_Preregistration&quot;: {
+    &quot;max&quot;: 2,
+    &quot;score&quot;: 0
+  },
+  &quot;P_Preregistration_Content&quot;: {
+    &quot;max&quot;: 1,
+    &quot;score&quot;: 0.2
+  }
+}</pre></details>
+</article>
+<article class="check " id="check-49" data-check data-kind="characterization" data-attention="false" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-49">SCORE-UNDOCUMENTED-GUARD</a><span class="badge ">Documented behavior matched</span><span class="kind">Characterization</span></div>
+<h3>The undocumented score.score guard changes false-condition denominator behavior</h3>
+<div class="finding">Finding reference: <strong>LIMIT-01</strong></div>
+<p class="small muted">This records a limitation or policy-dependent behavior; matching it is not a correctness verdict.</p>
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;before&quot;: {
+    &quot;max&quot;: 1,
+    &quot;score&quot;: 0
+  },
+  &quot;after&quot;: null
+}</pre></details>
+</article>
+<article class="check " id="check-50" data-check data-kind="characterization" data-attention="false" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-50">SCORE-CONFIG-UNSUPPORTED</a><span class="badge ">Documented behavior matched</span><span class="kind">Characterization</span></div>
+<h3>config$ works in UI expressions but is unsupported by the scorer</h3>
+<div class="finding">Finding reference: <strong>LIMIT-01</strong></div>
+<p class="small muted">This records a limitation or policy-dependent behavior; matching it is not a correctness verdict.</p>
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;ui&quot;: true,
+  &quot;scoring&quot;: &quot;ReferenceError&quot;
+}</pre></details>
+</article>
+<article class="check " id="check-51" data-check data-kind="characterization" data-attention="false" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-51">THEORY-UNANSWERED</a><span class="badge ">Documented behavior matched</span><span class="kind">Characterization</span></div>
+<h3>Unanswered theory filters leave 15 hidden possible points</h3>
+<div class="finding">Finding reference: <strong>POLICY-01</strong></div>
+<p class="small muted">This records a limitation or policy-dependent behavior; matching it is not a correctness verdict.</p>
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;visibleScoredItems&quot;: 0,
+  &quot;score&quot;: 0,
+  &quot;max&quot;: 15
+}</pre></details>
+</article>
+<article class="check " id="check-52" data-check data-kind="characterization" data-attention="false" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-52">THEORY-CATEGORIES</a><span class="badge ">Documented behavior matched</span><span class="kind">Characterization</span></div>
+<h3>Default category cues omit theory checklist points</h3>
+<div class="finding">Finding reference: <strong>POLICY-01</strong></div>
+<p class="small muted">This records a limitation or policy-dependent behavior; matching it is not a correctness verdict.</p>
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;checklistItems&quot;: 25,
+  &quot;categoryMatches&quot;: 0
+}</pre></details>
+</article>
+<article class="check " id="check-53" data-check data-kind="characterization" data-attention="false" data-publication="true">
+<div class="topline"><a class="check-id" href="#check-53">PUB-NORMALIZATION-SCOPE</a><span class="badge ">Documented behavior matched</span><span class="kind">Characterization</span></div>
+<h3>Normalization retains legacy keys and does not migrate query namespaces or saved record types</h3>
+<div class="finding">Finding reference: <strong>PUB-NOTES</strong></div>
+<p class="small muted">This records a limitation or policy-dependent behavior; matching it is not a correctness verdict.</p>
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;legacyConfigKeyRetained&quot;: true,
+  &quot;legacyQueryNamespace&quot;: {
+    &quot;min_indicators_warning_threshold&quot;: &quot;5&quot;
+  },
+  &quot;recordType&quot;: &quot;pubs&quot;
+}</pre></details>
+</article>
+<article class="check good" id="check-0" data-check data-kind="regression" data-attention="false" data-publication="true">
+<div class="topline"><a class="check-id" href="#check-0">PUB-DEFAULT</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Default YAML and active publication pack use pub/core-pub.json</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;sources&quot;: [
+    &quot;packs/core-pub.json&quot;
+  ],
+  &quot;packVersion&quot;: &quot;0.9.0&quot;
+}</pre></details>
+</article>
+<article class="check good" id="check-1" data-check data-kind="regression" data-attention="false" data-publication="true">
+<div class="topline"><a class="check-id" href="#check-1">PUB-FALLBACK</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Configuration loader reads the default file when config.yaml is absent</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;loaded&quot;: [
+    &quot;config/config-default.yaml&quot;
+  ]
+}</pre></details>
+</article>
+<article class="check good" id="check-2" data-check data-kind="regression" data-attention="false" data-publication="true">
+<div class="topline"><a class="check-id" href="#check-2">PUB-LEGACY-YAML</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Legacy YAML is normalized through the actual loader/menu path</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;keys&quot;: [
+    &quot;meta&quot;,
+    &quot;pub&quot;,
+    &quot;software&quot;,
+    &quot;data&quot;
+  ],
+  &quot;sources&quot;: [
+    &quot;packs/core-pub.json&quot;,
+    &quot;packs/EP/EP-theory_development.json&quot;
+  ]
+}</pre></details>
+</article>
+<article class="check good" id="check-3" data-check data-kind="regression" data-attention="false" data-publication="true">
+<div class="topline"><a class="check-id" href="#check-3">PUB-PRECEDENCE</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Canonical pub takes precedence; normalization is idempotent</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;canonical&quot;: [
+    &quot;packs/core-pub.json&quot;
+  ],
+  &quot;legacyKeyRetained&quot;: true
+}</pre></details>
+</article>
+<article class="check good" id="check-4" data-check data-kind="regression" data-attention="false" data-publication="true">
+<div class="topline"><a class="check-id" href="#check-4">PUB-EXACT-ALIAS</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Only the unversioned legacy source is aliased; archives and extensions are preserved</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;before&quot;: [
+    &quot;packs/core-pubs.json&quot;,
+    &quot;packs/core-pub.json&quot;,
+    &quot;packs/archive/core-pubs-0_8_2.json&quot;,
+    &quot;packs/archive/core-pubs-0_3_1.json&quot;,
+    &quot;packs/EP/EP-theory_development.json&quot;
+  ],
+  &quot;after&quot;: [
+    &quot;packs/core-pub.json&quot;,
+    &quot;packs/core-pub.json&quot;,
+    &quot;packs/archive/core-pubs-0_8_2.json&quot;,
+    &quot;packs/archive/core-pubs-0_3_1.json&quot;,
+    &quot;packs/EP/EP-theory_development.json&quot;
+  ]
+}</pre></details>
+</article>
+<article class="check good" id="check-5" data-check data-kind="regression" data-attention="false" data-publication="true">
+<div class="topline"><a class="check-id" href="#check-5">PUB-USE</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Direct use() calls also normalize the old unversioned source</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;fetched&quot;: [
+    &quot;packs/core-pub.json&quot;
+  ]
+}</pre></details>
+</article>
+<article class="check good" id="check-6" data-check data-kind="regression" data-attention="false" data-publication="true">
+<div class="topline"><a class="check-id" href="#check-6">PUB-MENU</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Menu assembles canonical forms and new records retain type pub</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;type&quot;: &quot;pub&quot;,
+  &quot;version&quot;: &quot;0.9.0&quot;,
+  &quot;max&quot;: 7.4,
+  &quot;fetched&quot;: [
+    &quot;packs/core-meta.json&quot;,
+    &quot;packs/core-pub.json&quot;,
+    &quot;packs/core-software.json&quot;,
+    &quot;packs/core-data.json&quot;
+  ]
+}</pre></details>
+</article>
+<article class="check good" id="check-7" data-check data-kind="regression" data-attention="false" data-publication="true">
+<div class="topline"><a class="check-id" href="#check-7">PUB-UI-CONFIG</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>UI expressions and per-publication overrides use config$pub/pub:</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;active&quot;: true,
+  &quot;threshold&quot;: &quot;4&quot;
+}</pre></details>
+</article>
+<article class="check good" id="check-8" data-check data-kind="regression" data-attention="false" data-publication="true">
+<div class="topline"><a class="check-id" href="#check-8">PUB-COLLECTOR-CORE</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Collector resolves pub/core-pub and the exact legacy core-pubs alias</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>[
+  {
+    &quot;type&quot;: &quot;pub&quot;,
+    &quot;sources&quot;: [
+      &quot;packs/core-pub.json&quot;
+    ]
+  },
+  {
+    &quot;type&quot;: &quot;core-pub&quot;,
+    &quot;sources&quot;: [
+      &quot;packs/core-pub.json&quot;
+    ]
+  },
+  {
+    &quot;type&quot;: &quot;core-pubs&quot;,
+    &quot;sources&quot;: [
+      &quot;packs/core-pub.json&quot;
+    ]
+  }
+]</pre></details>
+</article>
+<article class="check good" id="check-9" data-check data-kind="regression" data-attention="false" data-publication="true">
+<div class="topline"><a class="check-id" href="#check-9">PUB-COLLECTOR-EXTENSION</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>An extension selection retains core order and does not append the same exact path twice</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;elements&quot;: 133,
+  &quot;versions&quot;: {
+    &quot;P&quot;: &quot;0.9.0&quot;,
+    &quot;TH&quot;: &quot;5.0.0&quot;
+  }
+}</pre></details>
+</article>
+<article class="check good" id="check-10" data-check data-kind="regression" data-attention="false" data-publication="true">
+<div class="topline"><a class="check-id" href="#check-10">PUB-COLLECTOR-ARCHIVE</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Explicit historical core-pubs filenames remain loadable in the collector</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>[
+  {
+    &quot;version&quot;: &quot;0.3.1&quot;,
+    &quot;sources&quot;: [
+      &quot;packs/archive/core-pubs-0_3_1.json&quot;
+    ]
+  },
+  {
+    &quot;version&quot;: &quot;0.8.2&quot;,
+    &quot;sources&quot;: [
+      &quot;packs/archive/core-pubs-0_8_2.json&quot;
+    ]
+  }
+]</pre></details>
+</article>
+<article class="check good" id="check-11" data-check data-kind="regression" data-attention="false" data-publication="true">
+<div class="topline"><a class="check-id" href="#check-11">PUB-PREVIEW-CURRENT</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Preview pub/core-pub resolves the current renamed file</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>[
+  {
+    &quot;type&quot;: &quot;pub&quot;,
+    &quot;filename&quot;: &quot;/core-pub&quot;,
+    &quot;filter&quot;: &quot;&quot;,
+    &quot;showLabels&quot;: true,
+    &quot;showPoints&quot;: true
+  },
+  {
+    &quot;type&quot;: &quot;core-pub&quot;,
+    &quot;filename&quot;: &quot;/core-pub&quot;,
+    &quot;filter&quot;: &quot;&quot;,
+    &quot;showLabels&quot;: true,
+    &quot;showPoints&quot;: true
+  }
+]</pre></details>
+</article>
+<article class="check good" id="check-12" data-check data-kind="regression" data-attention="false" data-publication="true">
+<div class="topline"><a class="check-id" href="#check-12">PUB-CATALOG</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Every catalog entry, including historical plural names, resolves to an existing file</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>[
+  &quot;packs/EP/EP-clinical_psychology.json&quot;,
+  &quot;packs/EP/EP-theory_development.json&quot;,
+  &quot;packs/archive/core-pubs-0_3_1.json&quot;,
+  &quot;packs/archive/core-pubs-0_8_2.json&quot;,
+  &quot;packs/archive/EP-clinical_psychology-0_2_1.json&quot;,
+  &quot;packs/dev/EP-epistemic_goals.json&quot;,
+  &quot;packs/dev/EP-multidisciplinary.json&quot;,
+  &quot;packs/dev/EP-practical_relevance.json&quot;,
+  &quot;packs/dev/EP-stimuli.json&quot;
+]</pre></details>
+</article>
+<article class="check good" id="check-13" data-check data-kind="regression" data-attention="false" data-publication="true">
+<div class="topline"><a class="check-id" href="#check-13">PUB-IMPORT</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Import normalizes embedded legacy configuration without renaming pub records/forms</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;type&quot;: &quot;pub&quot;,
+  &quot;sources&quot;: [
+    &quot;packs/core-pub.json&quot;
+  ],
+  &quot;alerts&quot;: []
+}</pre></details>
+</article>
+<article class="check good" id="check-14" data-check data-kind="regression" data-attention="false" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-14">DEFAULT-CHECKBOX</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Checkbox defaults initialize selected and unselected keys</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>[
+  {
+    &quot;X_A&quot;: false,
+    &quot;X_B&quot;: false
+  },
+  {
+    &quot;X_A&quot;: false,
+    &quot;X_B&quot;: false
+  },
+  {
+    &quot;X_A&quot;: true,
+    &quot;X_B&quot;: false
+  },
+  {
+    &quot;X_A&quot;: true,
+    &quot;X_B&quot;: true
+  }
+]</pre></details>
+</article>
+<article class="check good" id="check-15" data-check data-kind="regression" data-attention="false" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-15">DEFAULT-FALSY</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Own-property scalar defaults preserve 0, false, empty string and null</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;N&quot;: 0,
+  &quot;F&quot;: false,
+  &quot;E&quot;: &quot;&quot;,
+  &quot;Z&quot;: null,
+  &quot;S&quot;: &quot;0&quot;,
+  &quot;Missing&quot;: &quot;&quot;,
+  &quot;Inherited&quot;: &quot;&quot;
+}</pre></details>
+</article>
+<article class="check good" id="check-16" data-check data-kind="regression" data-attention="false" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-16">DEFAULT-TABLE</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Table row defaults override the element fallback, including falsy overrides</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;T_A&quot;: &quot;NoRole&quot;,
+  &quot;T_B&quot;: &quot;Lead&quot;,
+  &quot;T_C&quot;: &quot;&quot;,
+  &quot;T_D&quot;: false,
+  &quot;T_E&quot;: 0,
+  &quot;U_A&quot;: &quot;&quot;
+}</pre></details>
+</article>
+<article class="check good" id="check-17" data-check data-kind="regression" data-attention="false" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-17">DEFAULT-VALIDATION</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Malformed checkbox defaults and unknown option IDs fail clearly</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;invalidShapesRejected&quot;: 6,
+  &quot;unknownOptionRejected&quot;: true
+}</pre></details>
+</article>
+<article class="check good" id="check-18" data-check data-kind="regression" data-attention="false" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-18">DEFAULT-DISPLAY</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Information elements and separators never create answer defaults</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{}</pre></details>
+</article>
+<article class="check good" id="check-19" data-check data-kind="regression" data-attention="false" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-19">DEFAULT-ALL-PACKS</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Every questionnaire pack can initialize its current defaults</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>[
+  {
+    &quot;file&quot;: &quot;packs/archive/core-pubs-0_3_1.json&quot;,
+    &quot;answerKeys&quot;: 111
+  },
+  {
+    &quot;file&quot;: &quot;packs/archive/core-pubs-0_8_2.json&quot;,
+    &quot;answerKeys&quot;: 129
+  },
+  {
+    &quot;file&quot;: &quot;packs/archive/core-software-0_1.json&quot;,
+    &quot;answerKeys&quot;: 28
+  },
+  {
+    &quot;file&quot;: &quot;packs/archive/EP-clinical_psychology-0_2_1.json&quot;,
+    &quot;answerKeys&quot;: 18
+  },
+  {
+    &quot;file&quot;: &quot;packs/core-data.json&quot;,
+    &quot;answerKeys&quot;: 1
+  },
+  {
+    &quot;file&quot;: &quot;packs/core-meta.json&quot;,
+    &quot;answerKeys&quot;: 10
+  },
+  {
+    &quot;file&quot;: &quot;packs/core-pub.json&quot;,
+    &quot;answerKeys&quot;: 129
+  },
+  {
+    &quot;file&quot;: &quot;packs/core-software.json&quot;,
+    &quot;answerKeys&quot;: 22
+  },
+  {
+    &quot;file&quot;: &quot;packs/dev/EP-epistemic_goals.json&quot;,
+    &quot;answerKeys&quot;: 14
+  },
+  {
+    &quot;file&quot;: &quot;packs/dev/EP-multidisciplinary.json&quot;,
+    &quot;answerKeys&quot;: 2
+  },
+  {
+    &quot;file&quot;: &quot;packs/dev/EP-practical_relevance.json&quot;,
+    &quot;answerKeys&quot;: 3
+  },
+  {
+    &quot;file&quot;: &quot;packs/dev/EP-stimuli.json&quot;,
+    &quot;answerKeys&quot;: 5
+  },
+  {
+    &quot;file&quot;: &quot;packs/EP/EP-clinical_psychology.json&quot;,
+    &quot;answerKeys&quot;: 18
+  },
+  {
+    &quot;file&quot;: &quot;packs/EP/EP-theory_development.json&quot;,
+    &quot;answerKeys&quot;: 30
+  },
+  {
+    &quot;file&quot;: &quot;packs/user.json&quot;,
+    &quot;answerKeys&quot;: 2
+  }
+]</pre></details>
+</article>
+<article class="check good" id="check-20" data-check data-kind="regression" data-attention="false" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-20">EXPRESSION-SUGAR</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>OR/AND sugar and negation agree in UI and scoring</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>[
+  &quot;($x === &#39;A&#39; || $x === &#39;B&#39;)&quot;,
+  &quot;!($x === &#39;A&#39; || $x === &#39;B&#39;)&quot;,
+  &quot;($x === &#39;A&#39; &amp;&amp; $x === &#39;B&#39;)&quot;,
+  &quot;($x === &#39;B&#39; &amp;&amp; $x === &#39;B&#39;)&quot;
+]</pre></details>
+</article>
+<article class="check good" id="check-21" data-check data-kind="regression" data-attention="false" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-21">EXPRESSION-EXISTS</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>exists is truthiness, not whitespace trimming or URL validation</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;values&quot;: [
+    &quot;&quot;,
+    0,
+    false,
+    null,
+    &quot;0&quot;,
+    &quot;   &quot;,
+    &quot;not a URL&quot;
+  ],
+  &quot;actual&quot;: [
+    false,
+    false,
+    false,
+    false,
+    true,
+    true,
+    true
+  ]
+}</pre></details>
+</article>
+<article class="check good" id="check-22" data-check data-kind="regression" data-attention="false" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-22">SCORE-CONDITION</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>A false score.condition retains the denominator</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;max&quot;: 1,
+  &quot;score&quot;: 0
+}</pre></details>
+</article>
+<article class="check good" id="check-23" data-check data-kind="regression" data-attention="false" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-23">SCORE-NOT-APPLICABLE</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Justified not applicable removes both earned and possible points</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;withExplanation&quot;: null,
+  &quot;withoutExplanation&quot;: {
+    &quot;max&quot;: 1,
+    &quot;score&quot;: 0
+  }
+}</pre></details>
+</article>
+<article class="check good" id="check-24" data-check data-kind="regression" data-attention="false" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-24">SCORE-TYPES</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Radio/checkbox option values score without a score object; dropdown/table values do not</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;R&quot;: {
+    &quot;max&quot;: 1,
+    &quot;score&quot;: 1
+  },
+  &quot;C&quot;: {
+    &quot;max&quot;: 1,
+    &quot;score&quot;: 1
+  },
+  &quot;D&quot;: {
+    &quot;max&quot;: 0,
+    &quot;score&quot;: 0
+  },
+  &quot;T&quot;: {
+    &quot;max&quot;: 0,
+    &quot;score&quot;: 0
+  }
+}</pre></details>
+</article>
+<article class="check good" id="check-25" data-check data-kind="regression" data-attention="false" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-25">SCORE-UNSUITABLE</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Unsuitable publications exclude every scored core and shipped extension item</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>[
+  {
+    &quot;pack&quot;: &quot;core-pub&quot;,
+    &quot;max&quot;: 0,
+    &quot;score&quot;: 0
+  },
+  {
+    &quot;pack&quot;: &quot;EP/EP-clinical_psychology&quot;,
+    &quot;max&quot;: 0,
+    &quot;score&quot;: 0
+  },
+  {
+    &quot;pack&quot;: &quot;EP/EP-theory_development&quot;,
+    &quot;max&quot;: 0,
+    &quot;score&quot;: 0
+  }
+]</pre></details>
+</article>
+<article class="check good" id="check-26" data-check data-kind="regression" data-attention="false" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-26">SCORE-AGGREGATION</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Overall percentage is the mean of output ratios, not pooled points</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;overall&quot;: &quot;50.0&quot;,
+  &quot;pooledPointsPercentage&quot;: &quot;10.0&quot;
+}</pre></details>
+</article>
+<article class="check good" id="check-27" data-check data-kind="regression" data-attention="false" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-27">MENU-FILTERS</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Empty exclude wins over include, prefix matching is used, and excluded defaults survive</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;withEmptyExclude&quot;: [
+    {
+      &quot;id&quot;: &quot;A&quot;
+    },
+    {
+      &quot;id&quot;: &quot;AChild&quot;
+    },
+    {
+      &quot;id&quot;: &quot;B&quot;
+    }
+  ],
+  &quot;includeOnly&quot;: [
+    {
+      &quot;id&quot;: &quot;A&quot;
+    },
+    {
+      &quot;id&quot;: &quot;AChild&quot;
+    }
+  ]
+}</pre></details>
+</article>
+<article class="check good" id="check-28" data-check data-kind="regression" data-attention="false" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-28">PACK-IDS</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Pack element, option, row and generated answer IDs are unique within each pack</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>[
+  {
+    &quot;file&quot;: &quot;packs/archive/core-pubs-0_3_1.json&quot;,
+    &quot;elements&quot;: 86,
+    &quot;answerKeys&quot;: 111
+  },
+  {
+    &quot;file&quot;: &quot;packs/archive/core-pubs-0_8_2.json&quot;,
+    &quot;elements&quot;: 99,
+    &quot;answerKeys&quot;: 129
+  },
+  {
+    &quot;file&quot;: &quot;packs/archive/core-software-0_1.json&quot;,
+    &quot;elements&quot;: 21,
+    &quot;answerKeys&quot;: 28
+  },
+  {
+    &quot;file&quot;: &quot;packs/archive/EP-clinical_psychology-0_2_1.json&quot;,
+    &quot;elements&quot;: 16,
+    &quot;answerKeys&quot;: 18
+  },
+  {
+    &quot;file&quot;: &quot;packs/core-data.json&quot;,
+    &quot;elements&quot;: 1,
+    &quot;answerKeys&quot;: 1
+  },
+  {
+    &quot;file&quot;: &quot;packs/core-meta.json&quot;,
+    &quot;elements&quot;: 15,
+    &quot;answerKeys&quot;: 10
+  },
+  {
+    &quot;file&quot;: &quot;packs/core-pub.json&quot;,
+    &quot;elements&quot;: 99,
+    &quot;answerKeys&quot;: 129
+  },
+  {
+    &quot;file&quot;: &quot;packs/core-software.json&quot;,
+    &quot;elements&quot;: 14,
+    &quot;answerKeys&quot;: 22
+  },
+  {
+    &quot;file&quot;: &quot;packs/dev/EP-epistemic_goals.json&quot;,
+    &quot;elements&quot;: 5,
+    &quot;answerKeys&quot;: 14
+  },
+  {
+    &quot;file&quot;: &quot;packs/dev/EP-multidisciplinary.json&quot;,
+    &quot;elements&quot;: 2,
+    &quot;answerKeys&quot;: 2
+  },
+  {
+    &quot;file&quot;: &quot;packs/dev/EP-practical_relevance.json&quot;,
+    &quot;elements&quot;: 2,
+    &quot;answerKeys&quot;: 3
+  },
+  {
+    &quot;file&quot;: &quot;packs/dev/EP-stimuli.json&quot;,
+    &quot;elements&quot;: 6,
+    &quot;answerKeys&quot;: 5
+  },
+  {
+    &quot;file&quot;: &quot;packs/EP/EP-clinical_psychology.json&quot;,
+    &quot;elements&quot;: 16,
+    &quot;answerKeys&quot;: 18
+  },
+  {
+    &quot;file&quot;: &quot;packs/EP/EP-theory_development.json&quot;,
+    &quot;elements&quot;: 34,
+    &quot;answerKeys&quot;: 30
+  },
+  {
+    &quot;file&quot;: &quot;packs/user.json&quot;,
+    &quot;elements&quot;: 3,
+    &quot;answerKeys&quot;: 2
+  }
+]</pre></details>
+</article>
+<article class="check good" id="check-29" data-check data-kind="regression" data-attention="false" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-29">PACK-EXPRESSIONS</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Active pack visibility and scoring expressions evaluate on default-answer fixtures</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>[
+  {
+    &quot;file&quot;: &quot;packs/core-data.json&quot;,
+    &quot;expressionsEvaluated&quot;: 0,
+    &quot;score&quot;: 0,
+    &quot;max&quot;: 0
+  },
+  {
+    &quot;file&quot;: &quot;packs/core-meta.json&quot;,
+    &quot;expressionsEvaluated&quot;: 5,
+    &quot;score&quot;: 0,
+    &quot;max&quot;: 0
+  },
+  {
+    &quot;file&quot;: &quot;packs/core-pub.json&quot;,
+    &quot;expressionsEvaluated&quot;: 111,
+    &quot;score&quot;: 0,
+    &quot;max&quot;: 7.4
+  },
+  {
+    &quot;file&quot;: &quot;packs/core-software.json&quot;,
+    &quot;expressionsEvaluated&quot;: 6,
+    &quot;score&quot;: 0,
+    &quot;max&quot;: 11
+  },
+  {
+    &quot;file&quot;: &quot;packs/dev/EP-epistemic_goals.json&quot;,
+    &quot;expressionsEvaluated&quot;: 0,
+    &quot;score&quot;: 0,
+    &quot;max&quot;: 0
+  },
+  {
+    &quot;file&quot;: &quot;packs/dev/EP-multidisciplinary.json&quot;,
+    &quot;expressionsEvaluated&quot;: 1,
+    &quot;score&quot;: 0,
+    &quot;max&quot;: 0
+  },
+  {
+    &quot;file&quot;: &quot;packs/dev/EP-practical_relevance.json&quot;,
+    &quot;expressionsEvaluated&quot;: 0,
+    &quot;score&quot;: 0,
+    &quot;max&quot;: 0
+  },
+  {
+    &quot;file&quot;: &quot;packs/dev/EP-stimuli.json&quot;,
+    &quot;expressionsEvaluated&quot;: 6,
+    &quot;score&quot;: 0,
+    &quot;max&quot;: 0
+  },
+  {
+    &quot;file&quot;: &quot;packs/EP/EP-clinical_psychology.json&quot;,
+    &quot;expressionsEvaluated&quot;: 25,
+    &quot;score&quot;: 0,
+    &quot;max&quot;: 2
+  },
+  {
+    &quot;file&quot;: &quot;packs/EP/EP-theory_development.json&quot;,
+    &quot;expressionsEvaluated&quot;: 59,
+    &quot;score&quot;: 0,
+    &quot;max&quot;: 15
+  },
+  {
+    &quot;file&quot;: &quot;packs/user.json&quot;,
+    &quot;expressionsEvaluated&quot;: 1,
+    &quot;score&quot;: 0,
+    &quot;max&quot;: 0
+  }
+]</pre></details>
+</article>
+<article class="check good" id="check-30" data-check data-kind="regression" data-attention="false" data-publication="false">
+<div class="topline"><a class="check-id" href="#check-30">SCORE-CATEGORY-FALLBACK</a><span class="badge good">Regression passed</span><span class="kind">Regression</span></div>
+<h3>Per-form categories, legacy fallback and explicit overrides retain their precedence</h3>
+
+
+
+<details class="print-expand"><summary>Recorded evidence</summary><pre>{
+  &quot;perForm&quot;: &quot;Form&quot;,
+  &quot;explicitOverride&quot;: &quot;Override&quot;,
+  &quot;missingFormConfig&quot;: &quot;Legacy&quot;
+}</pre></details>
+</article>
+</section>
+<section class="section" id="packs"><h2>Pack JSON validation</h2><p class="muted">Parsing status only; valid JSON does not establish schema completeness or scoring correctness.</p><div class="table-wrap"><table><thead><tr><th scope="col">File</th><th scope="col">Parsing result</th></tr></thead><tbody><tr><td><code>packs/archive/core-pubs-0_3_1.json</code></td><td><span class="badge good">Valid JSON</span></td></tr><tr><td><code>packs/archive/core-pubs-0_8_2.json</code></td><td><span class="badge good">Valid JSON</span></td></tr><tr><td><code>packs/archive/core-software-0_1.json</code></td><td><span class="badge good">Valid JSON</span></td></tr><tr><td><code>packs/archive/EP-clinical_psychology-0_2_1.json</code></td><td><span class="badge good">Valid JSON</span></td></tr><tr><td><code>packs/core-data.json</code></td><td><span class="badge good">Valid JSON</span></td></tr><tr><td><code>packs/core-meta.json</code></td><td><span class="badge good">Valid JSON</span></td></tr><tr><td><code>packs/core-pub.json</code></td><td><span class="badge good">Valid JSON</span></td></tr><tr><td><code>packs/core-software.json</code></td><td><span class="badge good">Valid JSON</span></td></tr><tr><td><code>packs/dev/EP-epistemic_goals.json</code></td><td><span class="badge good">Valid JSON</span></td></tr><tr><td><code>packs/dev/EP-multidisciplinary.json</code></td><td><span class="badge good">Valid JSON</span></td></tr><tr><td><code>packs/dev/EP-practical_relevance.json</code></td><td><span class="badge good">Valid JSON</span></td></tr><tr><td><code>packs/dev/EP-stimuli.json</code></td><td><span class="badge good">Valid JSON</span></td></tr><tr><td><code>packs/EP/EP-clinical_psychology.json</code></td><td><span class="badge good">Valid JSON</span></td></tr><tr><td><code>packs/EP/EP-theory_development.json</code></td><td><span class="badge good">Valid JSON</span></td></tr><tr><td><code>packs/info.json</code></td><td><span class="badge good">Valid JSON</span></td></tr><tr><td><code>packs/user.json</code></td><td><span class="badge good">Valid JSON</span></td></tr></tbody></table></div></section><section class="section" id="provenance"><h2>Provenance and raw results</h2><p class="muted">This is a presentation of the source report, not a new verification run. Report contents may include local paths and test evidence; review them before public sharing.</p>
+<details class="provenance"><summary>Source file SHA-256 fingerprints (24)</summary><div class="table-wrap"><table><thead><tr><th scope="col">Source file</th><th scope="col">SHA-256</th></tr></thead><tbody><tr><td><code>index.html</code></td><td><code>3e39bed8f11b52ebd02c7ffa30fe16692790c6a88dcf6e7e09a6f48e05b733f1</code></td></tr><tr><td><code>preview.html</code></td><td><code>1bb9cd6beee1bf26df25add1270a535a3dadbfbef994280c6569c9006ace73fa</code></td></tr><tr><td><code>menu.js</code></td><td><code>6330487dfae3e496cae344aed2a97ad0e0b6ed45d61e017eb6be13e079078c49</code></td></tr><tr><td><code>utils/score2.js</code></td><td><code>e5a747c2af1a83147f29f779d6a253bec89fad86db3e5bf8bd2bc086869c77c0</code></td></tr><tr><td><code>utils/packutils.js</code></td><td><code>23ec39279836c522d953e215b31ff454c93a34093b6628800cab7cbbc892771c</code></td></tr><tr><td><code>utils/keyalias.js</code></td><td><code>e8f91243d8864dcec2d48fe736d18694e7a1c7d57210c5da8cf6153305286392</code></td></tr><tr><td><code>builder.html</code></td><td><code>ed5eab05a9b0b6d675373274ac520b2e652a4a8692c6dfa2ab34bb5711ecd992</code></td></tr><tr><td><code>config/config-default.yaml</code></td><td><code>bac436247bfa3d0fef680869875b69f384d0df755947ee6a54f351c92659cb3e</code></td></tr><tr><td><code>packs/archive/core-pubs-0_3_1.json</code></td><td><code>0c31f53ff98dbde803c998e8c21088fca0edc7311d5cb5f784da52a7f3c7d194</code></td></tr><tr><td><code>packs/archive/core-pubs-0_8_2.json</code></td><td><code>7bf4462becad95aa7af82e7dcdccdc39001d95878ac226656cdcbc42ff3a0152</code></td></tr><tr><td><code>packs/archive/core-software-0_1.json</code></td><td><code>4d02a66957a5b1e040fa9bce336b4bb76530c67d698bb5604a6c37dde6b8d924</code></td></tr><tr><td><code>packs/archive/EP-clinical_psychology-0_2_1.json</code></td><td><code>5035d0e549b4bc29c393e64e905598e9a6ddcbd77b86ebc0f7d0c99f07317e6e</code></td></tr><tr><td><code>packs/core-data.json</code></td><td><code>9a5ef80f6f17535855c403137da4ed2d8aefb4cb1d393a85421f52e8f63b1dca</code></td></tr><tr><td><code>packs/core-meta.json</code></td><td><code>a23319a5d75538befc39ed8b664182ee8fd2bb4d2e758070290bf1087bfe4497</code></td></tr><tr><td><code>packs/core-pub.json</code></td><td><code>97266138b81d63e1dc948c4d17382738e467845fd950ebb7cd55cd11cb74ea1a</code></td></tr><tr><td><code>packs/core-software.json</code></td><td><code>459d96fea40d64beb09488d6e19d2da4068e328f01fac9a8e015edd064bc5187</code></td></tr><tr><td><code>packs/dev/EP-epistemic_goals.json</code></td><td><code>f5eab32da850d1477e1017d6f8e6be1aae47293700b0ffe36b35718a047c5e4e</code></td></tr><tr><td><code>packs/dev/EP-multidisciplinary.json</code></td><td><code>8660e951fe228c9c79e21462ab5127e60a97ac888289e0b82a0c95afd59bd8b6</code></td></tr><tr><td><code>packs/dev/EP-practical_relevance.json</code></td><td><code>9348f6395cfadf24ac76de07b4ca71cda370598dbe949bbc89ab376c6c76a2f9</code></td></tr><tr><td><code>packs/dev/EP-stimuli.json</code></td><td><code>051714c6ca817c548035d240de0cba27500fe186a7f3a7e52c471c6c7c366201</code></td></tr><tr><td><code>packs/EP/EP-clinical_psychology.json</code></td><td><code>5035d0e549b4bc29c393e64e905598e9a6ddcbd77b86ebc0f7d0c99f07317e6e</code></td></tr><tr><td><code>packs/EP/EP-theory_development.json</code></td><td><code>563939c9b2dfd0540817d0408e6043583e462b392c6c5a39a6aca3717f9312a2</code></td></tr><tr><td><code>packs/info.json</code></td><td><code>b4eda06ba808d940a195c12c3b633807be3014f0a45739833a9c96b0057e50ec</code></td></tr><tr><td><code>packs/user.json</code></td><td><code>eed7495a96b7b9edb782a73d5a22f0ddc36dd149c8356b49de835fbcde9d36d3</code></td></tr></tbody></table></div></details>
+<details class="no-print"><summary>Complete source JSON</summary><pre>{
+  &quot;repository&quot;: &quot;/Users/felix/Documents/Github/RESQUE-Framework/collector-app&quot;,
+  &quot;nodeVersion&quot;: &quot;v26.7.0&quot;,
+  &quot;strict&quot;: false,
+  &quot;summary&quot;: {
+    &quot;totalChecks&quot;: 54,
+    &quot;regressions&quot;: {
+      &quot;passed&quot;: 31,
+      &quot;failed&quot;: 0
+    },
+    &quot;knownIssues&quot;: {
+      &quot;reproduced&quot;: 15,
+      &quot;failedToReproduce&quot;: 2
+    },
+    &quot;characterizations&quot;: {
+      &quot;passed&quot;: 6,
+      &quot;failed&quot;: 0
+    },
+    &quot;jsonFiles&quot;: {
+      &quot;valid&quot;: 16,
+      &quot;invalid&quot;: 0
+    },
+    &quot;failedChecks&quot;: 2,
+    &quot;exitCode&quot;: 1
+  },
+  &quot;interpretation&quot;: &quot;Reproduced known issues are defects, not acceptance passes. Characterizations document limitations or policy choices. After a runtime fix, update/promote its checks; do not restore the defect. This VM harness is not a browser or external-report test.&quot;,
+  &quot;checks&quot;: [
+    {
+      &quot;id&quot;: &quot;PUB-DEFAULT&quot;,
+      &quot;name&quot;: &quot;Default YAML and active publication pack use pub/core-pub.json&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;sources&quot;: [
+          &quot;packs/core-pub.json&quot;
+        ],
+        &quot;packVersion&quot;: &quot;0.9.0&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;PUB-FALLBACK&quot;,
+      &quot;name&quot;: &quot;Configuration loader reads the default file when config.yaml is absent&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;loaded&quot;: [
+          &quot;config/config-default.yaml&quot;
+        ]
+      }
+    },
+    {
+      &quot;id&quot;: &quot;PUB-LEGACY-YAML&quot;,
+      &quot;name&quot;: &quot;Legacy YAML is normalized through the actual loader/menu path&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;keys&quot;: [
+          &quot;meta&quot;,
+          &quot;pub&quot;,
+          &quot;software&quot;,
+          &quot;data&quot;
+        ],
+        &quot;sources&quot;: [
+          &quot;packs/core-pub.json&quot;,
+          &quot;packs/EP/EP-theory_development.json&quot;
+        ]
+      }
+    },
+    {
+      &quot;id&quot;: &quot;PUB-PRECEDENCE&quot;,
+      &quot;name&quot;: &quot;Canonical pub takes precedence; normalization is idempotent&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;canonical&quot;: [
+          &quot;packs/core-pub.json&quot;
+        ],
+        &quot;legacyKeyRetained&quot;: true
+      }
+    },
+    {
+      &quot;id&quot;: &quot;PUB-EXACT-ALIAS&quot;,
+      &quot;name&quot;: &quot;Only the unversioned legacy source is aliased; archives and extensions are preserved&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;before&quot;: [
+          &quot;packs/core-pubs.json&quot;,
+          &quot;packs/core-pub.json&quot;,
+          &quot;packs/archive/core-pubs-0_8_2.json&quot;,
+          &quot;packs/archive/core-pubs-0_3_1.json&quot;,
+          &quot;packs/EP/EP-theory_development.json&quot;
+        ],
+        &quot;after&quot;: [
+          &quot;packs/core-pub.json&quot;,
+          &quot;packs/core-pub.json&quot;,
+          &quot;packs/archive/core-pubs-0_8_2.json&quot;,
+          &quot;packs/archive/core-pubs-0_3_1.json&quot;,
+          &quot;packs/EP/EP-theory_development.json&quot;
+        ]
+      }
+    },
+    {
+      &quot;id&quot;: &quot;PUB-USE&quot;,
+      &quot;name&quot;: &quot;Direct use() calls also normalize the old unversioned source&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;fetched&quot;: [
+          &quot;packs/core-pub.json&quot;
+        ]
+      }
+    },
+    {
+      &quot;id&quot;: &quot;PUB-MENU&quot;,
+      &quot;name&quot;: &quot;Menu assembles canonical forms and new records retain type pub&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;type&quot;: &quot;pub&quot;,
+        &quot;version&quot;: &quot;0.9.0&quot;,
+        &quot;max&quot;: 7.4,
+        &quot;fetched&quot;: [
+          &quot;packs/core-meta.json&quot;,
+          &quot;packs/core-pub.json&quot;,
+          &quot;packs/core-software.json&quot;,
+          &quot;packs/core-data.json&quot;
+        ]
+      }
+    },
+    {
+      &quot;id&quot;: &quot;PUB-UI-CONFIG&quot;,
+      &quot;name&quot;: &quot;UI expressions and per-publication overrides use config$pub/pub:&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;active&quot;: true,
+        &quot;threshold&quot;: &quot;4&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;PUB-COLLECTOR-CORE&quot;,
+      &quot;name&quot;: &quot;Collector resolves pub/core-pub and the exact legacy core-pubs alias&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;type&quot;: &quot;pub&quot;,
+          &quot;sources&quot;: [
+            &quot;packs/core-pub.json&quot;
+          ]
+        },
+        {
+          &quot;type&quot;: &quot;core-pub&quot;,
+          &quot;sources&quot;: [
+            &quot;packs/core-pub.json&quot;
+          ]
+        },
+        {
+          &quot;type&quot;: &quot;core-pubs&quot;,
+          &quot;sources&quot;: [
+            &quot;packs/core-pub.json&quot;
+          ]
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;PUB-COLLECTOR-EXTENSION&quot;,
+      &quot;name&quot;: &quot;An extension selection retains core order and does not append the same exact path twice&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;elements&quot;: 133,
+        &quot;versions&quot;: {
+          &quot;P&quot;: &quot;0.9.0&quot;,
+          &quot;TH&quot;: &quot;5.0.0&quot;
+        }
+      }
+    },
+    {
+      &quot;id&quot;: &quot;PUB-COLLECTOR-ARCHIVE&quot;,
+      &quot;name&quot;: &quot;Explicit historical core-pubs filenames remain loadable in the collector&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;version&quot;: &quot;0.3.1&quot;,
+          &quot;sources&quot;: [
+            &quot;packs/archive/core-pubs-0_3_1.json&quot;
+          ]
+        },
+        {
+          &quot;version&quot;: &quot;0.8.2&quot;,
+          &quot;sources&quot;: [
+            &quot;packs/archive/core-pubs-0_8_2.json&quot;
+          ]
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;PUB-PREVIEW-CURRENT&quot;,
+      &quot;name&quot;: &quot;Preview pub/core-pub resolves the current renamed file&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;type&quot;: &quot;pub&quot;,
+          &quot;filename&quot;: &quot;/core-pub&quot;,
+          &quot;filter&quot;: &quot;&quot;,
+          &quot;showLabels&quot;: true,
+          &quot;showPoints&quot;: true
+        },
+        {
+          &quot;type&quot;: &quot;core-pub&quot;,
+          &quot;filename&quot;: &quot;/core-pub&quot;,
+          &quot;filter&quot;: &quot;&quot;,
+          &quot;showLabels&quot;: true,
+          &quot;showPoints&quot;: true
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;PUB-CATALOG&quot;,
+      &quot;name&quot;: &quot;Every catalog entry, including historical plural names, resolves to an existing file&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: [
+        &quot;packs/EP/EP-clinical_psychology.json&quot;,
+        &quot;packs/EP/EP-theory_development.json&quot;,
+        &quot;packs/archive/core-pubs-0_3_1.json&quot;,
+        &quot;packs/archive/core-pubs-0_8_2.json&quot;,
+        &quot;packs/archive/EP-clinical_psychology-0_2_1.json&quot;,
+        &quot;packs/dev/EP-epistemic_goals.json&quot;,
+        &quot;packs/dev/EP-multidisciplinary.json&quot;,
+        &quot;packs/dev/EP-practical_relevance.json&quot;,
+        &quot;packs/dev/EP-stimuli.json&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;PUB-IMPORT&quot;,
+      &quot;name&quot;: &quot;Import normalizes embedded legacy configuration without renaming pub records/forms&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;type&quot;: &quot;pub&quot;,
+        &quot;sources&quot;: [
+          &quot;packs/core-pub.json&quot;
+        ],
+        &quot;alerts&quot;: []
+      }
+    },
+    {
+      &quot;id&quot;: &quot;DEFAULT-CHECKBOX&quot;,
+      &quot;name&quot;: &quot;Checkbox defaults initialize selected and unselected keys&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;X_A&quot;: false,
+          &quot;X_B&quot;: false
+        },
+        {
+          &quot;X_A&quot;: false,
+          &quot;X_B&quot;: false
+        },
+        {
+          &quot;X_A&quot;: true,
+          &quot;X_B&quot;: false
+        },
+        {
+          &quot;X_A&quot;: true,
+          &quot;X_B&quot;: true
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;DEFAULT-FALSY&quot;,
+      &quot;name&quot;: &quot;Own-property scalar defaults preserve 0, false, empty string and null&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;N&quot;: 0,
+        &quot;F&quot;: false,
+        &quot;E&quot;: &quot;&quot;,
+        &quot;Z&quot;: null,
+        &quot;S&quot;: &quot;0&quot;,
+        &quot;Missing&quot;: &quot;&quot;,
+        &quot;Inherited&quot;: &quot;&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;DEFAULT-TABLE&quot;,
+      &quot;name&quot;: &quot;Table row defaults override the element fallback, including falsy overrides&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;T_A&quot;: &quot;NoRole&quot;,
+        &quot;T_B&quot;: &quot;Lead&quot;,
+        &quot;T_C&quot;: &quot;&quot;,
+        &quot;T_D&quot;: false,
+        &quot;T_E&quot;: 0,
+        &quot;U_A&quot;: &quot;&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;DEFAULT-VALIDATION&quot;,
+      &quot;name&quot;: &quot;Malformed checkbox defaults and unknown option IDs fail clearly&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;invalidShapesRejected&quot;: 6,
+        &quot;unknownOptionRejected&quot;: true
+      }
+    },
+    {
+      &quot;id&quot;: &quot;DEFAULT-DISPLAY&quot;,
+      &quot;name&quot;: &quot;Information elements and separators never create answer defaults&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {}
+    },
+    {
+      &quot;id&quot;: &quot;DEFAULT-ALL-PACKS&quot;,
+      &quot;name&quot;: &quot;Every questionnaire pack can initialize its current defaults&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;file&quot;: &quot;packs/archive/core-pubs-0_3_1.json&quot;,
+          &quot;answerKeys&quot;: 111
+        },
+        {
+          &quot;file&quot;: &quot;packs/archive/core-pubs-0_8_2.json&quot;,
+          &quot;answerKeys&quot;: 129
+        },
+        {
+          &quot;file&quot;: &quot;packs/archive/core-software-0_1.json&quot;,
+          &quot;answerKeys&quot;: 28
+        },
+        {
+          &quot;file&quot;: &quot;packs/archive/EP-clinical_psychology-0_2_1.json&quot;,
+          &quot;answerKeys&quot;: 18
+        },
+        {
+          &quot;file&quot;: &quot;packs/core-data.json&quot;,
+          &quot;answerKeys&quot;: 1
+        },
+        {
+          &quot;file&quot;: &quot;packs/core-meta.json&quot;,
+          &quot;answerKeys&quot;: 10
+        },
+        {
+          &quot;file&quot;: &quot;packs/core-pub.json&quot;,
+          &quot;answerKeys&quot;: 129
+        },
+        {
+          &quot;file&quot;: &quot;packs/core-software.json&quot;,
+          &quot;answerKeys&quot;: 22
+        },
+        {
+          &quot;file&quot;: &quot;packs/dev/EP-epistemic_goals.json&quot;,
+          &quot;answerKeys&quot;: 14
+        },
+        {
+          &quot;file&quot;: &quot;packs/dev/EP-multidisciplinary.json&quot;,
+          &quot;answerKeys&quot;: 2
+        },
+        {
+          &quot;file&quot;: &quot;packs/dev/EP-practical_relevance.json&quot;,
+          &quot;answerKeys&quot;: 3
+        },
+        {
+          &quot;file&quot;: &quot;packs/dev/EP-stimuli.json&quot;,
+          &quot;answerKeys&quot;: 5
+        },
+        {
+          &quot;file&quot;: &quot;packs/EP/EP-clinical_psychology.json&quot;,
+          &quot;answerKeys&quot;: 18
+        },
+        {
+          &quot;file&quot;: &quot;packs/EP/EP-theory_development.json&quot;,
+          &quot;answerKeys&quot;: 30
+        },
+        {
+          &quot;file&quot;: &quot;packs/user.json&quot;,
+          &quot;answerKeys&quot;: 2
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;EXPRESSION-SUGAR&quot;,
+      &quot;name&quot;: &quot;OR/AND sugar and negation agree in UI and scoring&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: [
+        &quot;($x === &#39;A&#39; || $x === &#39;B&#39;)&quot;,
+        &quot;!($x === &#39;A&#39; || $x === &#39;B&#39;)&quot;,
+        &quot;($x === &#39;A&#39; &amp;&amp; $x === &#39;B&#39;)&quot;,
+        &quot;($x === &#39;B&#39; &amp;&amp; $x === &#39;B&#39;)&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;EXPRESSION-EXISTS&quot;,
+      &quot;name&quot;: &quot;exists is truthiness, not whitespace trimming or URL validation&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;values&quot;: [
+          &quot;&quot;,
+          0,
+          false,
+          null,
+          &quot;0&quot;,
+          &quot;   &quot;,
+          &quot;not a URL&quot;
+        ],
+        &quot;actual&quot;: [
+          false,
+          false,
+          false,
+          false,
+          true,
+          true,
+          true
+        ]
+      }
+    },
+    {
+      &quot;id&quot;: &quot;SCORE-CONDITION&quot;,
+      &quot;name&quot;: &quot;A false score.condition retains the denominator&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;max&quot;: 1,
+        &quot;score&quot;: 0
+      }
+    },
+    {
+      &quot;id&quot;: &quot;SCORE-NOT-APPLICABLE&quot;,
+      &quot;name&quot;: &quot;Justified not applicable removes both earned and possible points&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;withExplanation&quot;: null,
+        &quot;withoutExplanation&quot;: {
+          &quot;max&quot;: 1,
+          &quot;score&quot;: 0
+        }
+      }
+    },
+    {
+      &quot;id&quot;: &quot;SCORE-TYPES&quot;,
+      &quot;name&quot;: &quot;Radio/checkbox option values score without a score object; dropdown/table values do not&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;R&quot;: {
+          &quot;max&quot;: 1,
+          &quot;score&quot;: 1
+        },
+        &quot;C&quot;: {
+          &quot;max&quot;: 1,
+          &quot;score&quot;: 1
+        },
+        &quot;D&quot;: {
+          &quot;max&quot;: 0,
+          &quot;score&quot;: 0
+        },
+        &quot;T&quot;: {
+          &quot;max&quot;: 0,
+          &quot;score&quot;: 0
+        }
+      }
+    },
+    {
+      &quot;id&quot;: &quot;SCORE-UNSUITABLE&quot;,
+      &quot;name&quot;: &quot;Unsuitable publications exclude every scored core and shipped extension item&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;pack&quot;: &quot;core-pub&quot;,
+          &quot;max&quot;: 0,
+          &quot;score&quot;: 0
+        },
+        {
+          &quot;pack&quot;: &quot;EP/EP-clinical_psychology&quot;,
+          &quot;max&quot;: 0,
+          &quot;score&quot;: 0
+        },
+        {
+          &quot;pack&quot;: &quot;EP/EP-theory_development&quot;,
+          &quot;max&quot;: 0,
+          &quot;score&quot;: 0
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;SCORE-AGGREGATION&quot;,
+      &quot;name&quot;: &quot;Overall percentage is the mean of output ratios, not pooled points&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;overall&quot;: &quot;50.0&quot;,
+        &quot;pooledPointsPercentage&quot;: &quot;10.0&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;MENU-FILTERS&quot;,
+      &quot;name&quot;: &quot;Empty exclude wins over include, prefix matching is used, and excluded defaults survive&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;withEmptyExclude&quot;: [
+          {
+            &quot;id&quot;: &quot;A&quot;
+          },
+          {
+            &quot;id&quot;: &quot;AChild&quot;
+          },
+          {
+            &quot;id&quot;: &quot;B&quot;
+          }
+        ],
+        &quot;includeOnly&quot;: [
+          {
+            &quot;id&quot;: &quot;A&quot;
+          },
+          {
+            &quot;id&quot;: &quot;AChild&quot;
+          }
+        ]
+      }
+    },
+    {
+      &quot;id&quot;: &quot;PACK-IDS&quot;,
+      &quot;name&quot;: &quot;Pack element, option, row and generated answer IDs are unique within each pack&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;file&quot;: &quot;packs/archive/core-pubs-0_3_1.json&quot;,
+          &quot;elements&quot;: 86,
+          &quot;answerKeys&quot;: 111
+        },
+        {
+          &quot;file&quot;: &quot;packs/archive/core-pubs-0_8_2.json&quot;,
+          &quot;elements&quot;: 99,
+          &quot;answerKeys&quot;: 129
+        },
+        {
+          &quot;file&quot;: &quot;packs/archive/core-software-0_1.json&quot;,
+          &quot;elements&quot;: 21,
+          &quot;answerKeys&quot;: 28
+        },
+        {
+          &quot;file&quot;: &quot;packs/archive/EP-clinical_psychology-0_2_1.json&quot;,
+          &quot;elements&quot;: 16,
+          &quot;answerKeys&quot;: 18
+        },
+        {
+          &quot;file&quot;: &quot;packs/core-data.json&quot;,
+          &quot;elements&quot;: 1,
+          &quot;answerKeys&quot;: 1
+        },
+        {
+          &quot;file&quot;: &quot;packs/core-meta.json&quot;,
+          &quot;elements&quot;: 15,
+          &quot;answerKeys&quot;: 10
+        },
+        {
+          &quot;file&quot;: &quot;packs/core-pub.json&quot;,
+          &quot;elements&quot;: 99,
+          &quot;answerKeys&quot;: 129
+        },
+        {
+          &quot;file&quot;: &quot;packs/core-software.json&quot;,
+          &quot;elements&quot;: 14,
+          &quot;answerKeys&quot;: 22
+        },
+        {
+          &quot;file&quot;: &quot;packs/dev/EP-epistemic_goals.json&quot;,
+          &quot;elements&quot;: 5,
+          &quot;answerKeys&quot;: 14
+        },
+        {
+          &quot;file&quot;: &quot;packs/dev/EP-multidisciplinary.json&quot;,
+          &quot;elements&quot;: 2,
+          &quot;answerKeys&quot;: 2
+        },
+        {
+          &quot;file&quot;: &quot;packs/dev/EP-practical_relevance.json&quot;,
+          &quot;elements&quot;: 2,
+          &quot;answerKeys&quot;: 3
+        },
+        {
+          &quot;file&quot;: &quot;packs/dev/EP-stimuli.json&quot;,
+          &quot;elements&quot;: 6,
+          &quot;answerKeys&quot;: 5
+        },
+        {
+          &quot;file&quot;: &quot;packs/EP/EP-clinical_psychology.json&quot;,
+          &quot;elements&quot;: 16,
+          &quot;answerKeys&quot;: 18
+        },
+        {
+          &quot;file&quot;: &quot;packs/EP/EP-theory_development.json&quot;,
+          &quot;elements&quot;: 34,
+          &quot;answerKeys&quot;: 30
+        },
+        {
+          &quot;file&quot;: &quot;packs/user.json&quot;,
+          &quot;elements&quot;: 3,
+          &quot;answerKeys&quot;: 2
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;PACK-EXPRESSIONS&quot;,
+      &quot;name&quot;: &quot;Active pack visibility and scoring expressions evaluate on default-answer fixtures&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;file&quot;: &quot;packs/core-data.json&quot;,
+          &quot;expressionsEvaluated&quot;: 0,
+          &quot;score&quot;: 0,
+          &quot;max&quot;: 0
+        },
+        {
+          &quot;file&quot;: &quot;packs/core-meta.json&quot;,
+          &quot;expressionsEvaluated&quot;: 5,
+          &quot;score&quot;: 0,
+          &quot;max&quot;: 0
+        },
+        {
+          &quot;file&quot;: &quot;packs/core-pub.json&quot;,
+          &quot;expressionsEvaluated&quot;: 111,
+          &quot;score&quot;: 0,
+          &quot;max&quot;: 7.4
+        },
+        {
+          &quot;file&quot;: &quot;packs/core-software.json&quot;,
+          &quot;expressionsEvaluated&quot;: 6,
+          &quot;score&quot;: 0,
+          &quot;max&quot;: 11
+        },
+        {
+          &quot;file&quot;: &quot;packs/dev/EP-epistemic_goals.json&quot;,
+          &quot;expressionsEvaluated&quot;: 0,
+          &quot;score&quot;: 0,
+          &quot;max&quot;: 0
+        },
+        {
+          &quot;file&quot;: &quot;packs/dev/EP-multidisciplinary.json&quot;,
+          &quot;expressionsEvaluated&quot;: 1,
+          &quot;score&quot;: 0,
+          &quot;max&quot;: 0
+        },
+        {
+          &quot;file&quot;: &quot;packs/dev/EP-practical_relevance.json&quot;,
+          &quot;expressionsEvaluated&quot;: 0,
+          &quot;score&quot;: 0,
+          &quot;max&quot;: 0
+        },
+        {
+          &quot;file&quot;: &quot;packs/dev/EP-stimuli.json&quot;,
+          &quot;expressionsEvaluated&quot;: 6,
+          &quot;score&quot;: 0,
+          &quot;max&quot;: 0
+        },
+        {
+          &quot;file&quot;: &quot;packs/EP/EP-clinical_psychology.json&quot;,
+          &quot;expressionsEvaluated&quot;: 25,
+          &quot;score&quot;: 0,
+          &quot;max&quot;: 2
+        },
+        {
+          &quot;file&quot;: &quot;packs/EP/EP-theory_development.json&quot;,
+          &quot;expressionsEvaluated&quot;: 59,
+          &quot;score&quot;: 0,
+          &quot;max&quot;: 15
+        },
+        {
+          &quot;file&quot;: &quot;packs/user.json&quot;,
+          &quot;expressionsEvaluated&quot;: 1,
+          &quot;score&quot;: 0,
+          &quot;max&quot;: 0
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;SCORE-CATEGORY-FALLBACK&quot;,
+      &quot;name&quot;: &quot;Per-form categories, legacy fallback and explicit overrides retain their precedence&quot;,
+      &quot;kind&quot;: &quot;regression&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;perForm&quot;: &quot;Form&quot;,
+        &quot;explicitOverride&quot;: &quot;Override&quot;,
+        &quot;missingFormConfig&quot;: &quot;Legacy&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;CONFIG-WARNING-KEY&quot;,
+      &quot;finding&quot;: &quot;CONFIG-01&quot;,
+      &quot;name&quot;: &quot;The default YAML warning threshold has different casing from the runtime lookup&quot;,
+      &quot;kind&quot;: &quot;known-issue&quot;,
+      &quot;status&quot;: &quot;reproduced&quot;,
+      &quot;evidence&quot;: {
+        &quot;configuredThreshold&quot;: 5,
+        &quot;researchOutputs&quot;: 1,
+        &quot;warningShown&quot;: false,
+        &quot;configuredKey&quot;: &quot;min_RO_warning_threshold&quot;,
+        &quot;runtimeKey&quot;: &quot;min_ro_warning_threshold&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;CONFIG-BUILDER-KEYS&quot;,
+      &quot;finding&quot;: &quot;CONFIG-01&quot;,
+      &quot;name&quot;: &quot;Builder camelCase parameters do not override snake_case collector settings&quot;,
+      &quot;kind&quot;: &quot;known-issue&quot;,
+      &quot;status&quot;: &quot;reproduced&quot;,
+      &quot;evidence&quot;: {
+        &quot;requested&quot;: {
+          &quot;topPapers&quot;: 1,
+          &quot;indicatorsThreshold&quot;: 7
+        },
+        &quot;effective&quot;: {
+          &quot;topPapers&quot;: 3,
+          &quot;indicatorsThreshold&quot;: 0
+        }
+      }
+    },
+    {
+      &quot;id&quot;: &quot;PUB-ARCHIVE-ALIAS&quot;,
+      &quot;finding&quot;: &quot;PUB-01&quot;,
+      &quot;name&quot;: &quot;Canonical pub/core-pub aliases construct nonexistent archived filenames&quot;,
+      &quot;kind&quot;: &quot;known-issue&quot;,
+      &quot;status&quot;: &quot;failed&quot;,
+      &quot;error&quot;: {
+        &quot;name&quot;: &quot;AssertionError&quot;,
+        &quot;message&quot;: &quot;Expected values to be strictly equal:\n\u001b[32mactual\u001b[39m \u001b[31mexpected\u001b[39m\n\n\u001b[39m&#39;\u001b[39m\u001b[39mp\u001b[39m\u001b[39ma\u001b[39m\u001b[39mc\u001b[39m\u001b[39mk\u001b[39m\u001b[39ms\u001b[39m\u001b[39m/\u001b[39m\u001b[39ma\u001b[39m\u001b[39mr\u001b[39m\u001b[39mc\u001b[39m\u001b[39mh\u001b[39m\u001b[39mi\u001b[39m\u001b[39mv\u001b[39m\u001b[39me\u001b[39m\u001b[39m/\u001b[39m\u001b[39mc\u001b[39m\u001b[39mo\u001b[39m\u001b[39mr\u001b[39m\u001b[39me\u001b[39m\u001b[39m-\u001b[39m\u001b[39mp\u001b[39m\u001b[39mu\u001b[39m\u001b[39mb\u001b[39m\u001b[32ms\u001b[39m\u001b[39m-\u001b[39m\u001b[39m0\u001b[39m\u001b[39m_\u001b[39m\u001b[39m8\u001b[39m\u001b[39m_\u001b[39m\u001b[39m2\u001b[39m\u001b[39m.\u001b[39m\u001b[39mj\u001b[39m\u001b[39ms\u001b[39m\u001b[39mo\u001b[39m\u001b[39mn\u001b[39m\u001b[39m&#39;\u001b[39m\n&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;PUB-LEGACY-PREVIEW&quot;,
+      &quot;finding&quot;: &quot;PUB-01&quot;,
+      &quot;name&quot;: &quot;Unversioned core-pubs preview links do not use the collector compatibility alias&quot;,
+      &quot;kind&quot;: &quot;known-issue&quot;,
+      &quot;status&quot;: &quot;reproduced&quot;,
+      &quot;evidence&quot;: {
+        &quot;requested&quot;: &quot;packs/core-pubs.json&quot;,
+        &quot;replacement&quot;: &quot;packs/core-pub.json&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;PUB-RELATIVE-SOURCE&quot;,
+      &quot;finding&quot;: &quot;PUB-01&quot;,
+      &quot;name&quot;: &quot;The legacy source alias does not cover a ./-prefixed configuration path&quot;,
+      &quot;kind&quot;: &quot;known-issue&quot;,
+      &quot;status&quot;: &quot;reproduced&quot;,
+      &quot;evidence&quot;: {
+        &quot;unresolved&quot;: &quot;./packs/core-pubs.json&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;PUB-DUPLICATE-ALIASES&quot;,
+      &quot;finding&quot;: &quot;PUB-02&quot;,
+      &quot;name&quot;: &quot;Both old and new source spellings load the publication core twice&quot;,
+      &quot;kind&quot;: &quot;known-issue&quot;,
+      &quot;status&quot;: &quot;reproduced&quot;,
+      &quot;evidence&quot;: {
+        &quot;normalizedSources&quot;: [
+          &quot;packs/core-pub.json&quot;,
+          &quot;packs/core-pub.json&quot;
+        ],
+        &quot;elements&quot;: 198,
+        &quot;distinctIds&quot;: 99,
+        &quot;single&quot;: {
+          &quot;score&quot;: 1,
+          &quot;max&quot;: 7.4
+        },
+        &quot;duplicated&quot;: {
+          &quot;score&quot;: 2,
+          &quot;max&quot;: 14.8
+        },
+        &quot;duplicatedItemMaxSum&quot;: 7.4
+      }
+    },
+    {
+      &quot;id&quot;: &quot;ACCESS-JUSTIFICATION&quot;,
+      &quot;finding&quot;: &quot;SCORE-01&quot;,
+      &quot;name&quot;: &quot;Restricted-access ZK2 earns a point without its requested justification&quot;,
+      &quot;kind&quot;: &quot;known-issue&quot;,
+      &quot;status&quot;: &quot;reproduced&quot;,
+      &quot;evidence&quot;: {
+        &quot;max&quot;: 1,
+        &quot;score&quot;: 1
+      }
+    },
+    {
+      &quot;id&quot;: &quot;ACCESS-HIDDEN&quot;,
+      &quot;finding&quot;: &quot;SCORE-01&quot;,
+      &quot;name&quot;: &quot;A retained access answer earns points after Open Data becomes unjustified NotApplicable&quot;,
+      &quot;kind&quot;: &quot;known-issue&quot;,
+      &quot;status&quot;: &quot;reproduced&quot;,
+      &quot;evidence&quot;: {
+        &quot;visible&quot;: false,
+        &quot;item&quot;: {
+          &quot;max&quot;: 1,
+          &quot;score&quot;: 1
+        }
+      }
+    },
+    {
+      &quot;id&quot;: &quot;FAIR-REUSED&quot;,
+      &quot;finding&quot;: &quot;SCORE-02&quot;,
+      &quot;name&quot;: &quot;Reused-data FAIR questions are visible and applicable but cannot earn points&quot;,
+      &quot;kind&quot;: &quot;known-issue&quot;,
+      &quot;status&quot;: &quot;reproduced&quot;,
+      &quot;evidence&quot;: [
+        {
+          &quot;source&quot;: &quot;P_Data_Source_ReuseOwn&quot;,
+          &quot;visible&quot;: true,
+          &quot;item&quot;: {
+            &quot;max&quot;: 1,
+            &quot;score&quot;: 0
+          }
+        },
+        {
+          &quot;source&quot;: &quot;P_Data_Source_ReuseCompilation&quot;,
+          &quot;visible&quot;: true,
+          &quot;item&quot;: {
+            &quot;max&quot;: 1,
+            &quot;score&quot;: 0
+          }
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CHILD-EVIDENCE&quot;,
+      &quot;finding&quot;: &quot;SCORE-03&quot;,
+      &quot;name&quot;: &quot;Child FAIR/preregistration points do not require their parent evidence URL&quot;,
+      &quot;kind&quot;: &quot;characterization&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;P_Data_Open_AccessLevel&quot;: {
+          &quot;max&quot;: 1,
+          &quot;score&quot;: 0
+        },
+        &quot;P_Data_Open_FAIR&quot;: {
+          &quot;max&quot;: 1,
+          &quot;score&quot;: 0.5
+        },
+        &quot;P_ReproducibleScripts&quot;: {
+          &quot;max&quot;: 1,
+          &quot;score&quot;: 0
+        },
+        &quot;P_ReproducibleScripts_FAIR&quot;: {
+          &quot;max&quot;: 1.4,
+          &quot;score&quot;: 0.2
+        },
+        &quot;P_Preregistration&quot;: {
+          &quot;max&quot;: 2,
+          &quot;score&quot;: 0
+        },
+        &quot;P_Preregistration_Content&quot;: {
+          &quot;max&quot;: 1,
+          &quot;score&quot;: 0.2
+        }
+      }
+    },
+    {
+      &quot;id&quot;: &quot;CLINICAL-HIDDEN&quot;,
+      &quot;finding&quot;: &quot;SCORE-04&quot;,
+      &quot;name&quot;: &quot;Hidden clinical RCT answers retain points after preregistration changes to No&quot;,
+      &quot;kind&quot;: &quot;known-issue&quot;,
+      &quot;status&quot;: &quot;reproduced&quot;,
+      &quot;evidence&quot;: {
+        &quot;visible&quot;: false,
+        &quot;primary&quot;: {
+          &quot;max&quot;: 1,
+          &quot;score&quot;: 1
+        },
+        &quot;criteria&quot;: {
+          &quot;max&quot;: 2,
+          &quot;score&quot;: 0.5
+        }
+      }
+    },
+    {
+      &quot;id&quot;: &quot;SOFTWARE-GATES&quot;,
+      &quot;finding&quot;: &quot;SCORE-05&quot;,
+      &quot;name&quot;: &quot;Software ignores factor, option condition and parent visibility&quot;,
+      &quot;kind&quot;: &quot;known-issue&quot;,
+      &quot;status&quot;: &quot;reproduced&quot;,
+      &quot;evidence&quot;: {
+        &quot;score&quot;: 5.2,
+        &quot;max&quot;: 11,
+        &quot;tests&quot;: {
+          &quot;max&quot;: 1,
+          &quot;score&quot;: 0.2
+        },
+        &quot;documentation&quot;: {
+          &quot;max&quot;: 2,
+          &quot;score&quot;: 2
+        }
+      }
+    },
+    {
+      &quot;id&quot;: &quot;EXPORT-OWNERSHIP&quot;,
+      &quot;finding&quot;: &quot;DATA-01&quot;,
+      &quot;name&quot;: &quot;Hidden generated checkbox/table answers survive export, but hidden scalar defaults do not&quot;,
+      &quot;kind&quot;: &quot;known-issue&quot;,
+      &quot;status&quot;: &quot;reproduced&quot;,
+      &quot;evidence&quot;: {
+        &quot;type&quot;: &quot;pub&quot;,
+        &quot;X_A&quot;: true,
+        &quot;T_A&quot;: &quot;Yes&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;COMPLETION-TABLE&quot;,
+      &quot;finding&quot;: &quot;UI-01&quot;,
+      &quot;name&quot;: &quot;An unanswered table is marked complete because its parent key is missing&quot;,
+      &quot;kind&quot;: &quot;known-issue&quot;,
+      &quot;status&quot;: &quot;reproduced&quot;,
+      &quot;evidence&quot;: {
+        &quot;current&quot;: 1,
+        &quot;total&quot;: 1,
+        &quot;ratio&quot;: 1,
+        &quot;percent&quot;: &quot;100&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;COMPLETION-MISSING-EMPTY&quot;,
+      &quot;finding&quot;: &quot;UI-01&quot;,
+      &quot;name&quot;: &quot;Missing scalars count as filled and no required fields produces NaN&quot;,
+      &quot;kind&quot;: &quot;known-issue&quot;,
+      &quot;status&quot;: &quot;reproduced&quot;,
+      &quot;evidence&quot;: {
+        &quot;missingScalarRatio&quot;: 1,
+        &quot;emptyFormRatio&quot;: &quot;NaN&quot;,
+        &quot;emptyFormPercent&quot;: &quot;NaN&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;IMPORT-FORM-DEFAULTS&quot;,
+      &quot;finding&quot;: &quot;DATA-02&quot;,
+      &quot;name&quot;: &quot;Import fills defaults using the previously open dataset, not the incoming form&quot;,
+      &quot;kind&quot;: &quot;known-issue&quot;,
+      &quot;status&quot;: &quot;reproduced&quot;,
+      &quot;evidence&quot;: {
+        &quot;embeddedField&quot;: &quot;EX_Imported&quot;,
+        &quot;initialized&quot;: false
+      }
+    },
+    {
+      &quot;id&quot;: &quot;PERSISTED-FORMS&quot;,
+      &quot;finding&quot;: &quot;DATA-02&quot;,
+      &quot;name&quot;: &quot;Saved embedded forms can disagree with current UI/export forms&quot;,
+      &quot;kind&quot;: &quot;known-issue&quot;,
+      &quot;status&quot;: &quot;reproduced&quot;,
+      &quot;evidence&quot;: {
+        &quot;scoredWithEmbeddedForm&quot;: 9,
+        &quot;visibleInCurrentForm&quot;: false,
+        &quot;retainedByExport&quot;: false
+      }
+    },
+    {
+      &quot;id&quot;: &quot;PREVIEW-VERSION-POINTS&quot;,
+      &quot;finding&quot;: &quot;UI-02&quot;,
+      &quot;name&quot;: &quot;Versioned preview query loses showPoints=true&quot;,
+      &quot;kind&quot;: &quot;known-issue&quot;,
+      &quot;status&quot;: &quot;failed&quot;,
+      &quot;error&quot;: {
+        &quot;name&quot;: &quot;AssertionError&quot;,
+        &quot;message&quot;: &quot;Expected values to be strictly equal:\n\u001b[32m+ actual\u001b[39m \u001b[31m- expected\u001b[39m\n\n\u001b[32m+\u001b[39m true\n\u001b[31m- \u001b[39mundefined\n&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;SCORE-UNDOCUMENTED-GUARD&quot;,
+      &quot;finding&quot;: &quot;LIMIT-01&quot;,
+      &quot;name&quot;: &quot;The undocumented score.score guard changes false-condition denominator behavior&quot;,
+      &quot;kind&quot;: &quot;characterization&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;before&quot;: {
+          &quot;max&quot;: 1,
+          &quot;score&quot;: 0
+        },
+        &quot;after&quot;: null
+      }
+    },
+    {
+      &quot;id&quot;: &quot;SCORE-CONFIG-UNSUPPORTED&quot;,
+      &quot;finding&quot;: &quot;LIMIT-01&quot;,
+      &quot;name&quot;: &quot;config$ works in UI expressions but is unsupported by the scorer&quot;,
+      &quot;kind&quot;: &quot;characterization&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;ui&quot;: true,
+        &quot;scoring&quot;: &quot;ReferenceError&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;THEORY-UNANSWERED&quot;,
+      &quot;finding&quot;: &quot;POLICY-01&quot;,
+      &quot;name&quot;: &quot;Unanswered theory filters leave 15 hidden possible points&quot;,
+      &quot;kind&quot;: &quot;characterization&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;visibleScoredItems&quot;: 0,
+        &quot;score&quot;: 0,
+        &quot;max&quot;: 15
+      }
+    },
+    {
+      &quot;id&quot;: &quot;THEORY-CATEGORIES&quot;,
+      &quot;finding&quot;: &quot;POLICY-01&quot;,
+      &quot;name&quot;: &quot;Default category cues omit theory checklist points&quot;,
+      &quot;kind&quot;: &quot;characterization&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;checklistItems&quot;: 25,
+        &quot;categoryMatches&quot;: 0
+      }
+    },
+    {
+      &quot;id&quot;: &quot;PUB-NORMALIZATION-SCOPE&quot;,
+      &quot;finding&quot;: &quot;PUB-NOTES&quot;,
+      &quot;name&quot;: &quot;Normalization retains legacy keys and does not migrate query namespaces or saved record types&quot;,
+      &quot;kind&quot;: &quot;characterization&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;evidence&quot;: {
+        &quot;legacyConfigKeyRetained&quot;: true,
+        &quot;legacyQueryNamespace&quot;: {
+          &quot;min_indicators_warning_threshold&quot;: &quot;5&quot;
+        },
+        &quot;recordType&quot;: &quot;pubs&quot;
+      }
+    }
+  ],
+  &quot;jsonParsing&quot;: [
+    {
+      &quot;file&quot;: &quot;packs/archive/core-pubs-0_3_1.json&quot;,
+      &quot;valid&quot;: true
+    },
+    {
+      &quot;file&quot;: &quot;packs/archive/core-pubs-0_8_2.json&quot;,
+      &quot;valid&quot;: true
+    },
+    {
+      &quot;file&quot;: &quot;packs/archive/core-software-0_1.json&quot;,
+      &quot;valid&quot;: true
+    },
+    {
+      &quot;file&quot;: &quot;packs/archive/EP-clinical_psychology-0_2_1.json&quot;,
+      &quot;valid&quot;: true
+    },
+    {
+      &quot;file&quot;: &quot;packs/core-data.json&quot;,
+      &quot;valid&quot;: true
+    },
+    {
+      &quot;file&quot;: &quot;packs/core-meta.json&quot;,
+      &quot;valid&quot;: true
+    },
+    {
+      &quot;file&quot;: &quot;packs/core-pub.json&quot;,
+      &quot;valid&quot;: true
+    },
+    {
+      &quot;file&quot;: &quot;packs/core-software.json&quot;,
+      &quot;valid&quot;: true
+    },
+    {
+      &quot;file&quot;: &quot;packs/dev/EP-epistemic_goals.json&quot;,
+      &quot;valid&quot;: true
+    },
+    {
+      &quot;file&quot;: &quot;packs/dev/EP-multidisciplinary.json&quot;,
+      &quot;valid&quot;: true
+    },
+    {
+      &quot;file&quot;: &quot;packs/dev/EP-practical_relevance.json&quot;,
+      &quot;valid&quot;: true
+    },
+    {
+      &quot;file&quot;: &quot;packs/dev/EP-stimuli.json&quot;,
+      &quot;valid&quot;: true
+    },
+    {
+      &quot;file&quot;: &quot;packs/EP/EP-clinical_psychology.json&quot;,
+      &quot;valid&quot;: true
+    },
+    {
+      &quot;file&quot;: &quot;packs/EP/EP-theory_development.json&quot;,
+      &quot;valid&quot;: true
+    },
+    {
+      &quot;file&quot;: &quot;packs/info.json&quot;,
+      &quot;valid&quot;: true
+    },
+    {
+      &quot;file&quot;: &quot;packs/user.json&quot;,
+      &quot;valid&quot;: true
+    }
+  ],
+  &quot;sourceSHA256&quot;: {
+    &quot;index.html&quot;: &quot;3e39bed8f11b52ebd02c7ffa30fe16692790c6a88dcf6e7e09a6f48e05b733f1&quot;,
+    &quot;preview.html&quot;: &quot;1bb9cd6beee1bf26df25add1270a535a3dadbfbef994280c6569c9006ace73fa&quot;,
+    &quot;menu.js&quot;: &quot;6330487dfae3e496cae344aed2a97ad0e0b6ed45d61e017eb6be13e079078c49&quot;,
+    &quot;utils/score2.js&quot;: &quot;e5a747c2af1a83147f29f779d6a253bec89fad86db3e5bf8bd2bc086869c77c0&quot;,
+    &quot;utils/packutils.js&quot;: &quot;23ec39279836c522d953e215b31ff454c93a34093b6628800cab7cbbc892771c&quot;,
+    &quot;utils/keyalias.js&quot;: &quot;e8f91243d8864dcec2d48fe736d18694e7a1c7d57210c5da8cf6153305286392&quot;,
+    &quot;builder.html&quot;: &quot;ed5eab05a9b0b6d675373274ac520b2e652a4a8692c6dfa2ab34bb5711ecd992&quot;,
+    &quot;config/config-default.yaml&quot;: &quot;bac436247bfa3d0fef680869875b69f384d0df755947ee6a54f351c92659cb3e&quot;,
+    &quot;packs/archive/core-pubs-0_3_1.json&quot;: &quot;0c31f53ff98dbde803c998e8c21088fca0edc7311d5cb5f784da52a7f3c7d194&quot;,
+    &quot;packs/archive/core-pubs-0_8_2.json&quot;: &quot;7bf4462becad95aa7af82e7dcdccdc39001d95878ac226656cdcbc42ff3a0152&quot;,
+    &quot;packs/archive/core-software-0_1.json&quot;: &quot;4d02a66957a5b1e040fa9bce336b4bb76530c67d698bb5604a6c37dde6b8d924&quot;,
+    &quot;packs/archive/EP-clinical_psychology-0_2_1.json&quot;: &quot;5035d0e549b4bc29c393e64e905598e9a6ddcbd77b86ebc0f7d0c99f07317e6e&quot;,
+    &quot;packs/core-data.json&quot;: &quot;9a5ef80f6f17535855c403137da4ed2d8aefb4cb1d393a85421f52e8f63b1dca&quot;,
+    &quot;packs/core-meta.json&quot;: &quot;a23319a5d75538befc39ed8b664182ee8fd2bb4d2e758070290bf1087bfe4497&quot;,
+    &quot;packs/core-pub.json&quot;: &quot;97266138b81d63e1dc948c4d17382738e467845fd950ebb7cd55cd11cb74ea1a&quot;,
+    &quot;packs/core-software.json&quot;: &quot;459d96fea40d64beb09488d6e19d2da4068e328f01fac9a8e015edd064bc5187&quot;,
+    &quot;packs/dev/EP-epistemic_goals.json&quot;: &quot;f5eab32da850d1477e1017d6f8e6be1aae47293700b0ffe36b35718a047c5e4e&quot;,
+    &quot;packs/dev/EP-multidisciplinary.json&quot;: &quot;8660e951fe228c9c79e21462ab5127e60a97ac888289e0b82a0c95afd59bd8b6&quot;,
+    &quot;packs/dev/EP-practical_relevance.json&quot;: &quot;9348f6395cfadf24ac76de07b4ca71cda370598dbe949bbc89ab376c6c76a2f9&quot;,
+    &quot;packs/dev/EP-stimuli.json&quot;: &quot;051714c6ca817c548035d240de0cba27500fe186a7f3a7e52c471c6c7c366201&quot;,
+    &quot;packs/EP/EP-clinical_psychology.json&quot;: &quot;5035d0e549b4bc29c393e64e905598e9a6ddcbd77b86ebc0f7d0c99f07317e6e&quot;,
+    &quot;packs/EP/EP-theory_development.json&quot;: &quot;563939c9b2dfd0540817d0408e6043583e462b392c6c5a39a6aca3717f9312a2&quot;,
+    &quot;packs/info.json&quot;: &quot;b4eda06ba808d940a195c12c3b633807be3014f0a45739833a9c96b0057e50ec&quot;,
+    &quot;packs/user.json&quot;: &quot;eed7495a96b7b9edb782a73d5a22f0ddc36dd149c8356b49de835fbcde9d36d3&quot;
+  }
+}</pre></details></section>
+<footer>Generated by render-verification-report.cjs. Self-contained HTML; no external fonts, scripts, or styles. Browser printing includes every check, regardless of the screen filter.</footer></main><script>
+(() => {
+  const toolbar = document.getElementById('toolbar');
+  const search = document.getElementById('search');
+  const filter = document.getElementById('filter');
+  const cards = Array.from(document.querySelectorAll('[data-check]'));
+  const shown = document.getElementById('shown');
+  const empty = document.getElementById('empty');
+  if (toolbar) {
+    toolbar.hidden = false;
+    const update = () => {
+      const needle = search.value.trim().toLowerCase();
+      let count = 0;
+      cards.forEach(card => {
+        const matches = filter.value === 'all' ||
+          (filter.value === 'attention' && card.dataset.attention === 'true') ||
+          (filter.value === 'publication' && card.dataset.publication === 'true') ||
+          card.dataset.kind === filter.value;
+        card.hidden = !(matches && card.textContent.toLowerCase().includes(needle));
+        if (!card.hidden) count++;
+      });
+      shown.textContent = count + ' of ' + cards.length + ' checks shown';
+      empty.hidden = count !== 0;
+    };
+    search.addEventListener('input', update);
+    filter.addEventListener('change', update);
+    document.getElementById('reset').addEventListener('click', () => {
+      search.value = ''; filter.value = 'all'; update();
+    });
+    document.getElementById('expand').addEventListener('click', () => {
+      cards.filter(card => !card.hidden).forEach(card => card.querySelectorAll('details').forEach(d => { d.open = true; }));
+    });
+    document.getElementById('collapse').addEventListener('click', () => {
+      cards.filter(card => !card.hidden).forEach(card => card.querySelectorAll('details').forEach(d => { d.open = false; }));
+    });
+    const showTarget = () => {
+      const target = document.getElementById(location.hash.slice(1));
+      if (target && target.hasAttribute('data-check')) {
+        search.value = ''; filter.value = 'all'; update(); target.scrollIntoView();
+      }
+    };
+    window.addEventListener('hashchange', showTarget);
+    update();
+    showTarget();
+  }
+  let detailState = [];
+  window.addEventListener('beforeprint', () => {
+    detailState = Array.from(document.querySelectorAll('details.print-expand')).map(d => [d, d.open]);
+    detailState.forEach(([d]) => { d.open = true; });
+  });
+  window.addEventListener('afterprint', () => {
+    detailState.forEach(([d, wasOpen]) => { d.open = wasOpen; });
+  });
+})();
+</script></body></html>
