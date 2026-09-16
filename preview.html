@@ -120,8 +120,18 @@
             const showLabels = urlParams.get('showLabels') === 'true';
             const showPoints = urlParams.get('showPoints') === 'true';
 
+            // Keep legacy publication URLs working.
+            if (type === 'pubs') {
+                type = 'pub';
+            }
+
             if (['meta', 'pub', 'data', 'software'].includes(type)) {
                 type = `core-${type}`;
+            }
+
+            // Publication archives retain the former core-pubs filename stem.
+            if (type === 'core-pub' && path === 'archive' && version) {
+                type = 'core-pubs';
             }
 
             if (type && version) {

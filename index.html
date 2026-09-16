@@ -1916,26 +1916,33 @@
         loadConfigText().then(text => {
             const config = normalizePublicationConfig(jsyaml.load(text));
             // Resolve an optional pack selection using preview.html query syntax.
-            let type = params.get('type');
-            const path = params.get('path') ?? '';
-            const version = params.get('version');
+            let type = params.get("type");
+            const path = params.get("path") ?? "";
+            const version = params.get("version");
 
-            // Built-in packs use the core- prefix in their filenames.
-            if (['meta', 'pub', 'data', 'software'].includes(type)) {
+            if (type === "pubs") {
+                type = "pub";
+            }
+
+            if (["meta", "data", "software"].includes(type)) {
                 type = `core-${type}`;
+            } else if (type === "pub") {
+                type = path === "archive" && version
+                    ? "core-pubs"
+                    : "core-pub";
             }
 
             if (type) {
                 // Versions are represented with underscores in pack filenames.
                 const filename = version
-                    ? `${type}-${version.replace(/\./g, '_')}.json`
+                    ? `${type}-${version.replace(/\./g, "_")}.json`
                     : `${type}.json`;
 
-                const selectedPack = ['packs', path, filename].filter(Boolean).join('/');
+                const selectedPack = ["packs", path, filename].filter(Boolean).join("/");
 
                 // Expansion/custom packs extend the configured publication form.
                 // Explicit core-pack selections still replace it (e.g. archives).
-                config.pub.sources = type.startsWith('core-')
+                config.pub.sources = type.startsWith("core-")
                     ? [selectedPack]
                     : [...new Set([...config.pub.sources, selectedPack])];
             }

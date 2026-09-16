@@ -11,6 +11,7 @@ const pack = p => JSON.parse(read(`packs/${p}.json`));
 const core = pack('core-pub'), software = pack('core-software');
 const clinical = pack('EP/EP-clinical_psychology'), theory = pack('EP/EP-theory_development');
 const html = read('index.html');
+const previewHtml = read('preview.html');
 const stores = { data: { input: [{ RaterType: 'Applicant' }] }, config: { config: { statements_only_for_top_publications: true } } };
 const ctx = vm.createContext({ console, Alpine: { store: name => stores[name] } });
 vm.runInContext(read('utils/score2.js') + '\nglobalThis.score=score;globalThis.scoreAll=scoreAll;', ctx);
@@ -21,6 +22,15 @@ vm.runInContext(block('const filterExport =','// this is the export function') +
 vm.runInContext(block('const checkCompletion =','</script>') + '\nglobalThis.checkCompletion=checkCompletion;', ctx);
 vm.runInContext(block('function pick(combinedPack,','</script>') + '\nglobalThis.pick=pick;', ctx);
 vm.runInContext(read('menu.js') + '\nglobalThis.pickAccordingToConfig=pickAccordingToConfig;globalThis.normalizePublicationConfig=normalizePublicationConfig;globalThis.normalizePublicationSource=normalizePublicationSource;', ctx);
+const previewBlock = (start, end) => previewHtml.slice(previewHtml.indexOf(start), previewHtml.indexOf(end, previewHtml.indexOf(start)));
+const previewCtx = vm.createContext({
+  URLSearchParams,
+  window: { location: { search: '' } },
+});
+vm.runInContext(
+  previewBlock('// get params from query params from URL', 'const packToHTML =') + '\nglobalThis.resolvePackInQuery=resolvePackInQuery;',
+  previewCtx,
+);
 const plain = x => JSON.parse(JSON.stringify(x));
 const output = [];
 const check = (name, f) => { const evidence = f(); output.push({name,evidence}); };
@@ -116,6 +126,15 @@ check('Tabular completion checks the nonexistent parent key',()=>{
  stores.forms={pub:{elements,defaultValues:ctx.defaults(elements)}};
  const r={type:'pub',...ctx.defaults(elements)};
  const result=plain(ctx.checkCompletion(r));assert.equal(r.T_A,'');assert.equal(result.progress.ratio,1);return result.progress;
+});
+check('Publication URL aliases preserve current and archive filenames',()=>{
+ previewCtx.window.location.search='?type=pubs';
+ assert.equal(previewCtx.resolvePackInQuery().filename,'/core-pub');
+ previewCtx.window.location.search='?type=pub&path=archive&version=0.8.2';
+ assert.equal(previewCtx.resolvePackInQuery().filename,'archive/core-pubs-0_8_2');
+ previewCtx.window.location.search='?type=pubs&path=archive&version=0.3.1';
+ assert.equal(previewCtx.resolvePackInQuery().filename,'archive/core-pubs-0_3_1');
+ return {current:'core-pub',archive:'archive/core-pubs-0_8_2'};
 });
 check('Legacy pubs configuration and source path normalize to pub',()=>{
  const legacy={pubs:{sources:['packs/core-pubs.json','extension.json']}};
