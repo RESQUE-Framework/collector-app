@@ -91,19 +91,19 @@ Search for "AcademicAgeBonus" and change the content of the field `"title"`. Def
 
 **8. Optional: Change the set of indicators**
 
-The `sources` field in `config.yaml` defines which sets of indicators are included. Here is the default set for publications ("pubs"):
+The `sources` field in `config.yaml` defines which sets of indicators are included. Here is the default set for publications (`pub`):
 
 ```yaml
-pubs:
+pub:
   active: true
-  sources: ["packs/core-pubs.json"]
+  sources: ["packs/core-pub.json"]
   exclude: []
 ```
 
 If you want to add an expansion pack, e.g. the Clinical Expansion pack, provide the link to the pack:
 
 ```yaml
-sources: ["packs/core-pubs.json", "packs/EP/EP-clinical_psychology.json"]
+sources: ["packs/core-pub.json", "packs/EP/EP-clinical_psychology.json"]
 ```
 
 The indicators are displayed in the order provided here (i.e., the expansion pack will be displayed after the default pack).
@@ -114,7 +114,7 @@ By default all indicators defined in the packs are shown. You can exclude specif
 exclude: ["P_IndependentVerification", "P_ImpactStatement_Info", "P_ImpactStatement"]
 ```
 
-You can find the ID of each indicator in the packs themselves (e.g., see file `packs/core-pubs.json`), or when you go to the website of your app, click on any indicator in the middle pane, and inspect the help section in the right pane:
+You can find the ID of each indicator in the packs themselves (e.g., see file `packs/core-pub.json`), or when you go to the website of your app, click on any indicator in the middle pane, and inspect the help section in the right pane:
 
 ![](img/fork7.png)
 

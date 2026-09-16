@@ -25,7 +25,7 @@ Consequently, **hidden**, **unanswered**, **zero points**, and **not applicable*
 
 | File or directory | Role |
 | --- | --- |
-| `core-pubs.json` | Main publication questionnaire: 99 elements, including 12 scored elements. Prefix `P`, version `0.9.0`. |
+| `core-.json` | Main publication questionnaire: 99 elements, including 12 scored elements. Prefix `P`, version `0.9.0`. |
 | `core-meta.json` | Applicant/rater information shared by the research outputs. Prefix `M`, version `0.3.0`. |
 | `core-software.json` | Research software questionnaire. Prefix `S`, version `0.2`; some scoring fields are not implemented by `score2.js`. |
 | `core-data.json` | A minimal data-set pack with one text field. Prefix `D`, version `0.0.1`; no points. |
@@ -118,7 +118,7 @@ The collected data is an array. The first entry is metadata; later entries are i
 ]
 ```
 
-The configuration section is named `pubs`, but a publication’s stored `type` and form key are **`pub`**. The other form keys are `meta`, `data`, and `software`.
+The publication configuration section, stored `type`, and assembled form key are all **`pub`**. The other form keys are `meta`, `data`, and `software`. Legacy configurations using `pubs` are normalized to `pub` when loaded.
 
 | Element type | Answer representation | Directly scored by `score2.js`? |
 | --- | --- | --- |
@@ -161,7 +161,7 @@ For the UI, this logic lives in `index.html`. `score2.js` contains a separate im
 | `$P_Data_Source_NewOwn` | Generated checkbox answer in that output | Supported | Supported |
 | `meta$RaterType` | Answer in the first, metadata record | Supported | Supported |
 | `config$statements_only_for_top_publications` | Global configuration property | Supported | **Not implemented** |
-| `config$pubs.active` | Nested configuration property | Supported | **Not implemented** |
+| `config$pub.active` | Nested configuration property | Supported | **Not implemented** |
 
 For example, scoring transforms `$P_Data` to `context['P_Data']`, and `meta$RaterType` to `meta['RaterType']`. UI evaluation obtains metadata and configuration from the Alpine stores.
 
@@ -203,7 +203,7 @@ is rewritten to:
 
 Field substitution then turns the `$...` references into answer lookups. This is shorthand for several strict comparisons of **one scalar answer**. It is not a JavaScript operator and it is not a checkbox-array operation.
 
-A real example is the condition for the data identifier field in `core-pubs.json`:
+A real example is the condition for the data identifier field in `core-pub.json`:
 
 ```json
 "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseCompilation || $P_Data_Source_ReuseOwn || $P_Data_Source_Simulated) && $P_Data_Open =|= ['YesEntire', 'YesParts', 'YesSynthetic', 'YesAggregate', 'YesDataGeneratingScript']"
@@ -369,7 +369,7 @@ For a suitable paper using data:
 
 The separate `P_ReproducibleScripts_FAIR` checkbox item has seven options worth 0.2 each, so its maximum is **1.4**, not 1. Its score condition checks `YesParts`/`YesEntire` but does not require the scripts identifier. It is an independently scored item, even though its ID and layout place it beneath the scripts question.
 
-### 6.4 The 12 scored elements in `core-pubs.json`
+### 6.4 The 12 scored elements in `core-pub.json`
 
 These maxima apply when each item is included. Each row has its own `not_applicable` logic; the table does not replace those formulas.
 
@@ -440,10 +440,10 @@ Source: [default-value helper](https://github.com/RESQUE-Framework/collector-app
 For example, configure publication sources like this:
 
 ```yaml
-pubs:
+pub:
   active: true
   sources:
-    - packs/core-pubs.json
+    - packs/core-pub.json
     - packs/EP/EP-clinical_psychology.json
   exclude: []
   config:

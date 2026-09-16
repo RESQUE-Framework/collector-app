@@ -67,9 +67,9 @@ meta:
   config:
     min_indicators_warning_threshold: 0
 
-pubs:
+pub:
   active: true
-  sources: ["packs/core-pubs.json"]
+  sources: ["packs/core-pub.json"]
   exclude: []
   config:
     min_indicators_warning_threshold: 0

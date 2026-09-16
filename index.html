@@ -671,7 +671,7 @@
 
                         <div class="add-buttons"
                             x-show="($store.data.input.length - 1) < $store.config.config.max || !$store.config.config.committee_limits">
-                            <button x-show="$store.config.config.pubs.active" class="add-pub"
+                            <button x-show="$store.config.config.pub.active" class="add-pub"
                                 @click="$store.data.newResearchOutput('pub')">Add
                                 Publication</button>
                             <br />
@@ -1554,7 +1554,7 @@
             const pool = [];
 
             const ps = await Promise.all(packs.map(async pack => {
-                const response = await fetch("./" + pack);
+                const response = await fetch("./" + normalizePublicationSource(pack));
                 return response.json();
             }));
 
@@ -1744,6 +1744,11 @@
 
         const handleLoad = async files => {
             let loadedData = JSON.parse(await files[0].text());
+            const loadedConfig = loadedData[0]?.forms?.config;
+
+            if (loadedConfig) {
+                normalizePublicationConfig(loadedConfig);
+            }
 
             // Apply the aliases to all research outputs
             loadedData = loadedData
@@ -1909,14 +1914,14 @@
         }
 
         loadConfigText().then(text => {
-            const config = jsyaml.load(text);
+            const config = normalizePublicationConfig(jsyaml.load(text));
             // Resolve an optional pack selection using preview.html query syntax.
             let type = params.get('type');
             const path = params.get('path') ?? '';
             const version = params.get('version');
 
             // Built-in packs use the core- prefix in their filenames.
-            if (['meta', 'pubs', 'data', 'software'].includes(type)) {
+            if (['meta', 'pub', 'data', 'software'].includes(type)) {
                 type = `core-${type}`;
             }
 
@@ -1930,9 +1935,9 @@
 
                 // Expansion/custom packs extend the configured publication form.
                 // Explicit core-pack selections still replace it (e.g. archives).
-                config.pubs.sources = type.startsWith('core-')
+                config.pub.sources = type.startsWith('core-')
                     ? [selectedPack]
-                    : [...new Set([...config.pubs.sources, selectedPack])];
+                    : [...new Set([...config.pub.sources, selectedPack])];
             }
 
             Alpine.store('forms').config = config;

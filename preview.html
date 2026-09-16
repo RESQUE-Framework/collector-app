@@ -120,7 +120,7 @@
             const showLabels = urlParams.get('showLabels') === 'true';
             const showPoints = urlParams.get('showPoints') === 'true';
 
-            if (['meta', 'pubs', 'data', 'software'].includes(type)) {
+            if (['meta', 'pub', 'data', 'software'].includes(type)) {
                 type = `core-${type}`;
             }
 
@@ -264,7 +264,7 @@
                 <option value="" selected disabled hidden>Choose pack for preview</option>
 
                 <option value="core-meta">core-meta</option>
-                <option value="core-pubs">core-pubs</option>
+                <option value="core-pub">core-pub</option>
                 <option value="core-data">core-data</option>
                 <option value="core-software">core-software</option>
 

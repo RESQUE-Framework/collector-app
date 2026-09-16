@@ -8,7 +8,7 @@ const assert = require('node:assert/strict');
 const root = path.resolve(process.argv[2] || 'collector-app-main');
 const read = p => fs.readFileSync(path.join(root, p), 'utf8');
 const pack = p => JSON.parse(read(`packs/${p}.json`));
-const core = pack('core-pubs'), software = pack('core-software');
+const core = pack('core-pub'), software = pack('core-software');
 const clinical = pack('EP/EP-clinical_psychology'), theory = pack('EP/EP-theory_development');
 const html = read('index.html');
 const stores = { data: { input: [{ RaterType: 'Applicant' }] }, config: { config: { statements_only_for_top_publications: true } } };
@@ -20,7 +20,7 @@ vm.runInContext(block('const preprocessCondition =','const partialHighlight =') 
 vm.runInContext(block('const filterExport =','// this is the export function') + '\nglobalThis.filterExport=filterExport;', ctx);
 vm.runInContext(block('const checkCompletion =','</script>') + '\nglobalThis.checkCompletion=checkCompletion;', ctx);
 vm.runInContext(block('function pick(combinedPack,','</script>') + '\nglobalThis.pick=pick;', ctx);
-vm.runInContext(read('menu.js') + '\nglobalThis.pickAccordingToConfig=pickAccordingToConfig;', ctx);
+vm.runInContext(read('menu.js') + '\nglobalThis.pickAccordingToConfig=pickAccordingToConfig;globalThis.normalizePublicationConfig=normalizePublicationConfig;globalThis.normalizePublicationSource=normalizePublicationSource;', ctx);
 const plain = x => JSON.parse(JSON.stringify(x));
 const output = [];
 const check = (name, f) => { const evidence = f(); output.push({name,evidence}); };
@@ -116,6 +116,15 @@ check('Tabular completion checks the nonexistent parent key',()=>{
  stores.forms={pub:{elements,defaultValues:ctx.defaults(elements)}};
  const r={type:'pub',...ctx.defaults(elements)};
  const result=plain(ctx.checkCompletion(r));assert.equal(r.T_A,'');assert.equal(result.progress.ratio,1);return result.progress;
+});
+check('Legacy pubs configuration and source path normalize to pub',()=>{
+ const legacy={pubs:{sources:['packs/core-pubs.json','extension.json']}};
+ const canonical={pub:{sources:['canonical.json']},pubs:{sources:['packs/core-pubs.json']}};
+ assert.deepEqual(plain(ctx.normalizePublicationConfig(legacy).pub),{sources:['packs/core-pub.json','extension.json']});
+ assert.deepEqual(plain(ctx.normalizePublicationConfig(canonical).pub),{sources:['canonical.json']});
+ assert.equal(ctx.normalizePublicationSource('packs/core-pubs.json'),'packs/core-pub.json');
+ assert.equal(ctx.normalizePublicationSource('packs/archive/core-pubs-0_8_2.json'),'packs/archive/core-pubs-0_8_2.json');
+ return {legacy:legacy.pub.sources,canonical:canonical.pub.sources};
 });
 check('An empty exclude list overrides include; include uses startsWith',()=>{
  const combined={pool:[{id:'A'},{id:'AChild'},{id:'B'}]};

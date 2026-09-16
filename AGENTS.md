@@ -2,7 +2,7 @@
 
 ## Scope and source of truth
 
-- The central pack is `packs/core-pubs.json`; the active scorer is **`utils/score2.js`**. `utils/archive/score.js` is deprecated. Do not use it to infer current semantics or implement new scoring.
+- The central pack is `packs/core-pub.json`; the active scorer is **`utils/score2.js`**. `utils/archive/score.js` is deprecated. Do not use it to infer current semantics or implement new scoring.
 - `Documentation_notes.md` is incomplete and partly outdated, especially its explanation of `score.condition` and maximum points. Trace active code when resolving discrepancies.
 - Keep edits focused on the task. Explain changes to both earned and possible points: applicability, weights, and aggregation are assessment-policy decisions, not merely UI changes.
 - Preserve stable answer IDs and saved-data compatibility. For intentional renames, consider `utils/keyalias.js`, conditions, category cues, exports, and downstream consumers. Preserve pack provenance and citations.
@@ -34,9 +34,9 @@ Static browser application: Alpine.js, ordinary JavaScript, JSON packs, YAML con
   python3 -m http.server 8000 --bind 127.0.0.1
   ```
 
-  Open `http://127.0.0.1:8000/index.html`. Preview the core with `preview.html?type=pubs&showPoints=true&showLabels=true`; an extension with `preview.html?path=EP&type=EP-clinical_psychology&showPoints=true&showLabels=true`.
+  Open `http://127.0.0.1:8000/index.html`. Preview the core with `preview.html?type=pub&showPoints=true&showLabels=true`; an extension with `preview.html?path=EP&type=EP-clinical_psychology&showPoints=true&showLabels=true`.
   
-- Preview checks content/layout; test actual conditional behavior and scores in the collector with required packs loaded. The collector's type/path/version query selection appends expansion/custom packs to config.pubs.sources, preserving configured source order and avoiding duplicate paths. Thus ?path=EP&type=EP-theory_development retains the default publication core and adds the theory pack. Explicit core-* selections (including built-in aliases and archived versions) still replace the publication sources. Custom configurations must retain the core when their extensions depend on it.
+- Preview checks content/layout; test actual conditional behavior and scores in the collector with required packs loaded. The collector's type/path/version query selection appends expansion/custom packs to config.pub.sources, preserving configured source order and avoiding duplicate paths. Thus ?path=EP&type=EP-theory_development retains the default publication core and adds the theory pack. Explicit core-* selections (including built-in aliases and archived versions) still replace the publication sources. Custom configurations must retain the core when their extensions depend on it.
 - Alpine `<template>` output needs one root element; wrap siblings. Keep collector and preview option renderers consistent.
 - `renderOptionText()` converts Markdown in `options[].text` and removes one outer paragraph wrapper. Dropdown, radio, checkbox, and tabular-radio options use it. Other text follows separate HTML/interpolation helpers.
 - Pack content is trusted: it reaches `x-html`, and conditions reach `eval()`. Do not apply Markdown/HTML interpretation or expression evaluation to user-entered responses.
@@ -46,7 +46,7 @@ Static browser application: Alpine.js, ordinary JavaScript, JSON packs, YAML con
 
 | Pack | Reviewed role/version |
 | --- | --- |
-| `packs/core-pubs.json` | `P`, `0.9.0`; 99 elements, 12 scored elements |
+| `packs/core-pub.json` | `P`, `0.9.0`; 99 elements, 12 scored elements |
 | `packs/core-meta.json` | `M`, `0.3.0`; shared applicant/rater metadata |
 | `packs/core-software.json` | `S`, `0.2`; research software, with scoring limitations below |
 | `packs/core-data.json` | `D`, `0.1`; one unscored text field |
@@ -62,7 +62,7 @@ The theory checklist has five groups: theorizing (`T1`–`T5`), formalization (`
 - Packs normally define `prefix`, `version`, `date`, `title`, and ordered `elements`. License/creator/citation fields describe provenance, not scoring.
 - Activate packs through configuration `sources`. For publication extensions, normally retain `packs/core-pubs.json` first and append the extension. Adding to `info.json` alone does not load a pack in the collector.
 - `use()` concatenates elements in source order, keeps the first title, records versions/dates by prefix, and merges defaults. It does not deduplicate IDs; later defaults overwrite earlier values with the same key.
-- Configuration uses **`pubs`**; stored publication records and assembled forms use **`pub`**. Other types: `meta`, `software`, `data`.
+- Configuration, stored publication records, and assembled forms use **`pub`**. Legacy configuration files using `pubs` are normalized to `pub` on load. Other types: `meta`, `software`, `data`.
 - Defaults enable publications and disable software/data. `menu()` still assembles inactive types' configured sources; `active: false` does not mean “skip loading.”
 - `include`/`exclude` use `startsWith()`, not exact equality. Excluding `P_Data` also excludes descendants and any other IDs with that prefix.
 - `exclude` wins over `include`, even when `exclude: []`. Remove it when using `include`. An empty `include: []` selects everything.

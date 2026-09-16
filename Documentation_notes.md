@@ -28,8 +28,8 @@ meta:
   config:
     min_indicators_warning_threshold: 0
 
-pubs:
-  sources: ["packs/core-pubs.json"]
+pub:
+  sources: ["packs/core-pub.json"]
   include: ["DOI"]
   config:
     min_indicators_warning_threshold: 0
@@ -38,11 +38,11 @@ pubs:
 `sources` includes the packs that should be combined. E.g. if there are extension packs, we could do something like:
 
 ```yaml
-pubs:
-  sources: ["packs/core-pubs.json", "packs/extensions/clinical-psych-pubs.json"]
+pub:
+  sources: ["packs/core-pub.json", "packs/extensions/clinical-psych-pub.json"]
 ```
 
-The elements from that 'pack' would be included (hopefully, we should test this) in our final 'pubs form.
+The elements from that pack are included in the assembled `pub` form.
 
 If `exclude` is provided, we exclude the indicators with the ids from the list. We include everything else per default.
 
@@ -54,8 +54,8 @@ If `exclude` and `include` both do not exist, we pick everything.
 ### Examples:
 
 ```yaml
-pubs:
-  sources: ["packs/core-pubs.json", "packs/extensions/clin-pubs.json"]
+pub:
+  sources: ["packs/core-pub.json", "packs/extensions/clin-pub.json"]
   include: ["DOI", "CP_Hello"]
   config:
     min_indicators_warning_threshold: 0
@@ -71,7 +71,7 @@ Under `<template>`, only **one** root element is allowed. If you want to return 
 
 The preview.html shows the packs in one long list. It has the following URL parameters as options:
 
-- `type=pubs` (or `software`, `meta`, `data`)
+- `type=pub` (or `software`, `meta`, `data`)
 - `showPoints=true/false` (default: `false`)
 - `version`: Retrieve an old version from the `archive` subdir
 - `path`: Navigate to a subdirectory of the `packs` dir (e.g. `EP`)
