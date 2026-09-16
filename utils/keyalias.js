@@ -1,6 +1,6 @@
 export const renameOldKeys = (obj) => {
     const aliases = {
-        // Pubs
+        // Pub
         "P_Sample_Type": "P_Sample",
         "P_Sample_Type_Other": "P_Sample_Other",
         "P_Sample_Type_RareOther": "P_Sample_RareOther",

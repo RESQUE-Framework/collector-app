@@ -11,9 +11,8 @@
 
 <body>
 
-    <script src="//unpkg.com/alpinejs" defer></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.min.js"></script>
+    <script src="./js/alpinejs.min.js" defer></script>
+    <script src="./js/html-docx.min.js"></script>
     <script src="./js/showdown.min.js"></script>
 
     <script>
@@ -120,15 +119,26 @@
             const showLabels = urlParams.get('showLabels') === 'true';
             const showPoints = urlParams.get('showPoints') === 'true';
 
-            if (['meta', 'pubs', 'data', 'software'].includes(type)) {
+            // Keep legacy publication URLs working.
+            if (type === 'pubs') {
+                type = 'pub';
+            }
+
+            if (['meta', 'pub', 'data', 'software'].includes(type)) {
                 type = `core-${type}`;
+            }
+
+            // Publication archives retain the former core-pubs filename stem.
+            if (type === 'core-pub' && path === 'archive' && version) {
+                type = 'core-pubs';
             }
 
             if (type && version) {
                 return {
                     filename: `${path}/${type}-${version.replace(/\./g, '_')}`,
                     filter: filter ?? '',
-                    showLabels
+                    showLabels,
+                    showPoints
                 };
             } else if (type) {
                 return {
@@ -150,86 +160,50 @@
 
         const packToHTML = (pack) => {
             if (!pack || !pack.elements) {
-            return '';
+                return '';
             }
 
-            let html = `<h2>RESQUE: ${pack.title} (v${pack.version})${pack.license ? ` · ${pack.license}` : ""}</h2>`;
+            const html = `<h2>RESQUE: ${pack.title} (v${pack.version})${pack.license ? ` · ${pack.license}` : ""}</h2>`;
 
             const elementsHTML = pack.elements
-            .filter(el => el.type !== 'separator')
-            .map(el => {
-                return { 
-                el: el, 
-                html: (() => {
+                .filter(el => el.type !== 'separator')
+                .map(el => {
+                    let content = '';
+
                     switch (el.type) {
                     case 'info':
-                        return `<p>${el.text}</p>`;
-
+                        content = `<p>${el.text}</p>`;
+                        break;
                     case 'text':
-                        return `
-                        <p>
-                          <br/>
-                          Please specify: ___________
-                        </p>
-                        `;
-
-                    case 'textbox':
-                        return `
-                        <p>
-                          <br/>
-                          <div style="border: 1px solid #ccc; padding: 0.5rem; min-height: 3rem;">
-                        ___________
-                          </div>
-                        </p>
-                        `;
-
                     case 'number':
-                        return `
-                        <p>
-                          <br/>
-                          Please specify: ___________
-                        </p>
-                        `;
-
+                        content = '<p><br/>Please specify: ___________</p>';
+                        break;
+                    case 'textbox':
+                        content = '<div style="border: 1px solid #ccc; padding: 0.5rem; min-height: 3rem;">___________</div>';
+                        break;
                     case 'date':
-                        return `
-                        <p>
-                          <br/>
-                          Please specify date: ___________
-                        </p>
-                        `;
-
+                        content = '<p><br/>Please specify date: ___________</p>';
+                        break;
                     case 'dropdown':
-                        return `
-                        <ul>
-                          ${el.options
-                        .map(opt => `<li>${renderOptionText(opt.text)}</li>`)
-                        .join('')}
-                        </ul>
-                        `;
-
+                        content = `<ul>${el.options
+                            .map(opt => `<li>${renderOptionText(opt.text)}</li>`)
+                            .join('')}</ul>`;
+                        break;
                     case 'radio':
-                        return `
-                        ${el.options
-                        .map(opt => `<p>◯ ${opt.value ? ('(' + opt.value + 'P) ') : ''}${renderOptionText(opt.text)}</p>`)
-                        .join('')}
-                        `;
-
+                        content = el.options
+                            .map(opt => `<p>◯ ${opt.value ? `(${opt.value}P) ` : ''}${renderOptionText(opt.text)}</p>`)
+                            .join('');
+                        break;
                     case 'checkbox':
-                        return `
-                        ${el.options
-                        .map(opt => `<p>☐ ${opt.value ? ('(' + opt.value + 'P) ') : ''}${renderOptionText(opt.text)}</p>`)
-                        .join('')}
-                        `;
-
-                    default:
-                        return '';
+                        content = el.options
+                            .map(opt => `<p>☐ ${opt.value ? `(${opt.value}P) ` : ''}${renderOptionText(opt.text)}</p>`)
+                            .join('');
+                        break;
                     }
-                })()
-                };
-            })
-            .map(({ el, html }) => `<h3 style="color: blue">Indicator: ${el.id || ''}</h3><p><b>${el.title || ''}</b></p>${html}<p><b>Manual:</b><br>${clearMarkup(el.info || '-')}</p><p><b>Tips for external raters:</b><br>${clearMarkup(el.tip_external || '-')}</p>`)
-            .join('<hr />');
+
+                    return `<h3 style="color: blue">Indicator: ${el.id || ''}</h3><p><b>${el.title || ''}</b></p>${content}<p><b>Manual:</b><br>${clearMarkup(el.info || '-')}</p><p><b>Tips for external raters:</b><br>${clearMarkup(el.tip_external || '-')}</p>`;
+                })
+                .join('<hr />');
 
             return `<div style="font-family: sans-serif">${html}${elementsHTML}</div>`;
         };
@@ -241,8 +215,8 @@
                     top: 100,
                     right: 100,
                     bottom: 100,
-                    left: 100
-                }
+                    left: 100,
+                },
             });
 
             const url = URL.createObjectURL(docx);
@@ -252,6 +226,7 @@
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
     </script>
@@ -264,7 +239,7 @@
                 <option value="" selected disabled hidden>Choose pack for preview</option>
 
                 <option value="core-meta">core-meta</option>
-                <option value="core-pubs">core-pubs</option>
+                <option value="core-pub">core-pub</option>
                 <option value="core-data">core-data</option>
                 <option value="core-software">core-software</option>
 

@@ -15,7 +15,7 @@ if (!folder) {
 }
 
 const meta = require('../packs/core-meta.json');
-const pub = require('../packs/core-pubs.json');
+const pub = require('../packs/core-pub.json');
 const software = require('../packs/core-software.json');
 const data = require('../packs/core-data.json');
 

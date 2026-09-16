@@ -709,6 +709,53 @@ dialog .buttons {
     text-align: center;
 }
 
+#pack-validation-modal {
+    box-sizing: border-box;
+    width: calc(100% - 32px);
+    max-width: 780px;
+    max-height: 85vh;
+    top: 7vh;
+    overflow-y: auto;
+    overflow-wrap: anywhere;
+}
+
+#pack-validation-modal::backdrop {
+    background: rgb(0 0 0 / 35%);
+}
+
+.pack-validation-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.pack-validation-results {
+    list-style: none;
+    padding: 0;
+}
+
+.pack-validation-results li {
+    margin: 12px 0;
+    padding: 12px;
+    border-left: 4px solid;
+    background: #f7f7f7;
+}
+
+.pack-validation-results p {
+    margin: 8px 0;
+}
+
+.pack-validation-error { border-color: #b3261e; }
+.pack-validation-warning { border-color: #946200; }
+.pack-validation-error > strong { color: #b3261e; }
+.pack-validation-warning > strong { color: #946200; }
+
+.pack-validation-results pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
 button.critical {
     background-color: firebrick;
     color: #efefef;
