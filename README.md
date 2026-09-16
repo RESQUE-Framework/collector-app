@@ -38,8 +38,6 @@ E.g.:
 
 ## Demoing/Testing a specific pack
 
-With the same query strings as above, you can override the settings in `config.yaml` and force the regular app to display only one specific pack, e.g.:
+With the same query strings as above, you can extend the settings in `config.yaml` and tell the regular app to append a specific pack to the core-pubs set, e.g.:
 
 <https://resque-framework.github.io/collector-app/index.html?path=EP&type=EP-theory_development>
-
-(Technical note: In this case, the non-existent indicator P_Suitable is set to "Yes" by default.)
