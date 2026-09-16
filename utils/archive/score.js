@@ -1,3 +1,5 @@
+// This file is deprecated - it contains the old scoring mechanism.
+
 export const generateScoringRules = (items) => {
     let rules = {};
 

@@ -1,60 +1,57 @@
 export const getDefaultValues = elements => {
-    let defaultValues = {};
+    const defaultValues = {};
+    const hasDefault = obj =>
+        Object.prototype.hasOwnProperty.call(obj, 'default');
 
-    for(const element of elements) {
-        if (element.default
-            || element.rows?.some(row => row.default)
-        ) {
-            switch (element.type) {
-                case 'checkbox':
-                    element.default.forEach((optionId) => {
-                        defaultValues[element.id + '_' + optionId] = true;
-                    })
-                    break;
-                case 'tabular_radio':
-                    element.rows.forEach((row) => {
-                        defaultValues[element.id + '_' + row.id] = element.default || '';
-                    });
+    for (const element of elements) {
+        switch (element.type) {
+            case 'separator':
+            case 'info':
+                break;
 
-                    element.rows.forEach((row) => {
-                        if (row.default) {
-                            defaultValues[element.id + '_' + row.id] = row.default;
-                        }
-                    });
-                    break;
-                default:
-                    defaultValues[element.id] = element.default;
-            }                   
-        } else {
-            // Define default values
-            switch (element.type) {
-                case 'separator':
-                case 'info':
-                    // No default values needed
-                    break;
-                case 'text':
-                case 'textbox':
-                case 'number':
-                case 'date':
-                case 'dropdown':
-                case 'radio':
-                    defaultValues[element.id] = '';
-                    break;
-                case 'checkbox':
-                    element.options.forEach((option) => {
-                        defaultValues[element.id + '_' + option.id] = false;
-                    });
-                    break;
-                case 'tabular_radio':
-                    element.rows.forEach((row) => {
-                        defaultValues[element.id + '_' + row.id] = '';
-                    });
-                    break;
-                default:
-                    defaultValues[element.id] = '';
+            case 'checkbox': {
+                const selected = hasDefault(element) ? element.default : [];
+
+                if (!Array.isArray(selected)) {
+                    throw new TypeError(
+                        `${element.id}: checkbox default must be an array`
+                    );
+                }
+
+                const optionIds = new Set(element.options.map(o => o.id));
+
+                for (const id of selected) {
+                    if (!optionIds.has(id)) {
+                        throw new Error(
+                            `${element.id}: unknown default option "${id}"`
+                        );
+                    }
+                }
+
+                const selectedIds = new Set(selected);
+
+                for (const option of element.options) {
+                    defaultValues[`${element.id}_${option.id}`] =
+                        selectedIds.has(option.id);
+                }
+                break;
             }
+
+            case 'tabular_radio': {
+                const fallback = hasDefault(element) ? element.default : '';
+
+                for (const row of element.rows) {
+                    defaultValues[`${element.id}_${row.id}`] =
+                        hasDefault(row) ? row.default : fallback;
+                }
+                break;
+            }
+
+            default:
+                defaultValues[element.id] =
+                    hasDefault(element) ? element.default : '';
         }
     }
 
     return defaultValues;
-}
+};
