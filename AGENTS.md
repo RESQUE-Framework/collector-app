@@ -35,7 +35,8 @@ Static browser application: Alpine.js, ordinary JavaScript, JSON packs, YAML con
   ```
 
   Open `http://127.0.0.1:8000/index.html`. Preview the core with `preview.html?type=pubs&showPoints=true&showLabels=true`; an extension with `preview.html?path=EP&type=EP-clinical_psychology&showPoints=true&showLabels=true`.
-- Preview checks content/layout; test actual conditional behavior and scores in the collector with required packs loaded. The collector's `type`/`path`/`version` query override **replaces** `config.pubs.sources` with one selected pack; it does not append the core.
+  
+- Preview checks content/layout; test actual conditional behavior and scores in the collector with required packs loaded. The collector's type/path/version query selection appends expansion/custom packs to config.pubs.sources, preserving configured source order and avoiding duplicate paths. Thus ?path=EP&type=EP-theory_development retains the default publication core and adds the theory pack. Explicit core-* selections (including built-in aliases and archived versions) still replace the publication sources. Custom configurations must retain the core when their extensions depend on it.
 - Alpine `<template>` output needs one root element; wrap siblings. Keep collector and preview option renderers consistent.
 - `renderOptionText()` converts Markdown in `options[].text` and removes one outer paragraph wrapper. Dropdown, radio, checkbox, and tabular-radio options use it. Other text follows separate HTML/interpolation helpers.
 - Pack content is trusted: it reaches `x-html`, and conditions reach `eval()`. Do not apply Markdown/HTML interpretation or expression evaluation to user-entered responses.
