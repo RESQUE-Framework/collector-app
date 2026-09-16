@@ -1793,10 +1793,16 @@
                 normalizePublicationConfig(loadedConfig);
             }
 
-            // Apply the aliases to all research outputs
+            // Apply aliases to every record. Metadata has no form keyed by its type,
+            // so only research outputs receive form defaults.
             loadedData = loadedData
                 .map(window.renameOldKeys)
-                .map(r => ({ ...window.getDefaultValues(Alpine.store('data').input[0].forms[r.type].elements), ...r }));
+                .map(r => {
+                    const elements = Alpine.store('data').input[0]?.forms?.[r.type]?.elements;
+                    return elements
+                        ? { ...window.getDefaultValues(elements), ...r }
+                        : r;
+                });
 
             if (loadedData.every(r => Alpine.store('forms')[r.type].versions[prefixes[r.type]] === r.version)) {
                 Alpine.store('data').input = loadedData;
