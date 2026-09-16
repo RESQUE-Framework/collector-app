@@ -20,6 +20,7 @@ Static browser application: Alpine.js, ordinary JavaScript, JSON packs, YAML con
 | `menu.js` | Combine configured pack sources and apply include/exclude selection |
 | `utils/score2.js` | `score(output, meta, categoriesOverride)`, `scoreAll(records, categories)`, separate scoring expression evaluator |
 | `utils/packutils.js` | `getDefaultValues(elements)`; initializes answers, not expressions or scores |
+| `utils/pack-validator.js` | Client-side missing-reference checks on selected forms; structured errors and warnings for the collector modal |
 | `utils/prefixtree.js` | Visual indentation from ordered, underscore-separated IDs |
 | `utils/keyalias.js` | Historical answer-key renaming on import |
 | `utils/charts.js` | Chart.js category charts from score/max ratios |
@@ -72,6 +73,7 @@ The theory checklist has five groups: theorizing (`T1`–`T5`), formalization (`
 - `include`/`exclude` use `startsWith()`, not exact equality. Excluding `P_Data` also excludes descendants and any other IDs with that prefix.
 - `exclude` wins over `include`, even when `exclude: []`. Remove it when using `include`. An empty `include: []` selects everything.
 - Defaults are built **before** filtering and survive element exclusion. Dependencies are not automatically included: retain parent questions or deliberately provide suitable defaults.
+- The collector validates selected forms after assembly with `PackValidator.validate(forms)`. Excluded indicators are reported even if their default answers survive. Missing expression/scoring references are errors; missing display-text references are warnings. All configured types are checked, including inactive types. The footer's **Pack validation** link rechecks and opens the results; startup errors automatically open the dialog after Alpine renders it. This check does not inspect saved answers or change scoring. Run `node tests/verify-pack-validator.cjs` for focused regressions.
 
 ## Schema, IDs, and answers
 

@@ -483,7 +483,7 @@ Two important configuration details:
 - If `exclude` exists, it takes precedence over `include`, even when it is `[]`. Remove `exclude` when using `include`.
 - An empty `include: []` selects all elements, because `pick()` receives no filtering IDs.
 
-Filtering occurs after defaults are built, so defaults for excluded elements remain in the assembled default map. Including a child does not automatically include the parent questions it depends on. Keep dependencies together or provide deliberate defaults.
+Filtering occurs after defaults are built, so defaults for excluded elements remain in the assembled default map. Including a child does not automatically include the parent questions it depends on. Keep dependencies together. The browser validator reports references to excluded indicators even when their defaults remain; those defaults do not make the indicators part of the selected set.
 
 The assembled form definitions are embedded in the metadata record as `forms`. `score2.js` reads those embedded definitions. When testing a changed pack with previously saved data, check which form definitions are embedded in that data; changing the source JSON does not by itself guarantee that an existing record is scored with the new definitions.
 
@@ -507,6 +507,30 @@ In versioned previews, `showPoints=true` is currently lost in the query resolver
 The preview still depends on remote Alpine and manual-export scripts; it is not currently an offline-only tool (**UI-03**).
 
 Sources: [assembly helpers](../index.html), [configuration selection](../menu.js).
+
+### Browser pack validation
+
+The collector runs [utils/pack-validator.js](../utils/pack-validator.js) locally after the configured packs have been assembled and `include`/`exclude` applied. This includes extensions selected through the URL and all configured output types, even those marked `active: false`. Validation examines the current form definitions, not saved answers or older forms embedded in imported records. It does not evaluate expressions or make additional network requests.
+
+Use **Pack validation** next to FAQ, Tour, and Privacy/Terms of Use to recheck and view all results. The modal opens automatically on startup if there are errors. Warnings alone do not open it. Each result identifies the form, indicator ID, field, missing reference, and original expression/text. Closing the modal allows continued use; validation does not change answers, scores, or configuration.
+
+The first rule checks missing indicator/answer references:
+
+- **Error:** a missing reference in `condition`, `validation.condition`, nested option/row conditions, `score`/`scoring` strings (including `not_applicable`), or text highlight conditions.
+- **Warning:** a missing reference in display fields (`title`, `text`, `info`, `background`, `tip_external`, `message`).
+- `$Field` resolves within the same form; `meta$Field` resolves against selected metadata; `global$Field` resolves against publications. `config$...` belongs to configuration and is outside this check.
+- Checkbox references use `<id>_<optionID>` and table references use `<id>_<rowID>`. Their bare parent IDs are not stored answers. Selected input comment keys and built-in record fields (`type`, `version`, `date_added`, `date_modified`, `position`, `CollectorURL`) are recognized, as are metadata `date_created` and the publication `Abstract` supplied by DOI lookup.
+- Excluded indicators, their generated keys, and defaults left behind by filtering do not satisfy references. Indicators from unrelated output types cannot satisfy an unqualified reference either.
+
+For example, setting `pub.exclude: ["P_Suitable"]` produces errors for selected indicators that still refer to `$P_Suitable`. Restore that dependency or update those references. Repeated uses of the same missing reference within a field produce one result.
+
+The shipped software pack currently contains an unresolved `$S_Tests_URL` reference in `S_Tests_Quality.options[0].condition`. It is reported even with `software.active: false`, because that configured pack is still assembled. This check reports declared references even in fields the current renderer/scorer does not enforce; it does not change their evaluation behavior.
+
+This is a reference check, not a full schema, expression-syntax, scoring-policy, or load-error validator. Checks for additional problems can be added to the structured report (`issues`, `errors`, `warnings`) without changing the modal. Run the focused regression suite with:
+
+```bash
+node tests/verify-pack-validator.cjs
+```
 
 ## 9. Text shorthand, completion, and export
 

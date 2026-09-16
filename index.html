@@ -55,6 +55,7 @@
     <script src="./js/alpinejs.min.js"></script>
 
     <script src="./utils/score2.js"></script>
+    <script src="./utils/pack-validator.js"></script>
 
     <script type="module">
         import { getDefaultValues } from "./utils/packutils.js";
@@ -301,6 +302,17 @@
 
     <script>
         Alpine.store('loaded', false);
+
+        Alpine.store('packValidation', {
+            report: { issues: [], errors: [], warnings: [], indicatorsChecked: 0 },
+            run() {
+                this.report = PackValidator.validate(Alpine.store('forms'));
+            },
+            open() {
+                this.run();
+                showModal('pack-validation-modal');
+            }
+        });
 
         Alpine.store('forms', {
             meta: {},
@@ -1129,6 +1141,11 @@
                         <template x-if="$store.config?.config?.show_instruction">
                             • <span onclick="showInstructionsModal()" class="fakelink">Instructions</span>
                         </template>
+                        • <a id="pack-validation-link" class="fakelink" href="#pack-validation-modal"
+                            @click.prevent="$store.packValidation.open()" aria-haspopup="dialog"
+                            aria-controls="pack-validation-modal">Pack validation<span
+                                x-show="$store.packValidation.report.issues.length"
+                                x-text="' (' + $store.packValidation.report.errors.length + ' errors, ' + $store.packValidation.report.warnings.length + ' warnings)'"></span></a>
                     </div>
                     <div x-show="$store.config.config.show_beta_warning" style="margin-top: 20px;" x-cloak>
                         <span style='background-color: lightyellow; font-size:80%;'>[Note: The RESQUE collector app is
@@ -1226,6 +1243,32 @@
                 <button onclick="closeModal('clear-modal')">Cancel</button> <button onclick="exp()">Save data to local
                     file</button>
                 <button @click="$store.data.clear(); closeModal('clear-modal')" class="critical">Clear all data</button>
+            </dialog>
+
+            <dialog id="pack-validation-modal" aria-labelledby="pack-validation-title"
+                aria-describedby="pack-validation-summary">
+                <div class="pack-validation-header">
+                    <h3 id="pack-validation-title">Pack validation</h3>
+                    <button type="button" onclick="closeModal('pack-validation-modal')" autofocus>Close</button>
+                </div>
+                <p id="pack-validation-summary" role="status" x-text="$store.packValidation.report.errors.length + ' errors, ' + $store.packValidation.report.warnings.length + ' warnings · ' + $store.packValidation.report.indicatorsChecked + ' indicators checked'"></p>
+                <p>Checks references in all configured packs after include/exclude selection, including inactive output types.</p>
+                <p x-show="!$store.packValidation.report.issues.length">No missing indicator references found.</p>
+                <p x-show="$store.packValidation.report.issues.length">Restore the referenced indicator in the configuration, include its pack, or update the reference. Excluded indicators do not count even if their default answers remain.</p>
+                <ol class="pack-validation-results">
+                    <template x-for="(issue, index) in $store.packValidation.report.issues" :key="index">
+                        <li :class="'pack-validation-' + issue.severity">
+                            <strong x-text="issue.severity === 'error' ? 'Error' : 'Warning'"></strong>
+                            · <span x-text="issue.form"></span> · <code x-text="issue.indicator"></code>
+                            <div>Field: <code x-text="issue.field"></code></div>
+                            <p x-text="issue.message"></p>
+                            <details>
+                                <summary>Show expression or text</summary>
+                                <pre x-text="issue.expression"></pre>
+                            </details>
+                        </li>
+                    </template>
+                </ol>
             </dialog>
 
             <dialog id="config-incompatible-modal">
@@ -1959,6 +2002,7 @@
                     Alpine.store('forms')[key] = m[key];
                 }
 
+                Alpine.store('packValidation').run();
                 Alpine.store('data').manualInit();
                 Alpine.store('warnings').manualInit();
 
@@ -2014,9 +2058,15 @@
                     showInstructionsModal();
                 }
 
-                if (!Alpine.store('config').config.show_instruction && Alpine.store('data').input.length <= 1) {
+                if (!Alpine.store('config').config.show_instruction && Alpine.store('data').input.length <= 1 && !Alpine.store('packValidation').report.errors.length) {
                     //showInfoModal();
                     driver(tourMain).drive();
+                }
+
+                // The dialog is inside x-if="$store.loaded". Wait for Alpine to
+                // insert it, then bring errors above any other startup dialog.
+                if (Alpine.store('packValidation').report.errors.length) {
+                    Alpine.nextTick(() => showModal('pack-validation-modal'));
                 }
             });
         });
