@@ -572,19 +572,26 @@ knownIssue('CONFIG-BUILDER-KEYS', 'CONFIG-01', 'Builder camelCase parameters do 
     return { requested: { topPapers: 1, indicatorsThreshold: 7 }, effective: { topPapers: actual.max_top_papers, indicatorsThreshold: actual.min_indicators_warning_threshold } };
 });
 
-knownIssue('PUB-ARCHIVE-ALIAS', 'PUB-01', 'Canonical pub/core-pub aliases construct nonexistent archived filenames', () => {
+regression('PUB-ARCHIVE-ALIAS', 'Preview resolves archived publication packs to their retained core-pubs filenames', () => {
+    const archived = 'packs/archive/core-pubs-0_8_2.json';
+    assert.ok(fs.existsSync(path.join(root, archived)));
     const h = harness();
-    return ['pub', 'core-pub'].map(type => {
-        const query = `path=archive&type=${type}&version=0.8.2`;
-        const preview = h.preview('?' + query);
-        const config = h.ctx.selectCollectorPack(h.defaultConfig(), query);
+    return ['pub', 'core-pub', 'core-pubs'].map(type => {
+        const preview = h.preview(`?path=archive&type=${type}&version=0.8.2`);
         const source = path.posix.normalize(`packs/${preview.filename}.json`);
-        assert.equal(source, 'packs/archive/core-pub-0_8_2.json');
-        assert.equal(fs.existsSync(path.join(root, source)), false);
-        assert.deepEqual(plain(config.pub.sources), [source]);
-        assert.ok(fs.existsSync(path.join(root, 'packs/archive/core-pubs-0_8_2.json')));
-        return { type, requested: source, existing: 'packs/archive/core-pubs-0_8_2.json' };
+        assert.equal(source, archived);
+        return { type, resolved: source };
     });
+});
+knownIssue('PUB-ARCHIVE-COLLECTOR-ALIAS', 'PUB-01', 'The collector applies the archive stem to pub but not to an explicit core-pub selection', () => {
+    const h = harness();
+    const resolve = type => plain(h.ctx.selectCollectorPack(
+        h.defaultConfig(), `path=archive&type=${type}&version=0.8.2`).pub.sources);
+    assert.deepEqual(resolve('pub'), ['packs/archive/core-pubs-0_8_2.json']);
+    const explicit = resolve('core-pub');
+    assert.deepEqual(explicit, ['packs/archive/core-pub-0_8_2.json']);
+    assert.equal(fs.existsSync(path.join(root, explicit[0])), false);
+    return { pub: 'packs/archive/core-pubs-0_8_2.json', corePub: explicit[0], corePubExists: false };
 });
 knownIssue('PUB-LEGACY-PREVIEW', 'PUB-01', 'Unversioned core-pubs preview links do not use the collector compatibility alias', () => {
     const h = harness();
@@ -752,12 +759,16 @@ knownIssue('PERSISTED-FORMS', 'DATA-02', 'Saved embedded forms can disagree with
     assert.equal(Object.hasOwn(h.ctx.filterExport(publication), 'P_Legacy'), false);
     return { scoredWithEmbeddedForm: 9, visibleInCurrentForm: false, retainedByExport: false };
 });
-knownIssue('PREVIEW-VERSION-POINTS', 'UI-02', 'Versioned preview query loses showPoints=true', () => {
+regression('PREVIEW-VERSION-POINTS', 'Versioned preview queries retain both showPoints and showLabels', () => {
     const h = harness();
     const actual = h.preview('?path=archive&type=core-pubs&version=0.8.2&showPoints=true&showLabels=true');
+    assert.equal(actual.filename, 'archive/core-pubs-0_8_2');
     assert.equal(actual.showLabels, true);
-    assert.equal(actual.showPoints, undefined);
-    return actual;
+    assert.equal(actual.showPoints, true);
+    const unversioned = h.preview('?type=core-pub&showPoints=true&showLabels=true');
+    assert.equal(unversioned.showPoints, true);
+    assert.equal(unversioned.showLabels, true);
+    return { versioned: actual, unversioned };
 });
 
 characterization('SCORE-UNDOCUMENTED-GUARD', 'LIMIT-01', 'The undocumented score.score guard changes false-condition denominator behavior', () => {
