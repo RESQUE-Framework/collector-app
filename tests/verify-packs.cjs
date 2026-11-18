@@ -113,7 +113,7 @@ function harness() {
     fromIndex('const preprocessCondition =', 'const partialHighlight =', ['evaluateConditionInContext', 'preprocessCondition']);
     fromIndex('const checkCompletion =', 'const getProgressColor =', ['checkCompletion']);
     fromIndex('async function use(config,', '</script>', ['use', 'pick', 'pickExclude']);
-    expose(read('menu.js'), ['menu', 'pickAccordingToConfig', 'normalizePublicationConfig', 'normalizePublicationSource', 'parseConfigFile', 'configStructureIssues', 'ConfigFileError'], 'menu.js');
+    expose(read('menu.js'), ['menu', 'pickAccordingToConfig', 'normalizePublicationConfig', 'normalizePublicationSource', 'parseConfigFile', 'configStructureIssues', 'configQuoteIssues', 'ConfigFileError'], 'menu.js');
     fromIndex('function getQueryConfig(params)', 'const params = new URLSearchParams', ['getQueryConfig']);
     fromIndex('const reportStartupError =', 'loadConfigSource().then(', ['reportStartupError', 'loadConfigSource']);
     fromIndex('const getCollectorUrl =', "Alpine.store('selectedIndicator', {});", ['getConfig', 'getScoreCategories', 'answerHint']);
@@ -278,6 +278,63 @@ regression('CONFIG-YAML-SYNTAX', 'YAML syntax errors name the file and the 1-bas
     assert.equal(unclosed.kind, 'syntax');
     assert.ok(unclosed.line >= lineOf(text, metaSources));
     evidence.unclosed = { line: unclosed.line, reason: unclosed.reason };
+    return evidence;
+});
+regression('CONFIG-YAML-QUOTES', 'An unpaired quotation mark is reported on its own line, also where js-yaml accepts it', () => {
+    const h = harness();
+    const text = read('config/config-default.yaml');
+    // [fragment, replacement, offending column within the fragment line (1-based), message]
+    const cases = {
+        titleClosing: ['main_title: "RESQUE"', 'main_title: "RESQUE', 13, /not closed on the same line/],
+        titleOpening: ['main_title: "RESQUE"', 'main_title: RESQUE"', 19, /never opened/],
+        colorClosing: ['background_color: "#ffffff"', 'background_color: "#ffffff', 19, /not closed on the same line/],
+        colorOpening: ['background_color: "#ffffff"', 'background_color: #ffffff"', 26, /read as a comment/],
+        listClosing: ['  sources: ["packs/core-pub.json"]', '  sources: ["packs/core-pub.json]', 13, /not closed on the same line/],
+        listOpening: ['  sources: ["packs/core-pub.json"]', '  sources: [packs/core-pub.json"]', 32, /never opened/],
+        itemClosing: ['      - title: "Open Data"', '      - title: "Open Data', 16, /not closed on the same line/],
+        itemOpening: ['      - title: "Open Data"', '      - title: Open Data"', 25, /never opened/],
+        singleClosing: ["        color: '#beaed4'", "        color: '#beaed4", 16, /single quotation mark \(\'\)/],
+        oddInside: ['main_title: "RESQUE"', 'main_title: RESQUE "beta', 20, /without a partner/]
+    };
+    const evidence = {};
+    for (const [name, [fragment, replacement, column, pattern]] of Object.entries(cases)) {
+        const broken = text.replace(fragment, replacement);
+        assert.notEqual(broken, text, `${name}: fixture fragment not found`);
+        const line = lineOf(text, fragment);
+        // Without this check, js-yaml either accepts the file or points elsewhere.
+        let yamlLine = 'accepted';
+        try { h.ctx.jsyaml.load(broken); } catch (error) { yamlLine = error.mark.line + 1; }
+        assert.notEqual(yamlLine, line, `${name}: js-yaml alone already reports this line`);
+        const error = configError(h, broken);
+        assert.equal(error.kind, 'syntax', name);
+        assert.equal(error.line, line, `${name}: ${error.reason}`);
+        assert.equal(error.column, column, name);
+        assert.match(error.reason, pattern, name);
+        // The caret of the excerpt sits under the offending character.
+        const rows = error.snippet.split('\n');
+        const caretRow = rows.findIndex(row => /^-+\^$/.test(row));
+        assert.ok(caretRow > 0, `${name}: excerpt has a caret`);
+        assert.equal(rows[caretRow - 1][rows[caretRow].length - 1], replacement[column - 1], `${name}: caret position`);
+        evidence[name] = { line, column, jsYamlAlone: yamlLine };
+    }
+    // Several unpaired quotes are listed together.
+    const two = configError(h, text.replace('main_title: "RESQUE"', 'main_title: "RESQUE').replace('      - title: "Open Data"', '      - title: Open Data"'));
+    assert.equal(two.issues.length, 2);
+    assert.match(two.issues[1], new RegExp(`^Line ${lineOf(text, '      - title: "Open Data"')}, column 25: `));
+    // Valid YAML that uses quotation marks must not be reported.
+    const valid = [
+        'a: "x"', 'a: "say \\"hi\\" now"', "a: 'It''s \"x'", "a: 'RESQUE 2\"'", 'a: He said "hi"',
+        "a: Applicant's view", 'a: "#ffffff" # comment with " quote', 'a: https://example.org/x?y=1#frag',
+        'a: ["x", "y"]', "a: {b: \"x\", c: 'y'}", 'a: []', 'a:\n  - "x"\n  - y',
+        'a: |\n  text with " odd quote\n  more\nb: 1', '# comment " odd\na: 1', 'a: [ "x" , "y" ] # tail "',
+        '- title: "Open Data"\n  cue: "Data|Other"', 'a: "x: y"', 'a: 5 # 5" screen', '"quoted key": "v"',
+        'a: x"y"z', 'a:\n  # preset: "Applicant\n  b: 1'
+    ];
+    for (const source of valid) {
+        assert.deepEqual(plain(h.ctx.configQuoteIssues(source)), [], `valid YAML reported: ${JSON.stringify(source)}`);
+        h.ctx.jsyaml.load(source);
+    }
+    evidence.validPatterns = valid.length;
     return evidence;
 });
 regression('CONFIG-YAML-STRUCTURE', 'Valid YAML that menu() cannot start from is rejected with readable issues', () => {

@@ -69,7 +69,7 @@ In order to have a working website, you need to enable GitHub Pages for your for
    8. You can change `max: 10` to the maximum number of publications that your committee expects. Candidates can enter more publications in the app, but are asked to export only `max` publications for their submission to the committee. They can also enter less than `max` papers (but at least `min` papers).
    9. You can change `maxTopPapers: 3` to how many papers can (and must) be selected as "best papers".
    
-> :bulb: `config.yaml` is a YAML file: indent with spaces (never tabs), keep the settings of one section equally indented, and put text that contains `:` or `#` in quotes (e.g. `main_title: "RESQUE: Psychology"`). If the file contains an error, the app does not start. Instead it shows a message naming the file, the line, and the problem, so you can correct that line (the cause is often on the line just above) and reload. The app deliberately does **not** fall back to the default settings in that case, so your deployment never runs with the wrong configuration unnoticed.
+> :bulb: `config.yaml` is a YAML file: indent with spaces (never tabs), keep the settings of one section equally indented, and put text that contains `:` or `#` in quotes (e.g. `main_title: "RESQUE: Psychology"`). Quotation marks always come in pairs on the same line: `"RESQUE"`, not `"RESQUE` or `RESQUE"`. If the file contains an error, the app does not start. Instead it shows a message naming the file, the line, and the problem, so you can correct that line (the cause is often on the line just above) and reload. The app deliberately does **not** fall back to the default settings in that case, so your deployment never runs with the wrong configuration unnoticed.
 
 
 

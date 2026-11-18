@@ -202,8 +202,182 @@ function configStructureIssues(config) {
     return issues;
 }
 
+// --- Unpaired quotation marks ----------------------------------------------
+// js-yaml accepts most unpaired quotes without an error: a missing closing "
+// swallows the following lines into the string (silently deleting those
+// settings), and a missing opening " leaves a stray " in the value. This
+// line-based check runs before js-yaml and reports the actual line. It follows
+// YAML's rule that a quote only opens a string at the start of a value or flow
+// item; inside an unquoted value a " is literal, so only an odd number of them
+// is reported. Single-quoted values are not inspected for ", which keeps
+// 'RESQUE 2"' available for a literal quotation mark. Multi-line quoted strings
+// are reported as well: configuration values are written on one line.
+const QUOTE_MESSAGES = {
+    unclosedDouble: 'A quotation mark (") opens this value but is not closed on the same line. Add the closing " at the end of the value.',
+    unclosedSingle: "A single quotation mark (') opens this value but is not closed on the same line. Add the closing ' at the end of the value.",
+    unopenedDouble: 'This value ends with a quotation mark (") that was never opened. Add the opening " at the start of the value, or remove the stray ".',
+    oddDouble: "This value contains a quotation mark (\") without a partner. Put the whole value in quotes or remove the stray \"; to keep a literal \", wrap the value in single quotes, e.g. 'RESQUE 2\"'.",
+    commentValue: 'This value starts with # and is therefore read as a comment, so the setting is empty. It ends with a quotation mark ("), so the opening " is probably missing, e.g. "#ffffff".'
+};
+
+// Scans one scalar starting at `start`; returns { end } or { issue, column }.
+function scanQuotedOrPlain(value, start, inFlow) {
+    const first = value[start];
+
+    if (first === '"') {
+        for (let j = start + 1; j < value.length; j++) {
+            if (value[j] === '\\') { j++; continue; }
+            if (value[j] === '"') return { end: j + 1 };
+        }
+        return { issue: 'unclosedDouble', column: start };
+    }
+
+    if (first === "'") {
+        for (let j = start + 1; j < value.length; j++) {
+            if (value[j] === "'") {
+                if (value[j + 1] === "'") { j++; continue; }
+                return { end: j + 1 };
+            }
+        }
+        return { issue: 'unclosedSingle', column: start };
+    }
+
+    const quotes = [];
+    let end = start;
+
+    for (; end < value.length; end++) {
+        const c = value[end];
+        if (c === '#' && /\s/.test(value[end - 1] ?? ' ')) break;
+        if (inFlow && (c === ',' || c === ']' || c === '}')) break;
+        if (c === '"') quotes.push(end);
+    }
+
+    if (quotes.length % 2 === 1) {
+        const last = quotes[quotes.length - 1];
+        const endsWithQuote = value.slice(start, end).trimEnd().endsWith('"');
+        return { issue: endsWithQuote && quotes.length === 1 ? 'unopenedDouble' : 'oddDouble', column: last };
+    }
+
+    return { end };
+}
+
+// Returns { issue, column } for the value text of one line, or null.
+function valueQuoteIssue(value) {
+    let i = value.search(/\S/);
+
+    if (i < 0) return null;
+
+    if (value[i] === '#') {
+        // `key: #ffffff"` - the value became a comment.
+        return /^#[^\s"]*"\s*$/.test(value.slice(i)) ? { issue: 'commentValue', column: value.lastIndexOf('"') } : null;
+    }
+
+    if (value[i] === '[' || value[i] === '{') {
+        let depth = 0;
+
+        while (i < value.length) {
+            const c = value[i];
+
+            if (c === '[' || c === '{') { depth++; i++; continue; }
+            if (c === ']' || c === '}') { depth--; i++; if (depth === 0) return null; continue; }
+            if (c === ',' || c === ':' || /\s/.test(c)) { i++; continue; }
+            if (c === '#' && /\s/.test(value[i - 1])) return null;
+
+            const result = scanQuotedOrPlain(value, i, true);
+            if (result.issue) return result;
+            i = Math.max(result.end, i + 1);
+        }
+
+        return null;
+    }
+
+    // Anchors, aliases and tags are not used in the configuration; skip them.
+    if ('&*!'.includes(value[i])) return null;
+
+    const result = scanQuotedOrPlain(value, i, false);
+    return result.issue ? result : null;
+}
+
+// Excerpt in the format js-yaml uses for its own errors (line/column 1-based).
+function configSnippet(text, line, column) {
+    const lines = text.split(/\r?\n/);
+    const from = Math.max(1, line - 2);
+    const to = Math.min(lines.length, line + 2);
+    const width = String(to).length;
+    const out = [];
+
+    for (let n = from; n <= to; n++) {
+        const prefix = ` ${String(n).padStart(width)} | `;
+        out.push(prefix + lines[n - 1].replace(/\t/g, '→'));
+        if (n === line) out.push('-'.repeat(prefix.length + column - 1) + '^');
+    }
+
+    return out.join('\n');
+}
+
+// Returns [{ line, column, reason }] (1-based) for all unpaired quotes.
+function configQuoteIssues(text) {
+    const issues = [];
+    const lines = text.split(/\r?\n/);
+    let blockIndent = null;
+
+    lines.forEach((raw, index) => {
+        const indent = raw.search(/\S/);
+
+        // Lines of a `|` or `>` block scalar are literal text.
+        if (blockIndent !== null) {
+            if (indent < 0 || indent > blockIndent) return;
+            blockIndent = null;
+        }
+
+        if (indent < 0 || raw[indent] === '#' || /^(---|\.\.\.)(\s|$)/.test(raw.slice(indent))) return;
+
+        // `key: value`, `- key: value`, or `- value`; other lines (continuations
+        // of multi-line values, items of multi-line lists) are not inspected.
+        const match = /^(\s*(?:-\s+)*)((?:"(?:[^"\\]|\\.)*"|'(?:[^']|'')*'|[^\s#'"\-[\]{},][^#]*?|-[^\s#][^#]*?)\s*:)(?:\s+|$)/.exec(raw)
+            ?? /^(\s*(?:-\s+)+)()/.exec(raw);
+
+        if (!match) return;
+
+        const valueStart = match[0].length;
+        const value = raw.slice(valueStart);
+
+        if (/^[|>][-+0-9]*\s*(#.*)?$/.test(value)) {
+            // Its body is everything indented deeper than this line.
+            blockIndent = indent;
+            return;
+        }
+
+        const found = valueQuoteIssue(value);
+
+        if (found) {
+            issues.push({ line: index + 1, column: valueStart + found.column + 1, reason: QUOTE_MESSAGES[found.issue] });
+        }
+    });
+
+    return issues;
+}
+
 function parseConfigFile(text, file = 'config/config.yaml') {
     let config;
+
+    const quoteIssues = configQuoteIssues(text);
+
+    if (quoteIssues.length) {
+        const [first] = quoteIssues;
+
+        throw new ConfigFileError({
+            file,
+            kind: 'syntax',
+            reason: first.reason,
+            line: first.line,
+            column: first.column,
+            snippet: configSnippet(text, first.line, first.column),
+            issues: quoteIssues.length > 1
+                ? quoteIssues.map(issue => `Line ${issue.line}, column ${issue.column}: ${issue.reason}`)
+                : []
+        });
+    }
 
     try {
         // js-yaml also rejects tabs in indentation and duplicated keys.
