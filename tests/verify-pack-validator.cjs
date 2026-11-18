@@ -172,7 +172,7 @@ async function startup(elements) {
         showdown: { Converter: class { makeHtml(text) { return text; } } },
         renderMatomoOptOut() {}, objectHash: JSON.stringify,
         setTimeout() {}, switchToTab() {},
-        driver: () => ({ drive() { state.tours++; } }), tourMain: {},
+        driver: () => ({ drive() { state.tours++; } }), tourMain: () => ({}),
         showInstructionsModal() {}
     });
     vm.runInContext(read('utils/pack-validator.js'), browser);

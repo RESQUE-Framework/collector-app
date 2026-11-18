@@ -1301,7 +1301,7 @@
                     <div x-show="$store.data.input.length <= 1" style="text-align: right; position: sticky; bottom: 0;">
                         <button
                             style="background-color: #333; color: #efefef; border-radius: 99px; border: 4px solid #00000055; background-clip: padding-box;"
-                            @click="closeInstructionsModal(); driver(tourMain).drive()">Start tour →</button>
+                            @click="closeInstructionsModal(); driver(tourMain()).drive()">Start tour →</button>
                     </div>
                 </div>
             </div>
@@ -1469,10 +1469,10 @@
     <script>
         const driver = window.driver.js.driver;
 
-        const tourMain = {
+        const tourMain = () => ({
             showProgress: true,
             steps: [
-                { popover: { title: '👋🏻 Welcome to the RESQUE tool!', description: 'We need to change the way we assess research - with a focus on quality (over quantity). The RESearch QUality Evaluation (RESQUE) framework provides an evaluation scheme for publications, data sets, and research software for psychological research. With this tool, you can enter the necessary information for your best research outputs, export a profile that shows your research style (not implemented yet), and use it for your CV or in hiring and tenure committees. <br><span style="background-color: lightyellow; font-size:80%;">[Note: The RESQUE is still a beta version and in active development.]' } },
+                { popover: { title: '👋🏻 Welcome to the RESQUE tool!', description: 'We need to change the way we assess research - with a focus on quality (over quantity). The RESearch QUality Evaluation (RESQUE) framework provides an evaluation scheme basic quality aspects and important properties of publications in psychological research. With this tool, you can enter the necessary information for your best research outputs, export a profile that shows your research style, and use it for your CV or in hiring and tenure committees.' + (Alpine.store('config').config.show_beta_warning ? ' <br><span style="background-color: lightyellow; font-size:80%;">[Note: The RESQUE is still a beta version and in active development.]</span>' : '') } },
                 { popover: { title: '🔒 Privacy', description: 'The data you enter never leaves your device. Everything is processed locally. (except fetching the information about a publications using the DOI)' } },
                 { element: '.save-button', popover: { title: 'Saving changes...', description: 'Your changes are saved automatically in your browser. You can reload the page or close this tab and come back another time, the data you entered will still be here. Nonetheless, you should regularly make backups from your data by saving the data in a local file.' } },
                 // { element: '.pdf-button', popover: { description: 'You can open a PDF file and extract the DOI automatically. Note that this might fail in rare cases.' } },
@@ -1480,7 +1480,7 @@
                 { element: '.add-pub', popover: { title: 'Adding publications (1/2)', description: 'After that you can start to add a new publication. You can do this manually by clicking on the <b>Add Publication</b> button ...' } },
                 { element: '.add-orcid', popover: { title: 'Adding publications (2/2)', description: '... or you can add multiple publications at once by selecting them from your ORCID profile.' } },
             ]
-        };
+        });
 
         const tourForm = {
             showProgress: true,
@@ -2066,7 +2066,7 @@
 
                 if (!Alpine.store('config').config.show_instruction && Alpine.store('data').input.length <= 1 && !Alpine.store('packValidation').report.errors.length) {
                     //showInfoModal();
-                    driver(tourMain).drive();
+                    driver(tourMain()).drive();
                 }
 
                 // The dialog is inside x-if="$store.loaded". Wait for Alpine to
