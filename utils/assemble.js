@@ -20,7 +20,17 @@ async function use(config, ...packs) {
             throw new Error(`The pack file "${source}" listed under "sources:" in the configuration could not be loaded (HTTP ${response.status}).`);
         }
 
-        return response.json();
+        // Parsed here instead of response.json(): the validator keeps the
+        // text for line numbers, and invalid JSON gets a readable message.
+        const text = await response.text();
+        let pack;
+        try {
+            pack = JSON.parse(text);
+        } catch (error) {
+            throw new Error(`The pack file "${source}" is not valid JSON (${error.message}).`);
+        }
+        PackValidator.remember(source, pack, text);
+        return pack;
     }));
 
     ps.forEach(p => pool.push(...p.elements));

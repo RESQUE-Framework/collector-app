@@ -1028,6 +1028,16 @@ knownIssue('PUB-DUPLICATE-ALIASES', 'PUB-02', 'Both old and new source spellings
         single: { score: single.score, max: single.max }, duplicated: { score: duplicated.score, max: duplicated.max },
         duplicatedItemMaxSum: itemMaxSum };
 });
+knownIssue('OM-STALE-HIGHLIGHT', 'PUB-03', 'The P_OpenMaterials information text highlights option IDs that no longer exist', () => {
+    // Found by the pack validator (unknown-option-literal, a warning because it
+    // only affects highlighting): the paragraph for the old 'Yes' answers can
+    // never be highlighted. Fixing the text promotes this to a regression.
+    const element = pack('core-pub').elements.find(e => e.id === 'P_OpenMaterials');
+    const optionIds = element.options.map(o => o.id);
+    assert.ok(element.info.includes("{:'YesParts', 'YesEntire'"));
+    assert.ok(!optionIds.includes('YesParts') && !optionIds.includes('YesEntire'));
+    return { optionIds, stale: ['YesParts', 'YesEntire'] };
+});
 knownIssue('ACCESS-JUSTIFICATION', 'SCORE-01', 'Restricted-access ZK2 earns a point without its requested justification', () => {
     const h = harness();
     const actual = item(h, pack('core-pub'), 'P_Data_Open_AccessLevel', {

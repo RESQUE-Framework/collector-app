@@ -607,11 +607,68 @@ For example, setting `pub.exclude: ["P_Suitable"]` produces errors for selected 
 
 The shipped software pack currently contains an unresolved `$S_Tests_URL` reference in `S_Tests_Quality.options[0].condition`. It is listed under *Not blocking* in the default setup, because software is inactive and the pack is alpha; switching `software: active: true` keeps it non-blocking but adds the `immature-pack` warning. This check reports declared references even in fields the current renderer/scorer does not enforce; it does not change their evaluation behavior.
 
-This is a reference check, not a full schema, expression-syntax, scoring-policy, or load-error validator. Checks for additional problems can be added to the structured report without changing the modal: an issue only needs `code`, `severity`, `form` and `message`, and passes through the same blocking classification. Run the focused regression suite with:
+Besides missing references, the validator checks each pack file as written and the forms assembled from the configuration; see [Validator rules](#validator-rules). In the collector, problems of elements removed by `include`/`exclude` are not reported, because those elements are not used. Pack files are checked as fetched, before presets change the elements. Results carry the pack file and, where possible, the line of the element in it.
+
+Run the focused regression suite with:
 
 ```bash
 node tests/verify-pack-validator.cjs
 ```
+
+### Validator rules
+
+Each result has a `code`, a severity and a fix hint. **Errors** can produce wrong data, wrong scores or a broken form; they block when they occur in a stable pack of an active output type (see the table above). **Warnings** are probable mistakes. **Notices** are informational: shown collapsed, never counted in the footer link, never blocking. There is no way to silence a rule: a production deployment should simply have no errors and no warnings among its current problems. Archived packs (`packs/archive/`) are frozen history and only checked for valid JSON.
+
+*Pack file* rules look at one file on its own:
+
+| Code | Severity | What it finds | Why it matters |
+| --- | --- | --- | --- |
+| `invalid-json` | error | The file is not valid JSON (with line number). | The collector cannot start. |
+| `pack-structure` | error | Not an object; missing `prefix` (letters/digits), `title` or `elements` list; an element that is not an object. | The pack cannot be assembled or named. |
+| `pack-metadata` | warning | `version` is not a string of numbers such as `"1.0.0"`; `date` is not `YYYY-MM-DD`. | Versions are stored with every answer. |
+| `invalid-pack-status` | error | `status` is not `alpha`, `beta` or `stable`. | The pack is then treated as stable. |
+| `unknown-field` | warning | A field the app does not know, with a "did you mean" suggestion (e.g. `conditon`). | Misspelled fields are silently ignored. |
+| `ignored-field` | notice | `eval_dimension`, `min_selected`, option `explanation_required`, option `condition`, `score.op`, `score.factor`. | Accepted, but nothing enforces or scores them. |
+| `missing-element-id` | error | An element, option or table row without `id`. | It has no answer key. |
+| `id-charset` | error | An ID with characters other than letters, digits and `_`. | IDs must work in conditions, JavaScript and R. |
+| `id-prefix` | warning | An element ID that does not start with `<prefix>_`. The 37 long-standing IDs of `core-meta` and `core-pub` (`DOI`, `Title`, `RaterType`, …) are a fixed exception in the validator. | Unprefixed IDs can collide with other packs. |
+| `duplicate-id` | error | Two elements with one ID (also across packs of an output type). | Both answers share one field. |
+| `duplicate-option-id` | error | Two options or rows of an element with one ID. | The answers cannot be told apart. |
+| `unknown-element-type` | error | A `type` the collector does not render. | The element is not shown. |
+| `field-type` | error | A condition that is not a string (e.g. `false` instead of `"false"`), `options`/`rows` that are not lists, a `score`/`validation` that is not an object. | The expression or list is not evaluated as intended. |
+| `missing-options` | error | A radio, checkbox, dropdown or table without options, or a table without rows. | Nothing can be answered. |
+| `option-value-type` | error | An option `value` that is not a number of 0 or more (e.g. `"1"`). | Points are computed incorrectly. |
+| `option-value-incomplete` | error | Some options of a radio/checkbox have a `value`, others do not. | Give every option a value once one has points, also `0` (#136). |
+| `unscored-type-with-values` | warning | Points on a dropdown or table. | Only radio and checkbox elements are scored. |
+| `score-without-points` | warning | A `score` block on an element that cannot earn points. | The block has no effect. |
+| `expression-syntax` | error | A condition, scoring rule or highlight condition that is not a valid expression after shorthand expansion. Expressions are compiled, never run. | Evaluation fails. |
+| `array-comparison` | error | A comparison with a list, such as `$CP_RCT != ['Yes']` (RESQUER#39). | Works only by type coercion. |
+| `sugar-pitfall` | warning (error for `=\|= []`) | An empty `=\|=` list, any `=&=`, a quoted value containing a comma, or a left side that is not a single field. | The shorthand is expanded incorrectly (guide section 5.7). |
+| `config-in-scoring` | error | `config$` inside `score`. | The scorer cannot resolve it. |
+| `validation-pattern` | error | A `validation.pattern` that is not a valid regular expression. | The form fails when it checks the answer. |
+
+*Form* rules look at the packs of one output type together:
+
+| Code | Severity | What it finds | Why it matters |
+| --- | --- | --- | --- |
+| `missing-indicator-reference` | error (warning in display text) | A reference to an indicator that is not part of the selected forms (described above; covers excluded parents, #126 and #130). | Conditions and scoring rules silently fail. |
+| `unknown-option-literal` | error (warning in highlight text) | A comparison with an option ID that the referenced element does not have, e.g. `$P_Data_Open === 'yes'` or `meta$RaterType === 'Applicnt'`, also across packs; and checkbox answers compared with text. | The comparison never matches. |
+| `generated-key-collision` | error | Two elements producing the same answer key: checkbox option `Other` of `X` and an element `X_Other` (#133), table rows, `_Comment` fields. | Both answers share one field. |
+| `duplicate-source` | error | The same pack listed twice under `sources`. | Its indicators appear and count twice. |
+| `prefix-collision` | error | Two packs with the same prefix in one output type. | Only one version is recorded. |
+| `forward-reference` | notice | A visibility condition that depends on an element further down (#14). | Usually confusing; the core does it deliberately for the "no DOI" checkbox. |
+| `immature-pack` | warning | An active output type uses an alpha or beta pack. | Its listed problems do not block. |
+
+*Configuration* rules look at `config.yaml`:
+
+| Code | Severity | What it finds | Why it matters |
+| --- | --- | --- | --- |
+| `invalid-preset` | error | A preset for an unknown or excluded indicator, an unknown option, a non-list checkbox value. | The preset is not applied. |
+| `selection-matches-nothing` | warning | An `include`/`exclude` entry that matches no ID prefix, with a suggestion. | A typo silently does nothing. |
+| `include-ignored` | warning | `include` together with `exclude` (even an empty one). | `exclude` wins; `include` is ignored. |
+| `category-cue` | warning (error if the cue is not a valid regular expression) | A score category whose `cue` matches no scored indicator, or a scored indicator in no category. | Points count toward the total but appear in no chart category (#130). |
+
+New rules are added to `rules` in `utils/pack-validator.js` (code, severity, hint) and to this table; `tests/verify-pack-validator.cjs` checks that both lists agree.
 
 ## 9. Text shorthand, completion, and export
 
