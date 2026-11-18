@@ -17,7 +17,7 @@
 # Styling
 
 # Title of the app (shown on top left)
-main_title: "RESQUE"
+main_title: "RESQUE - Miscatonic University"
 
 # Background color of the app
 background_color: "#ffffff"
@@ -29,11 +29,11 @@ hide_score: false
 show_instruction: true
 
 # Show the beta warning message
-show_beta_warning: true
+show_beta_warning: false
 
 # Add a logo to the top left (next to the title) and to the welcome message
-# (if show_instruction is true). Set the URL of your institution's logo here;
-# an empty value shows no logo and makes no external request.
+# (if show_instruction is true). Set the URL of your institution's logo here,
+# the size is automatically adjusted. If you don't want a logo, set this to an empty string.
 image_url: ""
 
 
@@ -81,7 +81,7 @@ meta:
   sources: ["packs/core-meta.json"]
   exclude: []
   preset:
-    # All respondents are applicants, so the rater question is answered here.
+    # All respondents are applicants, so the rater question is pre-answered here.
     # core-meta.json and core-pub.json use meta$RaterType in their conditions;
     # with this preset, the applicant branches stay active and the
     # external-rater questions stay hidden.
