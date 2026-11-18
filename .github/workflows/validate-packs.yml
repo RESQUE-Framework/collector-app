@@ -1,0 +1,52 @@
+# Checks the packs and the configuration on every push and pull request that
+# changes them. Problems appear as annotations on the changed files.
+# Same checks as "Pack validation" in the app; see
+# documentation/RESQUE-Pack-Guide.md ("Validator rules").
+# In a fork, enable workflows once in the repository's "Actions" tab.
+name: Validate packs
+
+on:
+  push:
+    paths:
+      - 'packs/**'
+      - 'config/**'
+      - 'utils/**'
+      - 'menu.js'
+      - 'index.html'
+      - 'validator.html'
+      - 'scripts/validate-packs.cjs'
+      - 'tests/**'
+      - '.github/workflows/validate-packs.yml'
+  pull_request:
+    paths:
+      - 'packs/**'
+      - 'config/**'
+      - 'utils/**'
+      - 'menu.js'
+      - 'index.html'
+      - 'validator.html'
+      - 'scripts/validate-packs.cjs'
+      - 'tests/**'
+      - '.github/workflows/validate-packs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # Fails on blocking errors: errors in stable packs of active output types.
+      # Add --strict to fail on every error and warning.
+      - name: Validate configuration and packs
+        run: node scripts/validate-packs.cjs --all --format github
+      - name: Validator tests
+        run: |
+          node tests/verify-pack-validator.cjs
+          node tests/verify-validate-cli.cjs
+          node tests/verify-packs.cjs . > verification-results.json

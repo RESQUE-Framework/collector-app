@@ -289,7 +289,7 @@
         Alpine.store('startupError', false);
 
         Alpine.store('packValidation', {
-            report: { issues: [], errors: [], warnings: [], blocking: [], current: [], deferred: [], indicatorsChecked: 0 },
+            report: { issues: [], errors: [], warnings: [], blocking: [], current: [], deferred: [], notices: [], indicatorsChecked: 0 },
             run() {
                 this.report = PackValidator.validate(Alpine.store('forms'));
             },
@@ -1347,21 +1347,22 @@
                     <h3 id="pack-validation-title">Pack validation</h3>
                     <button type="button" onclick="closeModal('pack-validation-modal')" autofocus>Close</button>
                 </div>
-                <p id="pack-validation-summary" role="status" x-text="$store.packValidation.report.blocking.length + ' blocking errors, ' + $store.packValidation.report.current.filter(i => i.severity === 'warning').length + ' warnings, ' + $store.packValidation.report.deferred.length + ' not blocking · ' + $store.packValidation.report.indicatorsChecked + ' indicators checked'"></p>
-                <p>Checks references in all configured packs after include/exclude selection, including inactive output types. Only errors in stable packs of active output types block; they open this dialog on startup. Problems in inactive output types and in alpha or beta packs are listed under <em>Not blocking</em>.</p>
-                <p x-show="!$store.packValidation.report.issues.length">No missing indicator references found.</p>
-                <p x-show="$store.packValidation.report.blocking.length">Restore the referenced indicator in the configuration, include its pack, or update the reference. Excluded indicators do not count even if their default answers remain.</p>
-                <ol class="pack-validation-results">
+                <p id="pack-validation-summary" role="status" x-text="$store.packValidation.report.blocking.length + ' blocking errors, ' + $store.packValidation.report.current.filter(i => i.severity === 'warning').length + ' warnings, ' + $store.packValidation.report.deferred.length + ' not blocking, ' + $store.packValidation.report.notices.length + ' notices · ' + $store.packValidation.report.indicatorsChecked + ' indicators checked'"></p>
+                <p>Checks the pack files and the forms of this configuration (after include/exclude), including inactive output types. Only errors in stable packs of active output types block; they open this dialog on startup. Problems in inactive output types and in alpha or beta packs are listed under <em>Not blocking</em>. To check all packs of this app or a pack file of your own, open the <a href="validator.html" target="_blank">pack validator</a>.</p>
+                <p x-show="!$store.packValidation.report.current.length">No current problems found.</p>
+                <ol class="pack-validation-results" x-show="$store.packValidation.report.current.length">
                     <template x-for="(issue, index) in $store.packValidation.report.current" :key="index">
                         <li :class="'pack-validation-' + issue.severity">
-                            <strong x-text="issue.severity === 'error' ? 'Error' : 'Warning'"></strong>
+                            <strong x-text="issue.severity === 'error' ? 'Error' : issue.severity === 'warning' ? 'Warning' : 'Notice'"></strong>
                             · <span x-text="issue.form"></span><span x-show="issue.indicator"> · <code x-text="issue.indicator"></code></span>
+                            · <a class="pack-validation-rule" :href="PackValidator.guideUrl" target="_blank" rel="noopener" x-text="issue.code"></a>
                             <div x-show="issue.deferred" class="pack-validation-reason" x-text="$store.packValidation.reason(issue)"></div>
-                            <div x-show="issue.pack">Pack: <code x-text="issue.pack"></code>
+                            <div x-show="issue.pack">Pack: <code x-text="issue.pack + (issue.line ? ', line ' + issue.line : '')"></code>
                                 <span class="status-badge" x-show="issue.packStatus && issue.packStatus !== 'stable'" x-text="issue.packStatus"></span></div>
-                            <div>Field: <code x-text="issue.field"></code></div>
+                            <div x-show="issue.field">Field: <code x-text="issue.field"></code></div>
                             <p x-text="issue.message"></p>
-                            <details>
+                            <p class="pack-validation-hint" x-show="issue.hint" x-text="'How to fix: ' + issue.hint"></p>
+                            <details x-show="issue.expression">
                                 <summary>Show expression or text</summary>
                                 <pre x-text="issue.expression"></pre>
                             </details>
@@ -1373,14 +1374,38 @@
                     <ol class="pack-validation-results">
                         <template x-for="(issue, index) in $store.packValidation.report.deferred" :key="index">
                             <li :class="'pack-validation-' + issue.severity">
-                                <strong x-text="issue.severity === 'error' ? 'Error' : 'Warning'"></strong>
+                                <strong x-text="issue.severity === 'error' ? 'Error' : issue.severity === 'warning' ? 'Warning' : 'Notice'"></strong>
                                 · <span x-text="issue.form"></span><span x-show="issue.indicator"> · <code x-text="issue.indicator"></code></span>
+                                · <a class="pack-validation-rule" :href="PackValidator.guideUrl" target="_blank" rel="noopener" x-text="issue.code"></a>
                                 <div x-show="issue.deferred" class="pack-validation-reason" x-text="$store.packValidation.reason(issue)"></div>
-                                <div x-show="issue.pack">Pack: <code x-text="issue.pack"></code>
+                                <div x-show="issue.pack">Pack: <code x-text="issue.pack + (issue.line ? ', line ' + issue.line : '')"></code>
                                     <span class="status-badge" x-show="issue.packStatus && issue.packStatus !== 'stable'" x-text="issue.packStatus"></span></div>
-                                <div>Field: <code x-text="issue.field"></code></div>
+                                <div x-show="issue.field">Field: <code x-text="issue.field"></code></div>
                                 <p x-text="issue.message"></p>
-                                <details>
+                                <p class="pack-validation-hint" x-show="issue.hint" x-text="'How to fix: ' + issue.hint"></p>
+                                <details x-show="issue.expression">
+                                    <summary>Show expression or text</summary>
+                                    <pre x-text="issue.expression"></pre>
+                                </details>
+                            </li>
+                        </template>
+                    </ol>
+                </details>
+                <details class="pack-validation-deferred" x-show="$store.packValidation.report.notices.length">
+                    <summary x-text="'Notices (' + $store.packValidation.report.notices.length + '): for information'"></summary>
+                    <ol class="pack-validation-results">
+                        <template x-for="(issue, index) in $store.packValidation.report.notices" :key="index">
+                            <li :class="'pack-validation-' + issue.severity">
+                                <strong x-text="issue.severity === 'error' ? 'Error' : issue.severity === 'warning' ? 'Warning' : 'Notice'"></strong>
+                                · <span x-text="issue.form"></span><span x-show="issue.indicator"> · <code x-text="issue.indicator"></code></span>
+                                · <a class="pack-validation-rule" :href="PackValidator.guideUrl" target="_blank" rel="noopener" x-text="issue.code"></a>
+                                <div x-show="issue.deferred" class="pack-validation-reason" x-text="$store.packValidation.reason(issue)"></div>
+                                <div x-show="issue.pack">Pack: <code x-text="issue.pack + (issue.line ? ', line ' + issue.line : '')"></code>
+                                    <span class="status-badge" x-show="issue.packStatus && issue.packStatus !== 'stable'" x-text="issue.packStatus"></span></div>
+                                <div x-show="issue.field">Field: <code x-text="issue.field"></code></div>
+                                <p x-text="issue.message"></p>
+                                <p class="pack-validation-hint" x-show="issue.hint" x-text="'How to fix: ' + issue.hint"></p>
+                                <details x-show="issue.expression">
                                     <summary>Show expression or text</summary>
                                     <pre x-text="issue.expression"></pre>
                                 </details>

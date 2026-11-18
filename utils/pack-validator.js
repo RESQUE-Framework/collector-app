@@ -823,7 +823,9 @@ globalThis.PackValidator = (() => {
             }
         }
         const result = validate(forms);
-        const relevant = result.issues.filter(issue => checkedSources.has(normalizeSource(issue.pack)));
+        // immature-pack concerns deployments, not the file: an alpha pack
+        // without problems must be able to pass a strict check.
+        const relevant = result.issues.filter(issue => checkedSources.has(normalizeSource(issue.pack)) && issue.code !== 'immature-pack');
         const own = fileIssues.map(issue => ({ ...issue, packStatus: null, formActive: true, deferred: null, blocking: issue.severity === 'error' }));
         return report([...own, ...relevant], result.indicatorsChecked);
     }

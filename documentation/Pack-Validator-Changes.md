@@ -1,5 +1,30 @@
 # Client-side pack validator
 
+## Full rule set, command line and validator page (2026-11-18)
+
+Implements the validator wishlist (#136). Decisions: the dialog keeps opening on blocking errors (no new configuration key); the ID-prefix rule is a warning everywhere, with a fixed built-in list of the 37 existing unprefixed core IDs; there is no way to silence a rule; answer validation (#45, #103) stays a separate project.
+
+- **Code moved out of `index.html`** (no behaviour change): `utils/expressions.js` (condition shorthand and reference substitution) and `utils/assemble.js` (`use()`, `pick*`), so the command line and `validator.html` run the same code.
+- **`utils/pack-validator.js`:** a rule list (`rules`: code, severity, hint) and checks of each pack file (`lintPack`) and of the assembled forms (`validate`); `checkPackFiles` checks files outside a configuration. All rules are listed in [RESQUE-Pack-Guide.md](RESQUE-Pack-Guide.md#validator-rules). Results carry the pack file, line, rule code and fix hint. New severity *notice* (shown collapsed, never counted, never blocking). Expressions are compiled to check their syntax, never run. `use()` hands each fetched file to the validator, which checks the file as written (presets change the assembled elements); in the collector, problems of excluded elements are not reported. Archived packs are only checked for valid JSON.
+- **Issue items covered:** missing dependencies (#126, #130), list comparisons such as `$CP_RCT != ['Yes']` (RESQUER#39), generated answer-key collisions such as option `Other` vs. element `X_Other` (#133), options without `value` once another option has points (#136), IDs without the pack prefix (#136), forward references in visibility conditions (#14, as notices).
+- **Dialog:** line, rule code (linked to the guide), fix hint, a *Notices* group, a link to `validator.html`.
+- **`validator.html`** (logic in `utils/validator-page.js`): checks this app's configuration, all configured and catalogued packs, and a pack file chosen or dropped by the user (read locally). Reports are built from text nodes only.
+- **`scripts/validate-packs.cjs`:** configuration, `--all`, or given pack files (with core-meta/core-pub as companions; `--alone`, `--with`); `--format text|json|github`, `--strict`, `--notices`; exit codes 0/1/2.
+- **`.github/workflows/validate-packs.yml`:** runs the command-line validator with GitHub annotations and the validator tests.
+
+Findings in the shipped packs:
+- The stable packs have no errors.
+- `core-pub.json`: the information text of `P_OpenMaterials` highlights the option IDs `YesParts`/`YesEntire`, which no longer exist (2 warnings). Tracked as known issue PUB-03 (`OM-STALE-HIGHLIGHT` in `tests/verify-packs.cjs`); the pack text was not changed.
+- `user.json`: `AKZEPTANZ_sep` lacks the `U_` prefix (warning).
+- The alpha packs (`core-software`, `core-data`, `packs/dev/`) have known problems listed as not blocking.
+- The default configuration has 0 blocking errors.
+
+Verification:
+- `node tests/verify-pack-validator.cjs`: 49 tests, all pass - rule tests (one clean and one failing case per rule), the shipped packs, the dialog markup and the validator page logic.
+- `node tests/verify-validate-cli.cjs`: 9 tests, all pass - the command line with fixtures in `tests/fixtures/` (exit codes, formats, strict mode, alpha packs, invalid JSON, `--all`).
+- `node tests/verify-packs.cjs .`: 75 checks (52 regressions, 17 reproduced known issues including the new PUB-03, 6 characterizations), exit 0.
+- `validator.html` and the dialog were rendered in jsdom with the bundled scripts: configuration, all packs, an own file (including an HTML-injection attempt, which stays text). Layout in a real browser was not checked.
+
 ## Pack status and blocking problems (2026-11-18)
 
 Packs can declare their maturity, and only problems that matter for a deployment block the collector.

@@ -516,6 +516,12 @@ test('the modal shows current problems first and collapses the non-blocking ones
     assert.ok(current > 0 && deferred > current, 'current list precedes the collapsed deferred list');
     assert.ok(modal.slice(deferred).includes('report.deferred'));
     assert.match(modal, /report\.blocking\.length \+ ' blocking errors, '/);
+    // Line, rule code (linked to the guide), fix hint, notices, full validator.
+    assert.ok(modal.includes("issue.pack + (issue.line ? ', line ' + issue.line : '')"));
+    assert.ok(modal.includes(':href="PackValidator.guideUrl"'));
+    assert.ok(modal.includes("'How to fix: ' + issue.hint"));
+    assert.ok(modal.indexOf('report.notices') > modal.indexOf('report.deferred'));
+    assert.ok(modal.includes('href="validator.html"'));
     // Startup decisions use blocking errors, not all errors.
     assert.ok(html.includes("if (Alpine.store('packValidation').report.blocking.length) {"));
     assert.ok(!html.includes("report.errors.length) {"));
@@ -811,4 +817,67 @@ test('shipped packs: no errors in any stable pack; the default setup has no bloc
     }
     assert.deepEqual(validate(await assembled(config())).blocking, []);
     assert.deepEqual(validate({ ...(await ctx.menu(committeeConfig())), config: committeeConfig() }).blocking, []);
+});
+
+// --- validator.html --------------------------------------------------------
+
+vm.runInContext(read('utils/validator-page.js'), ctx);
+const fetchFile = async url => {
+    const file = url.replace(/^\.\//, '');
+    const ok = fs.existsSync(path.join(root, file));
+    return { ok, status: ok ? 200 : 404, text: async () => read(file), json: async () => JSON.parse(read(file)) };
+};
+
+test('validator page: all configured and catalogued packs are found on disk', () => {
+    const sources = plain(ctx.PackValidatorPage.packSources(config(), JSON.parse(read('packs/info.json'))));
+    for (const file of ['packs/core-meta.json', 'packs/core-pub.json', 'packs/core-software.json', 'packs/core-data.json',
+        'packs/EP/EP-clinical_psychology.json', 'packs/dev/EP-stimuli.json', 'packs/archive/core-pubs-0_8_2.json']) {
+        assert.ok(sources.includes(file), file);
+    }
+    assert.equal(new Set(sources).size, sources.length);
+    for (const source of sources) assert.ok(fs.existsSync(path.join(root, source)), source);
+    assert.deepEqual(plain(ctx.PackValidatorPage.companionSources(read('packs/EP/EP-theory_development.json'))), ['packs/core-meta.json', 'packs/core-pub.json']);
+    assert.deepEqual(plain(ctx.PackValidatorPage.companionSources(read('packs/core-pub.json'))), ['packs/core-meta.json']);
+    assert.deepEqual(plain(ctx.PackValidatorPage.companionSources(read('packs/core-meta.json'))), []);
+});
+
+test('validator page: own files are checked with or without the core; archives only parsed', async () => {
+    const good = read('tests/fixtures/packs/EP-good.json');
+    assert.deepEqual(plain(await ctx.PackValidatorPage.checkFile('EP-good.json', good, { fetchFile })).issues, []);
+    const alone = plain(await ctx.PackValidatorPage.checkFile('EP-good.json', good, { fetchFile, withCore: false }));
+    assert.ok(alone.blocking.length > 0 && alone.blocking.every(e => e.reference === '$P_Suitable'));
+    const archive = plain(await ctx.PackValidatorPage.checkFile('packs/archive/core-pubs-0_3_1.json', read('packs/archive/core-pubs-0_3_1.json'), { fetchFile }));
+    assert.deepEqual(archive.issues, []);
+    const configured = plain(await ctx.PackValidatorPage.checkConfiguration(fetchFile));
+    assert.equal(configured.file, fs.existsSync(path.join(root, 'config/config.yaml')) ? 'config/config.yaml' : 'config/config-default.yaml');
+});
+
+test('validator page: reports are built from text nodes only (no markup from pack files)', async () => {
+    // A minimal DOM: enough for reportElement(), and it records every text.
+    const texts = [];
+    const node = tag => ({
+        tag, children: [], attributes: {}, className: '',
+        setAttribute(name, value) { this.attributes[name] = value; },
+        appendChild(child) { this.children.push(child); return child; }
+    });
+    ctx.document = { createElement: node, createTextNode: text => { texts.push(text); return { text }; } };
+    const pack = JSON.parse(read('tests/fixtures/packs/EP-good.json'));
+    pack.elements[0].condition = "$P_Suitable === '<img src=x onerror=alert(1)>'";
+    const report = await ctx.PackValidatorPage.checkFile('EP-evil.json', JSON.stringify(pack, null, 4), { fetchFile });
+    const section = ctx.PackValidatorPage.reportElement('Your file EP-evil.json', report);
+    assert.equal(section.tag, 'section');
+    assert.ok(texts.some(text => text.includes('<img src=x onerror=alert(1)>')), 'the payload is shown as text');
+    const source = read('utils/validator-page.js') + read('validator.html');
+    assert.ok(!/innerHTML|insertAdjacentHTML|outerHTML/.test(source));
+    delete ctx.document;
+});
+
+test('validator page: loads only local scripts, in an order that works', () => {
+    const page = read('validator.html');
+    const scripts = [...page.matchAll(/<script src="([^"]+)"/g)].map(m => m[1]);
+    assert.deepEqual(scripts, ['./js/js-yaml.min.js', './menu.js', './utils/pack-validator.js', './utils/expressions.js', './utils/assemble.js', './utils/validator-page.js']);
+    for (const script of scripts) assert.ok(fs.existsSync(path.join(root, script)), script);
+    assert.ok(page.includes('import { getDefaultValues, getInitialValues } from "./utils/packutils.js"'));
+    for (const id of ['config-results', 'packs-results', 'file-results', 'pack-file', 'with-core', 'drop-zone']) assert.ok(page.includes(`id="${id}"`), id);
+    assert.ok(!/(src|href)="(https?:)?\/\//.test(page), 'no external resources');
 });

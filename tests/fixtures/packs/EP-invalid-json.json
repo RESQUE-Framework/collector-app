@@ -1,0 +1,6 @@
+{
+    "prefix": "EX",
+    "elements": [
+        { "id": "EX_A" "type": "text" }
+    ]
+}

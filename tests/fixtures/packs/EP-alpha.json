@@ -1,0 +1,42 @@
+{
+    "prefix": "EX",
+    "version": "1.0.0",
+    "date": "2026-11-18",
+    "title": "Alpha example",
+    "elements": [
+        {
+            "id": "EX_OpenProtocol",
+            "type": "radio",
+            "title": "Is the protocol publicly available?",
+            "options": [
+                {
+                    "id": "No",
+                    "text": "No",
+                    "value": 0
+                },
+                {
+                    "id": "Yes",
+                    "text": "Yes",
+                    "value": 1
+                }
+            ],
+            "condition": "$P_Suitable === 'Yes'",
+            "score": {
+                "not_applicable": "$P_Suitable === 'No'",
+                "condition": "exists($EX_OpenProtocol_Identifier)"
+            }
+        },
+        {
+            "id": "EX_OpenProtocol_Identifier",
+            "type": "text",
+            "title": "Protocol DOI or URL",
+            "condition": "$P_Suitable === 'Yes' && $EX_OpenProtocol === 'Yes'"
+        },
+        {
+            "id": "EX_Missing",
+            "type": "text",
+            "condition": "$EX_DoesNotExist"
+        }
+    ],
+    "status": "alpha"
+}

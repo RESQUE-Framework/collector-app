@@ -615,6 +615,27 @@ Run the focused regression suite with:
 node tests/verify-pack-validator.cjs
 ```
 
+### Checking packs outside the collector
+
+The same checks run in three places:
+
+1. **In the collector:** the *Pack validation* dialog, for the configuration the app is running with (above).
+2. **In the browser, without the collector:** [validator.html](../validator.html) checks this app's configuration, every configured and catalogued pack (`packs/info.json`) on its own, and a pack file you choose or drop onto the page. The file is read locally and never uploaded. Publication packs are checked together with `core-meta` and `core-pub` unless you untick that option, so references such as `$P_Suitable` resolve. The dialog in the collector links to this page.
+3. **On the command line:** `scripts/validate-packs.cjs` needs Node.js only (no npm):
+
+```bash
+node scripts/validate-packs.cjs                      # the configuration, as the collector does
+node scripts/validate-packs.cjs --all                # configuration plus every pack in packs/
+node scripts/validate-packs.cjs packs/EP/EP-my_pack.json           # one pack, with core-meta and core-pub
+node scripts/validate-packs.cjs --strict packs/dev/EP-my_pack.json # also fail on warnings and non-blocking errors
+node scripts/validate-packs.cjs --alone --with packs/core-pub.json my-pack.json   # choose dependencies yourself
+node scripts/validate-packs.cjs --format json --all  # machine-readable report
+```
+
+Exit code 0 means no blocking errors (with `--strict`: no errors and no warnings at all), 1 means problems were found, 2 is a usage error. Notices are only counted unless `--notices` is given. An alpha pack therefore passes without `--strict` even with errors; use `--strict` while developing a pack, and to decide whether it can be marked stable.
+
+`.github/workflows/validate-packs.yml` runs `--all --format github` and the validator tests on every push and pull request that changes packs, configuration or validator code; problems appear as annotations on the changed lines. A fork has to enable workflows once in its *Actions* tab.
+
 ### Validator rules
 
 Each result has a `code`, a severity and a fix hint. **Errors** can produce wrong data, wrong scores or a broken form; they block when they occur in a stable pack of an active output type (see the table above). **Warnings** are probable mistakes. **Notices** are informational: shown collapsed, never counted in the footer link, never blocking. There is no way to silence a rule: a production deployment should simply have no errors and no warnings among its current problems. Archived packs (`packs/archive/`) are frozen history and only checked for valid JSON.
@@ -714,7 +735,7 @@ Source: [completion logic](../index.html), [text helpers](../index.html), [expor
 6. Enter a positive answer, then change the parent so the child is hidden. Check whether its stored answer should still earn points, retain its denominator, or be excluded. Encode that decision explicitly.
 7. Add the pack to `sources`, and to `info.json` if it should be discoverable in the preview. Add category cues if its points should appear in a chart.
 8. Check a fresh record and an export/import round trip. Verify both item scores and the denominator; a plausible percentage alone can conceal a mistake.
-9. Keep `"status": "alpha"` while the pack is in development (or develop it in `packs/dev/`). Its problems then never block a deployment, yet **Pack validation** lists them under *Not blocking*. Before a release, open the validation with the pack's output type active, fix every error it reports, and set `"status"` to `"beta"` or `"stable"`.
+9. Keep `"status": "alpha"` while the pack is in development (or develop it in `packs/dev/`). Its problems then never block a deployment, yet **Pack validation** lists them under *Not blocking*. Before a release, run `node scripts/validate-packs.cjs --strict <pack>` (or check the file in `validator.html`), fix every error and warning, and set `"status"` to `"beta"` or `"stable"`.
 
 ## 11. Running the verifier and interpreting results
 
@@ -724,6 +745,8 @@ From the repository root:
 node tests/verify-packs.cjs
 node tests/verify-packs.cjs . > tests/verification-results.json
 node tests/verify-packs.cjs --strict
+node tests/verify-pack-validator.cjs   # rules of the pack validator, validator.html logic
+node tests/verify-validate-cli.cjs     # the command-line validator (fixtures in tests/fixtures/)
 ```
 
 No npm installation/build is required. The script defaults to the checkout containing it, independent of the current working directory. An optional repository-root argument selects another checkout. Do not use `node /tests/verify-packs.cjs .`, which points to an unrelated filesystem-root directory.

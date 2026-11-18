@@ -160,7 +160,12 @@ Three details:
 
 After you commited all changes, the app is ready for testing. You can use the link to your GitHub Pages website to test the app (see "Step 2" above).
 
-Before you distribute the link to your applicants, you should test the app yourself. Click the *Pack validation* link (next to *Tour* and *Privacy/Terms of Use*): a production app should show no errors and no warnings among the current problems. (The dialog opens by itself if there is a blocking error, e.g. a question that refers to an indicator you excluded.) Enter some test data and export it. Check if you can [generate the profile](https://shiny.psy.lmu.de/felix/RESQUE_profile/) (see also next step).
+Before you distribute the link to your applicants, you should test the app yourself.
+
+1. Click the *Pack validation* link (next to *Tour* and *Privacy/Terms of Use*): a production app should show no errors and no warnings among the current problems. The dialog opens by itself if there is a blocking error, e.g. a question that refers to an indicator you excluded. Each entry names the pack file and line and says how to fix it.
+2. If you changed or added pack files, open `validator.html` in your app (e.g. `https://<your-github-username>.github.io/collector-app-MYUNIVERSITY/validator.html`) and click *Check all packs*. You can also drop a single pack file onto that page to check it before you commit it.
+3. Optional: in the *Actions* tab of your repository, enable workflows. Every commit that changes packs or `config.yaml` is then checked automatically, and problems are shown on the changed lines. With Node.js installed, `node scripts/validate-packs.cjs --all` runs the same check on your computer.
+4. Enter some test data and export it. Check if you can [generate the profile](https://shiny.psy.lmu.de/felix/RESQUE_profile/) (see also next step).
 
 
 ## Step 5: Generate the applicants' profiles

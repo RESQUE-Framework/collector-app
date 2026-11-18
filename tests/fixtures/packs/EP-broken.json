@@ -1,0 +1,67 @@
+{
+    "prefix": "EX",
+    "version": "1.0.0",
+    "date": "2026-11-18",
+    "title": "Broken example",
+    "elements": [
+        {
+            "id": "EX_Source",
+            "type": "checkbox",
+            "title": "Sources",
+            "options": [
+                {
+                    "id": "Own",
+                    "text": "Own data",
+                    "value": 1
+                },
+                {
+                    "id": "Other",
+                    "text": "Other"
+                }
+            ]
+        },
+        {
+            "id": "EX_Source_Other",
+            "type": "text",
+            "title": "Which other source?",
+            "condition": "$EX_Source_Other"
+        },
+        {
+            "id": "EX_RCT",
+            "type": "radio",
+            "title": "Is it an RCT?",
+            "options": [
+                {
+                    "id": "Yes",
+                    "text": "Yes"
+                },
+                {
+                    "id": "No",
+                    "text": "No"
+                }
+            ],
+            "conditon": "$P_Suitable === 'Yes'"
+        },
+        {
+            "id": "EX_Prereg",
+            "type": "radio",
+            "title": "Preregistered?",
+            "options": [
+                {
+                    "id": "No",
+                    "text": "No",
+                    "value": 0
+                },
+                {
+                    "id": "Yes",
+                    "text": "Yes",
+                    "value": 1
+                }
+            ],
+            "score": {
+                "not_applicable": "$EX_RCT != ['Yes']"
+            },
+            "condition": "$EX_RCT === 'yes'"
+        }
+    ]
+}
