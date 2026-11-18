@@ -61,7 +61,7 @@ In order to have a working website, you need to enable GitHub Pages for your for
 **4. Make adjustments:**
    1. Change `main_title: "RESQUE"` to `main_title: "RESQUE MYUNIVERSITY"`. 
    2. Change `image_url` to an link towards your university's logo (the image is automatically shrunken to the correct size)
-   3. Change `background_color: "#ffffff"`. This makes your app visually distinguishable from the generic Collector App.
+   3. Change `background_color: "#ffffff"`. This makes your app visually distinguishable from the generic Collector App. The color is only used on screen; "Print this publication" always prints on a white background.
    4. Change `show_instruction: false` to `true`. Then the welcome text (defined in `config/instructions.md`, see below) will be shown to the applicants.
    5. You can change `show_beta_warning` to `false` to hide the message about this software being in beta stage in the top left box.
    6. Set `committee_limits` to `true` if `min` and `max` (see below) should be enforced by the app.

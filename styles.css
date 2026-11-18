@@ -923,7 +923,17 @@ table {
 
 @media print {
 
+    /* `background_color` in config.yaml may be any color (see How_to_fork.md), and
+       index.html applies it as an inline `--bg-color` on <html>. Together with the
+       `print-color-adjust: exact` below that color would be painted onto the printed
+       page, so neutralize it for printing: `!important` is required to win against
+       the inline custom property. */
+    :root {
+        --bg-color: #ffffff !important;
+    }
+
     body {
+        background-color: #ffffff !important;
         print-color-adjust: exact !important;
         -webkit-print-color-adjust: exact !important;
     }
