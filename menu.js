@@ -126,6 +126,116 @@ function normalizePublicationConfig(config) {
     return config;
 }
 
+// --- Reading the configuration file -----------------------------------------
+// An unreadable config.yaml must never leave a blank page. parseConfigFile()
+// turns the file text into a configuration or throws a ConfigFileError that the
+// collector (index.html) and the preview (preview.html) can show to the user.
+// Syntax is checked by the bundled js-yaml (js/js-yaml.min.js); the structure
+// check covers only what menu() and use() rely on to start at all - it is not a
+// schema for every setting.
+const CONFIG_SECTIONS = ['meta', 'pub', 'data', 'software'];
+
+class ConfigFileError extends Error {
+    // kind: 'syntax' (YAML cannot be parsed) or 'structure' (parsed, but unusable).
+    // line/column are 1-based; snippet is js-yaml's excerpt of the offending lines.
+    constructor({ file, kind, reason, line = null, column = null, snippet = '', issues = [] }) {
+        super(line
+            ? `${file}: ${reason} (line ${line}, column ${column})`
+            : `${file}: ${reason}`);
+        this.name = 'ConfigFileError';
+        Object.assign(this, { file, kind, reason, line, column, snippet, issues });
+    }
+}
+
+const isMapping = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+
+const describeYamlValue = value => value === null || value === undefined
+    ? 'nothing'
+    : Array.isArray(value) ? 'a list' : `a single value (${JSON.stringify(value)})`;
+
+// Returns a list of messages, empty when the parsed configuration can be used.
+function configStructureIssues(config) {
+    if (!isMapping(config)) {
+        return [`The file must consist of "setting: value" lines, but it contains ${describeYamlValue(config)}.`];
+    }
+
+    const issues = [];
+
+    for (const section of CONFIG_SECTIONS) {
+        const typeConfig = section === 'pub' ? config.pub ?? config.pubs : config[section];
+
+        if (typeConfig === undefined) {
+            issues.push(`The section "${section}:" is missing.`);
+            continue;
+        }
+
+        if (!isMapping(typeConfig)) {
+            issues.push(`The section "${section}:" must contain indented settings (such as "sources:"), but it contains ${describeYamlValue(typeConfig)}.`);
+            continue;
+        }
+
+        const sources = typeConfig.sources;
+
+        if (!Array.isArray(sources) || sources.length === 0) {
+            issues.push(`"${section}: sources:" must be a list of pack files, e.g. ["packs/core-${section}.json"].`);
+        } else if (sources.some(source => typeof source !== 'string' || source.trim() === '')) {
+            issues.push(`"${section}: sources:" may only contain pack file paths.`);
+        }
+
+        for (const key of ['include', 'exclude']) {
+            const value = typeConfig[key];
+
+            if (value !== undefined && value !== null && !Array.isArray(value)) {
+                issues.push(`"${section}: ${key}:" must be a list of indicator IDs, e.g. ["P_Data"].`);
+            }
+        }
+
+        for (const key of ['config', 'preset']) {
+            const value = typeConfig[key];
+
+            if (value !== undefined && value !== null && !isMapping(value)) {
+                issues.push(`"${section}: ${key}:" must contain indented "name: value" settings, but it contains ${describeYamlValue(value)}.`);
+            }
+        }
+    }
+
+    return issues;
+}
+
+function parseConfigFile(text, file = 'config/config.yaml') {
+    let config;
+
+    try {
+        // js-yaml also rejects tabs in indentation and duplicated keys.
+        config = jsyaml.load(text, { filename: file });
+    } catch (error) {
+        if (error?.name !== 'YAMLException') {
+            throw error;
+        }
+
+        throw new ConfigFileError({
+            file,
+            kind: 'syntax',
+            reason: error.reason ?? error.message,
+            line: error.mark ? error.mark.line + 1 : null,
+            column: error.mark ? error.mark.column + 1 : null,
+            snippet: error.mark?.snippet ?? ''
+        });
+    }
+
+    if (config === undefined || config === null) {
+        throw new ConfigFileError({ file, kind: 'structure', reason: 'The file is empty.', issues: ['The file is empty or contains only comments.'] });
+    }
+
+    const issues = configStructureIssues(config);
+
+    if (issues.length) {
+        throw new ConfigFileError({ file, kind: 'structure', reason: 'The file is valid YAML but cannot be used as a configuration.', issues });
+    }
+
+    return normalizePublicationConfig(config);
+}
+
 async function menu(config) {
     normalizePublicationConfig(config);
 

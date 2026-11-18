@@ -34,23 +34,26 @@
         // The preview shows one pack as configured, so it reads the same
         // configuration as the collector: indicators answered by a `preset` are
         // shown with their configured value and marked as hidden.
+        // Resolves to { config, error }. The preview still works without a
+        // configuration, so an unreadable file is shown as a warning
+        // (#config-warning) instead of stopping the page.
         const loadConfig = () => fetch('./config/config.yaml')
             .then(response => {
                 if (!response.ok) {
                     throw new Error('config.yaml not found');
                 }
-                return response.text();
+                return response.text().then(text => ({ file: 'config/config.yaml', text }));
             })
             .catch(() => fetch('./config/config-default.yaml').then(response => {
                 if (!response.ok) {
                     throw new Error('No valid config file found');
                 }
-                return response.text();
+                return response.text().then(text => ({ file: 'config/config-default.yaml', text }));
             }))
-            .then(text => normalizePublicationConfig(jsyaml.load(text)))
+            .then(({ file, text }) => ({ config: parseConfigFile(text, file), error: null }))
             .catch(error => {
                 console.warn('Preview continues without configuration presets:', error);
-                return null;
+                return { config: null, error };
             });
 
         const configPromise = loadConfig();
@@ -79,7 +82,7 @@
 
             const response = await fetch(`./packs/${filename}.json`);
             const data = await response.json();
-            const config = await configPromise;
+            const { config } = await configPromise;
             const typeConfig = config?.[configSectionOf(filename)];
 
             // Marks preset elements as hidden and replaces their default.
@@ -88,6 +91,15 @@
 
         document.addEventListener('alpine:init', () => {
             Alpine.store('packs', []);
+
+            // Only a file that exists but cannot be used is worth a warning.
+            // `false`, not `null`: Alpine.store() throws for null values.
+            Alpine.store('configError', false);
+            configPromise.then(({ error }) => {
+                if (error?.name === 'ConfigFileError') {
+                    Alpine.store('configError', error);
+                }
+            });
 
             getPacks().then(d => Alpine.store('packs', d));
 
@@ -286,6 +298,26 @@
         }
 
     </script>
+
+    <!-- Alpine is deferred here, so it only initializes [x-data] roots: the
+         warning needs one of its own. -->
+    <div x-data id="config-warning-root">
+    <template x-if="$store.configError">
+        <div id="config-warning" class="config-warning no-print" role="alert">
+            <p><strong x-text="'The configuration file ' + $store.configError.file + ' cannot be used: ' + $store.configError.reason"></strong>
+                <span x-show="$store.configError.line"
+                    x-text="'(line ' + $store.configError.line + ', column ' + $store.configError.column + ')'"></span></p>
+            <pre x-show="$store.configError.snippet" x-text="$store.configError.snippet"></pre>
+            <ul x-show="$store.configError.issues.length">
+                <template x-for="(issue, index) in $store.configError.issues" :key="index">
+                    <li x-text="issue"></li>
+                </template>
+            </ul>
+            <p>The pack is previewed without the configuration, so presets are not shown. The collector will not
+                start until the file is fixed.</p>
+        </div>
+    </template>
+    </div>
 
     <div x-data="{selectedPack: ''}" x-effect="getPack(selectedPack).then(d => $store.pack = d)">
         <div x-show="!$store.packInQuery?.filename" class="no-print"

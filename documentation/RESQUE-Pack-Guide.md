@@ -546,6 +546,8 @@ Consequences worth knowing:
 
 `config/config-default-committee.yaml` is a complete example. It is a template: the app reads `config/config.yaml` and falls back to `config/config-default.yaml`, so copy it before use.
 
+The fallback applies only when `config/config.yaml` is missing. A file that exists but cannot be used - invalid YAML, or a missing section or `sources` list - is checked by `parseConfigFile()` in `menu.js` and reported instead: the collector shows a startup error panel with the file, line, column, an excerpt, and the reason, and the preview shows the same message as a warning and previews the pack without presets. A pack file listed under `sources` that does not exist is reported on the same panel with its path.
+
 The assembled form definitions are embedded in the metadata record as `forms`. `score2.js` reads those embedded definitions. When testing a changed pack with previously saved data, check which form definitions are embedded in that data; changing the source JSON does not by itself guarantee that an existing record is scored with the new definitions.
 
 ### Query-based pack selection
@@ -656,7 +658,7 @@ The JSON report separates three kinds of checks:
 
 | Kind | What success means |
 | --- | --- |
-| `regression` | A supported behavior or confirmed fix still works, including canonical/legacy publication configuration, source assembly, current/default preview resolution, import normalization, and corrected defaults. |
+| `regression` | A supported behavior or confirmed fix still works, including canonical/legacy publication configuration, source assembly, current/default preview resolution, import normalization, corrected defaults, configuration-file error reporting, and the rule that no library, stylesheet, or font is loaded from a CDN. |
 | `known-issue` | A documented defect was reproduced; this is not an acceptance pass. |
 | `characterization` | A limitation or assessment-policy choice still behaves as documented, such as early theory denominators. |
 

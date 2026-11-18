@@ -308,6 +308,11 @@
     <script>
         Alpine.store('loaded', false);
 
+        // Set by reportStartupError() when the collector cannot start; shown in
+        // #startup-error, which lives outside the x-if="$store.loaded" template.
+        // `false`, not `null`: Alpine.store() throws for null values.
+        Alpine.store('startupError', false);
+
         Alpine.store('packValidation', {
             report: { issues: [], errors: [], warnings: [], indicatorsChecked: 0 },
             run() {
@@ -651,6 +656,45 @@
             document.querySelector('#formview').scrollTop = 0;
         }
     </script>
+
+    <!-- Shown instead of the collector when it cannot start (see reportStartupError).
+         Everything is rendered with x-text, never x-html: the content comes from the file.
+         The own x-data root makes Alpine initialize it however Alpine is loaded
+         (a deferred Alpine only initializes [x-data]/[x-init] roots). -->
+    <div x-data id="startup-error-root">
+    <template x-if="$store.startupError && !$store.loaded">
+        <div id="startup-error" class="startup-error" role="alert">
+            <h2 x-text="$store.startupError.title"></h2>
+            <p class="startup-error-reason" x-text="$store.startupError.reason"></p>
+            <p x-show="$store.startupError.line"
+                x-text="'Line ' + $store.startupError.line + ', column ' + $store.startupError.column + ':'"></p>
+            <pre x-show="$store.startupError.snippet" x-text="$store.startupError.snippet"></pre>
+            <ul x-show="$store.startupError.issues.length">
+                <template x-for="(issue, index) in $store.startupError.issues" :key="index">
+                    <li x-text="issue"></li>
+                </template>
+            </ul>
+            <template x-if="$store.startupError.kind === 'syntax'">
+                <div>
+                    <p>Common causes in YAML files:</p>
+                    <ul>
+                        <li>Indentation must use spaces, never tabs, and settings of one section must be indented equally.</li>
+                        <li>Text containing <code>:</code> or <code>#</code> must be in quotes, e.g. <code>main_title: "RESQUE: Psychology"</code>.</li>
+                        <li>Every setting may appear only once per section; lists need matching brackets, e.g. <code>["packs/core-pub.json"]</code>.</li>
+                    </ul>
+                    <p>The error is often on the line just above the marked one.</p>
+                </div>
+            </template>
+            <template x-if="$store.startupError.kind === 'startup'">
+                <p>Check that every pack file listed under <code>sources:</code> in the configuration exists. The
+                    browser console contains further details.</p>
+            </template>
+            <p>Fix the file and reload this page. <code>config/config-default.yaml</code> shows a working
+                configuration with all settings; if <code>config/config.yaml</code> is removed, the collector uses
+                that file. Your entered data is stored in the browser and is not affected.</p>
+        </div>
+    </template>
+    </div>
 
     <template x-if="$store.loaded">
         <div id="root">
@@ -1655,7 +1699,15 @@
             const pool = [];
 
             const ps = await Promise.all(packs.map(async pack => {
-                const response = await fetch("./" + normalizePublicationSource(pack));
+                const source = normalizePublicationSource(pack);
+                const response = await fetch("./" + source);
+
+                // Shown on the startup error panel; a 404 page is not JSON and
+                // would otherwise surface as an unhelpful parse error.
+                if (!response.ok) {
+                    throw new Error(`The pack file "${source}" listed under "sources:" in the configuration could not be loaded (HTTP ${response.status}).`);
+                }
+
                 return response.json();
             }));
 
@@ -2029,27 +2081,58 @@
             Alpine.store('data').input[0].queryConfig = Alpine.store('config').queryConfig;
         }
 
-        // Load config (fall back to config-default.yaml when config.yaml is missing)
-        const loadConfigText = () => {
+        // Anything that stops the collector before it is shown (an unreadable
+        // config.yaml, a missing pack file, ...) is reported in #startup-error
+        // instead of leaving a blank page. Errors after startup only go to the
+        // console, so a running session is never replaced by the error panel.
+        const reportStartupError = (error) => {
+            console.error('The collector could not start:', error);
+
+            if (Alpine.store('loaded')) {
+                return;
+            }
+
+            const configError = error?.name === 'ConfigFileError';
+
+            Alpine.store('startupError', {
+                kind: configError ? error.kind : 'startup',
+                title: configError
+                    ? `The configuration file ${error.file} cannot be used`
+                    : 'The collector could not start',
+                file: configError ? error.file : null,
+                reason: configError ? error.reason : (error?.message ?? String(error)),
+                line: configError ? error.line : null,
+                column: configError ? error.column : null,
+                snippet: configError ? error.snippet : '',
+                issues: configError ? error.issues : []
+            });
+        }
+
+        // Load config (fall back to config-default.yaml when config.yaml is missing).
+        // Only a MISSING config.yaml falls back: an invalid one is reported, because
+        // silently using the defaults would drop the deployment's settings
+        // (e.g. a committee's presets) without anyone noticing.
+        const loadConfigSource = () => {
             return fetch('./config/config.yaml')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('config.yaml not found');
                     }
-                    return response.text();
+                    return response.text().then(text => ({ file: 'config/config.yaml', text }));
                 })
                 .catch(() => {
                     return fetch('./config/config-default.yaml').then(response => {
                         if (!response.ok) {
                             throw new Error('No valid config file found (config.yaml or config-default.yaml)');
                         }
-                        return response.text();
+                        return response.text().then(text => ({ file: 'config/config-default.yaml', text }));
                     });
                 });
         }
 
-        loadConfigText().then(text => {
-            const config = normalizePublicationConfig(jsyaml.load(text));
+        loadConfigSource().then(({ file, text }) => {
+            // Throws a ConfigFileError (see menu.js) for invalid YAML or structure.
+            const config = parseConfigFile(text, file);
             // Resolve an optional pack selection using preview.html query syntax.
             let type = params.get("type");
             const path = params.get("path") ?? "";
@@ -2086,7 +2169,7 @@
 
             return config;
         }).then((config) => {
-            menu(config).then(m => {
+            return menu(config).then(m => {
                 for (const key in m) {
                     if (m[key].elements) {
                         Alpine.store('indentations')[key] = window.getDepths(m[key].elements);
@@ -2161,7 +2244,7 @@
                     Alpine.nextTick(() => showModal('pack-validation-modal'));
                 }
             });
-        });
+        }).catch(reportStartupError);
 
     </script>
 </body>

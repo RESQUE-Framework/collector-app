@@ -41,6 +41,48 @@ body {
     box-sizing: content-box;
 }
 
+/* Replaces the collector when it cannot start (e.g. an invalid config.yaml).
+   body has overflow: hidden, so the panel scrolls itself. */
+.startup-error {
+    box-sizing: border-box;
+    max-width: 760px;
+    max-height: calc(100vh - 40px);
+    overflow: auto;
+    margin: 20px auto;
+    padding: 10px 24px 16px;
+    border-left: 6px solid darkred;
+    background-color: #fff5f5;
+}
+
+.startup-error h2 {
+    color: darkred;
+}
+
+.startup-error-reason {
+    font-weight: bold;
+}
+
+.startup-error pre {
+    overflow-x: auto;
+    padding: 8px 12px;
+    background-color: #ffffff;
+    border: 1px solid #e0c0c0;
+    font-size: 0.9em;
+}
+
+/* Non-blocking variant used by preview.html. */
+.config-warning {
+    margin: 10px 0;
+    padding: 6px 16px;
+    border-left: 6px solid orange;
+    background-color: var(--warning-color);
+}
+
+.config-warning pre {
+    overflow-x: auto;
+    font-size: 0.9em;
+}
+
 #main {
     display: flex;
     flex-direction: row;

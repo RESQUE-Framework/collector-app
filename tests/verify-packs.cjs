@@ -113,9 +113,9 @@ function harness() {
     fromIndex('const preprocessCondition =', 'const partialHighlight =', ['evaluateConditionInContext', 'preprocessCondition']);
     fromIndex('const checkCompletion =', 'const getProgressColor =', ['checkCompletion']);
     fromIndex('async function use(config,', '</script>', ['use', 'pick', 'pickExclude']);
-    expose(read('menu.js'), ['menu', 'pickAccordingToConfig', 'normalizePublicationConfig', 'normalizePublicationSource'], 'menu.js');
+    expose(read('menu.js'), ['menu', 'pickAccordingToConfig', 'normalizePublicationConfig', 'normalizePublicationSource', 'parseConfigFile', 'configStructureIssues', 'ConfigFileError'], 'menu.js');
     fromIndex('function getQueryConfig(params)', 'const params = new URLSearchParams', ['getQueryConfig']);
-    fromIndex('const loadConfigText =', 'loadConfigText().then(text =>', ['loadConfigText']);
+    fromIndex('const reportStartupError =', 'loadConfigSource().then(', ['reportStartupError', 'loadConfigSource']);
     fromIndex('const getCollectorUrl =', "Alpine.store('selectedIndicator', {});", ['getConfig', 'getScoreCategories', 'answerHint']);
     fromIndex('const handleLoad =', 'const filterExport =', ['handleLoad']);
     fromIndex('const filterExport =', '// this is the export function', ['filterExport']);
@@ -195,9 +195,11 @@ regression('PUB-FALLBACK', 'Configuration loader reads the default file when con
     const originalFetch = h.ctx.fetch;
     h.ctx.fetch = async url => url === './config/config.yaml'
         ? { ok: false, status: 404 } : originalFetch(url);
-    const config = h.ctx.normalizePublicationConfig(h.ctx.jsyaml.load(await h.ctx.loadConfigText()));
+    const source = await h.ctx.loadConfigSource();
+    assert.equal(source.file, 'config/config-default.yaml');
+    const config = h.ctx.parseConfigFile(source.text, source.file);
     assert.deepEqual(plain(config.pub.sources), ['packs/core-pub.json']);
-    return { loaded: h.requests };
+    return { file: source.file, loaded: h.requests };
 });
 regression('PUB-LEGACY-YAML', 'Legacy YAML is normalized through the actual loader/menu path', async () => {
     const h = harness();
@@ -209,13 +211,247 @@ regression('PUB-LEGACY-YAML', 'Legacy YAML is normalized through the actual load
     const originalFetch = h.ctx.fetch;
     h.ctx.fetch = async url => url === './config/config.yaml'
         ? { ok: true, text: async () => text } : originalFetch(url);
-    const loaded = h.ctx.normalizePublicationConfig(h.ctx.jsyaml.load(await h.ctx.loadConfigText()));
+    const source = await h.ctx.loadConfigSource();
+    const loaded = h.ctx.parseConfigFile(source.text, source.file);
     const forms = await h.assemble(loaded);
     assert.equal(forms.pub.elements.length, pack('core-pub').elements.length + pack('EP/EP-theory_development').elements.length);
     assert.equal(Object.hasOwn(forms, 'pubs'), false);
     assert.ok(h.requests.includes('packs/core-pub.json'));
     assert.ok(!h.requests.includes('packs/core-pubs.json'));
     return { keys: Object.keys(forms), sources: plain(loaded.pub.sources) };
+});
+// --- Configuration file errors (#194) -----------------------------------------
+// An unusable config.yaml must be reported with file, line and reason instead
+// of leaving a blank page. parseConfigFile() lives in menu.js and is shared by
+// the collector (startup panel) and the preview (warning banner).
+const configError = (h, text, file = 'config/config.yaml') => {
+    try {
+        h.ctx.parseConfigFile(text, file);
+    } catch (error) {
+        assert.equal(error.name, 'ConfigFileError', `Expected a ConfigFileError, got ${error.name}: ${error.message}`);
+        return error;
+    }
+    assert.fail('Expected parseConfigFile() to reject the configuration');
+};
+const lineOf = (text, fragment) => {
+    const index = text.indexOf(fragment);
+    assert.ok(index >= 0, `Fixture fragment not found: ${fragment}`);
+    return text.slice(0, index).split('\n').length;
+};
+regression('CONFIG-SHIPPED-VALID', 'Both shipped configuration files pass the configuration check', () => {
+    const h = harness();
+    const evidence = {};
+    for (const file of ['config/config-default.yaml', 'config/config-default-committee.yaml']) {
+        const config = h.ctx.parseConfigFile(read(file), file);
+        assert.deepEqual(plain(h.ctx.configStructureIssues(config)), []);
+        evidence[file] = Object.keys(config).filter(key => ['meta', 'pub', 'data', 'software'].includes(key));
+    }
+    return evidence;
+});
+regression('CONFIG-YAML-SYNTAX', 'YAML syntax errors name the file and the 1-based line with an excerpt', () => {
+    const h = harness();
+    const text = read('config/config-default.yaml');
+    const metaSources = '  sources: ["packs/core-meta.json"]';
+    const cases = {
+        // Tab indentation (the most common copy-paste error).
+        tab: [text.replace(metaSources, metaSources.replace('  ', '\t')), lineOf(text, metaSources)],
+        // An unquoted colon inside a value.
+        colon: [text.replace('main_title: "RESQUE"', 'main_title: RESQUE: Psychology'), lineOf(text, 'main_title: "RESQUE"')],
+        // A setting given twice.
+        duplicate: [text.replace('hide_score: false', 'hide_score: false\nhide_score: true'), lineOf(text, 'hide_score: false') + 1],
+        // An indented line that does not belong to the setting above.
+        indentation: [text.replace(metaSources, metaSources + '\n     exclude: []'), lineOf(text, metaSources) + 1]
+    };
+    const evidence = {};
+    for (const [name, [broken, expectedLine]] of Object.entries(cases)) {
+        const error = configError(h, broken);
+        assert.equal(error.kind, 'syntax', name);
+        assert.equal(error.file, 'config/config.yaml', name);
+        assert.equal(error.line, expectedLine, `${name}: ${error.reason}`);
+        assert.ok(error.column >= 1, name);
+        assert.ok(error.snippet.includes('^'), `${name}: excerpt marks the position`);
+        assert.ok(error.message.includes(`line ${expectedLine}`), name);
+        evidence[name] = { line: error.line, column: error.column, reason: error.reason };
+    }
+    // An unclosed list is only detected further down; js-yaml still reports a position.
+    const unclosed = configError(h, text.replace(metaSources, metaSources.slice(0, -1)));
+    assert.equal(unclosed.kind, 'syntax');
+    assert.ok(unclosed.line >= lineOf(text, metaSources));
+    evidence.unclosed = { line: unclosed.line, reason: unclosed.reason };
+    return evidence;
+});
+regression('CONFIG-YAML-STRUCTURE', 'Valid YAML that menu() cannot start from is rejected with readable issues', () => {
+    const h = harness();
+    const valid = read('config/config-default.yaml');
+    const parsed = () => h.defaultConfig();
+    const dump = config => h.ctx.jsyaml.dump(config);
+    const without = (key) => { const config = parsed(); delete config[key]; return dump(config); };
+    const changed = (change) => { const config = parsed(); change(config); return dump(config); };
+    const cases = {
+        empty: ['', /empty/],
+        commentsOnly: ['# nothing configured\n', /empty/],
+        list: ['- meta\n- pub\n', /contains a list/],
+        scalar: ['RESQUE\n', /single value/],
+        missingSection: [without('software'), /"software:" is missing/],
+        sectionNotMapping: [changed(c => { c.data = 'packs/core-data.json'; }), /"data:" must contain indented settings/],
+        sourcesNotList: [changed(c => { c.meta.sources = 'packs/core-meta.json'; }), /"meta: sources:" must be a list/],
+        sourcesEmpty: [changed(c => { c.pub.sources = []; }), /"pub: sources:" must be a list/],
+        excludeNotList: [changed(c => { c.pub.exclude = 'P_Data'; }), /"pub: exclude:" must be a list/],
+        presetNotMapping: [changed(c => { c.meta.preset = ['RaterType']; }), /"meta: preset:" must contain indented/]
+    };
+    const evidence = {};
+    for (const [name, [text, pattern]] of Object.entries(cases)) {
+        const error = configError(h, text);
+        assert.equal(error.kind, 'structure', name);
+        assert.equal(error.line, null, name);
+        assert.ok(error.issues.some(issue => pattern.test(issue)), `${name}: ${JSON.stringify(error.issues)}`);
+        evidence[name] = error.issues;
+    }
+    // Several problems are reported together, not one per reload.
+    const twoIssues = configError(h, changed(c => { delete c.data; c.meta.sources = 'x'; }));
+    assert.equal(twoIssues.issues.length, 2);
+    // The legacy `pubs:` section and empty include/exclude lists stay valid.
+    const legacy = changed(c => { c.pubs = c.pub; delete c.pub; c.meta.exclude = null; });
+    assert.deepEqual(plain(h.ctx.parseConfigFile(legacy).pub.sources), ['packs/core-pub.json']);
+    assert.ok(h.ctx.parseConfigFile(valid));
+    return evidence;
+});
+regression('CONFIG-STARTUP-ERROR', 'An unusable config.yaml or pack file fills the startup panel instead of a blank page', async () => {
+    const h = harness();
+    const metaSources = '  sources: ["packs/core-meta.json"]';
+    const broken = read('config/config-default.yaml').replace(metaSources, metaSources.replace('  ', '\t'));
+    const originalFetch = h.ctx.fetch;
+    h.ctx.fetch = async url => url === './config/config.yaml'
+        ? { ok: true, status: 200, text: async () => broken } : originalFetch(url);
+    const source = await h.ctx.loadConfigSource();
+    // An invalid config.yaml must not silently fall back to the defaults.
+    assert.equal(source.file, 'config/config.yaml');
+    assert.ok(!h.requests.includes('config/config-default.yaml'));
+    const error = configError(h, source.text, source.file);
+    h.ctx.reportStartupError(error);
+    const panel = plain(h.stores.startupError);
+    assert.equal(panel.kind, 'syntax');
+    assert.match(panel.title, /config\/config\.yaml/);
+    assert.equal(panel.line, error.line);
+    assert.equal(panel.snippet, error.snippet);
+    // A pack listed under `sources:` that does not exist is named, not a JSON parse error.
+    const missing = await h.ctx.use({}, 'packs/does-not-exist.json').then(() => null, failure => failure);
+    assert.ok(missing, 'use() must reject for a missing pack file');
+    assert.match(missing.message, /"packs\/does-not-exist\.json".*HTTP 404/);
+    const other = harness();
+    other.ctx.reportStartupError(missing);
+    assert.equal(other.stores.startupError.kind, 'startup');
+    assert.equal(other.stores.startupError.reason, missing.message);
+    // Once the collector is shown, errors never replace it with the panel.
+    const running = harness();
+    running.stores.loaded = true;
+    running.ctx.reportStartupError(error);
+    assert.equal(running.stores.startupError, undefined);
+    return { panel: { kind: panel.kind, line: panel.line, reason: panel.reason }, missingPack: missing.message };
+});
+regression('CONFIG-STARTUP-PANEL', 'The error panel is outside the loaded template, and both pages use the shared check', () => {
+    const html = read('index.html');
+    const panelTag = '<template x-if="$store.startupError && !$store.loaded">';
+    const loadedTag = '<template x-if="$store.loaded">';
+    const panelStart = html.indexOf(panelTag);
+    const loadedStart = html.indexOf(loadedTag);
+    assert.ok(panelStart >= 0, 'startup panel template missing');
+    assert.equal(html.indexOf(loadedTag, loadedStart + 1), -1, 'ambiguous loaded template');
+    assert.ok(loadedStart > panelStart, 'panel must come before (and outside) the loaded template');
+    const panel = html.slice(panelStart, loadedStart);
+    assert.ok(panel.includes('id="startup-error"'));
+    // A root-level template is only initialized by Alpine inside an x-data root
+    // when Alpine is deferred; the panel must not depend on how Alpine is loaded.
+    const panelRoot = '<div x-data id="startup-error-root">';
+    const rootStart = html.indexOf(panelRoot);
+    assert.ok(rootStart >= 0 && html.slice(rootStart + panelRoot.length, panelStart).trim() === '',
+        'panel template must sit directly inside its own x-data root');
+    assert.equal((panel.match(/<template\b/g) || []).length, (panel.match(/<\/template>/g) || []).length,
+        'panel template must be closed before the loaded template starts');
+    // File content is shown as text, never as HTML.
+    assert.ok(!panel.includes('x-html'));
+    const chain = between(html, 'loadConfigSource().then(', '</script>', 'index.html');
+    assert.ok(chain.includes('parseConfigFile(text, file)'));
+    assert.ok(chain.includes('return menu(config)'), 'menu() chain must be returned so its errors are caught');
+    assert.ok(/\}\)\.catch\(reportStartupError\);\s*$/.test(chain), 'startup chain must end in .catch(reportStartupError)');
+    const preview = read('preview.html');
+    assert.ok(between(preview, 'const loadConfig =', 'const configPromise', 'preview.html').includes('parseConfigFile(text, file)'));
+    // preview.html defers Alpine, so the warning needs its own x-data root.
+    const warning = between(preview, '<div x-data id="config-warning-root">', '<div x-data="{selectedPack', 'preview.html');
+    assert.ok(/^<div x-data id="config-warning-root">\s*<template x-if="\$store\.configError">/.test(warning),
+        'warning template must sit directly inside its own x-data root');
+    assert.ok(warning.includes('id="config-warning"'));
+    assert.ok(!warning.includes('x-html'));
+    return { panelBeforeLoaded: loadedStart - panelStart };
+});
+
+// --- No CDN -----------------------------------------------------------------
+// Every library, stylesheet and font is stored in the repository and loaded
+// from it (js/, fonts/, utils/). Data requests (DOI/ORCID lookups, the analytics
+// tracker, a configured logo URL) are not library loads and are not checked here.
+const EXTERNAL_URL = /^(?:[a-z][a-z0-9+.-]*:)?\/\//i;
+const CDN_HOSTS = /\b(?:cdn\.jsdelivr\.net|unpkg\.com|cdnjs\.cloudflare\.com|esm\.sh|cdn\.skypack\.dev|ajax\.googleapis\.com|fonts\.googleapis\.com|fonts\.gstatic\.com|code\.jquery\.com|stackpath\.bootstrapcdn\.com|cdn\.tailwindcss\.com|kit\.fontawesome\.com|use\.fontawesome\.com)\b/i;
+const withoutComments = (source, kind) => {
+    let result = source;
+    if (kind === 'html') result = result.replace(/<!--[\s\S]*?-->/g, '');
+    if (kind !== 'html') result = result.replace(/\/\*[\s\S]*?\*\//g, '');
+    if (kind === 'js') result = result.replace(/^\s*\/\/.*$/gm, '');
+    return result;
+};
+regression('NO-CDN', 'Pages load scripts, styles and fonts only from files stored in the repository', () => {
+    const tracked = dir => fs.readdirSync(path.join(root, dir)).map(file => path.posix.join(dir, file));
+    const pages = fs.readdirSync(root).filter(file => file.endsWith('.html'));
+    const styles = [...fs.readdirSync(root).filter(file => file.endsWith('.css')), ...tracked('js').filter(file => file.endsWith('.css'))];
+    const scripts = ['menu.js', ...tracked('utils').filter(file => file.endsWith('.js'))];
+    const loads = [];
+    const collect = (file, source, pattern, kind) => {
+        for (const match of source.matchAll(pattern)) loads.push({ file, kind, url: match[1] });
+    };
+    const cssUrls = /(?:url\(\s*["']?|@import\s+["'])([^"')\s]+)/g;
+    const imports = /\bimport\s*(?:\(\s*|[^;'"()]*?\bfrom\s*)?["']([^"']+)["']/g;
+    const cdnMentions = [];
+    for (const file of pages) {
+        const source = withoutComments(read(file), 'html');
+        collect(file, source, /<script\b[^>]*?\bsrc\s*=\s*["']([^"']+)["']/gi, 'script');
+        collect(file, source, /<link\b[^>]*?\bhref\s*=\s*["']([^"']+)["']/gi, 'link');
+        for (const [, style] of source.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)) collect(file, withoutComments(style, 'css'), cssUrls, 'css');
+        for (const [, script] of source.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)) collect(file, withoutComments(script, 'js'), imports, 'import');
+        if (CDN_HOSTS.test(source)) cdnMentions.push(file);
+    }
+    for (const file of styles) {
+        const source = withoutComments(read(file), 'css');
+        collect(file, source, cssUrls, 'css');
+        if (CDN_HOSTS.test(source)) cdnMentions.push(file);
+    }
+    for (const file of scripts) {
+        const source = withoutComments(read(file), 'js');
+        collect(file, source, imports, 'import');
+        if (CDN_HOSTS.test(source)) cdnMentions.push(file);
+    }
+    const external = loads.filter(load => EXTERNAL_URL.test(load.url));
+    assert.deepEqual(external, [], `External library/style loads: ${JSON.stringify(external)}`);
+    assert.deepEqual(cdnMentions, [], `CDN hosts referenced in active code: ${cdnMentions.join(', ')}`);
+    // Local references must point to files that are actually in the repository.
+    const missing = loads.filter(load => !load.url.startsWith('data:')).filter(load => {
+        const relative = path.posix.normalize(path.posix.join(path.posix.dirname(load.file), load.url.split(/[?#]/)[0]));
+        return !fs.existsSync(path.join(root, relative));
+    });
+    assert.deepEqual(missing, [], `Local references without a file: ${JSON.stringify(missing)}`);
+    return { pages, localLoads: loads.length, byKind: loads.reduce((counts, load) => ({ ...counts, [load.kind]: (counts[load.kind] ?? 0) + 1 }), {}) };
+});
+regression('ALPINE-STORE-NOT-NULL', 'No page initializes an Alpine store with null (Alpine.store() throws for it)', () => {
+    // The bundled Alpine walks the property descriptors of every stored value,
+    // so Alpine.store(name, null) aborts the surrounding script in the browser.
+    const offenders = [];
+    const files = fs.readdirSync(root).filter(name => name.endsWith('.html')).concat(['menu.js']);
+    for (const file of files) {
+        const source = withoutComments(withoutComments(read(file), 'html'), 'js');
+        for (const match of source.matchAll(/Alpine\.store\(\s*['"`][^'"`]+['"`]\s*,\s*(?:null|undefined)\s*\)/g)) {
+            offenders.push(`${file}: ${match[0]}`);
+        }
+    }
+    assert.deepEqual(offenders, []);
+    return { files };
 });
 regression('PUB-PRECEDENCE', 'Canonical pub takes precedence; normalization is idempotent', () => {
     const h = harness();
@@ -491,20 +727,23 @@ regression('DEFAULT-BLANK-RESTORE', 'Stored and imported records keep blank hint
     h.stores.data.manualInit();
     const restored = plain(h.stores.data.input[0]);
     assert.equal(restored.LastName, 'Stored');
+    // Fixture precondition: AcademicAgeBonus is a hinted (number) element with a
+    // pack default. If the pack drops that default, pick another hinted field.
+    const bonus = h.stores.forms.meta.elements.find(element => element.id === 'AcademicAgeBonus');
+    assert.ok(bonus && bonus.type === 'number' && bonus.default === '0',
+        `packs/core-meta.json AcademicAgeBonus must be a number with default '0', found ${JSON.stringify(bonus && { type: bonus.type, default: bonus.default })}`);
     // A hinted default is not written into the restored record ...
-    assert.equal(restored.YearPhD, '');
     assert.equal(restored.AcademicAgeBonus, '');
     // ... but a selection default the record was saved without is.
     assert.equal(restored.HonestyDisclaimer_Yes, false);
     const exported = plain(h.ctx.filterExport(h.stores.data.input[0]));
-    assert.equal(exported.YearPhD, 9999);
     assert.equal(exported.AcademicAgeBonus, '0');
     const loaded = harness();
     await loaded.assemble(loaded.defaultConfig());
     await loaded.ctx.handleLoad([{ text: async () => JSON.stringify([{ type: 'meta', version: loaded.stores.forms.meta.versions.M, LastName: 'Loaded', AcademicAgeBonus: '' }]) }]);
     assert.equal(loaded.stores.data.input[0].AcademicAgeBonus, '');
     assert.equal(plain(loaded.ctx.filterExport(loaded.stores.data.input[0])).AcademicAgeBonus, '0');
-    return { restored: { YearPhD: restored.YearPhD, AcademicAgeBonus: restored.AcademicAgeBonus }, exported: { YearPhD: exported.YearPhD, AcademicAgeBonus: exported.AcademicAgeBonus } };
+    return { restored: { AcademicAgeBonus: restored.AcademicAgeBonus }, exported: { AcademicAgeBonus: exported.AcademicAgeBonus } };
 });
 
 regression('EXPRESSION-SUGAR', 'OR/AND sugar and negation agree in UI and scoring', () => {
@@ -707,7 +946,8 @@ knownIssue('PUB-RELATIVE-SOURCE', 'PUB-01', 'The legacy source alias does not co
     const h = harness();
     const legacy = './packs/core-pubs.json';
     assert.equal(h.ctx.normalizePublicationSource(legacy), legacy);
-    await assert.rejects(h.ctx.use({}, legacy), /404: packs\/core-pubs\.json/);
+    // use() names the unresolved path (see CONFIG-STARTUP-ERROR); it is still a 404.
+    await assert.rejects(h.ctx.use({}, legacy), /"\.\/packs\/core-pubs\.json".*HTTP 404/);
     return { unresolved: legacy };
 });
 knownIssue('PUB-DUPLICATE-ALIASES', 'PUB-02', 'Both old and new source spellings load the publication core twice', async () => {
