@@ -41,7 +41,7 @@ The principle is that a configuration cannot hide an indicator, only answer one;
 | `index.html` | Form loop skips `elem.hidden`; `checkCompletion()` ignores hidden elements; `enforcePresets()` applies preset values to new, restored, imported, and DOI-added records and records the applied presets on the metadata record as `presets`; `filterExport()` keeps that key. |
 | `preview.html` | Loads the same configuration (`config.yaml`, falling back to `config-default.yaml`), maps the previewed pack to its configuration section, applies presets, and marks the element with a *hidden · preset: value* badge; the DOCX manual gets the same note. |
 | `styles.css` | `.preset-badge`. |
-| `config/config-default-committee.yaml` | Committee template: committee limits enabled, no external logo URL, `meta.preset.RaterType: "Applicant"`. |
+| `config/config-default-committee.yaml` | Committee template: committee limits enabled, welcome message shown, beta warning hidden, example `main_title`, no logo URL, `meta.preset.RaterType: "Applicant"`. |
 
 Preset IDs are matched exactly; `include`/`exclude` match ID prefixes. Presets overwrite answers from local storage and from loaded files, because a hidden answer cannot be corrected in the form. Invalid presets - unknown ID, excluded ID, unknown option ID, a checkbox value that is not a list, `info`/`separator` elements - are skipped and reported.
 

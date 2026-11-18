@@ -46,7 +46,7 @@ In order to have a working website, you need to enable GitHub Pages for your for
 
 **1. In the main menu, go to the *Code* tab**, click on the `config` folder (this brings you to another view of all files), and then click in the left file tree on the file `config/config-default.yaml`.
 
-> :bulb: If your app is meant for a hiring committee - i.e., everybody who fills in the form is an applicant, never an external rater - start from `config/config-default-committee.yaml` instead. It contains the same settings, enables the committee limits, and answers the "Who enters the data?" question for all users (see step 9 below). Both files are templates; the app only reads `config/config.yaml` and falls back to `config/config-default.yaml`.
+> :bulb: If your app is meant for a hiring committee - i.e., everybody who fills in the form is an applicant, never an external rater - start from `config/config-default-committee.yaml` instead. It has the same structure as the default file, but enables the committee limits, shows the welcome message, hides the beta warning, carries an example title that you replace with your own (step 4.1), and answers the "Who enters the data?" question for all users (see step 9 below). Both files are templates; the app only reads `config/config.yaml` and falls back to `config/config-default.yaml`.
 
 ![](img/fork5a.png)
 
