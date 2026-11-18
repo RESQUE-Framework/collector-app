@@ -11,7 +11,11 @@ const root = path.join(__dirname, '..');
 const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 const ctx = vm.createContext({
     console,
-    fetch: async url => ({ json: async () => JSON.parse(read(url)) })
+    // Like a browser Response: use() checks `ok` before reading a pack.
+    fetch: async url => {
+        const ok = fs.existsSync(path.join(root, url));
+        return { ok, status: ok ? 200 : 404, json: async () => JSON.parse(read(url)) };
+    }
 });
 vm.runInContext(read('utils/pack-validator.js') + '\nglobalThis.validator = PackValidator;', ctx);
 vm.runInContext(read('utils/packutils.js').replace(/^export /gm, ''), ctx);
@@ -151,8 +155,10 @@ async function startup(elements) {
     const browser = vm.createContext({
         console, params: new URLSearchParams(),
         normalizePublicationConfig: ctx.normalizePublicationConfig,
-        jsyaml: { load: JSON.parse },
-        loadConfigText: async () => JSON.stringify(config()),
+        loadConfigSource: async () => ({ file: 'config/config.yaml', text: JSON.stringify(config()) }),
+        parseConfigFile: text => ctx.normalizePublicationConfig(JSON.parse(text)),
+        // A startup failure must fail the test, not disappear into the panel.
+        reportStartupError: error => { throw error; },
         menu: async () => ({ pub: { elements } }),
         window: { getDepths: () => [] },
         Alpine: {
@@ -181,10 +187,10 @@ async function startup(elements) {
     vm.runInContext(html.slice(storeStart, html.indexOf("Alpine.store('forms', {", storeStart)), browser);
     const modalStart = html.indexOf('const showModal =');
     vm.runInContext(html.slice(modalStart, html.indexOf('const showInfoModal =', modalStart)), browser);
-    const startupStart = html.indexOf('loadConfigText().then(text =>');
+    const startupStart = html.indexOf('loadConfigSource().then(');
     assert.ok(startupStart >= 0);
     await vm.runInContext(html.slice(startupStart, html.indexOf('</script>', startupStart)), browser);
-    // The existing loader does not return its nested menu() chain.
+    // The chain returns menu(); the dialog itself waits for Alpine.nextTick().
     await new Promise(resolve => setImmediate(resolve));
     state.rendered = true;
     return { state, stores, dialog, browser };

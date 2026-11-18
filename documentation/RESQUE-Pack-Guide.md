@@ -453,7 +453,32 @@ Core examples are `P_Suitable: "Yes"`, `P_Data_Source_NewOwn: true`, and `P_CRed
 
 Checkbox defaults must be arrays containing valid option IDs. For example, `"default": []` is a valid all-unselected state; `"default": "A"`, `"default": false`, and an array naming an unknown option throw clear errors. Every checkbox key is initialized, whether or not it is selected. These behaviors are covered by the verifier's `DEFAULT-*` regression checks.
 
-A configuration `preset` replaces an element's `default` before this helper runs, so a preset answer reaches storage, scoring, and export through the same mechanism (see section 8). Defaults are applied when creating outputs and filling missing keys during import; they are not recalculated when a visibility condition changes. The import handler still takes its default definitions from the previously open dataset, which can disagree with the incoming file (**DATA-02**). Generated checkbox/table keys still have a separate export-ownership problem (**DATA-01**); fixing initialization did not resolve that filtering behavior.
+A configuration `preset` replaces an element's `default` before this helper runs, so a preset answer reaches storage, scoring, and export through the same mechanism (see section 8). Defaults are not recalculated when a visibility condition changes. The import handler still takes its default definitions from the previously open dataset, which can disagree with the incoming file (**DATA-02**). Generated checkbox/table keys still have a separate export-ownership problem (**DATA-01**); fixing initialization did not resolve that filtering behavior.
+
+### A default is a hint, not an answer
+
+For `text`, `number`, and `date` inputs the default is **not** written into the field. The field starts empty and shows the default as a greyed-out placeholder, so an unanswered question still looks unanswered and the respondent does not have to delete a value before typing. `getInitialValues(elements)` builds the answers a new record starts with: `getDefaultValues()` with those three types blanked. Every other control - radio, dropdown, checkbox, tabular radio - has no placeholder, so its default stays a real preselection (`P_Suitable: "Yes"`, `P_CRediT_<row>: "NoRole"`). The contenteditable `textbox` is excluded too: its `placeholder` attribute has no stylesheet rule behind it and renders nothing.
+
+Two exceptions keep their value: an element answered by a configuration `preset` (marked `hidden`, with no field to show a hint in - `applyPresets()` writes preset answers into `initialValues` as well), and any element whose default is blank anyway.
+
+`answerHint(elem)` in `index.html` supplies the placeholder: the default when the element has one, otherwise the element title, which is what the placeholder always showed.
+
+### Blank answers fall back to the default on export
+
+`withDefaults(record, defaultValues)` applies the rule that the effective value of a *blank* answer is its default. Blank means missing, `null`, or `""`; `0` and `false` are answers and are never replaced. The helper returns a new record, so a record held in the store is not modified by an export. Keys without a default, and keys whose default is itself blank, are left as they are.
+
+| Moment | Effect |
+| --- | --- |
+| Creating an output (`createResearchOutput`) | Starts from `initialValues`: preselections are written, hint defaults are not |
+| Restoring from local storage (`manualInit`) | A record saved before an element existed, or before it gained a default, starts where a new record would start; stored answers win |
+| Importing a file (`handleLoad`) | Same, applied to the loaded record, so a file written by an older version is repaired |
+| Exporting (`filterExport`) | An indicator left blank is exported with its default instead of `""` |
+
+So the hint the respondent sees and the value the export carries are the same, without the default ever being an answer in the form. Export visibility conditions are evaluated on the filled record, so a condition such as `$YearPhD < 2020` reads the same value the export carries.
+
+Two consequences worth knowing when a pack adds a default to one of these inputs: the field counts as unanswered in the completion progress until the respondent types something, and the validation message, which is only shown for a nonempty field, no longer fires against the default itself.
+
+The verifier covers all of this with the `DEFAULT-HINT-*` and `DEFAULT-BLANK-*` regression checks.
 
 Source: [default-value helper](../utils/packutils.js).
 
@@ -520,6 +545,8 @@ Consequences worth knowing:
 `preview.html` reads the same configuration and marks preset indicators with a *hidden · preset: value* badge, so a configured questionnaire can be reviewed and exported as a manual without starting the collector.
 
 `config/config-default-committee.yaml` is a complete example. It is a template: the app reads `config/config.yaml` and falls back to `config/config-default.yaml`, so copy it before use.
+
+The fallback applies only when `config/config.yaml` is missing. A file that exists but cannot be used - invalid YAML, an unpaired quotation mark (which YAML itself often accepts, silently swallowing the following lines or keeping a stray `"` in the value), or a missing section or `sources` list - is checked by `parseConfigFile()` in `menu.js` and reported instead: the collector shows a startup error panel with the file, line, column, an excerpt, and the reason, and the preview shows the same message as a warning and previews the pack without presets. A pack file listed under `sources` that does not exist is reported on the same panel with its path.
 
 The assembled form definitions are embedded in the metadata record as `forms`. `score2.js` reads those embedded definitions. When testing a changed pack with previously saved data, check which form definitions are embedded in that data; changing the source JSON does not by itself guarantee that an existing record is scored with the new definitions.
 
@@ -598,7 +625,7 @@ There are still completion defects: the code checks a table’s parent key inste
 
 ### Export is condition-sensitive, but not uniform
 
-`filterExport()` builds an allowlist from visible elements, their checkbox/row keys, comments, selected metadata fields, and “unreachable” default keys. It does not simply serialize only what is on screen.
+`filterExport()` first replaces blank answers with their defaults (section 7), then builds an allowlist from visible elements, their checkbox/row keys, comments, selected metadata fields, and “unreachable” default keys. It does not simply serialize only what is on screen, and an exported `""` now means “no answer and no default”, not “default not applied”.
 
 In the current implementation, generated checkbox and table keys are often classified as unreachable because they are compared with parent element IDs. Hidden checkbox values can therefore survive export, while hidden scalar fields may be omitted even if they have an explicit default. See **DATA-01** before relying on export to remove hidden answers. Since checkbox initialization is now complete, all generated checkbox default keys take part in this ownership problem, not just explicitly selected defaults.
 
@@ -631,7 +658,7 @@ The JSON report separates three kinds of checks:
 
 | Kind | What success means |
 | --- | --- |
-| `regression` | A supported behavior or confirmed fix still works, including canonical/legacy publication configuration, source assembly, current/default preview resolution, import normalization, and corrected defaults. |
+| `regression` | A supported behavior or confirmed fix still works, including canonical/legacy publication configuration, source assembly, current/default preview resolution, import normalization, corrected defaults, configuration-file error reporting, and the rule that no library, stylesheet, or font is loaded from a CDN. |
 | `known-issue` | A documented defect was reproduced; this is not an acceptance pass. |
 | `characterization` | A limitation or assessment-policy choice still behaves as documented, such as early theory denominators. |
 
