@@ -61,9 +61,26 @@ statements_only_for_top_publications: true
 min_RO_warning_threshold: 0
 
 # which packs should be included?
+#
+# Each output type takes:
+#   sources: the pack files that are loaded, in order
+#   include / exclude: which indicator IDs are selected (ID *prefixes*)
+#   preset:  indicators that this deployment answers itself (exact IDs)
+#   config:  settings for this output type
+#
+# `preset` answers an indicator instead of asking the respondent: the value
+# replaces the pack default, and the indicator is never shown in the form.
+# It stays part of the form, so conditions that refer to it keep working and
+# the answer is still exported - unlike `exclude`, which removes it.
+# Hiding is always the consequence of answering, so a hidden indicator can
+# never be undefined. Use option IDs for radio/dropdown/table indicators and a
+# list of option IDs for checkboxes. See config-default-committee.yaml for an
+# example, and the preview for how presets are displayed.
 meta:
   sources: ["packs/core-meta.json"]
   exclude: []
+  # preset:
+  #   RaterType: "Applicant"
   config:
     min_indicators_warning_threshold: 0
 

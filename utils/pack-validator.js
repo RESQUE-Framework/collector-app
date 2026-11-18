@@ -37,6 +37,20 @@ globalThis.PackValidator = (() => {
         const issues = [];
         let indicatorsChecked = 0;
 
+        // Configuration presets are resolved during assembly (menu.js). Invalid
+        // ones are skipped there and reported here, for every configured type.
+        for (const type of formTypes) {
+            for (const issue of forms[type]?.presetIssues ?? []) {
+                issues.push({
+                    code: 'invalid-preset', severity: 'error', form: type,
+                    indicator: issue.indicator, field: 'preset',
+                    location: `config.${type}.preset.${issue.indicator}`,
+                    expression: `${issue.indicator}: ${JSON.stringify(issue.value)}`,
+                    message: issue.message
+                });
+            }
+        }
+
         for (const form of activeTypes) {
             for (const [index, element] of (forms[form]?.elements || []).entries()) {
                 indicatorsChecked++;
