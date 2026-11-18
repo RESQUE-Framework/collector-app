@@ -58,7 +58,7 @@
     <script src="./utils/pack-validator.js"></script>
 
     <script type="module">
-        import { getDefaultValues } from "./utils/packutils.js";
+        import { getDefaultValues, getInitialValues, withDefaults, isBlankAnswer } from "./utils/packutils.js";
         import { getDepths } from "./utils/prefixtree.js";
         import { renderScoreChart } from "./utils/charts.js";
         import { fetchAuthorByORCID, fetchPapersByORCID } from "./utils/orcid.js";
@@ -66,6 +66,9 @@
         import { renameOldKeys } from "./utils/keyalias.js";
 
         window.getDefaultValues = getDefaultValues;
+        window.getInitialValues = getInitialValues;
+        window.withDefaults = withDefaults;
+        window.isBlankAnswer = isBlankAnswer;
         window.getDepths = getDepths;
         window.score = score;
         window.scoreAll = scoreAll;
@@ -382,6 +385,16 @@
             return record;
         };
 
+        // The placeholder of an input that has a default: the default itself, shown
+        // greyed out as a hint of what an unanswered field will export (see
+        // withDefaults in packutils.js). It is deliberately not written into the
+        // field as a real answer - an empty field has to look unanswered, and
+        // typing must not have to delete a value first. Without a default the
+        // placeholder stays what it always was, the element title.
+        const answerHint = (elem) => window.isBlankAnswer(elem.default)
+            ? (elem.title || '')
+            : String(elem.default);
+
         Alpine.store('selectedIndicator', {});
 
         Alpine.store('data', {
@@ -400,7 +413,17 @@
                 }
 
                 if (Array.isArray(this.input)) {
-                    this.input = this.input.map(enforcePresets);
+                    // A record stored before an element existed, or before it
+                    // gained its default, starts where a new record would start.
+                    // Stored answers always win, and a default that is only a
+                    // placeholder hint stays out of the record (see packutils).
+                    this.input = this.input
+                        .map(r => {
+                            const initial = Alpine.store('forms')[r.type]?.initialValues ?? {};
+
+                            return window.withDefaults({ ...initial, ...r }, initial);
+                        })
+                        .map(enforcePresets);
                 }
 
                 if (this.input[0]) {
@@ -418,7 +441,7 @@
                     type,
                     version: Alpine.store('forms')[type].versions[prefixes[type]],
                     date_added: Date.now(),
-                    ...Alpine.store('forms')[type].defaultValues
+                    ...Alpine.store('forms')[type].initialValues
                 };
 
                 if (type === 'meta') {
@@ -453,7 +476,7 @@
                     type: 'pub',
                     version: Alpine.store('forms')['pub'].versions[prefixes['pub']],
                     date_added: Date.now(),
-                    ...Alpine.store('forms').pub.defaultValues,
+                    ...Alpine.store('forms').pub.initialValues,
                     ...details
                 }));
             },
@@ -869,7 +892,7 @@
 
                                                 <template x-if="elem.type === 'text'">
                                                     <input x-model="$store.data.currentInput[elem.id]" type="text"
-                                                        :placeholder="elem.title || ''" />
+                                                        :placeholder="answerHint(elem)" />
                                                 </template>
 
                                                 <template x-if="elem.type === 'textbox'">
@@ -890,12 +913,12 @@
 
                                                 <template x-if="elem.type === 'number'">
                                                     <input x-model="$store.data.currentInput[elem.id]" type="text"
-                                                        :placeholder="elem.title || ''" />
+                                                        :placeholder="answerHint(elem)" />
                                                 </template>
 
                                                 <template x-if="elem.type === 'date'">
                                                     <input x-model="$store.data.currentInput[elem.id]" type="date"
-                                                        :placeholder="elem.title || ''" />
+                                                        :placeholder="answerHint(elem)" />
                                                 </template>
 
                                                 <template x-if="elem.type === 'dropdown'">
@@ -1650,11 +1673,18 @@
 
             ps.forEach(pack => Object.assign(defaultValues, getDefaultValues(pack.elements)));
 
+            // What a new record starts with. Differs from defaultValues only for
+            // controls that show their default as a placeholder hint instead.
+            let initialValues = {}
+
+            ps.forEach(pack => Object.assign(initialValues, getInitialValues(pack.elements)));
+
             return {
                 title: ps[0].title,
                 versions,
                 date,
                 defaultValues,
+                initialValues,
                 pool,
                 config
             };
@@ -1670,6 +1700,7 @@
                 versions: combinedPack.versions,
                 date: combinedPack.date,
                 defaultValues: combinedPack.defaultValues,
+                initialValues: combinedPack.initialValues,
                 config: combinedPack.config,
                 elements: combinedPack.pool.filter(item => item.id.startsWith(prefix))
             };
@@ -1681,6 +1712,7 @@
                 versions: combinedPack.versions,
                 date: combinedPack.date,
                 defaultValues: combinedPack.defaultValues,
+                initialValues: combinedPack.initialValues,
                 config: combinedPack.config,
                 elements: combinedPack.pool.filter(item => condition(item))
             };
@@ -1834,9 +1866,17 @@
                 .map(window.renameOldKeys)
                 .map(r => {
                     const elements = Alpine.store('data').input[0]?.forms?.[r.type]?.elements;
-                    return elements
-                        ? { ...window.getDefaultValues(elements), ...r }
-                        : r;
+
+                    if (!elements) {
+                        return r;
+                    }
+
+                    // Keys the loaded file does not mention start where a new record
+                    // would start, and a key it leaves blank falls back to the same
+                    // value, so a file written by an older version is repaired.
+                    const initial = window.getInitialValues(elements);
+
+                    return window.withDefaults({ ...initial, ...r }, initial);
                 })
                 // The loaded file may come from a deployment that asked a
                 // question this one answers by configuration.
@@ -1854,13 +1894,18 @@
             }
         }
 
-        const filterExport = (result) => {
-            const elements = Alpine.store('forms')[result.type].elements;
+        const filterExport = (storedResult) => {
+            const elements = Alpine.store('forms')[storedResult.type].elements;
 
             const allIds = elements.map(e => e.id);
 
             // These are all indicators which have a default value. These must be exported, regardless if they are visible
-            const defaults = Alpine.store('forms')[result.type].defaultValues;
+            const defaults = Alpine.store('forms')[storedResult.type].defaultValues;
+
+            // An indicator that was never answered - or whose field the respondent
+            // emptied again - is exported with its default, not as "". This works on
+            // a copy: the form the respondent sees keeps the empty field.
+            const result = window.withDefaults(storedResult, defaults);
 
             // These are invisible/unreachable indicators which have a default value            
             const unreachableDefaultIds = Object.keys(defaults).filter(id => !allIds.includes(id));

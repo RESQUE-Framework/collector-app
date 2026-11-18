@@ -107,7 +107,7 @@ function harness() {
     const fromIndex = (start, end, names) => expose(between(html, start, end, 'index.html'), names, 'index.html');
 
     expose(read('utils/score2.js'), ['score', 'scoreAll'], 'utils/score2.js');
-    expose(read('utils/packutils.js').replace(/^export\s+(?=const )/gm, ''), ['getDefaultValues'], 'utils/packutils.js');
+    expose(read('utils/packutils.js').replace(/^export\s+(?=const )/gm, ''), ['getDefaultValues', 'getInitialValues', 'withDefaults', 'isBlankAnswer'], 'utils/packutils.js');
     expose(read('utils/keyalias.js').replace(/^export\s+(?=const )/gm, ''), ['renameOldKeys'], 'utils/keyalias.js');
     run(read('js/js-yaml.min.js'), 'js/js-yaml.min.js');
     fromIndex('const preprocessCondition =', 'const partialHighlight =', ['evaluateConditionInContext', 'preprocessCondition']);
@@ -116,7 +116,7 @@ function harness() {
     expose(read('menu.js'), ['menu', 'pickAccordingToConfig', 'normalizePublicationConfig', 'normalizePublicationSource'], 'menu.js');
     fromIndex('function getQueryConfig(params)', 'const params = new URLSearchParams', ['getQueryConfig']);
     fromIndex('const loadConfigText =', 'loadConfigText().then(text =>', ['loadConfigText']);
-    fromIndex('const getCollectorUrl =', "Alpine.store('selectedIndicator', {});", ['getConfig', 'getScoreCategories']);
+    fromIndex('const getCollectorUrl =', "Alpine.store('selectedIndicator', {});", ['getConfig', 'getScoreCategories', 'answerHint']);
     fromIndex('const handleLoad =', 'const filterExport =', ['handleLoad']);
     fromIndex('const filterExport =', '// this is the export function', ['filterExport']);
     run(between(html, 'let prefixes =', '</script>', 'index.html'), 'index.html');
@@ -137,6 +137,9 @@ function harness() {
         score: ctx.score,
         scoreAll: ctx.scoreAll,
         getDefaultValues: ctx.getDefaultValues,
+        getInitialValues: ctx.getInitialValues,
+        withDefaults: ctx.withDefaults,
+        isBlankAnswer: ctx.isBlankAnswer,
         renameOldKeys: ctx.renameOldKeys
     });
     stores.config = { config: { statements_only_for_top_publications: true, pub: { active: true } }, queryConfig: { global: {} } };
@@ -145,6 +148,7 @@ function harness() {
     return {
         ctx, stores, requests, alerts, localStorage, sessionStorage,
         defaults: elements => ctx.getDefaultValues(elements),
+        initial: elements => ctx.getInitialValues(elements),
         uiEval: (expression, record) => ctx.evaluateConditionInContext(expression, record),
         defaultConfig: () => plain(ctx.jsyaml.load(read('config/config-default.yaml'))),
         preview(query) {
@@ -403,6 +407,104 @@ regression('DEFAULT-ALL-PACKS', 'Every questionnaire pack can initialize its cur
         assert.ok(defaults && typeof defaults === 'object');
         return { file, answerKeys: Object.keys(defaults).length };
     });
+});
+
+regression('DEFAULT-BLANK-HELPER', 'Only missing/empty answers fall back to a default; 0 and false are answers', () => {
+    const h = harness();
+    const defaults = { N: 0, Y: 9999, S: '0', B: false, T: true, E: '', Z: null };
+    const stored = { type: 'meta', N: '', Y: undefined, S: null, B: '', T: '', E: '', Z: '', Other: '' };
+    const actual = plain(h.ctx.withDefaults(stored, defaults));
+    assert.deepEqual(actual, { type: 'meta', N: 0, Y: 9999, S: '0', B: false, T: true, E: '', Z: '', Other: '' });
+    // An answer, including a falsy one, is never replaced by the default.
+    assert.deepEqual(plain(h.ctx.withDefaults({ N: 0, Y: 1990, B: false }, defaults)), { N: 0, Y: 1990, B: false, S: '0', T: true });
+    // The stored record stays untouched.
+    assert.equal(stored.Y, undefined);
+    assert.equal(stored.N, '');
+    return actual;
+});
+regression('DEFAULT-HINT-INITIAL', 'A text/number/date default is a hint: the field starts blank, selections do not', () => {
+    const h = harness();
+    const elements = [
+        { id: 'Bonus', type: 'number', default: '0' },
+        { id: 'Name', type: 'text', default: 'Doe' },
+        { id: 'Day', type: 'date', default: '2026-01-01' },
+        { id: 'Statement', type: 'textbox', default: 'none' },
+        { id: 'Suitable', type: 'radio', default: 'Yes', options: [{ id: 'Yes' }] },
+        { id: 'Source', type: 'checkbox', default: ['A'], options: [{ id: 'A' }] },
+        { id: 'Roles', type: 'tabular_radio', default: 'NoRole', rows: [{ id: 'R' }], options: [{ id: 'NoRole' }] },
+        { id: 'Preset', type: 'text', default: 'Applicant', hidden: true }
+    ];
+    const actual = plain(h.initial(elements));
+    assert.deepEqual(actual, {
+        Bonus: '', Name: '', Day: '',
+        Statement: 'none', Suitable: 'Yes', Source_A: true, Roles_R: 'NoRole',
+        Preset: 'Applicant'
+    });
+    // The fallback map that the export uses is unchanged.
+    assert.equal(plain(h.defaults(elements)).Bonus, '0');
+    return actual;
+});
+regression('DEFAULT-HINT-PLACEHOLDER', 'The default is offered as a placeholder, the title only without one', () => {
+    const h = harness();
+    assert.equal(h.ctx.answerHint({ id: 'Bonus', title: 'Bonus years', default: '0' }), '0');
+    assert.equal(h.ctx.answerHint({ id: 'Year', title: 'Year of PhD', default: 9999 }), '9999');
+    assert.equal(h.ctx.answerHint({ id: 'Zero', title: 'Zero', default: 0 }), '0');
+    assert.equal(h.ctx.answerHint({ id: 'Name', title: 'Last name' }), 'Last name');
+    assert.equal(h.ctx.answerHint({ id: 'Empty', title: 'Empty', default: '' }), 'Empty');
+    assert.equal(h.ctx.answerHint({ id: 'Bare' }), '');
+    // The hint must stay bound to the controls that have a placeholder, and the
+    // default must not be written back into the field on blur.
+    const html = read('index.html');
+    const bound = ['text', 'number', 'date'].map(type => {
+        const template = between(html, `<template x-if="elem.type === '${type}'">`, '</template>', 'index.html');
+        assert.ok(template.includes(':placeholder="answerHint(elem)"'), `${type} input does not offer its default as a hint`);
+        assert.ok(!template.includes('@blur'), `${type} input writes a value on blur`);
+        return type;
+    });
+    return { bound };
+});
+regression('DEFAULT-BLANK-EXPORT', 'A blank answer is exported with its default, and the form keeps the empty field', () => {
+    const h = harness();
+    const elements = [
+        { id: 'Bonus', type: 'number', default: '0' },
+        { id: 'YearPhD', type: 'number', default: 9999 },
+        { id: 'Name', type: 'text' }
+    ];
+    h.stores.forms = { pub: { elements, defaultValues: h.defaults(elements), initialValues: h.initial(elements) } };
+    const untouched = { type: 'pub', ...h.initial(elements) };
+    assert.deepEqual(plain(untouched), { type: 'pub', Bonus: '', YearPhD: '', Name: '' });
+    const actual = plain(h.ctx.filterExport(untouched));
+    assert.deepEqual(actual, { type: 'pub', Bonus: '0', YearPhD: 9999, Name: '' });
+    // Exporting must not fill in the record the respondent is working on.
+    assert.equal(untouched.Bonus, '');
+    // An entered answer still wins, and 0 is an answer.
+    assert.equal(h.ctx.filterExport({ type: 'pub', Bonus: 0, YearPhD: 2019 }).Bonus, 0);
+    assert.equal(h.ctx.filterExport({ type: 'pub', Bonus: 0, YearPhD: 2019 }).YearPhD, 2019);
+    return actual;
+});
+regression('DEFAULT-BLANK-RESTORE', 'Stored and imported records keep blank hint fields and still export the default', async () => {
+    const h = harness();
+    await h.assemble(h.defaultConfig());
+    const title = h.stores.forms.config.main_title;
+    const saved = { type: 'meta', version: h.stores.forms.meta.versions.M, date_added: 1, LastName: 'Stored' };
+    h.localStorage.setItem('data ' + title, JSON.stringify([saved]));
+    h.stores.data.manualInit();
+    const restored = plain(h.stores.data.input[0]);
+    assert.equal(restored.LastName, 'Stored');
+    // A hinted default is not written into the restored record ...
+    assert.equal(restored.YearPhD, '');
+    assert.equal(restored.AcademicAgeBonus, '');
+    // ... but a selection default the record was saved without is.
+    assert.equal(restored.HonestyDisclaimer_Yes, false);
+    const exported = plain(h.ctx.filterExport(h.stores.data.input[0]));
+    assert.equal(exported.YearPhD, 9999);
+    assert.equal(exported.AcademicAgeBonus, '0');
+    const loaded = harness();
+    await loaded.assemble(loaded.defaultConfig());
+    await loaded.ctx.handleLoad([{ text: async () => JSON.stringify([{ type: 'meta', version: loaded.stores.forms.meta.versions.M, LastName: 'Loaded', AcademicAgeBonus: '' }]) }]);
+    assert.equal(loaded.stores.data.input[0].AcademicAgeBonus, '');
+    assert.equal(plain(loaded.ctx.filterExport(loaded.stores.data.input[0])).AcademicAgeBonus, '0');
+    return { restored: { YearPhD: restored.YearPhD, AcademicAgeBonus: restored.AcademicAgeBonus }, exported: { YearPhD: exported.YearPhD, AcademicAgeBonus: exported.AcademicAgeBonus } };
 });
 
 regression('EXPRESSION-SUGAR', 'OR/AND sugar and negation agree in UI and scoring', () => {

@@ -61,6 +61,7 @@ function applyPresets(pack, typeConfig) {
     pack.presetValues = {};
     pack.presetIssues = [];
     pack.defaultValues = pack.defaultValues ?? {};
+    pack.initialValues = pack.initialValues ?? {};
 
     for (const [id, value] of Object.entries(presets)) {
         const element = pack.elements.find(candidate => candidate.id === id);
@@ -93,9 +94,13 @@ function applyPresets(pack, typeConfig) {
 
         // getDefaultValues() expands checkbox/table answers into their generated
         // keys, so presets reach storage, export, and scoring like any answer.
+        // A preset is an answer, not a hint: it also goes into initialValues, so
+        // a preset on a text/number/date element is not blanked out like a pack
+        // default on the same element would be.
         const answers = getDefaultValues([element]);
 
         Object.assign(pack.defaultValues, answers);
+        Object.assign(pack.initialValues, answers);
         Object.assign(pack.presetValues, answers);
         pack.presets[id] = value;
     }
