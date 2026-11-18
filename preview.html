@@ -14,6 +14,15 @@
     <script src="./js/alpinejs.min.js" defer></script>
     <script src="./js/html-docx.min.js"></script>
     <script src="./js/showdown.min.js"></script>
+    <script src="./js/js-yaml.min.js"></script>
+    <script src="./menu.js"></script>
+
+    <script type="module">
+        import { getDefaultValues } from "./utils/packutils.js";
+
+        // applyPresets() in menu.js expands preset answers with this helper.
+        window.getDefaultValues = getDefaultValues;
+    </script>
 
     <script>
         const getPacks = async () => {
@@ -21,6 +30,45 @@
             const data = await response.json();
             return data;
         }
+
+        // The preview shows one pack as configured, so it reads the same
+        // configuration as the collector: indicators answered by a `preset` are
+        // shown with their configured value and marked as hidden.
+        const loadConfig = () => fetch('./config/config.yaml')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('config.yaml not found');
+                }
+                return response.text();
+            })
+            .catch(() => fetch('./config/config-default.yaml').then(response => {
+                if (!response.ok) {
+                    throw new Error('No valid config file found');
+                }
+                return response.text();
+            }))
+            .then(text => normalizePublicationConfig(jsyaml.load(text)))
+            .catch(error => {
+                console.warn('Preview continues without configuration presets:', error);
+                return null;
+            });
+
+        const configPromise = loadConfig();
+
+        // Publication extensions and archives are configured in the `pub`
+        // section; the other cores have a section of their own.
+        const configSectionOf = (filename) => {
+            const stem = filename.split('/').pop();
+
+            if (stem.startsWith('core-meta')) return 'meta';
+            if (stem.startsWith('core-data')) return 'data';
+            if (stem.startsWith('core-software')) return 'software';
+
+            return 'pub';
+        }
+
+        const formatPresetValue = (value) =>
+            Array.isArray(value) ? (value.join(', ') || 'nothing selected') : String(value);
 
         const getPack = async (filename) => {
 
@@ -31,7 +79,11 @@
 
             const response = await fetch(`./packs/${filename}.json`);
             const data = await response.json();
-            return data;
+            const config = await configPromise;
+            const typeConfig = config?.[configSectionOf(filename)];
+
+            // Marks preset elements as hidden and replaces their default.
+            return typeConfig && data.elements ? applyPresets(data, typeConfig) : data;
         }
 
         document.addEventListener('alpine:init', () => {
@@ -201,7 +253,11 @@
                         break;
                     }
 
-                    return `<h3 style="color: blue">Indicator: ${el.id || ''}</h3><p><b>${el.title || ''}</b></p>${content}<p><b>Manual:</b><br>${clearMarkup(el.info || '-')}</p><p><b>Tips for external raters:</b><br>${clearMarkup(el.tip_external || '-')}</p>`;
+                    const presetNote = el.hidden
+                        ? `<p><i>Hidden in this configuration; preset to: ${formatPresetValue(el.default)}</i></p>`
+                        : '';
+
+                    return `<h3 style="color: blue">Indicator: ${el.id || ''}</h3><p><b>${el.title || ''}</b></p>${presetNote}${content}<p><b>Manual:</b><br>${clearMarkup(el.info || '-')}</p><p><b>Tips for external raters:</b><br>${clearMarkup(el.tip_external || '-')}</p>`;
                 })
                 .join('<hr />');
 
@@ -298,6 +354,8 @@
                     <div x-show="evaluateFilter($store.filter, elem.id)">
                         <p>
                             <span class="label" x-show="$store.showLabels" x-text="`[${elem.id}]`"></span>
+                        <span class="preset-badge" x-show="elem.hidden"
+                            x-text="`hidden · preset: ${formatPresetValue(elem.default)}`"></span>
                         <span x-show="elem.title" x-html="preprocessText(elem.title)" style="font-weight: bold;"></span>
                         <span x-show="elem.info" x-data="{ hover: false }">
                             <span @mouseenter="hover = true" @mouseleave="hover = false"> ℹ️</span>

@@ -241,8 +241,10 @@
                 }
             }
 
-            // We can't check progress of checkboxes
-            const fillableElements = elements.filter(e => e.type !== 'checkbox' && e.type !== 'separator' && e.type !== 'info');
+            // We can't check progress of checkboxes.
+            // Indicators hidden by a configuration preset are answered by the
+            // deployment, not by the user, so they are no part of the progress.
+            const fillableElements = elements.filter(e => e.type !== 'checkbox' && e.type !== 'separator' && e.type !== 'info' && !e.hidden);
 
             // Get visible elements (required)
             const filteredElements = fillableElements
@@ -351,6 +353,35 @@
 
         const getScoreCategories = () => Alpine.store('forms')?.pub?.config?.score_categories || [];
 
+        // Indicators answered by the configuration (see `preset` in config.yaml
+        // and applyPresets() in menu.js). The raw configured values are recorded
+        // in the metadata record so that consumers of an export can tell a
+        // deployment answer apart from a respondent answer.
+        const getPresets = () => Object.fromEntries(
+            ['meta', 'pub', 'software', 'data']
+                .map(type => [type, Alpine.store('forms')[type]?.presets ?? {}])
+                .filter(([, presets]) => Object.keys(presets).length > 0)
+        );
+
+        // Presets are not editable in the form, so they also win over values
+        // restored from local storage or read from a loaded file - otherwise a
+        // record could carry an answer that nobody can see or change.
+        const enforcePresets = record => {
+            Object.assign(record, Alpine.store('forms')[record.type]?.presetValues ?? {});
+
+            if (record.type === 'meta') {
+                const presets = getPresets();
+
+                if (Object.keys(presets).length > 0) {
+                    record.presets = presets;
+                } else {
+                    delete record.presets;
+                }
+            }
+
+            return record;
+        };
+
         Alpine.store('selectedIndicator', {});
 
         Alpine.store('data', {
@@ -366,6 +397,10 @@
 
                 if (typeof this.input === "object" && this.input.length === 0) {
                     this.newResearchOutput('meta');
+                }
+
+                if (Array.isArray(this.input)) {
+                    this.input = this.input.map(enforcePresets);
                 }
 
                 if (this.input[0]) {
@@ -390,7 +425,7 @@
                     baseOutput.CollectorURL = Alpine.store('forms').meta.CollectorURL ?? getCollectorUrl();
                 }
 
-                return baseOutput;
+                return enforcePresets(baseOutput);
             },
 
             newResearchOutput(type) {
@@ -414,13 +449,13 @@
             },
 
             addPublicationWithDetails(details) {
-                this.input.push({
+                this.input.push(enforcePresets({
                     type: 'pub',
                     version: Alpine.store('forms')['pub'].versions[prefixes['pub']],
                     date_added: Date.now(),
                     ...Alpine.store('forms').pub.defaultValues,
                     ...details
-                });
+                }));
             },
 
             clear() {
@@ -779,7 +814,7 @@
                                 :key="$store.data.currentInput.position + '_' + elem.id">
                                 <template x-if="$store.showIndicators">
                                     <div @click="$store.selectedIndicator = elem"
-                                        x-show="evaluateCondition(elem.condition)" onblur="actions[elem.onchange]()"
+                                        x-show="!elem.hidden && evaluateCondition(elem.condition)" onblur="actions[elem.onchange]()"
                                         class="indicator-container"
                                         :class="{ selected: $store.selectedIndicator.id === elem.id }"
                                         :class="elem.style_classes" :id="elem.id">
@@ -1802,7 +1837,10 @@
                     return elements
                         ? { ...window.getDefaultValues(elements), ...r }
                         : r;
-                });
+                })
+                // The loaded file may come from a deployment that asked a
+                // question this one answers by configuration.
+                .map(enforcePresets);
 
             if (loadedData.every(r => Alpine.store('forms')[r.type].versions[prefixes[r.type]] === r.version)) {
                 Alpine.store('data').input = loadedData;
@@ -1849,7 +1887,10 @@
                 ...tabularRadioIds,
                 ...(filteredElements.map(e => e.id + '_Comment')),
                 'Title', 'Year', 'Abstract',
-                'date_added', 'position', 'type', 'version', 'CollectorURL'
+                'date_added', 'position', 'type', 'version', 'CollectorURL',
+                // Which answers came from the configuration, not the respondent
+                // (metadata record only).
+                'presets'
             ];
 
             const filteredData = Object.fromEntries(

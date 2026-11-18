@@ -213,3 +213,101 @@ test('warnings and successful checks stay optional and are available through the
         assert.equal(ui.dialog.open, true);
     }
 });
+
+// --- Configuration presets -------------------------------------------------
+// A preset answers an indicator from config.yaml: the value replaces the pack
+// default, the element is hidden, and it stays part of the selected form.
+
+const committeeConfig = () => ctx.jsyaml.load(read('config/config-default-committee.yaml'));
+// Values assembled inside the VM context are compared through plain JSON.
+const plain = value => JSON.parse(JSON.stringify(value));
+
+test('the committee configuration answers RaterType and keeps every reference to it resolvable', async () => {
+    const forms = await ctx.menu(committeeConfig());
+    const raterType = forms.meta.elements.find(e => e.id === 'RaterType');
+    assert.equal(raterType.hidden, true);
+    assert.equal(raterType.default, 'Applicant');
+    assert.equal(forms.meta.defaultValues.RaterType, 'Applicant');
+    assert.deepEqual(plain(forms.meta.presets), { RaterType: 'Applicant' });
+    assert.deepEqual(plain(forms.meta.presetValues), { RaterType: 'Applicant' });
+    assert.deepEqual(plain(forms.meta.presetIssues), []);
+    // Same report as the default configuration: only the shipped software issue.
+    assert.deepEqual(validate(forms).issues.map(e => [e.form, e.indicator, e.reference]), [
+        ['software', 'S_Tests_Quality', '$S_Tests_URL']
+    ]);
+});
+
+test('excluding an indicator instead of presetting it breaks the references that use it', async () => {
+    const c = committeeConfig();
+    delete c.meta.preset;
+    c.meta.exclude = ['RaterType'];
+    const errors = validate(await ctx.menu(c)).errors;
+    assert.ok(errors.some(e => e.form === 'pub' && e.reference === 'meta$RaterType'));
+    assert.ok(errors.some(e => e.form === 'meta' && e.reference === '$RaterType'));
+});
+
+test('a preset leaves the pack files untouched and is applied per assembly', async () => {
+    const source = read('packs/core-meta.json');
+    await ctx.menu(committeeConfig());
+    assert.equal(read('packs/core-meta.json'), source);
+    // A second assembly without the preset must produce a visible indicator.
+    const forms = await ctx.menu(config());
+    const raterType = forms.meta.elements.find(e => e.id === 'RaterType');
+    assert.equal(Object.hasOwn(raterType, 'hidden'), false);
+    assert.equal(raterType.default, 'Applicant');
+    assert.deepEqual(plain(forms.meta.presets), {});
+});
+
+test('checkbox and table presets expand into their generated answer keys', async () => {
+    const c = config();
+    c.pub.preset = { P_Data_Source: ['ReuseOwn', 'Simulated'], P_CRediT: 'Lead' };
+    const forms = await ctx.menu(c);
+    assert.deepEqual(plain(forms.pub.presetIssues), []);
+    assert.equal(forms.pub.presetValues.P_Data_Source_ReuseOwn, true);
+    assert.equal(forms.pub.presetValues.P_Data_Source_Simulated, true);
+    // The pack default ["NewOwn"] is replaced, not merged.
+    assert.equal(forms.pub.presetValues.P_Data_Source_NewOwn, false);
+    assert.equal(forms.pub.defaultValues.P_Data_Source_NewOwn, false);
+    assert.equal(forms.pub.presetValues.P_CRediT_Conceptualization, 'Lead');
+    assert.equal(Object.hasOwn(forms.pub.presetValues, 'P_Data_Source'), false);
+    assert.ok(forms.pub.elements.find(e => e.id === 'P_CRediT').hidden);
+});
+
+test('invalid presets are reported as errors instead of being applied', async () => {
+    const c = config();
+    c.meta.exclude = ['ORCID'];
+    c.meta.preset = {
+        ORCID: 'https://orcid.org/0000-0002-1825-0097',
+        NotAnIndicator: 'x',
+        RaterType: 'Rater',
+        HonestyDisclaimer: 'Yes',
+        METASEP1: 'x'
+    };
+    c.software.preset = { S_License: ['OpenSource'] };
+    const forms = await ctx.menu(c);
+    const report = validate(forms);
+    const presetErrors = report.errors.filter(e => e.code === 'invalid-preset');
+    assert.deepEqual(presetErrors.map(e => [e.form, e.indicator]), [
+        ['meta', 'ORCID'], ['meta', 'NotAnIndicator'], ['meta', 'RaterType'],
+        ['meta', 'HonestyDisclaimer'], ['meta', 'METASEP1'],
+        // Inactive output types are checked as well.
+        ['software', 'S_License']
+    ]);
+    assert.match(presetErrors[0].message, /exclude/);
+    assert.match(presetErrors[1].message, /none of the configured sources/);
+    assert.match(presetErrors[2].message, /option IDs/);
+    assert.match(presetErrors[3].message, /list of option IDs/);
+    assert.match(presetErrors[4].message, /stores no answer/);
+    assert.equal(presetErrors[0].field, 'preset');
+    assert.equal(presetErrors[0].location, 'config.meta.preset.ORCID');
+    // Nothing invalid reaches the form or the answers.
+    assert.deepEqual(plain(forms.meta.presets), {});
+    assert.deepEqual(plain(forms.meta.presetValues), {});
+    assert.equal(forms.meta.elements.find(e => e.id === 'RaterType').default, 'Applicant');
+    assert.equal(forms.meta.defaultValues.RaterType, 'Applicant');
+    assert.ok(forms.software.elements.find(e => e.id === 'S_License').hidden === undefined);
+});
+
+test('forms assembled without preset support still validate', () => {
+    assert.deepEqual(validate({ pub: { elements: [element('Lonely')] } }).errors, []);
+});
