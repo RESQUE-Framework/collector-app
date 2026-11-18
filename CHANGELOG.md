@@ -1,3 +1,7 @@
+## core-software 0.2 and core-data 0.0.1: marked as alpha (2026-11-18)
+
+No content changes and no version bump. Both packs now declare `"status": "alpha"`. Their known problems are listed by *Pack validation* but never block the collector, and `preview.html`/`packs.html` show an *alpha* badge (see `documentation/RESQUE-Pack-Guide.md`, "Pack metadata").
+
 ## core-pubs version 0.9.0 (2026-03-09)
 
 No real content changes; just bumping the version to indicate the new scoring export (needs the RESQUER package >= 0.10.0)

@@ -28,12 +28,20 @@ vm.runInContext(html.slice(start, html.indexOf('</script>', start)), ctx);
 const validate = forms => JSON.parse(JSON.stringify(ctx.validator.validate(forms)));
 const element = (id, properties = {}) => ({ id, type: 'text', ...properties });
 const config = () => ctx.jsyaml.load(read('config/config-default.yaml'));
+// Like index.html, which stores the configuration as forms.config next to the
+// assembled forms: the validator reads `active` from there.
+const assembled = async c => ({ ...(await ctx.menu(c)), config: c });
 
 test('default selected packs report the existing missing software reference, not built-in fields', async () => {
-    const report = validate(await ctx.menu(config()));
+    const report = validate(await assembled(config()));
     assert.deepEqual(report.issues.map(e => [e.form, e.indicator, e.reference]), [
         ['software', 'S_Tests_Quality', '$S_Tests_URL']
     ]);
+    // Software is inactive (and alpha): listed, but nothing blocks the default app.
+    assert.deepEqual(report.issues.map(e => [e.pack, e.packStatus, e.deferred, e.blocking]), [
+        ['packs/core-software.json', 'alpha', 'inactive', false]
+    ]);
+    assert.deepEqual(report.blocking, []);
     assert.ok(report.indicatorsChecked > 100);
 });
 
@@ -134,14 +142,19 @@ test('global text references use publication keys and never fall back to unrelat
 test('all selected forms are checked even if the output type is inactive; inputs are not mutated', () => {
     const forms = { software: { elements: [element('S_Test', { condition: '$Missing' })] }, config: { software: { active: false } } };
     const before = JSON.stringify(forms);
-    assert.equal(validate(forms).errors.length, 1);
+    const report = validate(forms);
+    assert.equal(report.errors.length, 1);
+    // Checked and listed, but an inactive output type never blocks.
+    assert.equal(report.errors[0].deferred, 'inactive');
+    assert.deepEqual(report.blocking, []);
+    assert.deepEqual(report.current, []);
     assert.equal(JSON.stringify(forms), before);
     assert.equal(validate({}).indicatorsChecked, 0);
 });
 
 // Exercise the actual collector startup/store code with a simulated UI. This
 // catches popup timing and wiring failures but does not replace a browser test.
-async function startup(elements) {
+async function startup(elements, form = {}) {
     const state = { rendered: false, tours: 0, opened: [] };
     const dialog = { open: false, showModal() {
         assert.ok(state.rendered, 'Dialog must be rendered before it is opened');
@@ -159,7 +172,7 @@ async function startup(elements) {
         parseConfigFile: text => ctx.normalizePublicationConfig(JSON.parse(text)),
         // A startup failure must fail the test, not disappear into the panel.
         reportStartupError: error => { throw error; },
-        menu: async () => ({ pub: { elements } }),
+        menu: async () => ({ pub: { elements, ...form } }),
         window: { getDepths: () => [] },
         Alpine: {
             store(name, value) {
@@ -237,10 +250,13 @@ test('the committee configuration answers RaterType and keeps every reference to
     assert.deepEqual(plain(forms.meta.presets), { RaterType: 'Applicant' });
     assert.deepEqual(plain(forms.meta.presetValues), { RaterType: 'Applicant' });
     assert.deepEqual(plain(forms.meta.presetIssues), []);
-    // Same report as the default configuration: only the shipped software issue.
-    assert.deepEqual(validate(forms).issues.map(e => [e.form, e.indicator, e.reference]), [
-        ['software', 'S_Tests_Quality', '$S_Tests_URL']
+    // Same report as the default configuration: only the shipped software
+    // issue, which does not block because software is inactive.
+    const report = validate({ ...forms, config: committeeConfig() });
+    assert.deepEqual(report.issues.map(e => [e.form, e.indicator, e.reference, e.deferred]), [
+        ['software', 'S_Tests_Quality', '$S_Tests_URL', 'inactive']
     ]);
+    assert.deepEqual(report.blocking, []);
 });
 
 test('excluding an indicator instead of presetting it breaks the references that use it', async () => {
@@ -316,4 +332,191 @@ test('invalid presets are reported as errors instead of being applied', async ()
 
 test('forms assembled without preset support still validate', () => {
     assert.deepEqual(validate({ pub: { elements: [element('Lonely')] } }).errors, []);
+});
+
+// --- Pack status -----------------------------------------------------------
+// A pack declares its maturity with a top-level "status" (alpha/beta/stable).
+// Only errors in stable packs of active output types block the collector;
+// everything else is listed as "not blocking".
+
+const status = (status, extra = {}) => ({ prefix: 'X', version: '1', ...(status === undefined ? {} : { status }), ...extra });
+// A one-pack form whose pack has the given status, for hand-built reports.
+const packForm = (packStatus, elements, source = 'packs/x.json') => ({
+    elements,
+    packs: [ctx.validator.packInfo(status(packStatus, { elements }), source)]
+});
+
+test('pack status: declared value wins, packs/dev/ defaults to alpha, everything else to stable', () => {
+    const resolve = (pack, source) => ctx.validator.packStatus(pack, source);
+    for (const value of ['alpha', 'beta', 'stable']) {
+        assert.equal(resolve(status(value), 'packs/core-pub.json'), value);
+        assert.equal(resolve(status(value), 'packs/dev/EP-x.json'), value);
+    }
+    assert.equal(resolve(status(), 'packs/core-pub.json'), 'stable');
+    assert.equal(resolve(status(), 'packs/archive/core-pubs-0_8_2.json'), 'stable');
+    assert.equal(resolve(status(), 'packs/EP/EP-x.json'), 'stable');
+    assert.equal(resolve(status(), 'packs/dev/EP-x.json'), 'alpha');
+    assert.equal(resolve(status(), './packs/dev/EP-x.json'), 'alpha');
+    // Unknown values are treated strictly (stable) and reported by validate().
+    assert.equal(resolve(status('Alpha'), 'packs/dev/EP-x.json'), 'stable');
+    assert.equal(resolve(status('experimental'), 'packs/x.json'), 'stable');
+    assert.equal(resolve(undefined), 'stable');
+});
+
+test('every shipped pack declares a valid status or none; software and data are alpha', () => {
+    const files = [];
+    (function walk(dir) {
+        for (const name of fs.readdirSync(path.join(root, dir))) {
+            const file = `${dir}/${name}`;
+            if (fs.statSync(path.join(root, file)).isDirectory()) walk(file);
+            else if (name.endsWith('.json') && !['packs/info.json', 'packs/user.json'].includes(file)) files.push(file);
+        }
+    })('packs');
+    assert.ok(files.length > 10);
+    for (const file of files) {
+        const pack = JSON.parse(read(file));
+        assert.ok(pack.status === undefined || ctx.validator.packStatuses.includes(pack.status), `${file}: status ${pack.status}`);
+    }
+    assert.equal(JSON.parse(read('packs/core-software.json')).status, 'alpha');
+    assert.equal(JSON.parse(read('packs/core-data.json')).status, 'alpha');
+    for (const file of ['packs/core-pub.json', 'packs/core-meta.json']) {
+        assert.equal(ctx.validator.packStatus(JSON.parse(read(file)), file), 'stable');
+    }
+});
+
+test('the loader records source, prefix, version and status of each pack, also after selection', async () => {
+    const c = config();
+    c.pub.sources.push('packs/dev/EP-stimuli.json');
+    delete c.pub.exclude;
+    c.pub.include = ['P_Suitable', 'ST_'];
+    const forms = await assembled(c);
+    const summary = form => plain(forms[form].packs).map(p => [p.source, p.prefix, p.status, p.declaredStatus ?? null]);
+    assert.deepEqual(summary('software'), [['packs/core-software.json', 'S', 'alpha', 'alpha']]);
+    assert.deepEqual(summary('data'), [['packs/core-data.json', 'D', 'alpha', 'alpha']]);
+    assert.deepEqual(summary('meta'), [['packs/core-meta.json', 'M', 'stable', null]]);
+    assert.deepEqual(summary('pub'), [
+        ['packs/core-pub.json', 'P', 'stable', null],
+        ['packs/dev/EP-stimuli.json', 'ST', 'alpha', null]
+    ]);
+    // ids cover the whole pack file, so selected elements can be traced back.
+    assert.ok(forms.pub.packs[0].ids.includes('P_Data'));
+    assert.ok(!forms.pub.elements.some(e => e.id === 'P_Data'));
+    // A stored export carries the provenance: plain JSON, no functions.
+    assert.deepEqual(JSON.parse(JSON.stringify(forms.pub.packs)), plain(forms.pub.packs));
+});
+
+test('blocking matrix: only errors in stable packs of active output types block', () => {
+    const broken = () => [element('X_Consumer', { condition: '$X_Missing' })];
+    const cases = [
+        // [pack status, active, expected deferred reason, blocking]
+        ['stable', true, null, true],
+        ['stable', false, 'inactive', false],
+        ['alpha', true, 'alpha', false],
+        ['beta', true, 'beta', false],
+        ['alpha', false, 'inactive', false],
+        [undefined, true, null, true]
+    ];
+    for (const [packStatus, active, deferred, blocking] of cases) {
+        const label = `${packStatus}/${active ? 'active' : 'inactive'}`;
+        const report = validate({ software: packForm(packStatus, broken()), config: { software: { active } } });
+        const reference = report.issues.find(e => e.code === 'missing-indicator-reference');
+        assert.equal(reference.deferred, deferred, label);
+        assert.equal(reference.blocking, blocking, label);
+        assert.equal(reference.pack, 'packs/x.json', label);
+        assert.equal(report.blocking.length, blocking ? 1 : 0, label);
+        // Severity stays honest: an error remains an error when it is deferred.
+        assert.equal(report.errors.filter(e => e.code === 'missing-indicator-reference').length, 1, label);
+        // An active immature pack gets exactly one current warning.
+        const notices = report.current.filter(e => e.code === 'immature-pack');
+        assert.equal(notices.length, active && ['alpha', 'beta'].includes(packStatus) ? 1 : 0, label);
+    }
+    // Forms without provenance count as stable (older or hand-built forms).
+    assert.equal(validate({ pub: { elements: broken() } }).blocking.length, 1);
+});
+
+test('activating the alpha software pack lists its problems with one warning but blocks nothing', async () => {
+    const c = config();
+    c.software.active = true;
+    c.data.active = true;
+    const report = validate(await assembled(c));
+    assert.deepEqual(report.blocking, []);
+    const notices = report.current.filter(e => e.code === 'immature-pack');
+    assert.deepEqual(notices.map(e => [e.form, e.pack, e.severity, e.deferred]), [
+        ['software', 'packs/core-software.json', 'warning', null],
+        ['data', 'packs/core-data.json', 'warning', null]
+    ]);
+    assert.match(notices[0].message, /alpha pack "packs\/core-software\.json" \(1 error, 0 warnings/);
+    assert.match(notices[1].message, /\(0 errors, 0 warnings/);
+    assert.deepEqual(report.deferred.map(e => [e.indicator, e.reference, e.deferred]), [
+        ['S_Tests_Quality', '$S_Tests_URL', 'alpha']
+    ]);
+    // Current issues come first; the deferred group follows.
+    assert.deepEqual(report.issues.map(e => e.code), ['immature-pack', 'immature-pack', 'missing-indicator-reference']);
+});
+
+test('configuration mistakes block in active output types even when the pack is alpha', () => {
+    const form = { ...packForm('alpha', [element('X_Q')]), presetIssues: [{ indicator: 'X_Q', value: 'Nope', message: 'bad preset' }] };
+    const active = validate({ software: form, config: { software: { active: true } } });
+    const preset = active.issues.find(e => e.code === 'invalid-preset');
+    assert.equal(preset.blocking, true);
+    assert.equal(preset.deferred, null);
+    assert.equal(preset.pack, 'packs/x.json');
+    const inactive = validate({ software: form, config: { software: { active: false } } });
+    assert.equal(inactive.issues.find(e => e.code === 'invalid-preset').deferred, 'inactive');
+    assert.deepEqual(inactive.blocking, []);
+});
+
+test('an unknown status value is a blocking error and the pack is checked as stable', () => {
+    const elements = [element('X_Consumer', { condition: '$X_Missing' })];
+    const form = { elements, packs: [ctx.validator.packInfo(status('Alpha', { elements }), 'packs/dev/EP-x.json')] };
+    const report = validate({ pub: form });
+    const invalid = report.issues.find(e => e.code === 'invalid-pack-status');
+    assert.equal(invalid.blocking, true);
+    assert.equal(invalid.expression, '"status": "Alpha"');
+    assert.match(invalid.message, /Use "alpha", "beta" or "stable"/);
+    assert.equal(report.issues.find(e => e.code === 'missing-indicator-reference').blocking, true);
+    assert.equal(report.current.filter(e => e.code === 'immature-pack').length, 0);
+});
+
+test('startup: errors in alpha packs do not open the modal; the footer link still counts them', async () => {
+    const elements = [element('X_Consumer', { condition: '$X_Missing' })];
+    const alpha = await startup(elements, { packs: [ctx.validator.packInfo(status('alpha', { elements }), 'packs/x.json')] });
+    assert.equal(alpha.dialog.open, false);
+    assert.equal(alpha.state.tours, 1);
+    assert.equal(alpha.stores.packValidation.report.errors.length, 1);
+    assert.equal(alpha.stores.packValidation.report.blocking.length, 0);
+    assert.equal(alpha.stores.packValidation.countLabel(), ' (1 warning, 1 not blocking)');
+    assert.equal(alpha.stores.packValidation.reason(alpha.stores.packValidation.report.deferred[0]), 'Not blocking: alpha pack.');
+    const stable = await startup(elements, { packs: [ctx.validator.packInfo(status('stable', { elements }), 'packs/x.json')] });
+    assert.equal(stable.dialog.open, true);
+    assert.equal(stable.state.tours, 0);
+    assert.equal(stable.stores.packValidation.countLabel(), ' (1 error)');
+    const clean = await startup([element('X_Q')]);
+    assert.equal(clean.stores.packValidation.countLabel(), '');
+});
+
+test('the modal shows current problems first and collapses the non-blocking ones', () => {
+    const start = html.indexOf('<dialog id="pack-validation-modal"');
+    const modal = html.slice(start, html.indexOf('</dialog>', start));
+    const current = modal.indexOf('report.current');
+    const deferred = modal.indexOf('<details class="pack-validation-deferred"');
+    assert.ok(current > 0 && deferred > current, 'current list precedes the collapsed deferred list');
+    assert.ok(modal.slice(deferred).includes('report.deferred'));
+    assert.match(modal, /report\.blocking\.length \+ ' blocking errors, '/);
+    // Startup decisions use blocking errors, not all errors.
+    assert.ok(html.includes("if (Alpine.store('packValidation').report.blocking.length) {"));
+    assert.ok(!html.includes("report.errors.length) {"));
+});
+
+test('preview and catalog pages load the shared status helper and show the badge', () => {
+    const preview = read('preview.html');
+    const catalog = read('packs.html');
+    for (const page of [preview, catalog]) {
+        assert.ok(page.includes('<script src="./utils/pack-validator.js"></script>'));
+        assert.ok(page.includes('PackValidator.packStatus('));
+        assert.ok(page.includes('PackValidator.statusNotes['));
+        assert.ok(page.includes('status-badge'));
+    }
+    assert.ok(read('styles.css').includes('.status-badge {'));
+    assert.deepEqual(Object.keys(ctx.validator.statusNotes).sort(), ['alpha', 'beta']);
 });

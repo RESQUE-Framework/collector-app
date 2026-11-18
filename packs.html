@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RESQUE Packs</title>
+    <script src="./utils/pack-validator.js"></script>
 </head>
 
 <body>
@@ -94,6 +95,20 @@
             fetch(pack.download_url)
                 .then(response => response.json())
                 .then(content => {
+                    // alpha/beta badge and note (see utils/pack-validator.js).
+                    const status = PackValidator.packStatus(content, pack.path);
+                    const note = PackValidator.statusNotes[status];
+                    if (note) {
+                        const badge = document.createElement('span');
+                        badge.classList.add('status-badge');
+                        badge.innerText = status;
+                        badge.title = note;
+                        title.appendChild(badge);
+                        const statusNote = document.createElement('p');
+                        statusNote.classList.add('status-note');
+                        statusNote.innerText = note;
+                        subtitle.after(statusNote);
+                    }
                     console.log(content.scoring);
                     scoring.innerHTML = scoringToString(content.scoring);
                     indicators.innerHTML = content.elements.map(element => indicatorToString(element)).join('\n');
@@ -147,6 +162,27 @@
         font-style: italic;
         color: gray;
         margin: 0;
+    }
+
+    /* Same look as .status-badge in styles.css, which this page does not load. */
+    .status-badge {
+        display: inline-block;
+        margin-left: 0.4em;
+        padding: 0.05em 0.5em;
+        border: 1px solid #946200;
+        border-radius: 99px;
+        background-color: #fff4d6;
+        color: #6b4700;
+        font-size: 60%;
+        font-weight: bold;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        vertical-align: middle;
+    }
+
+    .status-note {
+        font-style: italic;
+        color: #6b4700;
     }
 
     .box {

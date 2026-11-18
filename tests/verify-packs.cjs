@@ -112,6 +112,8 @@ function harness() {
     run(read('js/js-yaml.min.js'), 'js/js-yaml.min.js');
     fromIndex('const preprocessCondition =', 'const partialHighlight =', ['evaluateConditionInContext', 'preprocessCondition']);
     fromIndex('const checkCompletion =', 'const getProgressColor =', ['checkCompletion']);
+    // index.html loads it in <head>; use() records each pack's status with it.
+    run(read('utils/pack-validator.js'), 'utils/pack-validator.js');
     fromIndex('async function use(config,', '</script>', ['use', 'pick', 'pickExclude']);
     expose(read('menu.js'), ['menu', 'pickAccordingToConfig', 'normalizePublicationConfig', 'normalizePublicationSource', 'parseConfigFile', 'configStructureIssues', 'configQuoteIssues', 'ConfigFileError'], 'menu.js');
     fromIndex('function getQueryConfig(params)', 'const params = new URLSearchParams', ['getQueryConfig']);

@@ -29,12 +29,12 @@ Consequently, **hidden**, **unanswered**, **zero points**, and **not applicable*
 | --- | --- |
 | `core-pub.json` | Main publication questionnaire: 99 elements, including 12 scored elements. Prefix `P`, version `0.9.0`. |
 | `core-meta.json` | Applicant/rater information shared by the research outputs. Prefix `M`, version `0.3.0`. |
-| `core-software.json` | Research software questionnaire. Prefix `S`, version `0.2`; some scoring fields are not implemented by `score2.js`. |
-| `core-data.json` | A minimal data-set pack with one text field. Prefix `D`, version `0.0.1`; no points. |
+| `core-software.json` | Research software questionnaire. Prefix `S`, version `0.2`, status `alpha`; some scoring fields are not implemented by `score2.js`. |
+| `core-data.json` | A minimal data-set pack with one text field. Prefix `D`, version `0.0.1`, status `alpha`; no points. |
 | `user.json` | Example custom questions. Prefix `U`, version `0.1.0`. |
 | `EP/EP-clinical_psychology.json` | Publication extension, prefix `CP`, version `0.2.1`; 16 elements, including 5 scored elements. |
 | `EP/EP-theory_development.json` | Publication extension, prefix `TH`, version `5.0.0`; 34 elements: 25 scored checkboxes, 4 filter questions, 1 explanation, 1 information element, and 3 separators. |
-| `dev/` | Development packs for epistemic goals, multidisciplinarity, practical relevance, and stimuli. |
+| `dev/` | Development packs for epistemic goals, multidisciplinarity, practical relevance, and stimuli. Without a `status` field they count as `alpha`. |
 | `archive/` | Historical definitions. Some use an older, incompatible scoring structure. |
 | `info.json` | A catalog for pack discovery/preview; it is an array, not a questionnaire pack. |
 
@@ -82,6 +82,8 @@ This extension assumes the publication core is loaded alongside it. “Yes” ca
 ### Pack metadata
 
 `prefix` identifies the pack in the assembled version/date maps; it does not automatically prefix question IDs or create a separate answer namespace. Authors must choose distinct IDs themselves. `version`, `date`, and `title` describe the pack. Expansion packs may also contain `license`, `description`, `creators`, and `recommendedCitation`; these describe provenance and do not define scoring.
+
+The optional `status` declares how mature a pack is: `"alpha"` (early development; questions, conditions and points may be wrong), `"beta"` (complete, still being tested) or `"stable"`. It changes neither the questionnaire nor scoring. It decides whether the [browser pack validation](#browser-pack-validation) treats the pack's problems as blocking, and `preview.html` and `packs.html` show an *alpha*/*beta* badge with a short note (also in the exported manual). Without the field, a pack in `packs/dev/` is `alpha` and every other pack is `stable`, including `packs/archive/`. Any other value is reported as an `invalid-pack-status` error and the pack is treated as stable. `core-software.json` and `core-data.json` are currently `alpha`. Set `"status": "stable"` (or remove the field outside `packs/dev/`) only when the validator reports no errors for the pack.
 
 The order of `elements` is the display order. IDs such as `P_Data_Open_AccessLevel` also support visual indentation through `utils/prefixtree.js`. That helper examines neighboring IDs and underscore-separated relationships. Indentation does not create a logical dependency: each child must have its own condition.
 
@@ -499,7 +501,7 @@ pub:
 
 The example shows the relevant subsection; retain the rest of the configuration, including any desired `score_categories`.
 
-`use()` fetches the listed sources and concatenates their elements in source order. The assembled form uses the first pack’s title, keeps version/date maps keyed by pack prefix, and merges default values. It does not validate or resolve duplicate IDs; later defaults overwrite earlier ones with the same key. It aliases the exact old unversioned publication path before fetching but does not deduplicate equivalent sources. `menu()` currently fetches configured sources even for output types with `active: false`; all configured paths must be loadable.
+`use()` fetches the listed sources and concatenates their elements in source order. The assembled form uses the first pack’s title, keeps version/date maps keyed by pack prefix, records each pack's `source`, `prefix`, `version`, `status` (plus `declaredStatus` when the file has one) and element `ids` in a `packs` list, and merges default values. Because the assembled forms are embedded in exported records, `packs` is exported too; RESQUER does not read it. It does not validate or resolve duplicate IDs; later defaults overwrite earlier ones with the same key. It aliases the exact old unversioned publication path before fetching but does not deduplicate equivalent sources. `menu()` currently fetches configured sources even for output types with `active: false`; all configured paths must be loadable.
 
 `menu.js` then applies `include` or `exclude`. Both match **ID prefixes**, using `startsWith()`, rather than exact IDs. For example, excluding `P_Data` excludes `P_Data`, `P_Data_Source`, `P_Data_Open`, and their other elements.
 
@@ -575,11 +577,25 @@ Sources: [assembly helpers](../index.html), [configuration selection](../menu.js
 
 The collector runs [utils/pack-validator.js](../utils/pack-validator.js) locally after the configured packs have been assembled and `include`/`exclude` applied. This includes extensions selected through the URL and all configured output types, even those marked `active: false`. Validation examines the current form definitions, not saved answers or older forms embedded in imported records. It does not evaluate expressions or make additional network requests.
 
-Use **Pack validation** next to FAQ, Tour, and Privacy/Terms of Use to recheck and view all results. The modal opens automatically on startup if there are errors. Warnings alone do not open it. Each result identifies the form, indicator ID, field, missing reference, and original expression/text. Closing the modal allows continued use; validation does not change answers, scores, or configuration.
+Every problem is reported with its honest severity (error or warning), the pack it comes from (`pack`, `packStatus`) and whether it **blocks**. Only errors in stable packs of active output types block:
 
-The report contains two kinds of results. Invalid configuration presets are reported with `code: 'invalid-preset'` and `field: 'preset'`; they are collected while the forms are assembled and listed for every configured output type.
+| | Output type `active: false` | Output type active |
+| --- | --- | --- |
+| **stable pack** | Listed, not blocking (`deferred: 'inactive'`) | **Blocking** |
+| **alpha/beta pack** | Listed, not blocking (`deferred: 'inactive'`) | Listed, not blocking (`deferred: 'alpha'`/`'beta'`), plus one current `immature-pack` warning naming the pack and its number of known problems |
 
-The second rule checks missing indicator/answer references:
+Configuration problems (`invalid-preset`) block in every active output type, whatever the pack status, because they are the deployment's own mistake.
+
+Use **Pack validation** next to FAQ, Tour, and Privacy/Terms of Use to recheck and view all results; the link shows the counts, e.g. *(1 error, 2 warnings, 3 not blocking)*. The modal opens automatically on startup only if there are blocking errors, and the welcome tour is then skipped. Warnings and non-blocking problems never open it. The modal lists current problems first; non-blocking ones are collapsed under *Not blocking*, each with its reason. Each result identifies the form, indicator ID, pack (with an *alpha*/*beta* badge), field, message, and original expression/text. Closing the modal allows continued use; validation does not change answers, scores, or configuration.
+
+The report object contains `issues` (all, current ones first), `errors` and `warnings` (all, by severity), `current`, `deferred`, `blocking` and `indicatorsChecked`. It has four kinds of results:
+
+- `invalid-pack-status` (error): a pack's `status` is not `alpha`, `beta` or `stable`.
+- `immature-pack` (warning): an active output type uses an alpha or beta pack.
+- `invalid-preset` (error), with `field: 'preset'`: invalid configuration presets, collected while the forms are assembled and listed for every configured output type.
+- `missing-indicator-reference`, described below.
+
+The reference rule checks missing indicator/answer references:
 
 - **Error:** a missing reference in `condition`, `validation.condition`, nested option/row conditions, `score`/`scoring` strings (including `not_applicable`), or text highlight conditions.
 - **Warning:** a missing reference in display fields (`title`, `text`, `info`, `background`, `tip_external`, `message`).
@@ -589,9 +605,9 @@ The second rule checks missing indicator/answer references:
 
 For example, setting `pub.exclude: ["P_Suitable"]` produces errors for selected indicators that still refer to `$P_Suitable`. Restore that dependency or update those references. Repeated uses of the same missing reference within a field produce one result.
 
-The shipped software pack currently contains an unresolved `$S_Tests_URL` reference in `S_Tests_Quality.options[0].condition`. It is reported even with `software.active: false`, because that configured pack is still assembled. This check reports declared references even in fields the current renderer/scorer does not enforce; it does not change their evaluation behavior.
+The shipped software pack currently contains an unresolved `$S_Tests_URL` reference in `S_Tests_Quality.options[0].condition`. It is listed under *Not blocking* in the default setup, because software is inactive and the pack is alpha; switching `software: active: true` keeps it non-blocking but adds the `immature-pack` warning. This check reports declared references even in fields the current renderer/scorer does not enforce; it does not change their evaluation behavior.
 
-This is a reference check, not a full schema, expression-syntax, scoring-policy, or load-error validator. Checks for additional problems can be added to the structured report (`issues`, `errors`, `warnings`) without changing the modal. Run the focused regression suite with:
+This is a reference check, not a full schema, expression-syntax, scoring-policy, or load-error validator. Checks for additional problems can be added to the structured report without changing the modal: an issue only needs `code`, `severity`, `form` and `message`, and passes through the same blocking classification. Run the focused regression suite with:
 
 ```bash
 node tests/verify-pack-validator.cjs
@@ -641,6 +657,7 @@ Source: [completion logic](../index.html), [text helpers](../index.html), [expor
 6. Enter a positive answer, then change the parent so the child is hidden. Check whether its stored answer should still earn points, retain its denominator, or be excluded. Encode that decision explicitly.
 7. Add the pack to `sources`, and to `info.json` if it should be discoverable in the preview. Add category cues if its points should appear in a chart.
 8. Check a fresh record and an export/import round trip. Verify both item scores and the denominator; a plausible percentage alone can conceal a mistake.
+9. Keep `"status": "alpha"` while the pack is in development (or develop it in `packs/dev/`). Its problems then never block a deployment, yet **Pack validation** lists them under *Not blocking*. Before a release, open the validation with the pack's output type active, fix every error it reports, and set `"status"` to `"beta"` or `"stable"`.
 
 ## 11. Running the verifier and interpreting results
 

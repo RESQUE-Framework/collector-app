@@ -792,6 +792,9 @@ dialog .buttons {
 .pack-validation-warning { border-color: #946200; }
 .pack-validation-error > strong { color: #b3261e; }
 .pack-validation-warning > strong { color: #946200; }
+.pack-validation-reason { color: #555; font-style: italic; }
+.pack-validation-deferred { margin-top: 1rem; }
+.pack-validation-deferred > summary { cursor: pointer; font-weight: bold; }
 
 .pack-validation-results pre {
     white-space: pre-wrap;
@@ -960,6 +963,24 @@ table {
     color: #555;
     font-size: 80%;
     font-style: italic;
+    white-space: nowrap;
+}
+
+/* Marks a pack whose "status" is alpha or beta (utils/pack-validator.js):
+   in the preview header, the manual export and the pack validation dialog. */
+.status-badge {
+    display: inline-block;
+    margin-left: 0.4em;
+    padding: 0.05em 0.5em;
+    border: 1px solid #946200;
+    border-radius: 99px;
+    background-color: #fff4d6;
+    color: #6b4700;
+    font-size: 75%;
+    font-weight: bold;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    vertical-align: middle;
     white-space: nowrap;
 }
 

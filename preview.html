@@ -16,6 +16,7 @@
     <script src="./js/showdown.min.js"></script>
     <script src="./js/js-yaml.min.js"></script>
     <script src="./menu.js"></script>
+    <script src="./utils/pack-validator.js"></script>
 
     <script type="module">
         import { getDefaultValues } from "./utils/packutils.js";
@@ -82,6 +83,8 @@
 
             const response = await fetch(`./packs/${filename}.json`);
             const data = await response.json();
+            // alpha/beta/stable; shown as a badge (see utils/pack-validator.js).
+            data.packStatus = PackValidator.packStatus(data, `packs/${filename}.json`);
             const { config } = await configPromise;
             const typeConfig = config?.[configSectionOf(filename)];
 
@@ -227,7 +230,9 @@
                 return '';
             }
 
-            const html = `<h2>RESQUE: ${pack.title} (v${pack.version})${pack.license ? ` · ${pack.license}` : ""}</h2>`;
+            const statusNote = PackValidator.statusNotes[pack.packStatus];
+            const html = `<h2>RESQUE: ${pack.title} (v${pack.version})${pack.license ? ` · ${pack.license}` : ""}${statusNote ? ` [${pack.packStatus.toUpperCase()}]` : ""}</h2>`
+                + (statusNote ? `<p><i>${statusNote}</i></p>` : "");
 
             const elementsHTML = pack.elements
                 .filter(el => el.type !== 'separator')
@@ -369,8 +374,13 @@
                     <p style="margin-bottom: 0; color: gray; font-style: italic; font-size: small;"
                         x-show="$store.filter"><b>Selected indicators: </b><span x-text="$store.filter"></span></p>
 
-                    <h2 style="margin-top: 0.5rem;" x-text="`RESQUE: ${$store.pack.title} (v${$store.pack.version})${$store.pack.license ? ` · ${$store.pack.license}` : ''}`">
+                    <h2 style="margin-top: 0.5rem;"><span x-text="`RESQUE: ${$store.pack.title} (v${$store.pack.version})${$store.pack.license ? ` · ${$store.pack.license}` : ''}`"></span><span
+                            class="status-badge" x-show="PackValidator.statusNotes[$store.pack.packStatus]"
+                            x-text="$store.pack.packStatus" :title="PackValidator.statusNotes[$store.pack.packStatus]"></span>
                     </h2>
+
+                    <p class="status-note" x-show="PackValidator.statusNotes[$store.pack.packStatus]"
+                        style="font-style: italic; color: #6b4700;" x-text="PackValidator.statusNotes[$store.pack.packStatus]"></p>
 
                     <p x-show="$store.pack.description"
                         x-html="preprocessText($store.pack.description)"></p>
