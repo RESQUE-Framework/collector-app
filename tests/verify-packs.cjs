@@ -829,6 +829,97 @@ function jsonFiles(dir = 'packs') {
         });
 }
 
+// --- Configuration presets -------------------------------------------------
+// `preset` answers an indicator from config.yaml: the value replaces the pack
+// default, the indicator is hidden instead of excluded, and it stays in the
+// form, so references keep resolving and the answer is still exported.
+
+const committeeConfig = h => plain(h.ctx.jsyaml.load(read('config/config-default-committee.yaml')));
+
+regression('PRESET-COMMITTEE', 'The committee configuration answers RaterType, hides it, and keeps its conditions working', async () => {
+    const h = harness();
+    const forms = await h.assemble(committeeConfig(h));
+    const raterType = forms.meta.elements.find(e => e.id === 'RaterType');
+    assert.equal(raterType.hidden, true);
+    assert.deepEqual(plain(forms.meta.presets), { RaterType: 'Applicant' });
+    const metadata = h.stores.data.input[0];
+    assert.equal(metadata.RaterType, 'Applicant');
+    assert.deepEqual(plain(metadata.presets), { meta: { RaterType: 'Applicant' } });
+    // The applicant branches of core-pub stay active; the rater branch does not.
+    const publication = plain(h.stores.data.createResearchOutput('pub'));
+    assert.equal(h.uiEval("meta$RaterType === 'Applicant'", publication), true);
+    assert.equal(h.uiEval("$P_Suitable === 'Yes' && meta$RaterType != 'Applicant'", { ...publication, P_Suitable: 'Yes' }), false);
+    return { RaterType: metadata.RaterType, presets: plain(metadata.presets) };
+});
+
+regression('PRESET-COMPLETION', 'A hidden preset is no part of the completion progress', async () => {
+    const h = harness();
+    await h.assemble(committeeConfig(h));
+    const withPreset = plain(h.ctx.checkCompletion(h.stores.data.input[0])).progress;
+    const forms = await h.assemble(h.defaultConfig());
+    const withQuestion = plain(h.ctx.checkCompletion(h.stores.data.input[0])).progress;
+    assert.equal(withQuestion.total - withPreset.total, 1);
+    assert.ok(forms.meta.elements.find(e => e.id === 'RaterType').hidden === undefined);
+    return { presetTotal: withPreset.total, questionTotal: withQuestion.total };
+});
+
+regression('PRESET-EXPORT', 'Preset answers and the preset record are exported', async () => {
+    const h = harness();
+    await h.assemble(committeeConfig(h));
+    const exported = plain(h.ctx.filterExport(plain(h.stores.data.input[0])));
+    assert.equal(exported.RaterType, 'Applicant');
+    assert.deepEqual(exported.presets, { meta: { RaterType: 'Applicant' } });
+    // The applicant branches stay alive; the external-rater follow-up does not.
+    assert.equal(Object.hasOwn(exported, 'MeritStatement'), true);
+    assert.equal(Object.hasOwn(exported, 'ExternalRaterName'), false);
+    return { RaterType: exported.RaterType, presets: exported.presets };
+});
+
+regression('PRESET-IMPORT', 'A loaded file cannot reintroduce an answer the configuration presets', async () => {
+    const h = harness();
+    await h.assemble(committeeConfig(h));
+    const metadata = plain(h.stores.data.input[0]);
+    metadata.RaterType = 'External';
+    metadata.ExternalRaterName = 'Someone';
+    await h.ctx.handleLoad([{ text: async () => JSON.stringify([metadata]) }]);
+    assert.equal(h.stores.data.input[0].RaterType, 'Applicant');
+    assert.deepEqual(plain(h.stores.data.input[0].presets), { meta: { RaterType: 'Applicant' } });
+    return { RaterType: h.stores.data.input[0].RaterType, alerts: h.alerts };
+});
+
+regression('PRESET-NONE', 'Without presets the indicator stays visible and no preset record is written', async () => {
+    const h = harness();
+    const forms = await h.assemble(h.defaultConfig());
+    assert.deepEqual(plain(forms.meta.presets), {});
+    assert.deepEqual(plain(forms.meta.presetIssues), []);
+    assert.equal(Object.hasOwn(h.stores.data.input[0], 'presets'), false);
+    const exported = plain(h.ctx.filterExport(plain(h.stores.data.input[0])));
+    assert.equal(Object.hasOwn(exported, 'presets'), false);
+    assert.equal(exported.RaterType, 'Applicant');
+    return { presets: plain(forms.meta.presets) };
+});
+
+regression('PRESET-PREVIEW', 'The preview resolves the configuration section and marks preset indicators as hidden', () => {
+    const h = harness();
+    // Run the preview's own preset helpers.
+    vm.runInContext(between(read('preview.html'), 'const configSectionOf =', 'const getPack =', 'preview.html') +
+        '\nglobalThis.configSectionOf = configSectionOf;\nglobalThis.formatPresetValue = formatPresetValue;',
+        h.ctx, { filename: 'preview.html' });
+    assert.equal(h.ctx.configSectionOf('core-meta'), 'meta');
+    assert.equal(h.ctx.configSectionOf('core-software'), 'software');
+    assert.equal(h.ctx.configSectionOf('archive/core-pubs-0_8_2'), 'pub');
+    assert.equal(h.ctx.configSectionOf('EP/EP-theory_development'), 'pub');
+    assert.equal(h.ctx.formatPresetValue('Applicant'), 'Applicant');
+    assert.equal(h.ctx.formatPresetValue(['NewOwn', 'Simulated']), 'NewOwn, Simulated');
+    assert.equal(h.ctx.formatPresetValue([]), 'nothing selected');
+    const previewed = plain(h.ctx.applyPresets(pack('core-meta'), committeeConfig(h).meta));
+    const raterType = previewed.elements.find(e => e.id === 'RaterType');
+    assert.equal(raterType.hidden, true);
+    assert.equal(raterType.default, 'Applicant');
+    assert.equal(previewed.elements.find(e => e.id === 'ORCID').hidden, undefined);
+    return { hidden: raterType.hidden, value: h.ctx.formatPresetValue(raterType.default) };
+});
+
 async function main() {
     for (const file of ['index.html', 'preview.html', 'menu.js', 'utils/score2.js', 'utils/packutils.js', 'config/config-default.yaml']) {
         if (!fs.existsSync(path.join(root, file))) throw new Error(`Not a repository root: missing ${file} in ${root}`);
@@ -855,7 +946,7 @@ async function main() {
     const failed = results.filter(result => result.status === 'failed').length;
     const invalidJSON = jsonParsing.filter(result => !result.valid).length;
     const reproduced = count('known-issue', 'reproduced');
-    const runtimeFiles = ['index.html', 'preview.html', 'menu.js', 'utils/score2.js', 'utils/packutils.js', 'utils/keyalias.js', 'builder.html', 'config/config-default.yaml', ...jsonFiles()];
+    const runtimeFiles = ['index.html', 'preview.html', 'menu.js', 'utils/score2.js', 'utils/packutils.js', 'utils/keyalias.js', 'builder.html', 'config/config-default.yaml', 'config/config-default-committee.yaml', ...jsonFiles()];
     const report = {
         repository: root,
         nodeVersion: process.version,

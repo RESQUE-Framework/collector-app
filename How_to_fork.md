@@ -46,6 +46,8 @@ In order to have a working website, you need to enable GitHub Pages for your for
 
 **1. In the main menu, go to the *Code* tab**, click on the `config` folder (this brings you to another view of all files), and then click in the left file tree on the file `config/config-default.yaml`.
 
+> :bulb: If your app is meant for a hiring committee - i.e., everybody who fills in the form is an applicant, never an external rater - start from `config/config-default-committee.yaml` instead. It has the same structure as the default file, but enables the committee limits, shows the welcome message, hides the beta warning, carries an example title that you replace with your own (step 4.1), and answers the "Who enters the data?" question for all users (see step 9 below). Both files are templates; the app only reads `config/config.yaml` and falls back to `config/config-default.yaml`.
+
 ![](img/fork5a.png)
 
 **2. Click on the pencil icon (top right) to edit the file**
@@ -119,6 +121,34 @@ You can find the ID of each indicator in the packs themselves (e.g., see file `p
 ![](img/fork7.png)
 
 > :bulb: The generated report relies on the existence of some indicators - whenever you exclude an indicator, this bears the risk of breaking the report generation. If in doubt, you can consult the team which indicators are essential for the report and which not.
+
+**9. Optional: Answer an indicator for all users instead of asking it (`preset`)**
+
+Some indicators should not be asked in your deployment, but other indicators still depend on the answer. The most common case is `RaterType` ("Who enters the data?"): in a hiring committee deployment everybody is an applicant, and several questions in `core-meta.json` and `core-pub.json` are shown only to applicants.
+
+Do **not** use `exclude` for such an indicator: excluding removes it from the form, and every question that refers to it is then reported as an error in the app's *Pack validation*. Instead, answer it in `config.yaml`:
+
+```yaml
+meta:
+  sources: ["packs/core-meta.json"]
+  exclude: []
+  preset:
+    RaterType: "Applicant"
+```
+
+A preset indicator is never shown and cannot be changed by the user, but it keeps its configured answer: all questions that depend on it behave as if the user had given that answer, and the answer is part of the export. Note the difference to `exclude`:
+
+| | Shown in the form | Answer available to other questions | Part of the export |
+| --- | --- | --- | --- |
+| normal indicator | yes | yes | yes |
+| `preset` | no | yes (the configured value) | yes |
+| `exclude` | no | no | no |
+
+Three details:
+
+1. `preset` uses the **exact** indicator ID, while `include`/`exclude` match ID prefixes.
+2. For single-choice questions (radio, dropdown, table) use the ID of the option, e.g. `"Applicant"`; for checkboxes use a list of option IDs, e.g. `["NewOwn"]`. A value that does not exist is reported in *Pack validation* and is not applied.
+3. The export of the metadata record lists all preset answers under `presets`, so the committee can tell a configured answer apart from an answer given by the applicant. `preview.html` marks preset indicators as *hidden* and shows their configured value.
 
 
 

@@ -453,7 +453,7 @@ Core examples are `P_Suitable: "Yes"`, `P_Data_Source_NewOwn: true`, and `P_CRed
 
 Checkbox defaults must be arrays containing valid option IDs. For example, `"default": []` is a valid all-unselected state; `"default": "A"`, `"default": false`, and an array naming an unknown option throw clear errors. Every checkbox key is initialized, whether or not it is selected. These behaviors are covered by the verifier's `DEFAULT-*` regression checks.
 
-Defaults are applied when creating outputs and filling missing keys during import; they are not recalculated when a visibility condition changes. The import handler still takes its default definitions from the previously open dataset, which can disagree with the incoming file (**DATA-02**). Generated checkbox/table keys still have a separate export-ownership problem (**DATA-01**); fixing initialization did not resolve that filtering behavior.
+A configuration `preset` replaces an element's `default` before this helper runs, so a preset answer reaches storage, scoring, and export through the same mechanism (see section 8). Defaults are applied when creating outputs and filling missing keys during import; they are not recalculated when a visibility condition changes. The import handler still takes its default definitions from the previously open dataset, which can disagree with the incoming file (**DATA-02**). Generated checkbox/table keys still have a separate export-ownership problem (**DATA-01**); fixing initialization did not resolve that filtering behavior.
 
 Source: [default-value helper](../utils/packutils.js).
 
@@ -485,6 +485,42 @@ Two important configuration details:
 
 Filtering occurs after defaults are built, so defaults for excluded elements remain in the assembled default map. Including a child does not automatically include the parent questions it depends on. Keep dependencies together. The browser validator reports references to excluded indicators even when their defaults remain; those defaults do not make the indicators part of the selected set.
 
+### Presets: answering an indicator in the configuration
+
+`exclude` removes an indicator completely: it disappears from the form, from the export, and from every condition that refers to it. That is the wrong tool when a deployment knows the answer and other indicators depend on it. A hiring committee, for example, knows that every respondent is the applicant, while `core-meta.json` and `core-pub.json` use `meta$RaterType` to decide which questions to show.
+
+`preset` answers such an indicator in `config.yaml`:
+
+```yaml
+meta:
+  sources: ["packs/core-meta.json"]
+  exclude: []
+  preset:
+    RaterType: "Applicant"
+```
+
+`menu.js` applies presets with `applyPresets()` **after** `include`/`exclude`, so a preset can only answer an indicator that is part of the selected form. For each entry it replaces the element's `default` with the configured value, marks the element `hidden`, and expands the answer through `getDefaultValues()`, so checkbox and table presets produce their generated `<id>_<optionID>` and `<id>_<rowID>` keys. The results are available on the assembled form as `presets` (the configured values) and `presetValues` (the expanded answers).
+
+| | Shown in the form | Answer available to conditions and scoring | In the export |
+| --- | --- | --- | --- |
+| Normal indicator | Yes | Yes | Yes, if its condition is true |
+| `preset` | No | Yes, the configured value | Yes |
+| `exclude` | No | No; references to it become validation errors | No |
+
+Consequences worth knowing:
+
+- Hiding is only reachable through answering. There is no `hide` list, so a hidden indicator can never be undefined, and packs do not need a `"condition": "false"` for deployment decisions.
+- Preset IDs are matched **exactly**, unlike the prefix matching of `include`/`exclude`.
+- Presets overwrite answers restored from local storage or loaded from a file (`enforcePresets()` in `index.html`), because the form offers no way to correct a hidden answer.
+- The metadata record carries the applied presets as `presets` (output type -> indicator ID -> value), and the export keeps that key. Consumers can therefore distinguish a configured answer from one the respondent gave.
+- A preset value is a normal answer for `score2.js`; it is not treated specially.
+- `checkCompletion()` ignores hidden elements, so a preset neither raises nor lowers the displayed progress.
+- Invalid presets are never applied. An unknown or excluded ID, an unknown option ID, a checkbox value that is not a list, and `info`/`separator` elements are collected as `presetIssues` during assembly and reported by the browser validator as `invalid-preset` errors.
+
+`preview.html` reads the same configuration and marks preset indicators with a *hidden · preset: value* badge, so a configured questionnaire can be reviewed and exported as a manual without starting the collector.
+
+`config/config-default-committee.yaml` is a complete example. It is a template: the app reads `config/config.yaml` and falls back to `config/config-default.yaml`, so copy it before use.
+
 The assembled form definitions are embedded in the metadata record as `forms`. `score2.js` reads those embedded definitions. When testing a changed pack with previously saved data, check which form definitions are embedded in that data; changing the source JSON does not by itself guarantee that an existing record is scored with the new definitions.
 
 ### Query-based pack selection
@@ -514,7 +550,9 @@ The collector runs [utils/pack-validator.js](../utils/pack-validator.js) locally
 
 Use **Pack validation** next to FAQ, Tour, and Privacy/Terms of Use to recheck and view all results. The modal opens automatically on startup if there are errors. Warnings alone do not open it. Each result identifies the form, indicator ID, field, missing reference, and original expression/text. Closing the modal allows continued use; validation does not change answers, scores, or configuration.
 
-The first rule checks missing indicator/answer references:
+The report contains two kinds of results. Invalid configuration presets are reported with `code: 'invalid-preset'` and `field: 'preset'`; they are collected while the forms are assembled and listed for every configured output type.
+
+The second rule checks missing indicator/answer references:
 
 - **Error:** a missing reference in `condition`, `validation.condition`, nested option/row conditions, `score`/`scoring` strings (including `not_applicable`), or text highlight conditions.
 - **Warning:** a missing reference in display fields (`title`, `text`, `info`, `background`, `tip_external`, `message`).

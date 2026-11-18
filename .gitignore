@@ -2,3 +2,6 @@ _internal
 reports/*
 verification-results.json
 AGENTS.md
+
+# macOS Finder metadata, in any directory
+.DS_Store

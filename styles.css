@@ -906,6 +906,21 @@ table {
     pointer-events: none;
 }
 
+/* Marks an indicator that the configuration answers with a `preset`:
+   never shown in the collector, shown with its value in the preview. */
+.preset-badge {
+    display: inline-block;
+    margin-right: 0.4em;
+    padding: 0.05em 0.45em;
+    border: 1px solid #b0b0b0;
+    border-radius: 99px;
+    background-color: #f0f0f0;
+    color: #555;
+    font-size: 80%;
+    font-style: italic;
+    white-space: nowrap;
+}
+
 @media print {
 
     body {
