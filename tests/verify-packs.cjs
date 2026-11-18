@@ -110,11 +110,12 @@ function harness() {
     expose(read('utils/packutils.js').replace(/^export\s+(?=const )/gm, ''), ['getDefaultValues', 'getInitialValues', 'withDefaults', 'isBlankAnswer'], 'utils/packutils.js');
     expose(read('utils/keyalias.js').replace(/^export\s+(?=const )/gm, ''), ['renameOldKeys'], 'utils/keyalias.js');
     run(read('js/js-yaml.min.js'), 'js/js-yaml.min.js');
-    fromIndex('const preprocessCondition =', 'const partialHighlight =', ['evaluateConditionInContext', 'preprocessCondition']);
+    expose(read('utils/expressions.js'), ['preprocessCondition', 'insertValuesIntoCondition'], 'utils/expressions.js');
+    fromIndex('const evaluateCondition =', 'const partialHighlight =', ['evaluateConditionInContext']);
     fromIndex('const checkCompletion =', 'const getProgressColor =', ['checkCompletion']);
     // index.html loads it in <head>; use() records each pack's status with it.
     run(read('utils/pack-validator.js'), 'utils/pack-validator.js');
-    fromIndex('async function use(config,', '</script>', ['use', 'pick', 'pickExclude']);
+    expose(read('utils/assemble.js'), ['use', 'pick', 'pickExclude'], 'utils/assemble.js');
     expose(read('menu.js'), ['menu', 'pickAccordingToConfig', 'normalizePublicationConfig', 'normalizePublicationSource', 'parseConfigFile', 'configStructureIssues', 'configQuoteIssues', 'ConfigFileError'], 'menu.js');
     fromIndex('function getQueryConfig(params)', 'const params = new URLSearchParams', ['getQueryConfig']);
     fromIndex('const reportStartupError =', 'loadConfigSource().then(', ['reportStartupError', 'loadConfigSource']);

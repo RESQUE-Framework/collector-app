@@ -171,7 +171,7 @@ The current `number` renderer is a text input. Numeric-looking answers can there
 
 Conditions are **strings containing expressions**. They are not plain JavaScript as written: the app first expands its shorthand and field references, then evaluates the result with JavaScript `eval()`.
 
-For the UI, this logic lives in `index.html`. `score2.js` contains a separate implementation for scoring. `packutils.js` initializes defaults; it does not evaluate conditions.
+For the UI, the shorthand expansion and reference substitution live in `utils/expressions.js` (also used by the pack validator), and `index.html` evaluates the result. `score2.js` contains a separate implementation for scoring. `packutils.js` initializes defaults; it does not evaluate conditions.
 
 ### 5.1 Field references
 
@@ -310,7 +310,7 @@ The sugar uses regular-expression replacement and `split(",")`, not a full parse
 
 For example, `$Answer =|= []` expands to invalid `()`, not to false. A malformed expression can interrupt evaluation because these helpers do not catch evaluation errors locally.
 
-Sources: [UI expression helpers](../index.html), [scoring expression helpers](../utils/score2.js).
+Sources: [UI expression helpers](../utils/expressions.js), [UI evaluation](../index.html), [scoring expression helpers](../utils/score2.js).
 
 ## 6. How scoring works
 
@@ -571,7 +571,7 @@ In versioned previews, `showPoints=true` is currently lost in the query resolver
 
 The preview still depends on remote Alpine and manual-export scripts; it is not currently an offline-only tool (**UI-03**).
 
-Sources: [assembly helpers](../index.html), [configuration selection](../menu.js).
+Sources: [assembly helpers](../utils/assemble.js), [configuration selection](../menu.js).
 
 ### Browser pack validation
 
