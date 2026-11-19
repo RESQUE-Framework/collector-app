@@ -1,7 +1,8 @@
 {
     "prefix": "S",
-    "version": "0.2",
-    "date": "2026-05-06",
+    "version": "0.3",
+    "status": "alpha",
+    "date": "2026-11-19",
     "title": "Software Project",
     "elements": [
         {
@@ -21,61 +22,72 @@
         },
         {
             "id": "S_License",
-            "type": "dropdown",
+            "type": "radio",
             "title": "License",
             "eval_dimension": "rigor",
             "score": {
-                "factor": 0.5,
-                "condition": "$S_License =|= ['ClosedSource', 'NoLicense'] || !($S_URL)"
+                "condition": "exists($S_URL)"
             },
             "options": [
                 {
                     "id": "NoLicense",
-                    "text": "No license"
+                    "text": "No license",
+                    "value": 0
                 },
                 {
                     "id": "CC0",
-                    "text": "CC0"
+                    "text": "CC0",
+                    "value": 1
                 },
                 {
                     "id": "Apache2",
-                    "text": "Apache-2.0"
+                    "text": "Apache-2.0",
+                    "value": 1
                 },
                 {
                     "id": "LGPL2",
-                    "text": "(L)GPL-2.0"
+                    "text": "(L)GPL-2.0",
+                    "value": 1
                 },
                 {
                     "id": "LGPL3Only",
-                    "text": "(L)GPL-3.0-only"
+                    "text": "(L)GPL-3.0-only",
+                    "value": 1
                 },
                 {
                     "id": "MPL2",
-                    "text": "MPL-2.0"
+                    "text": "MPL-2.0",
+                    "value": 1
                 },
                 {
                     "id": "BSD2Clause",
-                    "text": "BSD-2-Clause"
+                    "text": "BSD-2-Clause",
+                    "value": 1
                 },
                 {
                     "id": "BSD3Clause",
-                    "text": "BSD-3-Clause"
+                    "text": "BSD-3-Clause",
+                    "value": 1
                 },
                 {
                     "id": "MIT",
-                    "text": "MIT"
+                    "text": "MIT",
+                    "value": 1
                 },
                 {
                     "id": "CCBY",
-                    "text": "CC-BY / CC-BY-SA"
+                    "text": "CC-BY / CC-BY-SA",
+                    "value": 1
                 },
                 {
                     "id": "OtherOpenSource",
-                    "text": "Other open source"
+                    "text": "Other open source",
+                    "value": 1
                 },
                 {
                     "id": "ClosedSource",
-                    "text": "Closed source"
+                    "text": "Closed source",
+                    "value": 0
                 }
             ]
         },
@@ -179,6 +191,12 @@
             ]
         },
         {
+            "id": "S_Tests_URL",
+            "type": "text",
+            "title": "⤷ URL to the test code",
+            "condition": "$S_Tests === 'Yes' && $S_Tests_Quality_OpenSource"
+        },
+        {
             "id": "S_Documentation",
             "type": "checkbox",
             "title": "Documentation",
@@ -196,15 +214,18 @@
                 },
                 {
                     "id": "UserFacingDocumentation",
-                    "text": "User facing documentation exists"
+                    "text": "User facing documentation exists",
+                    "value": 0.5
                 },
                 {
                     "id": "LongformDocumentation",
-                    "text": "Longform documentation exists"
+                    "text": "Longform documentation exists",
+                    "value": 0.5
                 },
                 {
                     "id": "DeveloperDocumentation",
-                    "text": "Developer documentation exists"
+                    "text": "Developer documentation exists",
+                    "value": 0.5
                 }
             ]
         },

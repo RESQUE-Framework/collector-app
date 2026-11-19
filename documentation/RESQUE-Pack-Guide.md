@@ -27,14 +27,14 @@ Consequently, **hidden**, **unanswered**, **zero points**, and **not applicable*
 
 | File or directory | Role |
 | --- | --- |
-| `core-pub.json` | Main publication questionnaire: 99 elements, including 12 scored elements. Prefix `P`, version `0.9.0`. |
+| `core-pub.json` | Main publication questionnaire: 99 elements, including 12 scored elements. Prefix `P`, version `0.9.1`. |
 | `core-meta.json` | Applicant/rater information shared by the research outputs. Prefix `M`, version `0.3.0`. |
-| `core-software.json` | Research software questionnaire. Prefix `S`, version `0.2`; some scoring fields are not implemented by `score2.js`. |
-| `core-data.json` | A minimal data-set pack with one text field. Prefix `D`, version `0.0.1`; no points. |
-| `user.json` | Example custom questions. Prefix `U`, version `0.1.0`. |
-| `EP/EP-clinical_psychology.json` | Publication extension, prefix `CP`, version `0.2.1`; 16 elements, including 5 scored elements. |
-| `EP/EP-theory_development.json` | Publication extension, prefix `TH`, version `5.0.0`; 34 elements: 25 scored checkboxes, 4 filter questions, 1 explanation, 1 information element, and 3 separators. |
-| `dev/` | Development packs for epistemic goals, multidisciplinarity, practical relevance, and stimuli. |
+| `core-software.json` | Research software questionnaire. Prefix `S`, version `0.3`, status `alpha`; some scoring rules are not implemented by `score2.js` (SCORE-05). |
+| `core-data.json` | A minimal data-set pack with one text field. Prefix `D`, version `0.1.0`, status `alpha`; no points. |
+| `user.json` | Example custom questions. Prefix `U`, version `0.1.1`. |
+| `EP/EP-clinical_psychology.json` | Publication extension, prefix `CP`, version `0.2.1`, status `stable`; 16 elements, including 5 scored elements. |
+| `EP/EP-theory_development.json` | Publication extension, prefix `TH`, version `5.0.0`, status `beta`; 34 elements: 25 scored checkboxes, 4 filter questions, 1 explanation, 1 information element, and 3 separators. |
+| `dev/` | Development packs for epistemic goals (`alpha`), multidisciplinarity, practical relevance and stimuli (each `stable`). A pack in `dev/` without a `status` field counts as `alpha`. |
 | `archive/` | Historical definitions. Some use an older, incompatible scoring structure. |
 | `info.json` | A catalog for pack discovery/preview; it is an array, not a questionnaire pack. |
 
@@ -82,6 +82,8 @@ This extension assumes the publication core is loaded alongside it. “Yes” ca
 ### Pack metadata
 
 `prefix` identifies the pack in the assembled version/date maps; it does not automatically prefix question IDs or create a separate answer namespace. Authors must choose distinct IDs themselves. `version`, `date`, and `title` describe the pack. Expansion packs may also contain `license`, `description`, `creators`, and `recommendedCitation`; these describe provenance and do not define scoring.
+
+The optional `status` declares how mature a pack is: `"alpha"` (early development; questions, conditions and points may be wrong), `"beta"` (complete, still being tested) or `"stable"`. It changes neither the questionnaire nor scoring. It decides whether the [browser pack validation](#browser-pack-validation) treats the pack's problems as blocking, and `preview.html` and `packs.html` show an *alpha*/*beta* badge with a short note (also in the exported manual). Without the field, a pack in `packs/dev/` is `alpha` and every other pack is `stable`, including `packs/archive/`. Any other value is reported as an `invalid-pack-status` error and the pack is treated as stable. Currently `core-software.json`, `core-data.json` and `dev/EP-epistemic_goals.json` are `alpha`, `EP/EP-theory_development.json` is `beta`, and `EP/EP-clinical_psychology.json` and the other `dev/` packs declare `stable`. Set `"status": "stable"` (or remove the field outside `packs/dev/`) only when the validator reports no errors for the pack.
 
 The order of `elements` is the display order. IDs such as `P_Data_Open_AccessLevel` also support visual indentation through `utils/prefixtree.js`. That helper examines neighboring IDs and underscore-separated relationships. Indentation does not create a logical dependency: each child must have its own condition.
 
@@ -169,7 +171,7 @@ The current `number` renderer is a text input. Numeric-looking answers can there
 
 Conditions are **strings containing expressions**. They are not plain JavaScript as written: the app first expands its shorthand and field references, then evaluates the result with JavaScript `eval()`.
 
-For the UI, this logic lives in `index.html`. `score2.js` contains a separate implementation for scoring. `packutils.js` initializes defaults; it does not evaluate conditions.
+For the UI, the shorthand expansion and reference substitution live in `utils/expressions.js` (also used by the pack validator), and `index.html` evaluates the result. `score2.js` contains a separate implementation for scoring. `packutils.js` initializes defaults; it does not evaluate conditions.
 
 ### 5.1 Field references
 
@@ -308,7 +310,7 @@ The sugar uses regular-expression replacement and `split(",")`, not a full parse
 
 For example, `$Answer =|= []` expands to invalid `()`, not to false. A malformed expression can interrupt evaluation because these helpers do not catch evaluation errors locally.
 
-Sources: [UI expression helpers](../index.html), [scoring expression helpers](../utils/score2.js).
+Sources: [UI expression helpers](../utils/expressions.js), [UI evaluation](../index.html), [scoring expression helpers](../utils/score2.js).
 
 ## 6. How scoring works
 
@@ -330,7 +332,7 @@ An element does not need a `score` object to contribute points. A `radio` or `ch
 | `checkbox` | Sum of all option values | Sum of values for keys whose stored value is exactly boolean `true` |
 | All other types | Zero | Zero |
 
-`dropdown` and `tabular_radio` are not scored, even if options contain values. Checkbox strings such as `"true"` do not earn points because the scorer tests `=== true`.
+`dropdown` and `tabular_radio` are not scored, even if options contain values. For dropdowns this is a known limitation (**SCORE-06**) that should be fixed in `score2.js` and its identical copy in RESQUER (`inst/js/score2.js`); until then, use `radio` for every scored single choice. The pack validator warns about values on dropdowns and tables (`unscored-type-with-values`), and no current pack has a scored dropdown (`S_License` in `core-software.json` became a radio on 2026-11-19). Checkbox strings such as `"true"` do not earn points because the scorer tests `=== true`.
 
 ### 6.2 The actual evaluation sequence
 
@@ -499,7 +501,7 @@ pub:
 
 The example shows the relevant subsection; retain the rest of the configuration, including any desired `score_categories`.
 
-`use()` fetches the listed sources and concatenates their elements in source order. The assembled form uses the first pack’s title, keeps version/date maps keyed by pack prefix, and merges default values. It does not validate or resolve duplicate IDs; later defaults overwrite earlier ones with the same key. It aliases the exact old unversioned publication path before fetching but does not deduplicate equivalent sources. `menu()` currently fetches configured sources even for output types with `active: false`; all configured paths must be loadable.
+`use()` fetches the listed sources and concatenates their elements in source order. The assembled form uses the first pack’s title, keeps version/date maps keyed by pack prefix, records each pack's `source`, `prefix`, `version`, `status` (plus `declaredStatus` when the file has one) and element `ids` in a `packs` list, and merges default values. Because the assembled forms are embedded in exported records, `packs` is exported too; RESQUER does not read it. It does not validate or resolve duplicate IDs; later defaults overwrite earlier ones with the same key. It aliases the exact old unversioned publication path before fetching but does not deduplicate equivalent sources. `menu()` currently fetches configured sources even for output types with `active: false`; all configured paths must be loadable.
 
 `menu.js` then applies `include` or `exclude`. Both match **ID prefixes**, using `startsWith()`, rather than exact IDs. For example, excluding `P_Data` excludes `P_Data`, `P_Data_Source`, `P_Data_Open`, and their other elements.
 
@@ -569,17 +571,31 @@ In versioned previews, `showPoints=true` is currently lost in the query resolver
 
 The preview still depends on remote Alpine and manual-export scripts; it is not currently an offline-only tool (**UI-03**).
 
-Sources: [assembly helpers](../index.html), [configuration selection](../menu.js).
+Sources: [assembly helpers](../utils/assemble.js), [configuration selection](../menu.js).
 
 ### Browser pack validation
 
 The collector runs [utils/pack-validator.js](../utils/pack-validator.js) locally after the configured packs have been assembled and `include`/`exclude` applied. This includes extensions selected through the URL and all configured output types, even those marked `active: false`. Validation examines the current form definitions, not saved answers or older forms embedded in imported records. It does not evaluate expressions or make additional network requests.
 
-Use **Pack validation** next to FAQ, Tour, and Privacy/Terms of Use to recheck and view all results. The modal opens automatically on startup if there are errors. Warnings alone do not open it. Each result identifies the form, indicator ID, field, missing reference, and original expression/text. Closing the modal allows continued use; validation does not change answers, scores, or configuration.
+Every problem is reported with its honest severity (error or warning), the pack it comes from (`pack`, `packStatus`) and whether it **blocks**. Only errors in stable packs of active output types block:
 
-The report contains two kinds of results. Invalid configuration presets are reported with `code: 'invalid-preset'` and `field: 'preset'`; they are collected while the forms are assembled and listed for every configured output type.
+| | Output type `active: false` | Output type active |
+| --- | --- | --- |
+| **stable pack** | Listed, not blocking (`deferred: 'inactive'`) | **Blocking** |
+| **alpha/beta pack** | Listed, not blocking (`deferred: 'inactive'`) | Listed, not blocking (`deferred: 'alpha'`/`'beta'`), plus one current `immature-pack` warning naming the pack and its number of known problems |
 
-The second rule checks missing indicator/answer references:
+Configuration problems (`invalid-preset`) block in every active output type, whatever the pack status, because they are the deployment's own mistake.
+
+Use **Pack validation** next to FAQ, Tour, and Privacy/Terms of Use to recheck and view all results; the link shows the counts, e.g. *(1 error, 2 warnings, 3 not blocking)*. The modal opens automatically on startup only if there are blocking errors, and the welcome tour is then skipped. Warnings and non-blocking problems never open it. The modal lists current problems first; non-blocking ones are collapsed under *Not blocking*, each with its reason. Each result identifies the form, indicator ID, pack (with an *alpha*/*beta* badge), field, message, and original expression/text. Closing the modal allows continued use; validation does not change answers, scores, or configuration.
+
+The report object contains `issues` (all, current ones first), `errors` and `warnings` (all, by severity), `current`, `deferred`, `blocking` and `indicatorsChecked`. It has four kinds of results:
+
+- `invalid-pack-status` (error): a pack's `status` is not `alpha`, `beta` or `stable`.
+- `immature-pack` (warning): an active output type uses an alpha or beta pack.
+- `invalid-preset` (error), with `field: 'preset'`: invalid configuration presets, collected while the forms are assembled and listed for every configured output type.
+- `missing-indicator-reference`, described below.
+
+The reference rule checks missing indicator/answer references:
 
 - **Error:** a missing reference in `condition`, `validation.condition`, nested option/row conditions, `score`/`scoring` strings (including `not_applicable`), or text highlight conditions.
 - **Warning:** a missing reference in display fields (`title`, `text`, `info`, `background`, `tip_external`, `message`).
@@ -589,13 +605,98 @@ The second rule checks missing indicator/answer references:
 
 For example, setting `pub.exclude: ["P_Suitable"]` produces errors for selected indicators that still refer to `$P_Suitable`. Restore that dependency or update those references. Repeated uses of the same missing reference within a field produce one result.
 
-The shipped software pack currently contains an unresolved `$S_Tests_URL` reference in `S_Tests_Quality.options[0].condition`. It is reported even with `software.active: false`, because that configured pack is still assembled. This check reports declared references even in fields the current renderer/scorer does not enforce; it does not change their evaluation behavior.
+The shipped software pack currently contains an unresolved `$S_Tests_URL` reference in `S_Tests_Quality.options[0].condition`. It is listed under *Not blocking* in the default setup, because software is inactive and the pack is alpha; switching `software: active: true` keeps it non-blocking but adds the `immature-pack` warning. This check reports declared references even in fields the current renderer/scorer does not enforce; it does not change their evaluation behavior.
 
-This is a reference check, not a full schema, expression-syntax, scoring-policy, or load-error validator. Checks for additional problems can be added to the structured report (`issues`, `errors`, `warnings`) without changing the modal. Run the focused regression suite with:
+Besides missing references, the validator checks each pack file as written and the forms assembled from the configuration; see [Validator rules](#validator-rules). In the collector, problems of elements removed by `include`/`exclude` are not reported, because those elements are not used. Pack files are checked as fetched, before presets change the elements. Results carry the pack file and, where possible, the line of the element in it.
+
+Run the focused regression suite with:
 
 ```bash
 node tests/verify-pack-validator.cjs
 ```
+
+### Checking packs outside the collector
+
+The same checks run in three places:
+
+1. **In the collector:** the *Pack validation* dialog, for the configuration the app is running with (above).
+2. **In the browser, without the collector:** [validator.html](../validator.html) checks this app's configuration, every configured and catalogued pack (`packs/info.json`) on its own, and a pack file you choose or drop onto the page. The file is read locally and never uploaded. Publication packs are checked together with `core-meta` and `core-pub` unless you untick that option, so references such as `$P_Suitable` resolve. The dialog in the collector links to this page.
+3. **On the command line:** `scripts/validate-packs.cjs` needs Node.js only (no npm):
+
+```bash
+node scripts/validate-packs.cjs                      # the configuration, as the collector does
+node scripts/validate-packs.cjs --all                # configuration plus every pack in packs/
+node scripts/validate-packs.cjs packs/EP/EP-my_pack.json           # one pack, with core-meta and core-pub
+node scripts/validate-packs.cjs --strict packs/dev/EP-my_pack.json # also fail on warnings and non-blocking errors
+node scripts/validate-packs.cjs --alone --with packs/core-pub.json my-pack.json   # choose dependencies yourself
+node scripts/validate-packs.cjs --format json --all  # machine-readable report
+node scripts/validate-packs.cjs --all --summary report.md            # also append a Markdown report to a file
+```
+
+Exit code 0 means no blocking errors (with `--strict`: no errors and no warnings at all), 1 means problems were found, 2 is a usage error. Notices are only counted unless `--notices` is given. An alpha pack therefore passes without `--strict` even with errors; use `--strict` while developing a pack, and to decide whether it can be marked stable.
+
+`.github/workflows/validate-packs.yml` runs `--all --format github --summary "$GITHUB_STEP_SUMMARY"` and the validator tests on every push and pull request that changes packs, configuration or validator code. A fork has to enable workflows once in its *Actions* tab. Nothing is written to the repository; GitHub keeps the results with the workflow run:
+
+- **Job summary:** the complete report (a table per checked configuration or pack, then every problem), on the run's page under *Actions*.
+- **Annotations:** attached to the job's check run. They appear on the run's page and in the commit's *Checks*. Next to the code they appear only in a pull request's *Files changed* tab, for lines the pull request changes; a plain push shows none in the file view. GitHub keeps at most 10 annotations per level (error, warning, notice) per step and drops the rest, so the validator writes at most 9 per level and a 10th saying how many more there are.
+- **Log:** the full text report, in the step's *Full report* group.
+
+Whether the run fails depends only on the exit code, not on how many annotations GitHub shows.
+
+### Validator rules
+
+Each result has a `code`, a severity and a fix hint. **Errors** can produce wrong data, wrong scores or a broken form; they block when they occur in a stable pack of an active output type (see the table above). **Warnings** are probable mistakes. **Notices** are informational: shown collapsed, never counted in the footer link, never blocking. There is no way to silence a rule: a production deployment should simply have no errors and no warnings among its current problems. Archived packs (`packs/archive/`) are frozen history and only checked for valid JSON.
+
+*Pack file* rules look at one file on its own:
+
+| Code | Severity | What it finds | Why it matters |
+| --- | --- | --- | --- |
+| `invalid-json` | error | The file is not valid JSON (with line number). | The collector cannot start. |
+| `pack-structure` | error | Not an object; missing `prefix` (letters/digits), `title` or `elements` list; an element that is not an object. | The pack cannot be assembled or named. |
+| `pack-metadata` | warning | `version` is not a string of numbers such as `"1.0.0"`; `date` is not `YYYY-MM-DD`. | Versions are stored with every answer. |
+| `invalid-pack-status` | error | `status` is not `alpha`, `beta` or `stable`. | The pack is then treated as stable. |
+| `unknown-field` | warning | A field the app does not know, with a "did you mean" suggestion (e.g. `conditon`). | Misspelled fields are silently ignored. |
+| `ignored-field` | notice | `eval_dimension`, `min_selected`, option `explanation_required`, option `condition`, `score.op`, `score.factor`. | Accepted, but nothing enforces or scores them. |
+| `missing-element-id` | error | An element, option or table row without `id`. | It has no answer key. |
+| `id-charset` | error | An ID with characters other than letters, digits and `_`. | IDs must work in conditions, JavaScript and R. |
+| `id-prefix` | warning | An element ID that does not start with `<prefix>_`. The 37 long-standing IDs of `core-meta` and `core-pub` (`DOI`, `Title`, `RaterType`, …) are a fixed exception in the validator. | Unprefixed IDs can collide with other packs. |
+| `duplicate-id` | error | Two elements with one ID (also across packs of an output type). | Both answers share one field. |
+| `duplicate-option-id` | error | Two options or rows of an element with one ID. | The answers cannot be told apart. |
+| `unknown-element-type` | error | A `type` the collector does not render. | The element is not shown. |
+| `field-type` | error | A condition that is not a string (e.g. `false` instead of `"false"`), `options`/`rows` that are not lists, a `score`/`validation` that is not an object. | The expression or list is not evaluated as intended. |
+| `missing-options` | error | A radio, checkbox, dropdown or table without options, or a table without rows. | Nothing can be answered. |
+| `option-value-type` | error | An option `value` that is not a number of 0 or more (e.g. `"1"`). | Points are computed incorrectly. |
+| `option-value-incomplete` | error | Some options of a radio/checkbox have a `value`, others do not. | Give every option a value once one has points, also `0` (#136). |
+| `unscored-type-with-values` | warning | Points on a dropdown or table. | Only radio and checkbox elements are scored. |
+| `score-without-points` | warning | A `score` block on an element that cannot earn points. | The block has no effect. |
+| `expression-syntax` | error | A condition, scoring rule or highlight condition that is not a valid expression after shorthand expansion. Expressions are compiled, never run. | Evaluation fails. |
+| `array-comparison` | error | A comparison with a list, such as `$CP_RCT != ['Yes']` (RESQUER#39). | Works only by type coercion. |
+| `sugar-pitfall` | warning (error for `=\|= []`) | An empty `=\|=` list, any `=&=`, a quoted value containing a comma, or a left side that is not a single field. | The shorthand is expanded incorrectly (guide section 5.7). |
+| `config-in-scoring` | error | `config$` inside `score`. | The scorer cannot resolve it. |
+| `validation-pattern` | error | A `validation.pattern` that is not a valid regular expression. | The form fails when it checks the answer. |
+
+*Form* rules look at the packs of one output type together:
+
+| Code | Severity | What it finds | Why it matters |
+| --- | --- | --- | --- |
+| `missing-indicator-reference` | error (warning in display text) | A reference to an indicator that is not part of the selected forms (described above; covers excluded parents, #126 and #130). | Conditions and scoring rules silently fail. |
+| `unknown-option-literal` | error (warning in highlight text) | A comparison with an option ID that the referenced element does not have, e.g. `$P_Data_Open === 'yes'` or `meta$RaterType === 'Applicnt'`, also across packs; and checkbox answers compared with text. | The comparison never matches. |
+| `generated-key-collision` | error | Two elements producing the same answer key: checkbox option `Other` of `X` and an element `X_Other` (#133), table rows, `_Comment` fields. | Both answers share one field. |
+| `duplicate-source` | error | The same pack listed twice under `sources`. | Its indicators appear and count twice. |
+| `prefix-collision` | error | Two packs with the same prefix in one output type. | Only one version is recorded. |
+| `forward-reference` | notice | A visibility condition that depends on an element further down (#14). | Usually confusing; the core does it deliberately for the "no DOI" checkbox. |
+| `immature-pack` | warning | An active output type uses an alpha or beta pack. | Its listed problems do not block. |
+
+*Configuration* rules look at `config.yaml`:
+
+| Code | Severity | What it finds | Why it matters |
+| --- | --- | --- | --- |
+| `invalid-preset` | error | A preset for an unknown or excluded indicator, an unknown option, a non-list checkbox value. | The preset is not applied. |
+| `selection-matches-nothing` | warning | An `include`/`exclude` entry that matches no ID prefix, with a suggestion. | A typo silently does nothing. |
+| `include-ignored` | warning | `include` together with `exclude` (even an empty one). | `exclude` wins; `include` is ignored. |
+| `category-cue` | warning (error if the cue is not a valid regular expression) | A score category whose `cue` matches no scored indicator, or a scored indicator in no category. | Points count toward the total but appear in no chart category (#130). |
+
+New rules are added to `rules` in `utils/pack-validator.js` (code, severity, hint) and to this table; `tests/verify-pack-validator.cjs` checks that both lists agree.
 
 ## 9. Text shorthand, completion, and export
 
@@ -641,6 +742,7 @@ Source: [completion logic](../index.html), [text helpers](../index.html), [expor
 6. Enter a positive answer, then change the parent so the child is hidden. Check whether its stored answer should still earn points, retain its denominator, or be excluded. Encode that decision explicitly.
 7. Add the pack to `sources`, and to `info.json` if it should be discoverable in the preview. Add category cues if its points should appear in a chart.
 8. Check a fresh record and an export/import round trip. Verify both item scores and the denominator; a plausible percentage alone can conceal a mistake.
+9. Keep `"status": "alpha"` while the pack is in development (or develop it in `packs/dev/`). Its problems then never block a deployment, yet **Pack validation** lists them under *Not blocking*. Before a release, run `node scripts/validate-packs.cjs --strict <pack>` (or check the file in `validator.html`), fix every error and warning, and set `"status"` to `"beta"` or `"stable"`.
 
 ## 11. Running the verifier and interpreting results
 
@@ -650,6 +752,8 @@ From the repository root:
 node tests/verify-packs.cjs
 node tests/verify-packs.cjs . > tests/verification-results.json
 node tests/verify-packs.cjs --strict
+node tests/verify-pack-validator.cjs   # rules of the pack validator, validator.html logic
+node tests/verify-validate-cli.cjs     # the command-line validator (fixtures in tests/fixtures/)
 ```
 
 No npm installation/build is required. The script defaults to the checkout containing it, independent of the current working directory. An optional repository-root argument selects another checkout. Do not use `node /tests/verify-packs.cjs .`, which points to an unrelated filesystem-root directory.

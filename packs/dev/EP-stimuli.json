@@ -1,6 +1,7 @@
 {
-    "version": "0.1.0",
-    "date": "2025-07-15",
+    "version": "0.1.1",
+    "date": "2026-11-19",
+    "status": "stable",
     "prefix": "ST",
     "title": "Stimuli",
     "elements": [
@@ -79,7 +80,7 @@
         },
 
         {
-            "id": "stimsep2",
+            "id": "ST_Stimuli_Separator2",
             "type": "separator",
             "no_comment": true,
             "condition": "$P_Suitable === 'Yes' && $P_Data === 'Yes' && !$P_TypeMethod_MetaAnalysis && ($P_Data_Source_NewOwn || $P_Data_Source_ReuseOwn || $P_Data_Source_ReuseOther || $P_Data_Source_ReuseCompilation) && ($P_TypeMethod_EmpiricalQuantitative || $P_TypeMethod_EmpiricalQualitative)"

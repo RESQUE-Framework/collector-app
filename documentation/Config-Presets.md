@@ -49,7 +49,7 @@ Preset IDs are matched exactly; `include`/`exclude` match ID prefixes. Presets o
 
 ## Verification
 
-- `node tests/verify-pack-validator.cjs`: 18 tests, 17 passed. The failing test (`all selected forms are checked even if the output type is inactive`) is the pre-existing mismatch between the inactive-type policy and `pack-validator.js`; it is unrelated to presets. Six new tests cover the committee configuration, the `exclude` contrast, unchanged pack files, checkbox/table expansion, rejected presets, and forms without preset support.
+- `node tests/verify-pack-validator.cjs`: 18 tests, 17 passed. The failing test (`all selected forms are checked even if the output type is inactive`) is the pre-existing mismatch between the inactive-type policy and `pack-validator.js`; it is unrelated to presets. *(Resolved on 2026-11-18: inactive types are checked but never block; see [Pack-Validator-Changes.md](Pack-Validator-Changes.md).)* Six new tests cover the committee configuration, the `exclude` contrast, unchanged pack files, checkbox/table expansion, rejected presets, and forms without preset support.
 - `node tests/verify-packs.cjs .`: 61 checks, 0 failures (39 regressions, 16 reproduced known issues, 6 characterizations), exit code 0. New regressions: `PRESET-COMMITTEE`, `PRESET-COMPLETION`, `PRESET-EXPORT`, `PRESET-IMPORT`, `PRESET-NONE`, `PRESET-PREVIEW`.
 
 Both suites run in a VM harness, not a browser; rendering was not verified automatically.

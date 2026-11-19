@@ -1,5 +1,109 @@
 # Client-side pack validator
 
+## Pack clean-up after the first validator run (2026-11-19)
+
+Fixes in the packs, following the validator's findings:
+
+- `core-pub.json`:
+  - `P_OpenMaterials`: removed the highlight for the option IDs `YesParts`/`YesEntire`, which no longer exist. This resolves PUB-03; the known issue `OM-STALE-HIGHLIGHT` became the regression `HIGHLIGHT-OPTION-IDS`, which checks every `{:...|text}` highlight in all current packs.
+  - Removed the ignored fields `score.op` (`P_Data_Open_AccessLevel`) and `eval_dimension` (`P_IndependentVerification`).
+- `core-software.json` (alpha):
+  - New text field `S_Tests_URL`, which the `OpenSource` option of `S_Tests_Quality` refers to (regression `SOFTWARE-TESTS-URL`).
+  - Points for the `S_Documentation` options, and for the `S_License` options.
+  - `S_License` changed from `dropdown` to `radio`, because the scorer does not score dropdowns.
+  - Removed the ignored `score.factor`.
+- `core-data.json` (alpha): `D3` renamed to `D_Name` (this changes the answer key).
+- `dev/EP-stimuli.json`: `stimsep2` renamed to `ST_Stimuli_Separator2`.
+
+Dropdowns are not scored by `score2.js` even when their options have values. This is recorded as a limitation to fix later (**SCORE-06**; characterization `DROPDOWN-UNSCORED` in `tests/verify-packs.cjs`). The fix has to go into `utils/score2.js` and the identical `RESQUER/inst/js/score2.js`. Until then, every scored single choice is a radio; the archived packs keep their dropdowns.
+
+Test updates:
+- `SOFTWARE-GATES` (SCORE-05) has new values: the fixture scores 5.2 of 13.5 instead of 11. It still reproduces the option-condition and parent-visibility defects; `score.factor` is no longer part of it.
+- Two validator tests and two CLI tests no longer rely on problems in the shipped packs. The inactive-output-type case uses the new fixture `tests/fixtures/config-inactive-problems.yaml`.
+
+Resolved later the same day:
+- The `S_License` scoring condition was inverted: an open license with a repository URL earned 0 points, without a URL 1 point. It is now `exists($S_URL)`; the 0-point options cover `NoLicense` and `ClosedSource`. This is guarded by the regression `SOFTWARE-LICENSE-URL`.
+- `user.json`: `AKZEPTANZ_sep` was renamed to `U_AKZEPTANZ_sep`.
+- The typo in the `P_OpenMaterials` text is fixed.
+- Pack versions were bumped (see `CHANGELOG.md`), and the expansion and dev packs declare a `status`.
+
+Verification:
+- `node tests/verify-pack-validator.cjs`: 49/49.
+- `node tests/verify-validate-cli.cjs`: 13/13.
+- `node tests/verify-packs.cjs .`: 78 checks (55 regressions, 16 reproduced known issues, 7 characterizations), exit 0.
+- `node scripts/validate-packs.cjs --all`: exit 0, with no errors and no warnings in any pack. Only notices remain (7 for the default configuration).
+
+## Where the CI results are kept (2026-11-19)
+
+The workflow comment and the docs said that problems "appear as annotations on the changed files/lines". That was wrong in three ways: `--all` annotates every problem, not only those in changed files; annotations appear next to the code only in a pull request (on a push only on the run's page and in the commit's checks); and GitHub keeps only 10 annotations per level and step, silently dropping the rest.
+
+- `scripts/validate-packs.cjs` has a new option `--summary <file>`, which appends the complete report as Markdown (a table per checked target, then every problem; pack text escaped, cut off at GitHub's 1 MiB limit). The workflow passes `--summary "$GITHUB_STEP_SUMMARY"`, so the full report is on the run's summary page.
+- `--format github` writes at most 9 annotations per level and a 10th saying how many more there are, then the full text report as a collapsible *Full report* log group.
+- The workflow comment, the guide ("Checking packs outside the collector") and `How_to_fork.md` now say where the results are: job summary, annotations on the run and the commit's checks (inline only in pull requests), log. Nothing is stored in the repository.
+- `tests/verify-validate-cli.cjs`: three new tests (annotation cap and log group, Markdown summary incl. appending and escaping, workflow and doc wording).
+
+## Full rule set, command line and validator page (2026-11-18)
+
+Implements the validator wishlist (#136). Decisions: the dialog keeps opening on blocking errors (no new configuration key); the ID-prefix rule is a warning everywhere, with a fixed built-in list of the 37 existing unprefixed core IDs; there is no way to silence a rule; answer validation (#45, #103) stays a separate project.
+
+- **Code moved out of `index.html`** (no behaviour change): `utils/expressions.js` (condition shorthand and reference substitution) and `utils/assemble.js` (`use()`, `pick*`), so the command line and `validator.html` run the same code.
+- **`utils/pack-validator.js`:** a rule list (`rules`: code, severity, hint) and checks of each pack file (`lintPack`) and of the assembled forms (`validate`); `checkPackFiles` checks files outside a configuration. All rules are listed in [RESQUE-Pack-Guide.md](RESQUE-Pack-Guide.md#validator-rules). Results carry the pack file, line, rule code and fix hint. New severity *notice* (shown collapsed, never counted, never blocking). Expressions are compiled to check their syntax, never run. `use()` hands each fetched file to the validator, which checks the file as written (presets change the assembled elements); in the collector, problems of excluded elements are not reported. Archived packs are only checked for valid JSON.
+- **Issue items covered:** missing dependencies (#126, #130), list comparisons such as `$CP_RCT != ['Yes']` (RESQUER#39), generated answer-key collisions such as option `Other` vs. element `X_Other` (#133), options without `value` once another option has points (#136), IDs without the pack prefix (#136), forward references in visibility conditions (#14, as notices).
+- **Dialog:** line, rule code (linked to the guide), fix hint, a *Notices* group, a link to `validator.html`.
+- **`validator.html`** (logic in `utils/validator-page.js`): checks this app's configuration, all configured and catalogued packs, and a pack file chosen or dropped by the user (read locally). Reports are built from text nodes only.
+- **`scripts/validate-packs.cjs`:** configuration, `--all`, or given pack files (with core-meta/core-pub as companions; `--alone`, `--with`); `--format text|json|github`, `--strict`, `--notices`; exit codes 0/1/2.
+- **`.github/workflows/validate-packs.yml`:** runs the command-line validator with GitHub annotations and the validator tests. *(Corrected 2026-11-19: annotations are not shown "on the changed files"; see below.)*
+
+Findings in the shipped packs:
+- The stable packs have no errors.
+- `core-pub.json`: the information text of `P_OpenMaterials` highlights the option IDs `YesParts`/`YesEntire`, which no longer exist (2 warnings). Tracked as known issue PUB-03 (`OM-STALE-HIGHLIGHT` in `tests/verify-packs.cjs`); the pack text was not changed. *(Fixed on 2026-11-19, see above.)*
+- `user.json`: `AKZEPTANZ_sep` lacks the `U_` prefix (warning).
+- The alpha packs (`core-software`, `core-data`, `packs/dev/`) have known problems listed as not blocking.
+- The default configuration has 0 blocking errors.
+
+Verification:
+- `node tests/verify-pack-validator.cjs`: 49 tests, all pass - rule tests (one clean and one failing case per rule), the shipped packs, the dialog markup and the validator page logic.
+- `node tests/verify-validate-cli.cjs`: 9 tests, all pass - the command line with fixtures in `tests/fixtures/` (exit codes, formats, strict mode, alpha packs, invalid JSON, `--all`).
+- `node tests/verify-packs.cjs .`: 75 checks (52 regressions, 17 reproduced known issues including the new PUB-03, 6 characterizations), exit 0.
+- `validator.html` and the dialog were rendered in jsdom with the bundled scripts: configuration, all packs, an own file (including an HTML-injection attempt, which stays text). Layout in a real browser was not checked.
+
+## Pack status and blocking problems (2026-11-18)
+
+Packs can declare their maturity, and only problems that matter for a deployment block the collector.
+
+- **Pack files:** an optional top-level `"status"`: `"alpha"`, `"beta"` or `"stable"`. Without it, packs in `packs/dev/` count as alpha, all others (including `packs/archive/`) as stable. `packs/core-software.json` and `packs/core-data.json` are now `"status": "alpha"`.
+- **`utils/pack-validator.js`:**
+  - New helpers `packStatus(pack, source)`, `packInfo(pack, source)`, `packStatuses` and `statusNotes`.
+  - `validate()` now checks every configured output type, including `active: false` ones. This resolves the old mismatch between code, test and documentation: the code skipped inactive types although everything else said they were checked.
+  - Every issue gets `pack`, `packStatus`, `formActive`, `deferred` (`null`, `'inactive'`, `'alpha'` or `'beta'`) and `blocking`. Only errors in stable packs of active output types block. Preset errors block in any active type.
+  - New result codes `immature-pack` (one current warning per alpha/beta pack in an active type) and `invalid-pack-status` (error).
+  - The report adds `current`, `deferred` and `blocking`; `errors` and `warnings` still contain all issues.
+- **`index.html`:**
+  - `use()` records `packs` (source, prefix, version, status, `declaredStatus` if present, element IDs) on each assembled form, and the pick functions keep it. The list is exported with the forms; RESQUER does not read it.
+  - The modal opens on startup, and the tour is skipped, only for **blocking** errors. The modal lists current problems first and collapses the rest under *Not blocking*, with the reason and an alpha/beta badge.
+  - The footer link shows e.g. *(1 error, 2 warnings, 3 not blocking)*.
+- **`preview.html`, `packs.html`, `styles.css`:** an *alpha*/*beta* badge and a short note next to the pack title. The preview's exported manual carries `[ALPHA]` and the note. Both pages load `utils/pack-validator.js` for the shared status logic.
+
+Effect on the default setup: the `$S_Tests_URL` reference in the software pack is listed under *Not blocking* (software is inactive and alpha). The dialog does not open, contrary to what the 2026-09-16 notes below say.
+
+Verification:
+- `node tests/verify-pack-validator.cjs`: 28 tests, all pass (previously 17 of 18). Ten new tests cover:
+  - status resolution
+  - the shipped pack statuses
+  - recorded provenance after include
+  - the blocking matrix
+  - an activated alpha software pack
+  - presets in alpha packs
+  - invalid status values
+  - startup with alpha vs. stable errors and the footer counts
+  - modal order
+  - the preview/catalog badges
+- A negative control, with the startup condition reverted to `errors`, fails the two startup/modal tests.
+- `node tests/verify-packs.cjs .`: unchanged at 74 checks (52 regressions, 16 reproduced known issues, 6 characterizations), exit 0. Its VM context now loads `utils/pack-validator.js`, as `index.html` does.
+- A jsdom render with the bundled Alpine confirmed the link text, summary, current/deferred lists and badges. Layout in a real browser was not checked.
+
+## Initial version (2026-09-16)
+
 Implemented against the supplied `Archiv(1).zip` on 2026-09-16.
 
 - `utils/pack-validator.js` checks missing indicator references in the assembled forms after configuration selection. It runs in the browser without additional dependencies, network requests, or expression evaluation.
@@ -9,7 +113,7 @@ Implemented against the supplied `Archiv(1).zip` on 2026-09-16.
 - All configured output types are checked, including inactive types. Current definitions are checked independently of saved answers and older embedded forms.
 - Pack definitions, selection rules, saved-data behavior, and scoring are unchanged.
 
-The default configuration exposes an existing unresolved `$S_Tests_URL` reference in `packs/core-software.json`, at `S_Tests_Quality.options[0].condition`. Consequently, the default setup opens the errors modal even though software is inactive. The rule checks declared references, including fields the current renderer/scorer does not enforce.
+The default configuration exposes an existing unresolved `$S_Tests_URL` reference in `packs/core-software.json`, at `S_Tests_Quality.options[0].condition`. Consequently, the default setup opens the errors modal even though software is inactive. *(Superseded: the code actually skipped inactive types, so the modal did not open; since 2026-11-18 the reference is listed as not blocking.)* The rule checks declared references, including fields the current renderer/scorer does not enforce.
 
 ## Verification
 
@@ -23,7 +127,7 @@ Visual browser verification remains outstanding: Playwright is available in the 
 
 From the repository root, run `python3 -m http.server 8000 --bind 127.0.0.1` and open `http://127.0.0.1:8000/index.html`.
 
-1. Confirm that the existing software reference opens the error modal; close it and reopen it using **Pack validation**.
+1. Confirm that the dialog does not open on startup and that the footer link reads *Pack validation (1 not blocking)*. Open it: the `$S_Tests_URL` error is under *Not blocking* with the reason "the software output type is inactive" and an *alpha* badge. Set `software: active: true` in `config/config.yaml`: the error stays non-blocking and an `immature-pack` warning appears among the current problems.
 2. Copy `config/config-default.yaml` to `config/config.yaml` if no custom configuration exists. Add `P_Suitable` to `pub.exclude`. Reload and confirm the additional condition/scoring errors.
 3. Restore the configuration. Confirm that `?path=EP&type=EP-theory_development` introduces no publication-reference errors when the core remains included.
 

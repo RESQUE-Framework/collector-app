@@ -1,11 +1,12 @@
 {
     "prefix": "D",
-    "version": "0.0.1",
-    "date": "2024-03-10",
+    "version": "0.1.0",
+    "status": "alpha",
+    "date": "2026-11-19",
     "title": "Data Set",
     "elements": [
         {
-            "id": "D3",
+            "id": "D_Name",
             "type": "text",
             "title": "Data set name"
         }

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RESQUE Collector - Pack validator</title>
+    <link rel="stylesheet" href="./styles.css" />
+
+    <!-- All checks run in this browser; nothing is uploaded. -->
+    <script src="./js/js-yaml.min.js"></script>
+    <script src="./menu.js"></script>
+    <script src="./utils/pack-validator.js"></script>
+    <script src="./utils/expressions.js"></script>
+    <script src="./utils/assemble.js"></script>
+    <script src="./utils/validator-page.js"></script>
+    <script type="module">
+        import { getDefaultValues, getInitialValues } from "./utils/packutils.js";
+
+        // use() (utils/assemble.js) and applyPresets() (menu.js) need these.
+        window.getDefaultValues = getDefaultValues;
+        window.getInitialValues = getInitialValues;
+    </script>
+
+    <style>
+        body { overflow: auto; }
+        .validator-page { width: 95%; max-width: 860px; margin: 0 auto 4rem auto; }
+        .validator-page section.validator-part { margin-top: 2rem; }
+        .validator-report { margin: 1rem 0 1.5rem 0; }
+        .validator-report h3 { margin-bottom: 0.2rem; }
+        .validator-summary { margin-top: 0; color: #555; }
+        .validator-ok { color: #1b7a2e; }
+        .validator-warn { color: #946200; }
+        .validator-failed { color: #b3261e; }
+        #drop-zone { border: 2px dashed #b0b0b0; border-radius: 8px; padding: 1.5rem; text-align: center; margin: 0.8rem 0; }
+        #drop-zone.dragging { border-color: #946200; background-color: #fff4d6; }
+    </style>
+</head>
+
+<body>
+    <div class="validator-page">
+        <h1>Pack validator</h1>
+        <p>Checks RESQUE pack files and this app's configuration with the same rules as <em>Pack validation</em> in the
+            <a href="index.html">collector</a>. Everything runs in your browser; no file is uploaded. Each result names
+            the rule, the pack file and line, and how to fix it. See the rule list in
+            <code>documentation/RESQUE-Pack-Guide.md</code> ("Validator rules"). On the command line, the same checks run
+            with <code>node scripts/validate-packs.cjs</code>.</p>
+        <p>Only <strong>errors in stable packs of active output types block</strong> the collector. Problems in inactive
+            output types and in alpha or beta packs are listed as <em>not blocking</em>. A production app should have no
+            errors and no warnings among its current problems.</p>
+
+        <section class="validator-part" id="config-part">
+            <h2>1. This app's configuration</h2>
+            <p>The packs selected in <code>config/config.yaml</code> (or <code>config/config-default.yaml</code>) after
+                <code>include</code>/<code>exclude</code>, presets and score categories - what applicants will see.</p>
+            <button type="button" id="check-config">Check again</button>
+            <div id="config-results" aria-live="polite"></div>
+        </section>
+
+        <section class="validator-part" id="packs-part">
+            <h2>2. All packs of this app</h2>
+            <p>Every configured pack and every pack in the preview catalog (<code>packs/info.json</code>), each on its
+                own. Publication expansion packs are checked together with the publication core. Archived packs are only
+                checked for valid JSON.</p>
+            <button type="button" id="check-packs">Check all packs</button>
+            <div id="packs-results" aria-live="polite"></div>
+        </section>
+
+        <section class="validator-part" id="file-part">
+            <h2>3. A pack file of your own</h2>
+            <p>For a new or changed pack, e.g. an expansion pack you are developing. The file is read locally.</p>
+            <div id="drop-zone">
+                <p>Drop a pack file (<code>.json</code>) here, or <label><input type="file" id="pack-file" accept=".json,application/json"></label></p>
+                <label><input type="checkbox" id="with-core" checked> Check together with the core packs
+                    (<code>core-meta</code>, and <code>core-pub</code> for publication packs), so references such as
+                    <code>$P_Suitable</code> resolve</label>
+            </div>
+            <div id="file-results" aria-live="polite"></div>
+        </section>
+    </div>
+
+    <script>
+        const page = PackValidatorPage;
+        const show = (container, ...nodes) => { container.replaceChildren(...nodes); };
+
+        async function runConfiguration() {
+            const container = document.getElementById('config-results');
+            show(container, document.createTextNode('Checking…'));
+            try {
+                const { file, report } = await page.checkConfiguration();
+                show(container, page.reportElement(`Configuration ${file}`, report));
+            } catch (error) {
+                show(container, page.errorElement('Configuration', error));
+            }
+        }
+
+        async function runAllPacks() {
+            const container = document.getElementById('packs-results');
+            show(container, document.createTextNode('Checking…'));
+            try {
+                const { config } = await page.checkConfiguration();
+                const catalogResponse = await fetch('./packs/info.json');
+                const catalog = catalogResponse.ok ? await catalogResponse.json() : [];
+                const results = [];
+                for (const source of page.packSources(config, catalog)) {
+                    const response = await fetch(`./${source}`);
+                    if (!response.ok) {
+                        results.push(page.errorElement(`Pack ${source}`, new Error(`The file could not be loaded (HTTP ${response.status}).`)));
+                        continue;
+                    }
+                    const report = await page.checkFile(source, await response.text());
+                    results.push(page.reportElement(`Pack ${source}`, report));
+                }
+                show(container, ...results);
+            } catch (error) {
+                show(container, page.errorElement('All packs', error));
+            }
+        }
+
+        // The last chosen or dropped file, rechecked when the checkbox changes.
+        let lastFile = null;
+
+        async function runFile(file) {
+            const container = document.getElementById('file-results');
+            if (!file) return;
+            lastFile = file;
+            show(container, document.createTextNode('Checking…'));
+            try {
+                // File.text() is missing in some older browsers; FileReader is not.
+                const text = typeof file.text === 'function' ? await file.text() : await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = () => reject(reader.error);
+                    reader.readAsText(file);
+                });
+                const withCore = document.getElementById('with-core').checked;
+                const report = await page.checkFile(file.name, text, { withCore });
+                show(container, page.reportElement(`Your file ${file.name}`, report));
+            } catch (error) {
+                show(container, page.errorElement(`Your file ${file.name}`, error));
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('check-config').addEventListener('click', runConfiguration);
+            document.getElementById('check-packs').addEventListener('click', runAllPacks);
+            const input = document.getElementById('pack-file');
+            input.addEventListener('change', () => runFile(input.files[0]));
+            document.getElementById('with-core').addEventListener('change', () => runFile(lastFile));
+            const zone = document.getElementById('drop-zone');
+            zone.addEventListener('dragover', event => { event.preventDefault(); zone.classList.add('dragging'); });
+            zone.addEventListener('dragleave', () => zone.classList.remove('dragging'));
+            zone.addEventListener('drop', event => {
+                event.preventDefault();
+                zone.classList.remove('dragging');
+                const file = event.dataTransfer.files[0];
+                if (file) runFile(file);
+            });
+            // Module scripts (packutils) run before DOMContentLoaded.
+            runConfiguration();
+        });
+    </script>
+</body>
+
+</html>

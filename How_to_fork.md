@@ -112,6 +112,8 @@ sources: ["packs/core-pub.json", "packs/EP/EP-clinical_psychology.json"]
 
 The indicators are displayed in the order provided here (i.e., the expansion pack will be displayed after the default pack).
 
+> :bulb: Some packs are still in development and are marked as **alpha** or **beta**. At the moment, these are the software and data packs (`software:` and `data:`, which are switched off with `active: false`) and every pack in `packs/dev/`. You can switch them on, but expect wrong conditions, points or wording. `preview.html` shows an *alpha*/*beta* badge for them. Their known problems never block your app: *Pack validation* lists them under *Not blocking*.
+
 By default all indicators defined in the packs are shown. You can exclude specific indicators by providing their IDs in the `exclude` array, for example:
 
 ```yaml
@@ -158,7 +160,12 @@ Three details:
 
 After you commited all changes, the app is ready for testing. You can use the link to your GitHub Pages website to test the app (see "Step 2" above).
 
-Before you distribute the link to your applicants, you should test the app yourself. Enter some test data and export it. Check if you can [generate the profile](https://shiny.psy.lmu.de/felix/RESQUE_profile/) (see also next step).
+Before you distribute the link to your applicants, you should test the app yourself.
+
+1. Click the *Pack validation* link (next to *Tour* and *Privacy/Terms of Use*): a production app should show no errors and no warnings among the current problems. The dialog opens by itself if there is a blocking error, e.g. a question that refers to an indicator you excluded. Each entry names the pack file and line and says how to fix it.
+2. If you changed or added pack files, open `validator.html` in your app (e.g. `https://<your-github-username>.github.io/collector-app-MYUNIVERSITY/validator.html`) and click *Check all packs*. You can also drop a single pack file onto that page to check it before you commit it.
+3. Optional: in the *Actions* tab of your repository, enable workflows. Every commit that changes packs or `config.yaml` is then checked automatically. To see the result, open the *Actions* tab and click the run: the summary page lists every problem with the file, line and how to fix it. A red cross next to the commit means there is a blocking error. (If you work with pull requests, the problems are also shown next to the changed lines in the *Files changed* tab.) With Node.js installed, `node scripts/validate-packs.cjs --all` runs the same check on your computer.
+4. Enter some test data and export it. Check if you can [generate the profile](https://shiny.psy.lmu.de/felix/RESQUE_profile/) (see also next step).
 
 
 ## Step 5: Generate the applicants' profiles

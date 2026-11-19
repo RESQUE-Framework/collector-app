@@ -56,6 +56,7 @@
 
     <script src="./utils/score2.js"></script>
     <script src="./utils/pack-validator.js"></script>
+    <script src="./utils/expressions.js"></script>
 
     <script type="module">
         import { getDefaultValues, getInitialValues, withDefaults, isBlankAnswer } from "./utils/packutils.js";
@@ -87,32 +88,6 @@
     </script>
 
     <script>
-        const preprocessCondition = condition => {
-            let processedCondition = condition
-                .replaceAll(/([\$\w]+)\s*=\|=\s*\[(.*?)\]/g, (match, variable, list) => {
-                    return "(" + list.split(",")
-                        .map(value => `${variable} === ${value.trim()}`)
-                        .join(" || ") + ")";
-                })
-                .replaceAll(/([\$\w]+)\s*=&=\s*\[(.*?)\]/g, (match, variable, list) => {
-                    return "(" + list.split(",")
-                        .map(value => `${variable} === ${value.trim()}`)
-                        .join(" && ") + ")";
-                })
-
-            return processedCondition;
-        }
-
-        const insertValuesIntoCondition = condition => {
-            return condition
-                .replaceAll(/meta\$([a-zA-Z0-9_]+)/g, `Alpine.store('data').input[0]['$1']`)
-                .replaceAll(/config\$([a-zA-Z0-9_.]+)/g, (match, keySequence) => {
-                    const keys = keySequence.split('.');
-                    return `Alpine.store('config').config['${keys.join("']['")}']`;
-                })
-                .replaceAll(/\$(\w*)/g, `context['$1']`);
-        }
-
         const evaluateCondition = condition => condition ? evaluateConditionInContext(condition, Alpine.store('data').currentInput) : true;
 
         const evaluateConditionInContext = (condition, context) => {
@@ -314,13 +289,31 @@
         Alpine.store('startupError', false);
 
         Alpine.store('packValidation', {
-            report: { issues: [], errors: [], warnings: [], indicatorsChecked: 0 },
+            report: { issues: [], errors: [], warnings: [], blocking: [], current: [], deferred: [], notices: [], indicatorsChecked: 0 },
             run() {
                 this.report = PackValidator.validate(Alpine.store('forms'));
             },
             open() {
                 this.run();
                 showModal('pack-validation-modal');
+            },
+            // Footer link suffix, e.g. " (1 error, 2 warnings, 3 not blocking)".
+            countLabel() {
+                const { blocking, current, deferred } = this.report;
+                const warnings = current.filter(issue => issue.severity === 'warning').length;
+                const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
+                const parts = [
+                    blocking.length && plural(blocking.length, 'error'),
+                    warnings && plural(warnings, 'warning'),
+                    deferred.length && `${deferred.length} not blocking`
+                ].filter(Boolean);
+                return parts.length ? ` (${parts.join(', ')})` : '';
+            },
+            // Why a listed problem does not block (see PackValidator.validate).
+            reason(issue) {
+                return issue.deferred === 'inactive'
+                    ? `Not blocking: the "${issue.form}" output type is inactive (active: false).`
+                    : `Not blocking: ${issue.packStatus} pack.`;
             }
         });
 
@@ -1248,7 +1241,7 @@
                             @click.prevent="$store.packValidation.open()" aria-haspopup="dialog"
                             aria-controls="pack-validation-modal">Pack validation<span
                                 x-show="$store.packValidation.report.issues.length"
-                                x-text="' (' + $store.packValidation.report.errors.length + ' errors, ' + $store.packValidation.report.warnings.length + ' warnings)'"></span></a>
+                                x-text="$store.packValidation.countLabel()"></span></a>
                     </div>
                     <div x-show="$store.config.config.show_beta_warning" style="margin-top: 20px;" x-cloak>
                         <span style='background-color: lightyellow; font-size:80%;'>[Note: The RESQUE collector app is
@@ -1354,24 +1347,72 @@
                     <h3 id="pack-validation-title">Pack validation</h3>
                     <button type="button" onclick="closeModal('pack-validation-modal')" autofocus>Close</button>
                 </div>
-                <p id="pack-validation-summary" role="status" x-text="$store.packValidation.report.errors.length + ' errors, ' + $store.packValidation.report.warnings.length + ' warnings · ' + $store.packValidation.report.indicatorsChecked + ' indicators checked'"></p>
-                <p>Checks references in all configured packs after include/exclude selection, including inactive output types.</p>
-                <p x-show="!$store.packValidation.report.issues.length">No missing indicator references found.</p>
-                <p x-show="$store.packValidation.report.issues.length">Restore the referenced indicator in the configuration, include its pack, or update the reference. Excluded indicators do not count even if their default answers remain.</p>
-                <ol class="pack-validation-results">
-                    <template x-for="(issue, index) in $store.packValidation.report.issues" :key="index">
+                <p id="pack-validation-summary" role="status" x-text="$store.packValidation.report.blocking.length + ' blocking errors, ' + $store.packValidation.report.current.filter(i => i.severity === 'warning').length + ' warnings, ' + $store.packValidation.report.deferred.length + ' not blocking, ' + $store.packValidation.report.notices.length + ' notices · ' + $store.packValidation.report.indicatorsChecked + ' indicators checked'"></p>
+                <p>Checks the pack files and the forms of this configuration (after include/exclude), including inactive output types. Only errors in stable packs of active output types block; they open this dialog on startup. Problems in inactive output types and in alpha or beta packs are listed under <em>Not blocking</em>. To check all packs of this app or a pack file of your own, open the <a href="validator.html" target="_blank">pack validator</a>.</p>
+                <p x-show="!$store.packValidation.report.current.length">No current problems found.</p>
+                <ol class="pack-validation-results" x-show="$store.packValidation.report.current.length">
+                    <template x-for="(issue, index) in $store.packValidation.report.current" :key="index">
                         <li :class="'pack-validation-' + issue.severity">
-                            <strong x-text="issue.severity === 'error' ? 'Error' : 'Warning'"></strong>
-                            · <span x-text="issue.form"></span> · <code x-text="issue.indicator"></code>
-                            <div>Field: <code x-text="issue.field"></code></div>
+                            <strong x-text="issue.severity === 'error' ? 'Error' : issue.severity === 'warning' ? 'Warning' : 'Notice'"></strong>
+                            · <span x-text="issue.form"></span><span x-show="issue.indicator"> · <code x-text="issue.indicator"></code></span>
+                            · <a class="pack-validation-rule" :href="PackValidator.guideUrl" target="_blank" rel="noopener" x-text="issue.code"></a>
+                            <div x-show="issue.deferred" class="pack-validation-reason" x-text="$store.packValidation.reason(issue)"></div>
+                            <div x-show="issue.pack">Pack: <code x-text="issue.pack + (issue.line ? ', line ' + issue.line : '')"></code>
+                                <span class="status-badge" x-show="issue.packStatus && issue.packStatus !== 'stable'" x-text="issue.packStatus"></span></div>
+                            <div x-show="issue.field">Field: <code x-text="issue.field"></code></div>
                             <p x-text="issue.message"></p>
-                            <details>
+                            <p class="pack-validation-hint" x-show="issue.hint" x-text="'How to fix: ' + issue.hint"></p>
+                            <details x-show="issue.expression">
                                 <summary>Show expression or text</summary>
                                 <pre x-text="issue.expression"></pre>
                             </details>
                         </li>
                     </template>
                 </ol>
+                <details class="pack-validation-deferred" x-show="$store.packValidation.report.deferred.length">
+                    <summary x-text="'Not blocking (' + $store.packValidation.report.deferred.length + '): inactive output types and alpha/beta packs'"></summary>
+                    <ol class="pack-validation-results">
+                        <template x-for="(issue, index) in $store.packValidation.report.deferred" :key="index">
+                            <li :class="'pack-validation-' + issue.severity">
+                                <strong x-text="issue.severity === 'error' ? 'Error' : issue.severity === 'warning' ? 'Warning' : 'Notice'"></strong>
+                                · <span x-text="issue.form"></span><span x-show="issue.indicator"> · <code x-text="issue.indicator"></code></span>
+                                · <a class="pack-validation-rule" :href="PackValidator.guideUrl" target="_blank" rel="noopener" x-text="issue.code"></a>
+                                <div x-show="issue.deferred" class="pack-validation-reason" x-text="$store.packValidation.reason(issue)"></div>
+                                <div x-show="issue.pack">Pack: <code x-text="issue.pack + (issue.line ? ', line ' + issue.line : '')"></code>
+                                    <span class="status-badge" x-show="issue.packStatus && issue.packStatus !== 'stable'" x-text="issue.packStatus"></span></div>
+                                <div x-show="issue.field">Field: <code x-text="issue.field"></code></div>
+                                <p x-text="issue.message"></p>
+                                <p class="pack-validation-hint" x-show="issue.hint" x-text="'How to fix: ' + issue.hint"></p>
+                                <details x-show="issue.expression">
+                                    <summary>Show expression or text</summary>
+                                    <pre x-text="issue.expression"></pre>
+                                </details>
+                            </li>
+                        </template>
+                    </ol>
+                </details>
+                <details class="pack-validation-deferred" x-show="$store.packValidation.report.notices.length">
+                    <summary x-text="'Notices (' + $store.packValidation.report.notices.length + '): for information'"></summary>
+                    <ol class="pack-validation-results">
+                        <template x-for="(issue, index) in $store.packValidation.report.notices" :key="index">
+                            <li :class="'pack-validation-' + issue.severity">
+                                <strong x-text="issue.severity === 'error' ? 'Error' : issue.severity === 'warning' ? 'Warning' : 'Notice'"></strong>
+                                · <span x-text="issue.form"></span><span x-show="issue.indicator"> · <code x-text="issue.indicator"></code></span>
+                                · <a class="pack-validation-rule" :href="PackValidator.guideUrl" target="_blank" rel="noopener" x-text="issue.code"></a>
+                                <div x-show="issue.deferred" class="pack-validation-reason" x-text="$store.packValidation.reason(issue)"></div>
+                                <div x-show="issue.pack">Pack: <code x-text="issue.pack + (issue.line ? ', line ' + issue.line : '')"></code>
+                                    <span class="status-badge" x-show="issue.packStatus && issue.packStatus !== 'stable'" x-text="issue.packStatus"></span></div>
+                                <div x-show="issue.field">Field: <code x-text="issue.field"></code></div>
+                                <p x-text="issue.message"></p>
+                                <p class="pack-validation-hint" x-show="issue.hint" x-text="'How to fix: ' + issue.hint"></p>
+                                <details x-show="issue.expression">
+                                    <summary>Show expression or text</summary>
+                                    <pre x-text="issue.expression"></pre>
+                                </details>
+                            </li>
+                        </template>
+                    </ol>
+                </details>
             </dialog>
 
             <dialog id="config-incompatible-modal">
@@ -1692,89 +1733,7 @@
         }
     </script>
 
-    <script>
-
-
-        async function use(config, ...packs) {
-
-            const pool = [];
-
-            const ps = await Promise.all(packs.map(async pack => {
-                const source = normalizePublicationSource(pack);
-                const response = await fetch("./" + source);
-
-                // Shown on the startup error panel; a 404 page is not JSON and
-                // would otherwise surface as an unhelpful parse error.
-                if (!response.ok) {
-                    throw new Error(`The pack file "${source}" listed under "sources:" in the configuration could not be loaded (HTTP ${response.status}).`);
-                }
-
-                return response.json();
-            }));
-
-            ps.forEach(p => pool.push(...p.elements));
-
-            let versions = {};
-
-            ps.forEach(pack => versions[pack.prefix] = pack.version);
-
-            let date = {};
-
-            ps.forEach(pack => date[pack.prefix] = pack.date);
-
-            let defaultValues = {}
-
-            ps.forEach(pack => Object.assign(defaultValues, getDefaultValues(pack.elements)));
-
-            // What a new record starts with. Differs from defaultValues only for
-            // controls that show their default as a placeholder hint instead.
-            let initialValues = {}
-
-            ps.forEach(pack => Object.assign(initialValues, getInitialValues(pack.elements)));
-
-            return {
-                title: ps[0].title,
-                versions,
-                date,
-                defaultValues,
-                initialValues,
-                pool,
-                config
-            };
-        }
-
-        function pick(combinedPack, ...ids) {
-            return pickByCondition(combinedPack, item => ids.length === 0 || ids.some(id => item.id.startsWith(id)));
-        }
-
-        function pickByPrefix(combinedPack, prefix) {
-            return {
-                title: combinedPack.title,
-                versions: combinedPack.versions,
-                date: combinedPack.date,
-                defaultValues: combinedPack.defaultValues,
-                initialValues: combinedPack.initialValues,
-                config: combinedPack.config,
-                elements: combinedPack.pool.filter(item => item.id.startsWith(prefix))
-            };
-        }
-
-        function pickByCondition(combinedPack, condition) {
-            return {
-                title: combinedPack.title,
-                versions: combinedPack.versions,
-                date: combinedPack.date,
-                defaultValues: combinedPack.defaultValues,
-                initialValues: combinedPack.initialValues,
-                config: combinedPack.config,
-                elements: combinedPack.pool.filter(item => condition(item))
-            };
-        }
-
-        function pickExclude(combinedPack, ...ids) {
-            return pickByCondition(combinedPack, item => !ids.some(id => item.id.startsWith(id)));
-        }
-    </script>
+    <script src="./utils/assemble.js"></script>
 
     <script src="menu.js"></script>
 
@@ -2234,14 +2193,16 @@
                     showInstructionsModal();
                 }
 
-                if (!Alpine.store('config').config.show_instruction && Alpine.store('data').input.length <= 1 && !Alpine.store('packValidation').report.errors.length) {
+                if (!Alpine.store('config').config.show_instruction && Alpine.store('data').input.length <= 1 && !Alpine.store('packValidation').report.blocking.length) {
                     //showInfoModal();
                     driver(tourMain()).drive();
                 }
 
                 // The dialog is inside x-if="$store.loaded". Wait for Alpine to
                 // insert it, then bring errors above any other startup dialog.
-                if (Alpine.store('packValidation').report.errors.length) {
+                // Only blocking errors open it: problems in inactive output
+                // types and alpha/beta packs are listed, but stay quiet.
+                if (Alpine.store('packValidation').report.blocking.length) {
                     Alpine.nextTick(() => showModal('pack-validation-modal'));
                 }
             });
