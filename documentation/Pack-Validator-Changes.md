@@ -1,5 +1,38 @@
 # Client-side pack validator
 
+## Pack clean-up after the first validator run (2026-11-19)
+
+Fixes in the packs, following the validator's findings:
+
+- `core-pub.json`:
+  - `P_OpenMaterials`: removed the highlight for the option IDs `YesParts`/`YesEntire`, which no longer exist. This resolves PUB-03; the known issue `OM-STALE-HIGHLIGHT` became the regression `HIGHLIGHT-OPTION-IDS`, which checks every `{:...|text}` highlight in all current packs.
+  - Removed the ignored fields `score.op` (`P_Data_Open_AccessLevel`) and `eval_dimension` (`P_IndependentVerification`).
+- `core-software.json` (alpha):
+  - New text field `S_Tests_URL`, which the `OpenSource` option of `S_Tests_Quality` refers to (regression `SOFTWARE-TESTS-URL`).
+  - Points for the `S_Documentation` options, and for the `S_License` options.
+  - `S_License` changed from `dropdown` to `radio`, because the scorer does not score dropdowns.
+  - Removed the ignored `score.factor`.
+- `core-data.json` (alpha): `D3` renamed to `D_Name` (this changes the answer key).
+- `dev/EP-stimuli.json`: `stimsep2` renamed to `ST_Stimuli_Separator2`.
+
+Dropdowns are not scored by `score2.js` even when their options have values. This is recorded as a limitation to fix later (**SCORE-06**; characterization `DROPDOWN-UNSCORED` in `tests/verify-packs.cjs`). The fix has to go into `utils/score2.js` and the identical `RESQUER/inst/js/score2.js`. Until then, every scored single choice is a radio; the archived packs keep their dropdowns.
+
+Test updates:
+- `SOFTWARE-GATES` (SCORE-05) has new values: the fixture scores 5.2 of 13.5 instead of 11. It still reproduces the option-condition and parent-visibility defects; `score.factor` is no longer part of it.
+- Two validator tests and two CLI tests no longer rely on problems in the shipped packs. The inactive-output-type case uses the new fixture `tests/fixtures/config-inactive-problems.yaml`.
+
+Resolved later the same day:
+- The `S_License` scoring condition was inverted: an open license with a repository URL earned 0 points, without a URL 1 point. It is now `exists($S_URL)`; the 0-point options cover `NoLicense` and `ClosedSource`. This is guarded by the regression `SOFTWARE-LICENSE-URL`.
+- `user.json`: `AKZEPTANZ_sep` was renamed to `U_AKZEPTANZ_sep`.
+- The typo in the `P_OpenMaterials` text is fixed.
+- Pack versions were bumped (see `CHANGELOG.md`), and the expansion and dev packs declare a `status`.
+
+Verification:
+- `node tests/verify-pack-validator.cjs`: 49/49.
+- `node tests/verify-validate-cli.cjs`: 13/13.
+- `node tests/verify-packs.cjs .`: 78 checks (55 regressions, 16 reproduced known issues, 7 characterizations), exit 0.
+- `node scripts/validate-packs.cjs --all`: exit 0, with no errors and no warnings in any pack. Only notices remain (7 for the default configuration).
+
 ## Where the CI results are kept (2026-11-19)
 
 The workflow comment and the docs said that problems "appear as annotations on the changed files/lines". That was wrong in three ways: `--all` annotates every problem, not only those in changed files; annotations appear next to the code only in a pull request (on a push only on the run's page and in the commit's checks); and GitHub keeps only 10 annotations per level and step, silently dropping the rest.
@@ -23,7 +56,7 @@ Implements the validator wishlist (#136). Decisions: the dialog keeps opening on
 
 Findings in the shipped packs:
 - The stable packs have no errors.
-- `core-pub.json`: the information text of `P_OpenMaterials` highlights the option IDs `YesParts`/`YesEntire`, which no longer exist (2 warnings). Tracked as known issue PUB-03 (`OM-STALE-HIGHLIGHT` in `tests/verify-packs.cjs`); the pack text was not changed.
+- `core-pub.json`: the information text of `P_OpenMaterials` highlights the option IDs `YesParts`/`YesEntire`, which no longer exist (2 warnings). Tracked as known issue PUB-03 (`OM-STALE-HIGHLIGHT` in `tests/verify-packs.cjs`); the pack text was not changed. *(Fixed on 2026-11-19, see above.)*
 - `user.json`: `AKZEPTANZ_sep` lacks the `U_` prefix (warning).
 - The alpha packs (`core-software`, `core-data`, `packs/dev/`) have known problems listed as not blocking.
 - The default configuration has 0 blocking errors.

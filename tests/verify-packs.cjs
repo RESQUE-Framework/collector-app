@@ -1028,15 +1028,37 @@ knownIssue('PUB-DUPLICATE-ALIASES', 'PUB-02', 'Both old and new source spellings
         single: { score: single.score, max: single.max }, duplicated: { score: duplicated.score, max: duplicated.max },
         duplicatedItemMaxSum: itemMaxSum };
 });
-knownIssue('OM-STALE-HIGHLIGHT', 'PUB-03', 'The P_OpenMaterials information text highlights option IDs that no longer exist', () => {
-    // Found by the pack validator (unknown-option-literal, a warning because it
-    // only affects highlighting): the paragraph for the old 'Yes' answers can
-    // never be highlighted. Fixing the text promotes this to a regression.
-    const element = pack('core-pub').elements.find(e => e.id === 'P_OpenMaterials');
-    const optionIds = element.options.map(o => o.id);
-    assert.ok(element.info.includes("{:'YesParts', 'YesEntire'"));
-    assert.ok(!optionIds.includes('YesParts') && !optionIds.includes('YesEntire'));
-    return { optionIds, stale: ['YesParts', 'YesEntire'] };
+regression('HIGHLIGHT-OPTION-IDS', 'Highlight shorthands {:...|text} name existing option IDs of their element', () => {
+    // {:'A', 'B'|text} highlights text when the element's answer is A or B.
+    // An option ID that does not exist never matches; the pack validator
+    // reports it as unknown-option-literal. Found in P_OpenMaterials (PUB-03,
+    // fixed 2026-11-19). Archived packs are frozen history and not checked.
+    const files = [];
+    (function walk(dir) {
+        for (const name of fs.readdirSync(path.join(root, dir))) {
+            const file = `${dir}/${name}`;
+            if (fs.statSync(path.join(root, file)).isDirectory()) { if (name !== 'archive') walk(file); }
+            else if (name.endsWith('.json') && file !== 'packs/info.json') files.push(file);
+        }
+    })('packs');
+    const stale = [];
+    let checked = 0;
+    for (const file of files) {
+        for (const element of JSON.parse(read(file)).elements ?? []) {
+            const optionIds = (element.options ?? []).map(o => o.id);
+            for (const field of ['title', 'text', 'info', 'background', 'tip_external']) {
+                for (const [, list] of String(element[field] ?? '').matchAll(/\{\s*:(.*?)\|/g)) {
+                    for (const [, , literal] of list.matchAll(/(['"])(.*?)\1/g)) {
+                        checked++;
+                        if (!optionIds.includes(literal)) stale.push(`${file}: ${element.id}.${field} '${literal}'`);
+                    }
+                }
+            }
+        }
+    }
+    assert.ok(checked > 10, 'highlight shorthands were found');
+    assert.deepEqual(stale, []);
+    return { files: files.length, literals: checked };
 });
 knownIssue('ACCESS-JUSTIFICATION', 'SCORE-01', 'Restricted-access ZK2 earns a point without its requested justification', () => {
     const h = harness();
@@ -1101,7 +1123,45 @@ knownIssue('CLINICAL-HIDDEN', 'SCORE-04', 'Hidden clinical RCT answers retain po
     assert.deepEqual(actual.criteria, { max: 2, score: 0.5 });
     return actual;
 });
-knownIssue('SOFTWARE-GATES', 'SCORE-05', 'Software ignores factor, option condition and parent visibility', () => {
+regression('SOFTWARE-TESTS-URL', 'Test code URL appears only for open-source tests and initializes blank', () => {
+    const h = harness();
+    const software = pack('core-software');
+    const quality = software.elements.findIndex(e => e.id === 'S_Tests_Quality');
+    const url = software.elements.findIndex(e => e.id === 'S_Tests_URL');
+    assert.ok(url > quality);
+    assert.equal(software.elements[url].type, 'text');
+    assert.equal(h.defaults(software.elements).S_Tests_URL, '');
+    const condition = software.elements[url].condition;
+    assert.equal(h.uiEval(condition, { S_Tests: 'Yes', S_Tests_Quality_OpenSource: true }), true);
+    assert.equal(h.uiEval(condition, { S_Tests: 'Yes', S_Tests_Quality_OpenSource: false }), false);
+    assert.equal(h.uiEval(condition, { S_Tests: 'No', S_Tests_Quality_OpenSource: true }), false);
+});
+regression('SOFTWARE-LICENSE-URL', 'An open-source license earns its point only together with a URL to the code', () => {
+    // Fixed 2026-11-19: the former condition was inverted (an open license
+    // with a URL earned 0, without a URL 1).
+    const h = harness();
+    const software = pack('core-software');
+    const license = software.elements.find(e => e.id === 'S_License');
+    assert.equal(license.type, 'radio');
+    const closed = ['NoLicense', 'ClosedSource'];
+    for (const option of license.options) assert.equal(option.value, closed.includes(option.id) ? 0 : 1, option.id);
+    const url = 'https://github.com/example/tool';
+    const cases = [
+        ['MIT', url, 1], ['OtherOpenSource', url, 1], ['MIT', '', 0], ['MIT', '   ', 0],
+        ['ClosedSource', url, 0], ['NoLicense', url, 0], ['ClosedSource', '', 0]
+    ];
+    const scores = cases.map(([S_License, S_URL, expected]) => {
+        const actual = item(h, software, 'S_License', { S_License, S_URL }, 'software');
+        assert.deepEqual(actual, { max: 1, score: expected }, `${S_License} / ${JSON.stringify(S_URL)}`);
+        return [S_License, S_URL.trim() ? 'url' : S_URL ? 'blank' : 'none', actual.score];
+    });
+    return { scores };
+});
+knownIssue('SOFTWARE-GATES', 'SCORE-05', 'Software ignores option conditions and parent visibility', () => {
+    // S_Tests is 'No', so S_Tests_Quality and the documentation follow-ups are
+    // hidden, yet they earn points; the OpenSource option also earns 0.2
+    // without its option condition $S_Tests_URL. (score.factor, formerly part
+    // of this finding, was removed from the pack on 2026-11-19.)
     const h = harness();
     const software = pack('core-software');
     const answers = {
@@ -1111,8 +1171,33 @@ knownIssue('SOFTWARE-GATES', 'SCORE-05', 'Software ignores factor, option condit
     };
     const actual = h.scorePack(software, answers, 'software');
     closeTo(actual.score, 5.2);
-    assert.equal(actual.max, 11);
-    return { score: actual.score, max: actual.max, tests: item(h, software, 'S_Tests_Quality', answers, 'software'), documentation: item(h, software, 'S_Documentation_UserFacing', answers, 'software') };
+    assert.equal(actual.max, 13.5);
+    const tests = item(h, software, 'S_Tests_Quality', answers, 'software');
+    const documentation = item(h, software, 'S_Documentation_UserFacing', answers, 'software');
+    assert.deepEqual(tests, { max: 1, score: 0.2 });
+    assert.deepEqual(documentation, { max: 2, score: 2 });
+    return { score: actual.score, max: actual.max, tests, documentation };
+});
+characterization('DROPDOWN-UNSCORED', 'SCORE-06', 'Dropdown option values earn no points; current packs use radio for scored choices', () => {
+    // score2.js scores only radio and checkbox elements. A dropdown with the
+    // same options and values earns nothing (to be fixed in score2.js and the
+    // identical RESQUER/inst/js/score2.js). Until then scored single choices
+    // must be radios; the pack validator warns (unscored-type-with-values).
+    const h = harness();
+    const element = type => ({ id: 'X_Choice', type, options: [{ id: 'No', text: 'No', value: 0 }, { id: 'Yes', text: 'Yes', value: 1 }] });
+    const radio = h.scorePack({ elements: [element('radio')] }, { X_Choice: 'Yes' });
+    const dropdown = h.scorePack({ elements: [element('dropdown')] }, { X_Choice: 'Yes' });
+    assert.deepEqual([radio.score, radio.max], [1, 1]);
+    assert.deepEqual([dropdown.score, dropdown.max], [0, 0]);
+    const valued = [];
+    for (const file of ['packs/core-pub.json', 'packs/core-meta.json', 'packs/core-software.json', 'packs/core-data.json']) {
+        for (const e of pack(file.slice(6, -5)).elements) {
+            if (e.type === 'dropdown' && (e.options ?? []).some(o => typeof o.value === 'number')) valued.push(`${file}: ${e.id}`);
+        }
+    }
+    assert.deepEqual(valued, []);
+    assert.equal(pack('core-software').elements.find(e => e.id === 'S_License').type, 'radio');
+    return { radio: [radio.score, radio.max], dropdown: [dropdown.score, dropdown.max] };
 });
 knownIssue('EXPORT-OWNERSHIP', 'DATA-01', 'Hidden generated checkbox/table answers survive export, but hidden scalar defaults do not', () => {
     const h = harness();

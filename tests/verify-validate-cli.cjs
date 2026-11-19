@@ -36,9 +36,16 @@ test('the shipped default configuration has no blocking errors', () => {
     const result = cli('--config', 'config/config-default.yaml');
     assert.equal(result.code, 0, result.out);
     assert.match(result.out, /^Configuration config\/config-default\.yaml: 0 blocking errors/m);
-    assert.match(result.out, /Not blocking \(\d+\):/);
-    assert.match(result.out, /\[not blocking: output type inactive\]/);
     assert.match(result.out, /^OK: 1 checked/m);
+});
+
+test('problems in an inactive output type are listed as not blocking and do not fail', () => {
+    const result = cli('--config', 'tests/fixtures/config-inactive-problems.yaml');
+    assert.equal(result.code, 0, result.out);
+    assert.match(result.out, /: 0 blocking errors, /);
+    assert.match(result.out, /Not blocking \(\d+\):/);
+    assert.match(result.out, /ERROR\s+generated-key-collision\s+tests\/fixtures\/packs\/EP-broken\.json:\d+.*\[not blocking: output type inactive\]/);
+    assert.equal(cli('--strict', '--config', 'tests/fixtures/config-inactive-problems.yaml').code, 1);
 });
 
 test('a configuration that excludes a dependency fails with the broken references', () => {
@@ -164,9 +171,10 @@ test('--summary appends a Markdown report with a table and every problem, escape
     // Pack text cannot add HTML or break the table.
     assert.ok(!md.includes('<img'));
     assert.ok(md.includes('&lt;img src=x onerror=alert(1)&gt;\\|\\*\\*x\\*\\*'));
-    // Without --summary nothing is written; the default configuration summarizes as OK.
+    // A run without blocking errors summarizes as OK; problems that do not
+    // block are collapsed.
     const okSummary = path.join(dir, 'ok.md');
-    assert.equal(cli('--summary', okSummary, '--config', 'config/config-default.yaml').code, 0);
+    assert.equal(cli('--summary', okSummary, '--config', 'tests/fixtures/config-inactive-problems.yaml').code, 0);
     const okMd = fs.readFileSync(okSummary, 'utf8');
     assert.match(okMd, /\*\*OK\*\*: no blocking errors\./);
     assert.match(okMd, /<details><summary>Not blocking \(\d+\)<\/summary>/);

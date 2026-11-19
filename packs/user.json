@@ -1,6 +1,6 @@
 {
-    "version": "0.1.0",
-    "date": "2025-11-18",
+    "version": "0.1.1",
+    "date": "2026-11-19",
     "prefix": "U",
     "title": "User Defined items",
     "elements": [
@@ -22,7 +22,7 @@
             "title": "Please provide an email adress where we can reach you:"
         },
         {
-            "id": "AKZEPTANZ_sep",
+            "id": "U_AKZEPTANZ_sep",
             "type": "separator",
             "no_comment": true
         }

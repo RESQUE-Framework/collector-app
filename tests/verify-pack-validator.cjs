@@ -39,15 +39,9 @@ const config = () => ctx.jsyaml.load(read('config/config-default.yaml'));
 // assembled forms: the validator reads `active` from there.
 const assembled = async c => ({ ...(await ctx.menu(c)), config: c });
 
-test('default selected packs report the existing missing software reference, not built-in fields', async () => {
+test('default selected packs resolve indicator references, including built-in fields', async () => {
     const report = validateRefs(await assembled(config()));
-    assert.deepEqual(report.issues.map(e => [e.form, e.indicator, e.reference]), [
-        ['software', 'S_Tests_Quality', '$S_Tests_URL']
-    ]);
-    // Software is inactive (and alpha): listed, but nothing blocks the default app.
-    assert.deepEqual(report.issues.map(e => [e.pack, e.packStatus, e.deferred, e.blocking]), [
-        ['packs/core-software.json', 'alpha', 'inactive', false]
-    ]);
+    assert.deepEqual(report.issues, []);
     assert.deepEqual(report.blocking, []);
     assert.ok(report.indicatorsChecked > 100);
 });
@@ -260,12 +254,8 @@ test('the committee configuration answers RaterType and keeps every reference to
     assert.deepEqual(plain(forms.meta.presets), { RaterType: 'Applicant' });
     assert.deepEqual(plain(forms.meta.presetValues), { RaterType: 'Applicant' });
     assert.deepEqual(plain(forms.meta.presetIssues), []);
-    // Same report as the default configuration: only the shipped software
-    // issue, which does not block because software is inactive.
     const report = validateRefs({ ...forms, config: committeeConfig() });
-    assert.deepEqual(report.issues.map(e => [e.form, e.indicator, e.reference, e.deferred]), [
-        ['software', 'S_Tests_Quality', '$S_Tests_URL', 'inactive']
-    ]);
+    assert.deepEqual(report.issues, []);
     assert.deepEqual(report.blocking, []);
 });
 
@@ -406,7 +396,9 @@ test('the loader records source, prefix, version and status of each pack, also a
     assert.deepEqual(summary('meta'), [['packs/core-meta.json', 'M', 'stable', null]]);
     assert.deepEqual(summary('pub'), [
         ['packs/core-pub.json', 'P', 'stable', null],
-        ['packs/dev/EP-stimuli.json', 'ST', 'alpha', null]
+        // Declared since 2026-11-19; the packs/dev/ default (alpha) is covered by
+        // the pack status test above.
+        ['packs/dev/EP-stimuli.json', 'ST', 'stable', 'stable']
     ]);
     // ids cover the whole pack file, so selected elements can be traced back.
     assert.ok(forms.pub.packs[0].ids.includes('P_Data'));
@@ -444,7 +436,7 @@ test('blocking matrix: only errors in stable packs of active output types block'
     assert.equal(validate({ pub: { elements: broken() } }).blocking.length, 1);
 });
 
-test('activating the alpha software pack lists its problems with one warning but blocks nothing', async () => {
+test('activating the alpha software and data packs adds one warning each but blocks nothing', async () => {
     const c = config();
     c.software.active = true;
     c.data.active = true;
@@ -455,13 +447,16 @@ test('activating the alpha software pack lists its problems with one warning but
         ['software', 'packs/core-software.json', 'warning', null],
         ['data', 'packs/core-data.json', 'warning', null]
     ]);
-    // Software: missing $S_Tests_URL, incomplete S_Documentation values, and a
-    // score block on the S_License dropdown. Data: the unprefixed D3.
-    assert.match(notices[0].message, /alpha pack "packs\/core-software\.json" \(2 errors, 1 warning;/);
-    assert.match(notices[1].message, /\(0 errors, 1 warning;/);
-    assert.ok(report.deferred.some(e => e.indicator === 'S_Tests_Quality' && e.reference === '$S_Tests_URL'));
-    assert.ok(report.deferred.length >= 4);
+    // Both packs were cleaned up on 2026-11-19; only notices remain (fields the
+    // scorer ignores), and those are not counted in the warning.
+    assert.match(notices[0].message, /alpha pack "packs\/core-software\.json" \(0 errors, 0 warnings;/);
+    assert.match(notices[1].message, /alpha pack "packs\/core-data\.json" \(0 errors, 0 warnings;/);
+    assert.ok(!report.deferred.some(e => e.indicator === 'S_Tests_Quality' && e.reference === '$S_Tests_URL'));
     assert.ok(report.deferred.every(e => e.deferred === 'alpha' && ['software', 'data'].includes(e.form)));
+    // What the alpha pack still has is classified as deferred, never current.
+    const softwareNotices = report.notices.filter(e => e.form === 'software');
+    assert.ok(softwareNotices.length > 0);
+    assert.ok(softwareNotices.every(e => e.deferred === 'alpha' && !e.blocking));
     // Current issues come first; the deferred group follows, then notices.
     const order = report.issues.map(e => e.deferred === null ? (e.severity === 'notice' ? 2 : 0) : e.severity === 'notice' ? 2 : 1);
     assert.deepEqual(order, [...order].sort());
@@ -773,17 +768,18 @@ test('rules: invalid JSON is reported with its line; archived packs are not lint
 
 test('rules: in the collector, files are checked as written and only selected elements count', async () => {
     const c = config();
-    c.pub.exclude = ['P_OpenMaterials'];
+    c.pub.exclude = ['P_Data_Open_AccessLevel'];
     const forms = await assembled(c);
     const report = validate(forms);
-    // The stale highlight in P_OpenMaterials (a known core finding) disappears with its element.
-    assert.ok(!report.issues.some(e => e.indicator === 'P_OpenMaterials'));
+    // The core's notice about P_Data_Open_AccessLevel (an option field the app
+    // does not enforce) disappears with its element.
+    assert.ok(!report.issues.some(e => e.indicator === 'P_Data_Open_AccessLevel'));
     const full = validate(await assembled(config()));
-    const stale = full.current.filter(e => e.indicator === 'P_OpenMaterials');
-    assert.deepEqual(stale.map(e => [e.code, e.severity, e.pack, e.line]), [
-        ['unknown-option-literal', 'warning', 'packs/core-pub.json', lineOf('packs/core-pub.json', 'P_OpenMaterials')],
-        ['unknown-option-literal', 'warning', 'packs/core-pub.json', lineOf('packs/core-pub.json', 'P_OpenMaterials')]
-    ]);
+    const found = full.notices.filter(e => e.indicator === 'P_Data_Open_AccessLevel');
+    assert.ok(found.length > 0);
+    for (const issue of found) {
+        assert.deepEqual([issue.code, issue.pack, issue.line], ['ignored-field', 'packs/core-pub.json', lineOf('packs/core-pub.json', 'P_Data_Open_AccessLevel')]);
+    }
     // Presets change element objects (hidden, default); the check sees the file.
     const committee = { ...(await ctx.menu(committeeConfig())), config: committeeConfig() };
     assert.ok(!validate(committee).issues.some(e => e.code === 'unknown-field' && e.field === 'hidden'));

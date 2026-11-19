@@ -27,14 +27,14 @@ Consequently, **hidden**, **unanswered**, **zero points**, and **not applicable*
 
 | File or directory | Role |
 | --- | --- |
-| `core-pub.json` | Main publication questionnaire: 99 elements, including 12 scored elements. Prefix `P`, version `0.9.0`. |
+| `core-pub.json` | Main publication questionnaire: 99 elements, including 12 scored elements. Prefix `P`, version `0.9.1`. |
 | `core-meta.json` | Applicant/rater information shared by the research outputs. Prefix `M`, version `0.3.0`. |
-| `core-software.json` | Research software questionnaire. Prefix `S`, version `0.2`, status `alpha`; some scoring fields are not implemented by `score2.js`. |
-| `core-data.json` | A minimal data-set pack with one text field. Prefix `D`, version `0.0.1`, status `alpha`; no points. |
-| `user.json` | Example custom questions. Prefix `U`, version `0.1.0`. |
-| `EP/EP-clinical_psychology.json` | Publication extension, prefix `CP`, version `0.2.1`; 16 elements, including 5 scored elements. |
-| `EP/EP-theory_development.json` | Publication extension, prefix `TH`, version `5.0.0`; 34 elements: 25 scored checkboxes, 4 filter questions, 1 explanation, 1 information element, and 3 separators. |
-| `dev/` | Development packs for epistemic goals, multidisciplinarity, practical relevance, and stimuli. Without a `status` field they count as `alpha`. |
+| `core-software.json` | Research software questionnaire. Prefix `S`, version `0.3`, status `alpha`; some scoring rules are not implemented by `score2.js` (SCORE-05). |
+| `core-data.json` | A minimal data-set pack with one text field. Prefix `D`, version `0.1.0`, status `alpha`; no points. |
+| `user.json` | Example custom questions. Prefix `U`, version `0.1.1`. |
+| `EP/EP-clinical_psychology.json` | Publication extension, prefix `CP`, version `0.2.1`, status `stable`; 16 elements, including 5 scored elements. |
+| `EP/EP-theory_development.json` | Publication extension, prefix `TH`, version `5.0.0`, status `beta`; 34 elements: 25 scored checkboxes, 4 filter questions, 1 explanation, 1 information element, and 3 separators. |
+| `dev/` | Development packs for epistemic goals (`alpha`), multidisciplinarity, practical relevance and stimuli (each `stable`). A pack in `dev/` without a `status` field counts as `alpha`. |
 | `archive/` | Historical definitions. Some use an older, incompatible scoring structure. |
 | `info.json` | A catalog for pack discovery/preview; it is an array, not a questionnaire pack. |
 
@@ -83,7 +83,7 @@ This extension assumes the publication core is loaded alongside it. “Yes” ca
 
 `prefix` identifies the pack in the assembled version/date maps; it does not automatically prefix question IDs or create a separate answer namespace. Authors must choose distinct IDs themselves. `version`, `date`, and `title` describe the pack. Expansion packs may also contain `license`, `description`, `creators`, and `recommendedCitation`; these describe provenance and do not define scoring.
 
-The optional `status` declares how mature a pack is: `"alpha"` (early development; questions, conditions and points may be wrong), `"beta"` (complete, still being tested) or `"stable"`. It changes neither the questionnaire nor scoring. It decides whether the [browser pack validation](#browser-pack-validation) treats the pack's problems as blocking, and `preview.html` and `packs.html` show an *alpha*/*beta* badge with a short note (also in the exported manual). Without the field, a pack in `packs/dev/` is `alpha` and every other pack is `stable`, including `packs/archive/`. Any other value is reported as an `invalid-pack-status` error and the pack is treated as stable. `core-software.json` and `core-data.json` are currently `alpha`. Set `"status": "stable"` (or remove the field outside `packs/dev/`) only when the validator reports no errors for the pack.
+The optional `status` declares how mature a pack is: `"alpha"` (early development; questions, conditions and points may be wrong), `"beta"` (complete, still being tested) or `"stable"`. It changes neither the questionnaire nor scoring. It decides whether the [browser pack validation](#browser-pack-validation) treats the pack's problems as blocking, and `preview.html` and `packs.html` show an *alpha*/*beta* badge with a short note (also in the exported manual). Without the field, a pack in `packs/dev/` is `alpha` and every other pack is `stable`, including `packs/archive/`. Any other value is reported as an `invalid-pack-status` error and the pack is treated as stable. Currently `core-software.json`, `core-data.json` and `dev/EP-epistemic_goals.json` are `alpha`, `EP/EP-theory_development.json` is `beta`, and `EP/EP-clinical_psychology.json` and the other `dev/` packs declare `stable`. Set `"status": "stable"` (or remove the field outside `packs/dev/`) only when the validator reports no errors for the pack.
 
 The order of `elements` is the display order. IDs such as `P_Data_Open_AccessLevel` also support visual indentation through `utils/prefixtree.js`. That helper examines neighboring IDs and underscore-separated relationships. Indentation does not create a logical dependency: each child must have its own condition.
 
@@ -332,7 +332,7 @@ An element does not need a `score` object to contribute points. A `radio` or `ch
 | `checkbox` | Sum of all option values | Sum of values for keys whose stored value is exactly boolean `true` |
 | All other types | Zero | Zero |
 
-`dropdown` and `tabular_radio` are not scored, even if options contain values. Checkbox strings such as `"true"` do not earn points because the scorer tests `=== true`.
+`dropdown` and `tabular_radio` are not scored, even if options contain values. For dropdowns this is a known limitation (**SCORE-06**) that should be fixed in `score2.js` and its identical copy in RESQUER (`inst/js/score2.js`); until then, use `radio` for every scored single choice. The pack validator warns about values on dropdowns and tables (`unscored-type-with-values`), and no current pack has a scored dropdown (`S_License` in `core-software.json` became a radio on 2026-11-19). Checkbox strings such as `"true"` do not earn points because the scorer tests `=== true`.
 
 ### 6.2 The actual evaluation sequence
 
