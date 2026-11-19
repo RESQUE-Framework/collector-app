@@ -630,11 +630,18 @@ node scripts/validate-packs.cjs packs/EP/EP-my_pack.json           # one pack, w
 node scripts/validate-packs.cjs --strict packs/dev/EP-my_pack.json # also fail on warnings and non-blocking errors
 node scripts/validate-packs.cjs --alone --with packs/core-pub.json my-pack.json   # choose dependencies yourself
 node scripts/validate-packs.cjs --format json --all  # machine-readable report
+node scripts/validate-packs.cjs --all --summary report.md            # also append a Markdown report to a file
 ```
 
 Exit code 0 means no blocking errors (with `--strict`: no errors and no warnings at all), 1 means problems were found, 2 is a usage error. Notices are only counted unless `--notices` is given. An alpha pack therefore passes without `--strict` even with errors; use `--strict` while developing a pack, and to decide whether it can be marked stable.
 
-`.github/workflows/validate-packs.yml` runs `--all --format github` and the validator tests on every push and pull request that changes packs, configuration or validator code; problems appear as annotations on the changed lines. A fork has to enable workflows once in its *Actions* tab.
+`.github/workflows/validate-packs.yml` runs `--all --format github --summary "$GITHUB_STEP_SUMMARY"` and the validator tests on every push and pull request that changes packs, configuration or validator code. A fork has to enable workflows once in its *Actions* tab. Nothing is written to the repository; GitHub keeps the results with the workflow run:
+
+- **Job summary:** the complete report (a table per checked configuration or pack, then every problem), on the run's page under *Actions*.
+- **Annotations:** attached to the job's check run. They appear on the run's page and in the commit's *Checks*. Next to the code they appear only in a pull request's *Files changed* tab, for lines the pull request changes; a plain push shows none in the file view. GitHub keeps at most 10 annotations per level (error, warning, notice) per step and drops the rest, so the validator writes at most 9 per level and a 10th saying how many more there are.
+- **Log:** the full text report, in the step's *Full report* group.
+
+Whether the run fails depends only on the exit code, not on how many annotations GitHub shows.
 
 ### Validator rules
 

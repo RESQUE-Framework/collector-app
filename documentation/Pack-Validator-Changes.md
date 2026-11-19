@@ -1,5 +1,14 @@
 # Client-side pack validator
 
+## Where the CI results are kept (2026-11-19)
+
+The workflow comment and the docs said that problems "appear as annotations on the changed files/lines". That was wrong in three ways: `--all` annotates every problem, not only those in changed files; annotations appear next to the code only in a pull request (on a push only on the run's page and in the commit's checks); and GitHub keeps only 10 annotations per level and step, silently dropping the rest.
+
+- `scripts/validate-packs.cjs` has a new option `--summary <file>`, which appends the complete report as Markdown (a table per checked target, then every problem; pack text escaped, cut off at GitHub's 1 MiB limit). The workflow passes `--summary "$GITHUB_STEP_SUMMARY"`, so the full report is on the run's summary page.
+- `--format github` writes at most 9 annotations per level and a 10th saying how many more there are, then the full text report as a collapsible *Full report* log group.
+- The workflow comment, the guide ("Checking packs outside the collector") and `How_to_fork.md` now say where the results are: job summary, annotations on the run and the commit's checks (inline only in pull requests), log. Nothing is stored in the repository.
+- `tests/verify-validate-cli.cjs`: three new tests (annotation cap and log group, Markdown summary incl. appending and escaping, workflow and doc wording).
+
 ## Full rule set, command line and validator page (2026-11-18)
 
 Implements the validator wishlist (#136). Decisions: the dialog keeps opening on blocking errors (no new configuration key); the ID-prefix rule is a warning everywhere, with a fixed built-in list of the 37 existing unprefixed core IDs; there is no way to silence a rule; answer validation (#45, #103) stays a separate project.
@@ -10,7 +19,7 @@ Implements the validator wishlist (#136). Decisions: the dialog keeps opening on
 - **Dialog:** line, rule code (linked to the guide), fix hint, a *Notices* group, a link to `validator.html`.
 - **`validator.html`** (logic in `utils/validator-page.js`): checks this app's configuration, all configured and catalogued packs, and a pack file chosen or dropped by the user (read locally). Reports are built from text nodes only.
 - **`scripts/validate-packs.cjs`:** configuration, `--all`, or given pack files (with core-meta/core-pub as companions; `--alone`, `--with`); `--format text|json|github`, `--strict`, `--notices`; exit codes 0/1/2.
-- **`.github/workflows/validate-packs.yml`:** runs the command-line validator with GitHub annotations and the validator tests.
+- **`.github/workflows/validate-packs.yml`:** runs the command-line validator with GitHub annotations and the validator tests. *(Corrected 2026-11-19: annotations are not shown "on the changed files"; see below.)*
 
 Findings in the shipped packs:
 - The stable packs have no errors.

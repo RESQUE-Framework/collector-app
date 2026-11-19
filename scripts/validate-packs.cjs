@@ -24,7 +24,11 @@ config/config.yaml, or config/config-default.yaml if there is none.
   --with <pack.json>     Also load this pack as a dependency (repeatable).
   --alone                Do not add the core packs automatically.
   --format <format>      text (default), json, or github (annotations for
-                         GitHub Actions).
+                         GitHub Actions, followed by the text report as a
+                         collapsible log group).
+  --summary <file>       Also append the report as Markdown to <file>. In
+                         GitHub Actions use --summary "$GITHUB_STEP_SUMMARY":
+                         the report then appears on the run's summary page.
   --notices              Also list notices (otherwise only counted).
   --strict               Also fail on warnings and on problems that do not
                          block (inactive output types, alpha/beta packs).
@@ -35,7 +39,7 @@ Exit codes: 0 = no blocking errors (with --strict: no errors and no warnings),
 1 = problems found, 2 = usage or setup error.`;
 
 function parseArgs(argv) {
-    const options = { files: [], with: [], format: 'text', all: false, alone: false, strict: false, notices: false, config: null, root: path.join(__dirname, '..') };
+    const options = { files: [], with: [], format: 'text', all: false, alone: false, strict: false, notices: false, config: null, summary: null, root: path.join(__dirname, '..') };
     for (let i = 0; i < argv.length; i++) {
         const arg = argv[i];
         const value = () => {
@@ -50,6 +54,7 @@ function parseArgs(argv) {
         else if (arg === '--config') options.config = value();
         else if (arg === '--with') options.with.push(value());
         else if (arg === '--format') options.format = value();
+        else if (arg === '--summary') options.summary = value();
         else if (arg === '--root') options.root = path.resolve(value());
         else if (arg.startsWith('-')) throw new UsageError(`Unknown option ${arg}.`);
         else options.files.push(arg);
@@ -201,10 +206,18 @@ function formatText(results, options) {
 }
 
 // GitHub Actions workflow commands; see "Workflow commands for GitHub Actions".
+// GitHub keeps only the first 10 annotations of each level (error, warning,
+// notice) per step and drops the rest without a trace. So at most 9 are
+// written per level, and a 10th says how many more there are. The complete
+// report follows as a collapsible log group (and goes to the job summary with
+// --summary). Annotations are attached to the job's check run: they show on
+// the run's page and the commit's checks, inline only in pull requests.
+const ANNOTATIONS_PER_LEVEL = 10;
+
 function formatGitHub(results, options) {
     const data = text => String(text).replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A');
     const property = text => data(text).replace(/:/g, '%3A').replace(/,/g, '%2C');
-    const lines = [];
+    const byLevel = { error: [], warning: [], notice: [] };
     for (const { report } of results) {
         const list = [...report.current, ...report.deferred, ...(options.notices ? report.notices : [])];
         for (const issue of list) {
@@ -212,11 +225,78 @@ function formatGitHub(results, options) {
                 : issue.severity === 'warning' && !issue.deferred ? 'warning' : 'notice';
             const props = [issue.pack && `file=${property(issue.pack)}`, issue.line && `line=${issue.line}`, `title=${property(issue.code)}`].filter(Boolean).join(',');
             const text = `${reason(issue) ? `[${reason(issue)}] ` : ''}${issue.indicator ? `${issue.indicator}: ` : ''}${issue.message} How to fix: ${issue.hint ?? ''}`;
-            lines.push(`::${level} ${props}::${data(text)}`);
+            byLevel[level].push(`::${level} ${props}::${data(text)}`);
         }
     }
+    const lines = [];
+    for (const [level, list] of Object.entries(byLevel)) {
+        if (list.length <= ANNOTATIONS_PER_LEVEL) {
+            lines.push(...list);
+            continue;
+        }
+        const shown = ANNOTATIONS_PER_LEVEL - 1;
+        const more = list.length - shown;
+        lines.push(...list.slice(0, shown));
+        lines.push(`::${level} title=${property(`${more} more ${level}s`)}::${data(`${more} more ${level}${more === 1 ? ' is' : 's are'} not shown as annotations (GitHub shows at most ${ANNOTATIONS_PER_LEVEL} per level and step). The complete list is in the job summary and in the "Full report" group of this step's log.`)}`);
+    }
+    lines.push('::group::Full report');
+    lines.push(formatText(results, options));
+    lines.push('::endgroup::');
     lines.push(formatText(results, { ...options, notices: false }).split('\n').slice(-2, -1)[0]);
     return lines.join('\n');
+}
+
+// Markdown report for the job summary (or any file). Text taken from packs and
+// messages is escaped, so a pack cannot add markup or break the tables.
+// GitHub limits a step's summary to 1 MiB; longer reports are cut off.
+const SUMMARY_LIMIT = 1000000;
+
+function formatMarkdown(results, options) {
+    const md = text => String(text ?? '')
+        .replace(/\r?\n/g, ' ')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/([\\`*_[\]|#~])/g, '\\$1');
+    const ok = !results.some(result => failed(result.report, options.strict));
+    const head = [
+        '## Pack validation',
+        '',
+        ok ? `**OK**: no ${options.strict ? 'errors or warnings' : 'blocking errors'}.`
+            : `**FAILED**: ${results.filter(r => failed(r.report, options.strict)).length} of ${results.length} checked ${options.strict ? 'with errors or warnings' : 'with blocking errors'}.`,
+        '',
+        '| Checked | Blocking errors | Warnings | Not blocking | Notices |',
+        '| --- | ---: | ---: | ---: | ---: |',
+        ...results.map(({ name, report }) => `| ${md(name)} | ${report.blocking.length} | ${report.current.filter(i => i.severity === 'warning').length} | ${report.deferred.length} | ${report.notices.length} |`),
+        '',
+        `Rules and fixes: [Validator rules](${results[0]?.guideUrl ?? ''}). Only errors in stable packs of active output types block.`,
+        ''
+    ];
+    const item = issue => {
+        const label = issue.severity === 'error' ? 'Error' : issue.severity === 'warning' ? 'Warning' : 'Notice';
+        const where = [issue.pack && `${md(issue.pack)}${issue.line ? `, line ${issue.line}` : ''}`, issue.indicator && md(issue.indicator)].filter(Boolean).join(' · ');
+        return `- **${label}** \`${issue.code}\`${where ? ` · ${where}` : ''}${reason(issue) ? ` · *${md(reason(issue))}*` : ''}: ${md(issue.message)}${issue.hint ? ` *How to fix:* ${md(issue.hint)}` : ''}`;
+    };
+    const body = [];
+    for (const { name, report } of results) {
+        if (!report.issues.length) continue;
+        body.push(`### ${md(name)}`, '');
+        body.push(...report.current.map(item));
+        for (const [label, list] of [['Not blocking', report.deferred], ['Notices', report.notices]]) {
+            if (!list.length) continue;
+            body.push('', `<details><summary>${label} (${list.length})</summary>`, '', ...list.map(item), '', '</details>');
+        }
+        body.push('');
+    }
+    const out = [...head];
+    let size = Buffer.byteLength(out.join('\n'));
+    for (const [i, line] of body.entries()) {
+        size += Buffer.byteLength(line) + 1;
+        if (size > SUMMARY_LIMIT - 500) {
+            out.push('', `*The report was cut off after ${i} of ${body.length} lines (GitHub allows 1 MiB per step). The complete report is in the log.*`);
+            break;
+        }
+        out.push(line);
+    }
+    return out.join('\n') + '\n';
 }
 
 async function main() {
@@ -239,6 +319,8 @@ async function main() {
     } else {
         console.log(options.format === 'github' ? formatGitHub(results, options) : formatText(results, options));
     }
+    // Appended, as GitHub expects: other steps may have written to the file.
+    if (options.summary) fs.appendFileSync(options.summary, formatMarkdown(results, options));
     return ok ? 0 : 1;
 }
 
